@@ -1,0 +1,18 @@
+{
+  "reading": [
+    { "label": "MiAcademy", "url": "https://miacademy.co" },
+    { "label": "Epic! Digital Library", "url": "https://www.getepic.com" }
+  ],
+  "logic": [
+    { "label": "Logic Pack Folder", "url": "https://drive.google.com/drive/folders/example" },
+    { "label": "Math Games", "url": "https://www.mathplayground.com" }
+  ],
+  "writing": [
+    { "label": "Writing Prompts Doc", "url": "https://drive.google.com/drive/folders/example" },
+    { "label": "Story Starters", "url": "https://www.scholastic.com/teachers/story-starters" }
+  ],
+  "projects": [
+    { "label": "Project Ideas Doc", "url": "https://drive.google.com/drive/folders/example" },
+    { "label": "DIY Science Projects", "url": "https://www.sciencebuddies.org" }
+  ]
+}
