@@ -1,0 +1,56 @@
+[
+  {
+    "date": "2025-12-12",
+    "theme": "Foundation Day",
+    "kidIds": ["kid-9", "kid-12"],
+    "lessonIds": ["lesson-wordless-villain", "lesson-math-patterns"],
+    "journalPrompt": "Three-Part Entry: Today I did / I noticed / Next time I will",
+    "projectPrompt": "Create a mood board for the story (drawn or collage).",
+    "parentNotes": "Friday activities - both kids working together."
+  },
+  {
+    "date": "2025-12-15",
+    "theme": "Foundation Day",
+    "kidIds": ["kid-9", "kid-12"],
+    "lessonIds": ["lesson-wordless-villain"],
+    "journalPrompt": "Three-Part Entry: Today I did / I noticed / Next time I will",
+    "projectPrompt": "Create a mood board for the story (drawn or collage).",
+    "parentNotes": "Bring 2 wordless books from the library."
+  },
+  {
+    "date": "2025-12-16",
+    "theme": "Skill Day",
+    "kidIds": ["kid-9", "kid-12"],
+    "lessonIds": ["lesson-math-patterns"],
+    "journalPrompt": "What patterns do you notice in your daily life?",
+    "projectPrompt": "Create a visual pattern using household items.",
+    "parentNotes": "Have colored pencils ready for pattern work."
+  },
+  {
+    "date": "2025-12-17",
+    "theme": "Expression Day",
+    "kidIds": ["kid-9", "kid-12"],
+    "lessonIds": ["lesson-nature-journal"],
+    "journalPrompt": "Describe your favorite outdoor spot and why you like it.",
+    "projectPrompt": "Take photos of interesting things you find outside.",
+    "parentNotes": "Check weather - have backup indoor nature activity ready."
+  },
+  {
+    "date": "2025-12-18",
+    "theme": "Foundation Day",
+    "kidIds": ["kid-9"],
+    "lessonIds": ["lesson-wordless-villain", "lesson-math-patterns"],
+    "journalPrompt": "What was the hardest part of today's work?",
+    "projectPrompt": null,
+    "parentNotes": "Kid 9 only - Kid 12 has a field trip."
+  },
+  {
+    "date": "2025-12-19",
+    "theme": "Skill Day",
+    "kidIds": ["kid-12"],
+    "lessonIds": ["lesson-nature-journal"],
+    "journalPrompt": "What scientific observations did you make today?",
+    "projectPrompt": "Write a short poem about nature.",
+    "parentNotes": "Kid 12 only - extended nature exploration."
+  }
+]

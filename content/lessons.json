@@ -1,0 +1,29 @@
+[
+  {
+    "id": "lesson-wordless-villain",
+    "title": "Wordless Book: Villain Monologue",
+    "instructions": "Choose a wordless book. Narrate the story from the villain POV.",
+    "tags": ["reading", "writing", "critical-thinking"],
+    "estimatedMinutes": 25,
+    "links": [{ "label": "Instructions", "url": "https://drive.google.com/example" }],
+    "attachments": [{ "label": "Worksheet PDF", "url": "https://drive.google.com/example" }]
+  },
+  {
+    "id": "lesson-math-patterns",
+    "title": "Pattern Detective",
+    "instructions": "Find patterns in the number sequences. Explain your reasoning.",
+    "tags": ["logic", "math"],
+    "estimatedMinutes": 20,
+    "links": [{ "label": "Pattern Worksheet", "url": "https://drive.google.com/example" }],
+    "attachments": []
+  },
+  {
+    "id": "lesson-nature-journal",
+    "title": "Nature Journal Entry",
+    "instructions": "Spend 15 minutes outdoors. Sketch and describe what you observe.",
+    "tags": ["writing", "science"],
+    "estimatedMinutes": 30,
+    "links": [],
+    "attachments": [{ "label": "Journal Template", "url": "https://drive.google.com/example" }]
+  }
+]
