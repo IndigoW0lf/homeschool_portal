@@ -1,4 +1,4 @@
-// Data access layer for content
+import { getWeekRange, formatDateString } from './dateUtils';
 // In Phase 2, this can be swapped to Supabase while keeping the same interface
 
 import { Kid, Quote, Resources, Lesson, CalendarEntry } from '@/types';
@@ -26,9 +26,11 @@ export function getQuotes(): Quote[] {
 export function getDailyQuote(date: Date = new Date()): Quote {
   const quotes = getQuotes();
   // Use the date as seed for deterministic selection
+  // Calculate day of year: days since January 1st
+  const startOfYear = new Date(date.getFullYear(), 0, 1);
   const dayOfYear = Math.floor(
-    (date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000
-  );
+    (date.getTime() - startOfYear.getTime()) / 86400000
+  ) + 1;
   const index = dayOfYear % quotes.length;
   return quotes[index];
 }
@@ -65,33 +67,23 @@ export function getCalendarEntriesForKid(kidId: string): CalendarEntry[] {
 }
 
 export function getCalendarEntriesForDateRange(startDate: Date, endDate: Date): CalendarEntry[] {
-  const start = startDate.toISOString().split('T')[0];
-  const end = endDate.toISOString().split('T')[0];
+  const start = formatDateString(startDate);
+  const end = formatDateString(endDate);
   return getCalendarEntries().filter(entry => entry.date >= start && entry.date <= end);
 }
 
 export function getTodayEntry(kidId: string, date: Date = new Date()): CalendarEntry | undefined {
-  const dateString = date.toISOString().split('T')[0];
+  const dateString = formatDateString(date);
   return getCalendarEntries().find(
     entry => entry.date === dateString && entry.kidIds.includes(kidId)
   );
 }
 
 export function getWeekEntries(kidId: string, date: Date = new Date()): CalendarEntry[] {
-  // Get the start of the week (Monday)
-  const startOfWeek = new Date(date);
-  const day = startOfWeek.getDay();
-  const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
-  startOfWeek.setDate(diff);
-  startOfWeek.setHours(0, 0, 0, 0);
-
-  // Get end of week (Sunday)
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
-  endOfWeek.setHours(23, 59, 59, 999);
+  const { start, end } = getWeekRange(date);
 
   return getCalendarEntriesForKid(kidId).filter(entry => {
     const entryDate = new Date(entry.date);
-    return entryDate >= startOfWeek && entryDate <= endOfWeek;
+    return entryDate >= start && entryDate <= end;
   });
 }

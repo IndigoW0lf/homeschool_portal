@@ -1,6 +1,7 @@
 'use client';
 
 import { CalendarEntry } from '@/types';
+import { getWeekDates, formatDateString } from '@/lib/dateUtils';
 import { useState } from 'react';
 
 interface WeekCalendarProps {
@@ -10,26 +11,6 @@ interface WeekCalendarProps {
 }
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
-function getWeekDates(date: Date = new Date()): Date[] {
-  const startOfWeek = new Date(date);
-  const day = startOfWeek.getDay();
-  const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
-  startOfWeek.setDate(diff);
-  startOfWeek.setHours(0, 0, 0, 0);
-
-  const week: Date[] = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(startOfWeek);
-    d.setDate(startOfWeek.getDate() + i);
-    week.push(d);
-  }
-  return week;
-}
-
-function formatDateString(date: Date): string {
-  return date.toISOString().split('T')[0];
-}
 
 export function WeekCalendar({ entries, selectedDate, onDateSelect }: WeekCalendarProps) {
   const [currentWeek] = useState(() => new Date());
