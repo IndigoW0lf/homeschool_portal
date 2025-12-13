@@ -3,6 +3,37 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Neutrals / Structure */
+  --ink-900: #2B2B2B;        /* text, outlines */
+  --ink-700: #4A4A4A;
+  --paper-50: #FAF9F7;       /* backgrounds */
+  --paper-100: #F2EFEA;
+
+  /* Warm Naturals (world cohesion) */
+  --wood-600: #8B6A4E;
+  --wood-400: #B99A7A;
+  --stone-500: #9DA3A6;
+  --stone-300: #C9CED1;
+
+  /* Greens (world + calm energy) */
+  --leaf-700: #4E6B50;
+  --leaf-500: #6F8F73;
+  --leaf-300: #AFC4B2;
+
+  /* Fabric / Play (avatars, outfits) */
+  --fabric-blue: #5E7FB8;
+  --fabric-green: #6FAFA2;
+  --fabric-gold: #E1B866;
+  --fabric-rose: #D48A8A;
+  --fabric-lilac: #9C8FB8;
+
+  /* Accent / Reward */
+  --ember-500: #E27D60;      /* progress, rewards */
+  --sky-400: #7FB3D5;        /* selection, highlights */
+
+  /* Shadows */
+  --shadow-soft: rgba(0,0,0,0.12);
 }
 
 @theme inline {
@@ -21,4 +52,12 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.avatar-shadow {
+  width: 60%;
+  height: 10px;
+  background: var(--shadow-soft);
+  border-radius: 50%;
+  filter: blur(2px);
 }

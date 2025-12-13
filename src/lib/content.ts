@@ -1,12 +1,14 @@
 import { getWeekRange, formatDateString } from './dateUtils';
 // In Phase 2, this can be swapped to Supabase while keeping the same interface
 
-import { Kid, Quote, Resources, Lesson, CalendarEntry } from '@/types';
+import { Kid, Quote, Resources, Lesson, CalendarEntry, AvatarAssets, StudioTemplates } from '@/types';
 import kidsData from '../../content/kids.json';
 import quotesData from '../../content/quotes.json';
 import resourcesData from '../../content/resources.json';
 import lessonsData from '../../content/lessons.json';
 import calendarData from '../../content/calendar.json';
+import avatarAssetsData from '../../content/avatar-assets.json';
+import studioTemplatesData from '../../content/studio-templates.json';
 
 // Kids
 export function getKids(): Kid[] {
@@ -86,4 +88,14 @@ export function getWeekEntries(kidId: string, date: Date = new Date()): Calendar
     const entryDate = new Date(entry.date);
     return entryDate >= start && entryDate <= end;
   });
+}
+
+// Avatar Assets
+export function getAvatarAssets(): AvatarAssets {
+  return avatarAssetsData as AvatarAssets;
+}
+
+// Studio Templates
+export function getStudioTemplates(): StudioTemplates {
+  return studioTemplatesData as StudioTemplates;
 }

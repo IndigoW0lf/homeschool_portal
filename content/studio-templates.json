@@ -1,0 +1,50 @@
+{
+  "templates": [
+    {
+      "id": "shirt",
+      "label": "Shirt",
+      "src": "/assets/studio/templates/shirt.svg",
+      "parts": [
+        {
+          "name": "primary",
+          "label": "Main Color"
+        },
+        {
+          "name": "secondary",
+          "label": "Accent Color"
+        }
+      ]
+    },
+    {
+      "id": "rug",
+      "label": "Rug",
+      "src": "/assets/studio/templates/rug.svg",
+      "parts": [
+        {
+          "name": "primary",
+          "label": "Main Color"
+        },
+        {
+          "name": "secondary",
+          "label": "Pattern Color"
+        }
+      ]
+    },
+    {
+      "id": "poster",
+      "label": "Poster",
+      "src": "/assets/studio/templates/poster.svg",
+      "parts": [
+        {
+          "name": "primary",
+          "label": "Background"
+        },
+        {
+          "name": "secondary",
+          "label": "Text/Design"
+        }
+      ]
+    }
+  ]
+}
+

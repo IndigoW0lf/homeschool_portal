@@ -1,0 +1,73 @@
+{
+  "bases": [
+    {
+      "id": "base-01",
+      "label": "Base 1",
+      "src": "/assets/avatars/bases/base-01.svg",
+      "category": "base"
+    },
+    {
+      "id": "base-02",
+      "label": "Base 2",
+      "src": "/assets/avatars/bases/base-02.svg",
+      "category": "base"
+    },
+    {
+      "id": "base-03",
+      "label": "Base 3",
+      "src": "/assets/avatars/bases/base-03.svg",
+      "category": "base"
+    }
+  ],
+  "outfits": [
+    {
+      "id": "shirt-01",
+      "label": "T-Shirt 1",
+      "src": "/assets/avatars/outfits/shirt-01.svg",
+      "category": "outfit",
+      "colorableParts": ["shirt"]
+    },
+    {
+      "id": "shirt-02",
+      "label": "T-Shirt 2",
+      "src": "/assets/avatars/outfits/shirt-02.svg",
+      "category": "outfit",
+      "colorableParts": ["shirt"]
+    },
+    {
+      "id": "shirt-03",
+      "label": "T-Shirt 3",
+      "src": "/assets/avatars/outfits/shirt-03.svg",
+      "category": "outfit",
+      "colorableParts": ["shirt"]
+    },
+    {
+      "id": "shirt-07",
+      "label": "T-Shirt 7",
+      "src": "/assets/avatars/outfits/shirt-07.svg",
+      "category": "outfit",
+      "colorableParts": ["shirt", "pants"]
+    }
+  ],
+  "accessories": [
+    {
+      "id": "hat-01",
+      "label": "Hat 1",
+      "src": "/assets/avatars/accessories/hat-01.svg",
+      "category": "accessory"
+    },
+    {
+      "id": "hat-02",
+      "label": "Hat 2",
+      "src": "/assets/avatars/accessories/hat-02.svg",
+      "category": "accessory"
+    },
+    {
+      "id": "glasses-01",
+      "label": "Glasses 1",
+      "src": "/assets/avatars/accessories/glasses-01.svg",
+      "category": "accessory"
+    }
+  ]
+}
+

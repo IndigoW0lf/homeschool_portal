@@ -60,3 +60,53 @@ export interface CalendarEntry {
 export interface DoneState {
   [key: string]: boolean | number; // key format: `homeschool_done::${kidId}::${date}::${lessonId}`
 }
+
+// Avatar types
+export interface AvatarAsset {
+  id: string;
+  label: string;
+  src: string;
+  category: 'base' | 'outfit' | 'accessory';
+  colorableParts?: string[];
+}
+
+export interface AvatarAssets {
+  bases: AvatarAsset[];
+  outfits: AvatarAsset[];
+  accessories: AvatarAsset[];
+}
+
+export interface AvatarColors {
+  [key: string]: string; // e.g., { "shirt": "--fabric-blue", "pants": "--fabric-green" }
+}
+
+export interface AvatarState {
+  base: string;
+  outfit: string;
+  accessory?: string;
+  colors: AvatarColors;
+}
+
+// Studio types
+export interface StudioTemplatePart {
+  name: string;
+  label: string;
+}
+
+export interface StudioTemplate {
+  id: string;
+  label: string;
+  src: string;
+  parts: StudioTemplatePart[];
+}
+
+export interface StudioState {
+  selectedTemplate: string;
+  colors: {
+    [partName: string]: string; // e.g., { "primary": "--fabric-blue", "secondary": "--fabric-gold" }
+  };
+}
+
+export interface StudioTemplates {
+  templates: StudioTemplate[];
+}
