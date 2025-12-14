@@ -1,14 +1,16 @@
 import Link from 'next/link';
-import { getKids, getDailyQuote, getCalendarEntries } from '@/lib/content';
+import { getKidsFromDB, getDayPlansFromDB } from '@/lib/supabase/data';
+import { getDailyQuote } from '@/lib/content';
+import { formatDateString } from '@/lib/dateUtils';
 import { QuoteCard, KidSwitcher, ThemeCard } from '@/components';
 import { DashboardWeekCalendar } from './DashboardWeekCalendar';
 
-export default function Dashboard() {
-  const kids = getKids();
+export default async function Dashboard() {
+  const kids = await getKidsFromDB();
   const quote = getDailyQuote();
   const today = new Date();
-  const todayString = today.toISOString().split('T')[0];
-  const calendarEntries = getCalendarEntries();
+  const todayString = formatDateString(today);
+  const calendarEntries = await getDayPlansFromDB();
   
   // Find today's theme (if any entry exists for today)
   const todayEntry = calendarEntries.find(entry => entry.date === todayString);

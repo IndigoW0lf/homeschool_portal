@@ -21,10 +21,14 @@ export function getWeekDates(date: Date = new Date()): Date[] {
 }
 
 /**
- * Format a date to ISO date string (YYYY-MM-DD)
+ * Format a date to ISO date string (YYYY-MM-DD) using local timezone
+ * This ensures dates match correctly regardless of UTC offset
  */
 export function formatDateString(date: Date): string {
-  return date.toISOString().split('T')[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**

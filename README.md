@@ -4,18 +4,28 @@ A kid-friendly Homeschool Portal web app with a centralized dashboard and per-ch
 
 ## Features
 
-- **Dashboard** (`/`) - Shows today's date, daily quote, week calendar, and links to each child's portal
-- **Child Portal** (`/kids/[kidId]`) - Personalized view with today's assignments, upcoming lessons, and resources
-- **Parent Dashboard** (`/parent`) - Read-only view of all kids, calendar items, and lessons with edit instructions
+### Parent Dashboard (`/parent`)
+- **Weekly Overview** - Visual week calendar showing lessons & assignments per day
+- **Day Playlist Modal** - Click any day to view/manage that day's schedule
+- **Library Management** - Create, edit, clone, and delete lessons & assignments
+- **Item Detail Modal** - Click any lesson/assignment to view full details with Delete/Edit/Clone actions
+- **Schedule Items** - Assign lessons & assignments to specific dates and students
 
-### MVP Features
+### Kid Portal (`/kids/[kidId]`)
+- **Today's Quests** - View today's assigned items with clickable detail modals
+- **Week Calendar** - Overview of the week's schedule
+- **Progress Tracking** - Mark items complete with star rewards
+- **Item Details** - Click any item to see instructions, steps, rubric, and encouragement
 
-- ✅ Daily rotating quotes
-- ✅ Week calendar view with assignment indicators
-- ✅ Assignment cards with tags, links, attachments, and prompts
-- ✅ "Mark Done" checkbox with localStorage persistence
-- ✅ Grouped resource links by category
-- ✅ Theme cards (Foundation/Skill/Expression days)
+### Core Features
+- ✅ Supabase backend with real-time data
+- ✅ Magic link authentication for parents
+- ✅ Daily rotating quotes on dashboard
+- ✅ Week calendar with assignment indicators
+- ✅ Assignment cards with tags, links, steps, and rubrics
+- ✅ "Mark Done" toggle with star rewards
+- ✅ Clone lessons/assignments for reuse
+- ✅ Toast notifications throughout
 - ✅ Responsive design for tablet and desktop
 
 ## Tech Stack
@@ -23,8 +33,9 @@ A kid-friendly Homeschool Portal web app with a centralized dashboard and per-ch
 - **Next.js 16** (App Router)
 - **React 19 + TypeScript**
 - **Tailwind CSS 4**
-- **No backend required** - Data stored in JSON files
-- **localStorage** for progress tracking
+- **Supabase** (PostgreSQL + Auth)
+- **Sonner** (Toast notifications)
+- **Lucide React** (Icons)
 
 ## Getting Started
 
@@ -32,11 +43,20 @@ A kid-friendly Homeschool Portal web app with a centralized dashboard and per-ch
 
 - Node.js 18+ 
 - npm
+- Supabase project (for backend)
 
 ### Installation
 
 ```bash
 npm install
+```
+
+### Environment Setup
+
+Create `.env.local` with your Supabase credentials:
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ```
 
 ### Development
@@ -54,75 +74,61 @@ npm run build
 npm start
 ```
 
-## Content Management
+## Database Schema
 
-Content is stored in JSON files in the `/content` directory:
+Key tables in Supabase:
 
-| File | Purpose |
-|------|---------|
-| `kids.json` | Kid profiles (id, name, grade band) |
-| `quotes.json` | Daily rotating quotes |
-| `resources.json` | Evergreen resource links by category |
-| `lessons.json` | Lesson definitions with instructions, links, attachments |
-| `calendar.json` | Schedule entries mapping dates to lessons and kids |
-
-### Adding a New Lesson
-
-1. Add the lesson to `content/lessons.json`:
-```json
-{
-  "id": "lesson-new-activity",
-  "title": "New Activity",
-  "instructions": "Instructions for the activity...",
-  "tags": ["reading", "writing"],
-  "estimatedMinutes": 20,
-  "links": [{ "label": "Resource Link", "url": "https://..." }],
-  "attachments": [{ "label": "Worksheet PDF", "url": "https://..." }]
-}
-```
-
-2. Schedule it in `content/calendar.json`:
-```json
-{
-  "date": "2025-01-15",
-  "theme": "Foundation Day",
-  "kidIds": ["kid-9", "kid-12"],
-  "lessonIds": ["lesson-new-activity"],
-  "journalPrompt": "What did you learn today?",
-  "projectPrompt": "Create something related to today's lesson.",
-  "parentNotes": "Notes for the parent."
-}
-```
+| Table | Purpose |
+|-------|---------|
+| `kids` | Kid profiles (id, name, grade_band) |
+| `lessons` | Lesson library with instructions, tags, links |
+| `assignment_items` | Assignment library with steps, rubric, deliverable |
+| `schedule_items` | Maps lessons/assignments to dates and students |
+| `resources` | Evergreen resource links by category |
 
 ## Project Structure
 
 ```
 homeschool-portal/
-├── content/           # JSON content files
-│   ├── kids.json
-│   ├── quotes.json
-│   ├── resources.json
-│   ├── lessons.json
-│   └── calendar.json
+├── supabase/
+│   └── migrations/    # Database migrations
 ├── src/
-│   ├── app/           # Next.js App Router pages
-│   │   ├── page.tsx   # Dashboard
-│   │   ├── kids/[kidId]/page.tsx  # Child portal
-│   │   └── parent/page.tsx        # Parent dashboard
-│   ├── components/    # Reusable UI components
-│   ├── hooks/         # React hooks
-│   ├── lib/           # Data access layer
-│   └── types/         # TypeScript type definitions
-└── public/            # Static assets
+│   ├── app/
+│   │   ├── page.tsx                  # Landing/Dashboard
+│   │   ├── kids/[kidId]/             # Kid portal
+│   │   │   ├── page.tsx
+│   │   │   ├── ScheduleItemsList.tsx # Clickable items with modal
+│   │   │   └── KidPortalWeekCalendar.tsx
+│   │   └── parent/
+│   │       ├── page.tsx              # Parent dashboard
+│   │       ├── lessons/              # Lesson management
+│   │       ├── assignments/          # Assignment management
+│   │       └── resources/            # Resource management
+│   ├── components/
+│   │   ├── dashboard/
+│   │   │   ├── DashboardOverview.tsx # Main parent view
+│   │   │   ├── DayModal.tsx          # Day playlist modal
+│   │   │   ├── ItemDetailModal.tsx   # View item details
+│   │   │   └── WeekView.tsx          # Week calendar
+│   │   ├── assignments/              # Assignment form
+│   │   ├── lessons/                  # Lesson form
+│   │   └── ui/                       # Shared UI components
+│   ├── lib/
+│   │   ├── supabase/                 # Supabase client & queries
+│   │   └── utils.ts                  # Utilities
+│   └── types/                        # TypeScript types
+└── public/                           # Static assets
 ```
 
-## Future Enhancements (Phase 2)
+## Recent Updates
 
-- Supabase auth (parent vs child)
-- Supabase tables for lessons/calendar
-- File uploads for PDFs
-- Real admin CRUD UI
+- **Item Detail Modals** - Click lessons/assignments to view full details
+- **Clone Functionality** - Duplicate items for reuse
+- **Kid Portal Click-to-View** - Kids can click items to see instructions
+- **Toast Confirmations** - Consistent toast UI for all actions
+- **Fixed Calendar Query** - Schedule items now display correctly
 
 ## License
 
 Private - for homeschool family use
+

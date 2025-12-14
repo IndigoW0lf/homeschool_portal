@@ -1,7 +1,7 @@
 import { getWeekRange, formatDateString } from './dateUtils';
 // In Phase 2, this can be swapped to Supabase while keeping the same interface
 
-import { Kid, Quote, Resources, Lesson, CalendarEntry, AvatarAssets, StudioTemplates } from '@/types';
+import { Kid, Quote, Resources, Lesson, CalendarEntry, AvatarAssets, StudioTemplates, ShopItems } from '@/types';
 import kidsData from '../../content/kids.json';
 import quotesData from '../../content/quotes.json';
 import resourcesData from '../../content/resources.json';
@@ -9,6 +9,7 @@ import lessonsData from '../../content/lessons.json';
 import calendarData from '../../content/calendar.json';
 import avatarAssetsData from '../../content/avatar-assets.json';
 import studioTemplatesData from '../../content/studio-templates.json';
+import shopItemsData from '../../content/shop-items.json';
 
 // Kids
 export function getKids(): Kid[] {
@@ -40,6 +41,14 @@ export function getDailyQuote(date: Date = new Date()): Quote {
 // Resources
 export function getResources(): Resources {
   return resourcesData as Resources;
+}
+
+export function getMiAcademyResource(): { label: string; url: string } | null {
+  const resources = getResources();
+  const reading = resources.reading || [];
+  // Find item with pinnedToday: true or label containing "MiAcademy"
+  const miacademy = reading.find(r => r.pinnedToday || r.label.toLowerCase().includes('miacademy'));
+  return miacademy ? { label: miacademy.label, url: miacademy.url } : null;
 }
 
 // Lessons
@@ -98,4 +107,9 @@ export function getAvatarAssets(): AvatarAssets {
 // Studio Templates
 export function getStudioTemplates(): StudioTemplates {
   return studioTemplatesData as StudioTemplates;
+}
+
+// Shop Items
+export function getShopItems(): ShopItems {
+  return shopItemsData as ShopItems;
 }

@@ -27,6 +27,17 @@ export function useDoneState(kidId: string, date: string, lessonId: string) {
     const newState = !done;
     setOptimisticDone(newState);
     setDone(kidId, date, lessonId, newState);
+
+    // Award star if marking done for first time
+    if (newState) {
+      // Import dynamically to avoid SSR issues
+      import('@/lib/progressState').then(({ isAwarded, markAwarded, addStars }) => {
+        if (!isAwarded(kidId, date, lessonId)) {
+          addStars(kidId, 1);
+          markAwarded(kidId, date, lessonId);
+        }
+      });
+    }
   }, [done, kidId, date, lessonId]);
 
   return { done, toggle, isLoaded: true };

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { StudioTemplates, StudioTemplate, StudioState } from '@/types';
+import { StudioTemplates, StudioState } from '@/types';
 import { getStudioState, setStudioState, getDefaultStudioState } from '@/lib/studioStorage';
 
 interface StudioEditorProps {
@@ -29,6 +29,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
   useEffect(() => {
     const savedState = getStudioState(kidId);
     if (savedState) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState(savedState);
     }
   }, [kidId]);

@@ -1,57 +1,87 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { getKidById, getResources, getWeekEntries, getLessonsByIds, getTodayEntry } from '@/lib/content';
-import { AssignmentCard, ResourceSection, ThemeCard } from '@/components';
+import { notFound } from 'next/navigation'; // Added redirect
+import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
+import { formatDateString } from '@/lib/dateUtils';
+import { ProgressCard, TodayCompletionSummary, ResourceSection } from '@/components';
+import { MiAcademyCardWrapper } from '@/components/MiAcademyCardWrapper';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
+import { ScheduleItemsList } from './ScheduleItemsList';
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { addWeeks, subWeeks, isSameDay, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 
 interface KidPortalPageProps {
   params: Promise<{
     kidId: string;
   }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function KidPortalPage({ params }: KidPortalPageProps) {
+export default async function KidPortalPage({ params, searchParams }: KidPortalPageProps) {
   const { kidId } = await params;
-  const kid = getKidById(kidId);
+  const { date } = await searchParams;
+  
+  const kid = await getKidByIdFromDB(kidId);
   
   if (!kid) {
     notFound();
   }
 
-  const resources = getResources();
-  const today = new Date();
-  const todayString = today.toISOString().split('T')[0];
-  const todayEntry = getTodayEntry(kidId, today);
-  const weekEntries = getWeekEntries(kidId, today);
+  // Date Logic
+  const today = new Date(); // Real today
+  let viewDate = today;
   
-  // Get lessons for today
-  const todayLessons = todayEntry ? getLessonsByIds(todayEntry.lessonIds) : [];
-  
-  // Get all upcoming lessons this week (excluding today if already shown)
-  const upcomingEntries = weekEntries.filter(entry => entry.date > todayString);
-  const upcomingLessonsMap = new Map<string, { entry: typeof todayEntry; lessons: typeof todayLessons }>();
-  
-  upcomingEntries.forEach(entry => {
-    upcomingLessonsMap.set(entry.date, {
-      entry,
-      lessons: getLessonsByIds(entry.lessonIds),
-    });
-  });
+  if (date && typeof date === 'string') {
+     try {
+        viewDate = parseISO(date);
+     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     } catch (e) {
+        // invalid date, fallback to today
+     }
+  }
 
-  // Format today's date nicely
-  const formattedDate = today.toLocaleDateString('en-US', {
+  // If viewDate is invalid or weird, fallback
+  if (isNaN(viewDate.getTime())) {
+     viewDate = today;
+  }
+
+  const viewDateString = formatDateString(viewDate);
+  const isViewToday = isSameDay(viewDate, today);
+
+  const resources = await getResourcesFromDB();
+  
+  // Get week date range
+  const weekStart = startOfWeek(viewDate, { weekStartsOn: 1 }); // Monday
+  const weekEnd = endOfWeek(viewDate, { weekStartsOn: 1 }); // Sunday
+  const weekStartStr = format(weekStart, 'yyyy-MM-dd');
+  const weekEndStr = format(weekEnd, 'yyyy-MM-dd');
+  
+  // Fetch schedule items for this student within the week
+  const weekScheduleItems = await getScheduleItemsForStudent(kidId, weekStartStr, weekEndStr);
+  
+  // Filter items for "today" (view date)
+  const todayItems = weekScheduleItems.filter(item => item.date === viewDateString);
+  
+  // Filter items for upcoming days (after view date)
+  const upcomingItems = weekScheduleItems.filter(item => item.date > viewDateString);
+
+  // Format view date
+  const formattedDate = viewDate.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
   });
 
+  // Navigation Handlers
+  const prevWeek = format(subWeeks(viewDate, 1), 'yyyy-MM-dd');
+  const nextWeek = format(addWeeks(viewDate, 1), 'yyyy-MM-dd');
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm">
+      <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
               <Link 
                 href="/"
                 className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
@@ -60,11 +90,25 @@ export default async function KidPortalPage({ params }: KidPortalPageProps) {
                 ← 
               </Link>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                   Hello, {kid.name}! 👋
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400">{formattedDate}</p>
+                <p className="text-gray-500 dark:text-gray-400 opacity-80">{formattedDate}</p>
               </div>
+            </div>
+
+            {/* Date Navigation */}
+            <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-full p-1 self-end sm:self-center">
+               <Link href={`/kids/${kidId}?date=${prevWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors text-gray-600 dark:text-gray-300">
+                  <ChevronLeft size={20} />
+               </Link>
+               <div className="px-4 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2 cursor-pointer" title="Jump to Today">
+                  <Calendar size={16} />
+                  {!isViewToday ? <Link href={`/kids/${kidId}`}>Back to Today</Link> : <span>This Week</span>}
+               </div>
+               <Link href={`/kids/${kidId}?date=${nextWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors text-gray-600 dark:text-gray-300">
+                  <ChevronRight size={20} />
+               </Link>
             </div>
           </div>
         </div>
@@ -72,78 +116,62 @@ export default async function KidPortalPage({ params }: KidPortalPageProps) {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
-        {/* Today's Theme */}
-        {todayEntry && (
-          <section>
-            <ThemeCard theme={todayEntry.theme} />
-          </section>
-        )}
-
-        {/* Today's Assignments */}
+        {/* Progress Card */}
         <section>
+          {isViewToday && <ProgressCard kidId={kidId} />}
+        </section>
+
+        {/* Today's Quests */}
+        <section id={`date-${viewDateString}`}>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-            📅 Today
+            {isViewToday ? '📅 Today\'s Quests' : `📅 Quests for ${formattedDate}`}
           </h2>
-          {todayLessons.length > 0 ? (
-            <div className="space-y-4">
-              {todayLessons.map(lesson => (
-                <AssignmentCard
-                  key={lesson.id}
-                  lesson={lesson}
-                  kidId={kidId}
-                  date={todayString}
-                  journalPrompt={todayEntry?.journalPrompt}
-                  projectPrompt={todayEntry?.projectPrompt}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center text-gray-500 dark:text-gray-400">
-              No assignments scheduled for today! 🎉
-            </div>
-          )}
+          
+          {/* Today Completion Summary (handles awards) */}
+          <TodayCompletionSummary
+            kidId={kidId}
+            date={viewDateString}
+            itemIds={[
+              'miacademy',
+              ...todayItems.map(item => item.id)
+            ]}
+          />
+
+          <div className="space-y-4">
+            {/* MiAcademy Card (always first) */}
+            <MiAcademyCardWrapper kidId={kidId} date={viewDateString} />
+
+            {/* Scheduled Items */}
+            {todayItems.length > 0 ? (
+              <ScheduleItemsList
+                items={todayItems}
+                kidId={kidId}
+                date={viewDateString}
+              />
+            ) : (
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center text-gray-500 dark:text-gray-400">
+                No assignments scheduled for today! 🎉
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Week Calendar */}
         <section>
-          <KidPortalWeekCalendar entries={weekEntries} />
+          <KidPortalWeekCalendar entries={weekScheduleItems} kidId={kidId} />
         </section>
 
-        {/* Upcoming Lessons */}
-        {upcomingEntries.length > 0 && (
+        {/* Upcoming Items */}
+        {upcomingItems.length > 0 && (
           <section>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
               📚 Coming Up This Week
             </h2>
-            <div className="space-y-6">
-              {upcomingEntries.map(entry => {
-                const data = upcomingLessonsMap.get(entry.date);
-                if (!data) return null;
-                
-                const entryDate = new Date(entry.date);
-                const dayName = entryDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
-                
-                return (
-                  <div key={entry.date}>
-                    <h3 className="text-md font-medium text-gray-600 dark:text-gray-300 mb-2">
-                      {dayName} - {entry.theme}
-                    </h3>
-                    <div className="space-y-3">
-                      {data.lessons.map(lesson => (
-                        <AssignmentCard
-                          key={lesson.id}
-                          lesson={lesson}
-                          kidId={kidId}
-                          date={entry.date}
-                          journalPrompt={entry.journalPrompt}
-                          projectPrompt={entry.projectPrompt}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <ScheduleItemsList
+              items={upcomingItems}
+              kidId={kidId}
+              date={upcomingItems[0]?.date || viewDateString}
+            />
           </section>
         )}
 

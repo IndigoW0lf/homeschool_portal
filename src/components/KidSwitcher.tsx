@@ -22,10 +22,9 @@ export function KidSwitcher({ kids }: KidSwitcherProps) {
             relative overflow-hidden rounded-xl p-6 
             bg-gradient-to-br ${gradeBandColors[kid.gradeBand] || gradeBandColors.default}
             text-white shadow-lg hover:shadow-xl transition-shadow
-            flex flex-col items-center justify-center min-h-[120px]
+            flex flex-col items-center justify-center h-[80px]
           `}
         >
-          <div className="text-3xl mb-2">📚</div>
           <h3 className="text-xl font-bold">{kid.name}</h3>
           <p className="text-sm opacity-80">Grade {kid.gradeBand}</p>
         </Link>

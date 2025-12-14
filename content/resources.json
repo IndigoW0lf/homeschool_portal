@@ -1,6 +1,6 @@
 {
   "reading": [
-    { "label": "MiAcademy", "url": "https://miacademy.co" },
+    { "label": "MiAcademy (Daily)", "url": "https://miacademy.co/login#/", "pinnedToday": true },
     { "label": "Epic! Digital Library", "url": "https://www.getepic.com" }
   ],
   "logic": [

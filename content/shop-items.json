@@ -1,0 +1,63 @@
+{
+  "items": [
+    {
+      "id": "badge-explorer",
+      "name": "Explorer Badge",
+      "type": "badge",
+      "cost": 10,
+      "description": "For curious minds who love to explore",
+      "unlocks": ["badge-explorer"]
+    },
+    {
+      "id": "badge-creator",
+      "name": "Creator Badge",
+      "type": "badge",
+      "cost": 15,
+      "description": "For those who build amazing things",
+      "unlocks": ["badge-creator"]
+    },
+    {
+      "id": "badge-scholar",
+      "name": "Scholar Badge",
+      "type": "badge",
+      "cost": 20,
+      "description": "For dedicated learners",
+      "unlocks": ["badge-scholar"]
+    },
+    {
+      "id": "avatar-hat-cool",
+      "name": "Cool Hat",
+      "type": "avatar",
+      "cost": 25,
+      "description": "A stylish hat for your avatar",
+      "unlocks": ["avatar-hat-cool"]
+    },
+    {
+      "id": "avatar-outfit-space",
+      "name": "Space Outfit",
+      "type": "avatar",
+      "cost": 30,
+      "description": "Blast off with this space-themed outfit",
+      "unlocks": ["avatar-outfit-space"]
+    },
+    {
+      "id": "home-wallpaper-ocean",
+      "name": "Ocean Wallpaper",
+      "type": "home",
+      "cost": 15,
+      "description": "Bring the ocean to your home",
+      "unlocks": ["home-wallpaper-ocean"]
+    },
+    {
+      "id": "home-furniture-desk",
+      "name": "Study Desk",
+      "type": "home",
+      "cost": 35,
+      "description": "A perfect desk for your studies",
+      "unlocks": ["home-furniture-desk"]
+    }
+  ]
+}
+
+
+

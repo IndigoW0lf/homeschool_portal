@@ -1,0 +1,125 @@
+
+> homeschool-portal@0.1.0 lint
+> eslint
+
+
+/Users/indigowolf/workspace/homeschool_portal/.codacy/tools-configs/eslint.config.mjs
+  1:1  warning  Assign array to a variable before exporting as module default  import/no-anonymous-default-export
+
+/Users/indigowolf/workspace/homeschool_portal/src/app/kids/[kidId]/page.tsx
+  3:114  warning  'getMiAcademyResourceFromDB' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/indigowolf/workspace/homeschool_portal/src/app/parent/login/page.tsx
+  36:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  61:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/AvatarBuilder.tsx
+   31:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/AvatarBuilder.tsx:31:7
+  29 |     const savedState = getAvatarState(kidId);
+  30 |     if (savedState) {
+> 31 |       setState(savedState);
+     |       ^^^^^^^^ Avoid calling setState() directly within an effect
+  32 |     }
+  33 |   }, [kidId]);
+  34 |  react-hooks/set-state-in-effect
+   84:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+   92:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+  100:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+  167:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/ProgressCard.tsx
+  5:31  warning  'getUnlocks' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/StudioEditor.tsx
+   88:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  120:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/TodayCompletionSummary.tsx
+   7:3   warning  'isAwarded' is defined but never used         @typescript-eslint/no-unused-vars
+   8:3   warning  'markAwarded' is defined but never used       @typescript-eslint/no-unused-vars
+  21:10  warning  'allDone' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/assignments/AssignmentForm.tsx
+  83:16  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/assignments/AssignmentForm.tsx:83:16
+  81 |   });
+  82 |
+> 83 |   const tags = watch('tags');
+     |                ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  84 |   const assignedTo = watch('assignTo');
+  85 |
+  86 |   const toggleStudent = (studentId: string) => {  react-hooks/incompatible-library
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/dashboard/DashboardOverview.tsx
+   19:13  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  168:22  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  187:44  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/dashboard/DayModal.tsx
+  14:14  error    Unexpected any. Specify a different type                                                                                     @typescript-eslint/no-explicit-any
+  22:37  error    Unexpected any. Specify a different type                                                                                     @typescript-eslint/no-explicit-any
+  25:9   warning  'studentSchedules' is assigned a value but never used                                                                        @typescript-eslint/no-unused-vars
+  26:39  error    Unexpected any. Specify a different type                                                                                     @typescript-eslint/no-explicit-any
+  33:53  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+  34:45  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+  35:41  error    React Hook "useState" is called conditionally. React Hooks must be called in the exact same order in every component render  react-hooks/rules-of-hooks
+  85:29  error    Unexpected any. Specify a different type                                                                                     @typescript-eslint/no-explicit-any
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/dashboard/WeekView.tsx
+  14:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  23:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/lessons/LessonForm.tsx
+  47:69  warning  'onCancel' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  47:79  warning  'onDelete' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  81:16  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/lessons/LessonForm.tsx:81:16
+  79 |   });
+  80 |
+> 81 |   const tags = watch('tags');
+     |                ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  82 |   const assignedTo = watch('assignTo');
+  83 |
+  84 |   const toggleStudent = (studentId: string) => {  react-hooks/incompatible-library
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/resources/ResourceForm.tsx
+  68:16  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+/Users/indigowolf/workspace/homeschool_portal/src/components/resources/ResourceForm.tsx:68:16
+  66 |   });
+  67 |
+> 68 |   const tags = watch('tags');
+     |                ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  69 |   const type = watch('type');
+  70 |   const assignedTo = watch('assignTo') || [];
+  71 |   const isPinned = watch('isPinned');  react-hooks/incompatible-library
+
+/Users/indigowolf/workspace/homeschool_portal/src/lib/progressState.ts
+  102:10  warning  'getDaysBetween' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/indigowolf/workspace/homeschool_portal/src/lib/supabase/data.ts
+  2:38  warning  'ResourceLink' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/indigowolf/workspace/homeschool_portal/src/lib/supabase/storage.ts
+  19:11  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 38 problems (16 errors, 22 warnings)
+

@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Default to dark mode */
+  --background: #0a0a0a;
+  --foreground: #ededed;
 
   /* Neutrals / Structure */
-  --ink-900: #2B2B2B;        /* text, outlines */
-  --ink-700: #4A4A4A;
-  --paper-50: #FAF9F7;       /* backgrounds */
-  --paper-100: #F2EFEA;
+  --ink-900: #E5E5E5;        /* text, outlines (lightened for dark mode) */
+  --ink-700: #B5B5B5;
+  --paper-50: #1A1A1A;       /* backgrounds (darkened for dark mode) */
+  --paper-100: #2D2D2D;
 
   /* Warm Naturals (world cohesion) */
   --wood-600: #8B6A4E;
   --wood-400: #B99A7A;
   --stone-500: #9DA3A6;
-  --stone-300: #C9CED1;
+  --stone-300: #6B7073;      /* darkened for dark mode */
 
   /* Greens (world + calm energy) */
-  --leaf-700: #4E6B50;
-  --leaf-500: #6F8F73;
+  --leaf-700: #6F8F73;       /* lightened for dark mode */
+  --leaf-500: #8FAF93;
   --leaf-300: #AFC4B2;
 
   /* Fabric / Play (avatars, outfits) */
@@ -33,7 +34,7 @@
   --sky-400: #7FB3D5;        /* selection, highlights */
 
   /* Shadows */
-  --shadow-soft: rgba(0,0,0,0.12);
+  --shadow-soft: rgba(0,0,0,0.3);  /* stronger shadow for dark mode */
 }
 
 @theme inline {
@@ -41,10 +42,19 @@
   --color-foreground: var(--foreground);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Light mode override (if needed in future) */
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
+    --ink-900: #2B2B2B;
+    --ink-700: #4A4A4A;
+    --paper-50: #FAF9F7;
+    --paper-100: #F2EFEA;
+    --stone-300: #C9CED1;
+    --leaf-700: #4E6B50;
+    --leaf-500: #6F8F73;
+    --shadow-soft: rgba(0,0,0,0.12);
   }
 }
 

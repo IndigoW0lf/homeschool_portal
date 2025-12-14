@@ -15,6 +15,7 @@ export interface Quote {
 export interface ResourceLink {
   label: string;
   url: string;
+  pinnedToday?: boolean;
 }
 
 export interface Resources {
@@ -39,6 +40,7 @@ export interface LessonAttachment {
 export interface Lesson {
   id: string;
   title: string;
+  type?: string; 
   instructions: string;
   tags: string[];
   estimatedMinutes: number;
@@ -109,4 +111,98 @@ export interface StudioState {
 
 export interface StudioTemplates {
   templates: StudioTemplate[];
+}
+
+// Shop types
+export interface ShopItem {
+  id: string;
+  name: string;
+  type: 'badge' | 'avatar' | 'home';
+  cost: number;
+  description: string;
+  unlocks: string[];
+}
+
+export interface ShopItems {
+  items: ShopItem[];
+}
+
+// Supabase database types
+export interface KidRow {
+  id: string;
+  name: string;
+  grade_band: string | null;
+}
+
+export interface LessonRow {
+  id: string;
+  title: string;
+  type: string | null;
+  instructions: string | null;
+  tags: string[];
+  estimated_minutes: number;
+  created_at: string;
+  parent_notes?: string | null;
+}
+
+export interface AssignmentItemRow {
+  id: string;
+  title: string;
+  type: string | null;
+  deliverable: string | null;
+  rubric: Record<string, unknown>[] | null; // jsonb
+  steps: Record<string, unknown>[] | null; // jsonb
+  parent_notes: string | null;
+  estimated_minutes: number;
+  tags: string[];
+  links: Record<string, unknown>[] | null; // jsonb
+  is_template: boolean;
+  created_at: string;
+}
+
+export interface DayPlanRow {
+  id: string;
+  date: string;
+  theme: string | null;
+  journal_prompt: string | null;
+  project_prompt: string | null;
+  parent_notes: string | null;
+}
+
+export interface ScheduleItemRow {
+  id: string;
+  date: string;
+  student_id: string;
+  item_type: 'lesson' | 'assignment' | 'resource' | 'custom';
+  item_id: string | null;
+  title_override: string | null;
+  status: 'pending' | 'in_progress' | 'completed';
+  completed_at: string | null;
+  sort_order: number;
+  lesson_id: string | null;
+  assignment_id: string | null;
+  resource_id: string | null;
+}
+
+export interface ResourceRow {
+  id: string;
+  category: string;
+  label: string;
+  url: string;
+  sort_order: number;
+  pinned_today: boolean;
+  // New fields
+  type: string; 
+  description: string | null;
+  tags: string[];
+  is_pinned: boolean;
+  show_on_today: boolean;
+  frequency: string | null; 
+  access_instructions: string | null;
+  duration: number | null;
+  purpose_prompt: string | null;
+  author: string | null;
+  reading_level: string | null;
+  platform: string | null;
+  requires_account: boolean;
 }
