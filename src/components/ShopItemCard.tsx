@@ -57,17 +57,17 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
       <div className="flex flex-col h-full">
         <div className="flex-1">
           <div className="flex items-start justify-between mb-2">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+            <h3 className="heading-sm">
               {item.name}
             </h3>
             {purchased && (
-              <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+              <span className="badge-green text-xs">
                 Owned
               </span>
             )}
           </div>
           
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+          <p className="text-sm text-muted mb-3">
             {item.description}
           </p>
           

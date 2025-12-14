@@ -1,13 +1,16 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation'; // Added redirect
 import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
+import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
 import { formatDateString } from '@/lib/dateUtils';
 import { ProgressCard, TodayCompletionSummary, ResourceSection } from '@/components';
 import { MiAcademyCardWrapper } from '@/components/MiAcademyCardWrapper';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { CaretLeft, CaretRight, CalendarBlank } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, isSameDay, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
+import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 
 interface KidPortalPageProps {
   params: Promise<{
@@ -48,6 +51,10 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
   const isViewToday = isSameDay(viewDate, today);
 
   const resources = await getResourcesFromDB();
+  
+  // Fetch progress data from DB
+  const progressData = await getStudentProgress(kidId);
+  const unlocks = await getStudentUnlocks(kidId);
   
   // Get week date range
   const weekStart = startOfWeek(viewDate, { weekStartsOn: 1 }); // Monday
@@ -90,26 +97,33 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                 ← 
               </Link>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                  Hello, {kid.name}! 👋
-                </h1>
+                {/* Custom hello SVG title */}
+                <Image 
+                  src={kid.name.toLowerCase() === 'stella' ? '/assets/titles/hello_stella.svg' : '/assets/titles/hello_atlas.svg'}
+                  alt={`Hello, ${kid.name}!`}
+                  width={200}
+                  height={50}
+                  className="h-10 w-auto mb-1 dark:brightness-110"
+                  priority
+                />
                 <p className="text-gray-500 dark:text-gray-400 opacity-80">{formattedDate}</p>
               </div>
             </div>
 
             {/* Date Navigation */}
             <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-full p-1 self-end sm:self-center">
-               <Link href={`/kids/${kidId}?date=${prevWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors text-gray-600 dark:text-gray-300">
-                  <ChevronLeft size={20} />
+               <Link href={`/kids/${kidId}?date=${prevWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
+                  <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
                </Link>
                <div className="px-4 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2 cursor-pointer" title="Jump to Today">
-                  <Calendar size={16} />
+                  <CalendarBlank size={20} weight="duotone" color="#caa2d8" />
                   {!isViewToday ? <Link href={`/kids/${kidId}`}>Back to Today</Link> : <span>This Week</span>}
                </div>
-               <Link href={`/kids/${kidId}?date=${nextWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors text-gray-600 dark:text-gray-300">
-                  <ChevronRight size={20} />
+               <Link href={`/kids/${kidId}?date=${nextWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
+                  <CaretRight size={24} weight="duotone" color="#b6e1d8" />
                </Link>
             </div>
+            <DarkModeToggle />
           </div>
         </div>
       </header>
@@ -118,14 +132,33 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
       <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         {/* Progress Card */}
         <section>
-          {isViewToday && <ProgressCard kidId={kidId} />}
+          {isViewToday && (
+            <ProgressCard 
+              kidId={kidId}
+              initialStars={progressData?.totalStars || 0}
+              initialStreak={{ 
+                current: progressData?.currentStreak || 0, 
+                best: progressData?.bestStreak || 0 
+              }}
+              initialUnlocks={unlocks}
+            />
+          )}
         </section>
 
         {/* Today's Quests */}
         <section id={`date-${viewDateString}`}>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-            {isViewToday ? '📅 Today\'s Quests' : `📅 Quests for ${formattedDate}`}
-          </h2>
+          <div className="mb-4">
+            <Image 
+              src="/assets/titles/todays_quest.svg" 
+              alt="Today's Quest" 
+              width={180} 
+              height={40}
+              className="h-8 w-auto dark:brightness-110"
+            />
+            {!isViewToday && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formattedDate}</p>
+            )}
+          </div>
           
           {/* Today Completion Summary (handles awards) */}
           <TodayCompletionSummary
@@ -177,9 +210,13 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
         {/* Resources */}
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-            🔗 Resources
-          </h2>
+          <Image 
+            src="/assets/titles/resources.svg" 
+            alt="Resources" 
+            width={140} 
+            height={40}
+            className="h-7 w-auto mb-4 dark:brightness-110"
+          />
           <ResourceSection resources={resources} />
         </section>
       </main>

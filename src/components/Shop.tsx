@@ -39,10 +39,10 @@ export function Shop({ kidId, items }: ShopProps) {
   return (
     <div className="space-y-6">
       {/* Stars Display */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="card p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">
+            <h2 className="heading-sm mb-1">
               Your Stars
             </h2>
             <p className="text-3xl font-bold text-[var(--ember-500)] flex items-center gap-2">
@@ -84,7 +84,7 @@ export function Shop({ kidId, items }: ShopProps) {
       </div>
 
       {filteredItems.length === 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center text-gray-500 dark:text-gray-400">
+        <div className="card p-6 text-center text-muted">
           No items in this category yet.
         </div>
       )}

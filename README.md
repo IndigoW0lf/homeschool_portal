@@ -1,6 +1,6 @@
 # Homeschool Portal
 
-A kid-friendly Homeschool Portal web app with a centralized dashboard and per-child pages. The portal is used daily by two kids (ages ~9 and ~12) and a parent.
+A kid-friendly Homeschool Portal web app with a centralized dashboard and per-child pages. The portal is used daily by **Atlas** (age ~9) and **Stella** (age ~12), plus a parent.
 
 ## Features
 
@@ -10,8 +10,9 @@ A kid-friendly Homeschool Portal web app with a centralized dashboard and per-ch
 - **Library Management** - Create, edit, clone, and delete lessons & assignments
 - **Item Detail Modal** - Click any lesson/assignment to view full details with Delete/Edit/Clone actions
 - **Schedule Items** - Assign lessons & assignments to specific dates and students
+- **Holidays & Breaks** - Manage holidays with icon picker (22 curated Phosphor icons)
 
-### Kid Portal (`/kids/[kidId]`)
+### Kid Portal (`/kids/atlas`, `/kids/stella`)
 - **Today's Quests** - View today's assigned items with clickable detail modals
 - **Week Calendar** - Overview of the week's schedule
 - **Progress Tracking** - Mark items complete with star rewards
@@ -27,15 +28,65 @@ A kid-friendly Homeschool Portal web app with a centralized dashboard and per-ch
 - ✅ Clone lessons/assignments for reuse
 - ✅ Toast notifications throughout
 - ✅ Responsive design for tablet and desktop
+- ✅ Click-outside-to-close for all modals
+- ✅ Dark mode support (persists to localStorage)
+- ✅ Error boundaries with friendly error pages
+- ✅ Design system with semantic utility classes
 
 ## Tech Stack
 
 - **Next.js 16** (App Router)
 - **React 19 + TypeScript**
-- **Tailwind CSS 4**
+- **Tailwind CSS 4** (with @apply design system)
 - **Supabase** (PostgreSQL + Auth)
 - **Sonner** (Toast notifications)
-- **Lucide React** (Icons)
+- **Phosphor Icons** (Duotone style, pastel color palette)
+- **Quicksand Font** (Google Fonts via Next.js optimization)
+
+## Design System
+
+The app uses a semantic design system in `src/app/design-system.css` with reusable classes:
+
+### Buttons
+| Class | Description |
+|-------|-------------|
+| `btn-primary` | Primary action button (ember color) |
+| `btn-secondary` | Secondary button (gray background) |
+| `btn-ghost` | Transparent button with hover |
+| `btn-danger` | Red delete/destructive button |
+| `btn-pill`, `btn-pill-active`, `btn-pill-inactive` | Pill-shaped filter buttons |
+| `btn-icon`, `btn-icon-sm` | Icon-only buttons |
+
+### Cards & Layout
+| Class | Description |
+|-------|-------------|
+| `card` | Standard card with border and shadow |
+| `card-header` | Card header with bottom border |
+| `list-item`, `list-item-clickable` | List row items |
+| `modal-backdrop`, `modal-content` | Modal components |
+
+### Typography
+| Class | Description |
+|-------|-------------|
+| `heading-xl/lg/md/sm` | Heading sizes with dark mode support |
+| `text-muted` | Secondary/muted text |
+| `text-heading` | Primary heading text color |
+| `section-label` | Small uppercase labels |
+| `link` | Styled anchor links |
+
+### Inputs
+| Class | Description |
+|-------|-------------|
+| `input`, `input-sm` | Text inputs with focus ring |
+| `textarea` | Multiline text input |
+| `select` | Dropdown select |
+| `input-label` | Form field labels |
+
+### Badges
+| Class | Description |
+|-------|-------------|
+| `badge-blue/purple/green/ember` | Colored badge pills |
+| `tag` | Removable tag pill |
 
 ## Getting Started
 
@@ -85,6 +136,7 @@ Key tables in Supabase:
 | `assignment_items` | Assignment library with steps, rubric, deliverable |
 | `schedule_items` | Maps lessons/assignments to dates and students |
 | `resources` | Evergreen resource links by category |
+| `holidays` | Holiday/break dates with icons |
 
 ## Project Structure
 
@@ -95,40 +147,35 @@ homeschool-portal/
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx                  # Landing/Dashboard
+│   │   ├── design-system.css         # Semantic utility classes
+│   │   ├── globals.css               # Global styles & CSS vars
+│   │   ├── error.tsx                 # Route error boundary
+│   │   ├── not-found.tsx             # 404 page
+│   │   ├── global-error.tsx          # App-wide error boundary
 │   │   ├── kids/[kidId]/             # Kid portal
-│   │   │   ├── page.tsx
-│   │   │   ├── ScheduleItemsList.tsx # Clickable items with modal
-│   │   │   └── KidPortalWeekCalendar.tsx
-│   │   └── parent/
-│   │       ├── page.tsx              # Parent dashboard
-│   │       ├── lessons/              # Lesson management
-│   │       ├── assignments/          # Assignment management
-│   │       └── resources/            # Resource management
+│   │   └── parent/                   # Parent dashboard
 │   ├── components/
-│   │   ├── dashboard/
-│   │   │   ├── DashboardOverview.tsx # Main parent view
-│   │   │   ├── DayModal.tsx          # Day playlist modal
-│   │   │   ├── ItemDetailModal.tsx   # View item details
-│   │   │   └── WeekView.tsx          # Week calendar
+│   │   ├── dashboard/                # Dashboard components
 │   │   ├── assignments/              # Assignment form
 │   │   ├── lessons/                  # Lesson form
-│   │   └── ui/                       # Shared UI components
+│   │   └── ui/                       # Shared UI (EmptyState, HolidayIcon, etc.)
 │   ├── lib/
 │   │   ├── supabase/                 # Supabase client & queries
 │   │   └── utils.ts                  # Utilities
 │   └── types/                        # TypeScript types
-└── public/                           # Static assets
+└── public/
+    └── assets/                       # SVG titles, icons
 ```
 
 ## Recent Updates
 
-- **Item Detail Modals** - Click lessons/assignments to view full details
-- **Clone Functionality** - Duplicate items for reuse
-- **Kid Portal Click-to-View** - Kids can click items to see instructions
-- **Toast Confirmations** - Consistent toast UI for all actions
-- **Fixed Calendar Query** - Schedule items now display correctly
+- **Design System** - Created `design-system.css` with semantic @apply classes
+- **Error Handling** - Added friendly 404, error, and global error pages
+- **HolidayIcon Component** - Reusable Phosphor icon renderer for holidays
+- **EmptyState Component** - Reusable empty state for lists
+- **Dark Mode Fix** - Theme now persists correctly across browser refresh
+- **Phosphor Icons** - Migrated from Lucide to Phosphor duotone icons
 
 ## License
 
 Private - for homeschool family use
-

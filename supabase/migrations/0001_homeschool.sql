@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS kids (
 
 -- Seed kids
 INSERT INTO kids (id, name, grade_band) VALUES
-  ('kid-9', 'Atlas', '3-5'),
-  ('kid-12', 'Stella', '6-8')
+  ('atlas', 'Atlas', '3-5'),
+  ('stella', 'Stella', '6-8')
 ON CONFLICT (id) DO NOTHING;
 
 -- Lessons table

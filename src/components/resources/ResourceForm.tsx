@@ -3,7 +3,7 @@
 import { useForm, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BookOpen, Globe, Layout, Tv, Pin, Calendar, Key, Trash2 } from 'lucide-react';
+import { BookOpen, Globe, Layout, Television, PushPin, CalendarBlank, Key, Trash } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS, STUDENTS } from '@/lib/mock-data';
@@ -137,14 +137,14 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
                onClick={() => setValue('isPinned', !isPinned)}
                className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", isPinned ? "bg-amber-50 border-amber-300 text-amber-700" : "border-gray-200 text-gray-500")}
             >
-               <Pin size={16} className={isPinned ? "fill-current" : ""} /> Pin to Top
+                <PushPin size={16} weight="duotone" color="#e7b58d" className={isPinned ? "fill-current" : ""} /> Pin to Top
             </button>
             <button 
                type="button" 
                onClick={() => setValue('showOnToday', !showOnToday)}
                className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", showOnToday ? "bg-blue-50 border-blue-300 text-blue-700" : "border-gray-200 text-gray-500")}
             >
-               <Calendar size={16} /> Show on Today
+                <CalendarBlank size={16} weight="duotone" color="#b6e1d8" /> Show on Today
             </button>
          </div>
       </div>
@@ -197,7 +197,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
       {type === 'video' && (
          <div className="bg-purple-50 dark:bg-purple-900/10 p-6 rounded-xl border border-purple-100 dark:border-purple-900/30 animate-in slide-in-from-top-2">
             <h3 className="text-sm font-bold text-purple-800 dark:text-purple-300 flex items-center gap-2 mb-4">
-               <Tv size={16} /> Video Details
+               <Television size={16} weight="duotone" color="#caa2d8" /> Video Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                <div className="md:col-span-2">
@@ -318,7 +318,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
               }}
               className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2"
            >
-              <Trash2 size={16} /> Delete
+               <Trash size={16} weight="duotone" color="#ffcdf6" /> Delete
            </button>
          )}
          <div className="flex gap-2 ml-auto">

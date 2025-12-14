@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Edit2, Trash2, Plus } from 'lucide-react';
+import { CaretLeft, CaretRight, PencilSimple, Trash, Plus } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export interface ListItem {
   id: string;
@@ -15,6 +16,7 @@ export interface ListItem {
 
 interface RecentListProps {
   title: string;
+  titleImage?: string; // SVG path like '/lessons.svg'
   items: ListItem[];
   type?: 'lesson' | 'assignment' | 'resource';
   onView?: (id: string) => void;
@@ -27,6 +29,7 @@ interface RecentListProps {
 
 export function RecentList({
   title,
+  titleImage,
   items,
   onView,
   onEdit,
@@ -50,15 +53,25 @@ export function RecentList({
   const prevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col h-full">
+    <div className="card flex flex-col h-full">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-        <h3 className="font-semibold text-gray-800 dark:text-gray-200">{title}</h3>
+      <div className="card-header">
+        {titleImage ? (
+          <Image 
+            src={titleImage} 
+            alt={title} 
+            width={120} 
+            height={30}
+            className="h-6 w-auto dark:brightness-110"
+          />
+        ) : (
+          <h3 className="heading-sm">{title}</h3>
+        )}
         <Link 
           href={createLink}
-          className="text-xs flex items-center gap-1 bg-[var(--ember-50)] dark:bg-[var(--ember-900)/30] text-[var(--ember-600)] dark:text-[var(--ember-400)] px-2.5 py-1.5 rounded-lg hover:bg-[var(--ember-100)] dark:hover:bg-[var(--ember-900)/50] transition-colors font-medium"
+          className="btn-sm btn-ghost text-[var(--ember-600)] dark:text-[var(--ember-400)]"
         >
-          <Plus size={14} /> {createLabel}
+          <Plus size={16} weight="bold" color="#e7b58d" /> {createLabel}
         </Link>
       </div>
 
@@ -70,7 +83,7 @@ export function RecentList({
               <div 
                 key={item.id} 
                 className={cn(
-                  "group flex items-center justify-between p-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors",
+                  "list-item group",
                   onView && "cursor-pointer"
                 )}
               >
@@ -92,7 +105,7 @@ export function RecentList({
                     )}
                   </div>
                   {item.subtitle && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-xs text-muted truncate">
                       {item.subtitle}
                     </p>
                   )}
@@ -106,7 +119,7 @@ export function RecentList({
                       className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
                       title="Edit"
                     >
-                      <Edit2 size={14} />
+                      <PencilSimple size={18} weight="duotone" color="#caa2d8" />
                     </button>
                   )}
                   {onDelete && (
@@ -115,7 +128,7 @@ export function RecentList({
                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
                        title="Delete"
                     >
-                      <Trash2 size={14} />
+                      <Trash size={18} weight="duotone" color="#ffcdf6" />
                     </button>
                   )}
                 </div>
@@ -139,14 +152,14 @@ export function RecentList({
                disabled={currentPage === 1}
                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:hover:bg-transparent"
              >
-               <ChevronLeft size={16} />
+                <CaretLeft size={20} weight="duotone" color="#b6e1d8" />
              </button>
              <button 
                onClick={nextPage} 
                disabled={currentPage === totalPages}
                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:hover:bg-transparent"
              >
-               <ChevronRight size={16} />
+                <CaretRight size={20} weight="duotone" color="#b6e1d8" />
              </button>
            </div>
          </div>

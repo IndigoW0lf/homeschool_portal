@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Edit2, Trash2, Copy, Clock, BookOpen, PenTool, CheckSquare, FileText, Link as LinkIcon } from 'lucide-react';
+import { X, PencilSimple, Trash, Copy, Clock, BookOpen, Pencil, CheckSquare, FileText, Link } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow } from '@/types';
 
@@ -48,8 +48,14 @@ export function ItemDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
@@ -58,7 +64,7 @@ export function ItemDetailModal({
               "p-2 rounded-lg",
               isLesson ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"
             )}>
-              {isLesson ? <BookOpen size={24} /> : <PenTool size={24} />}
+              {isLesson ? <BookOpen size={28} weight="duotone" color="#b6e1d8" /> : <Pencil size={28} weight="duotone" color="#caa2d8" />}
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -152,7 +158,7 @@ export function ItemDetailModal({
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                       >
-                        <LinkIcon size={14} />
+                        <Link size={18} weight="duotone" color="#b6e1d8" />
                         {link.label}
                       </a>
                     ))}
@@ -261,7 +267,7 @@ export function ItemDetailModal({
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                         >
-                          <LinkIcon size={14} />
+                          <Link size={18} weight="duotone" color="#b6e1d8" />
                           {link.label || 'Link'}
                         </a>
                       )
@@ -295,7 +301,7 @@ export function ItemDetailModal({
             onClick={handleDelete}
             className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2"
           >
-            <Trash2 size={18} />
+            <Trash size={22} weight="duotone" color="#ffcdf6" />
             Delete
           </button>
           <div className="flex gap-2">
@@ -310,7 +316,7 @@ export function ItemDetailModal({
               onClick={onEdit}
               className="px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
             >
-              <Edit2 size={18} />
+              <PencilSimple size={22} weight="duotone" color="#e7b58d" />
               Edit
             </button>
           </div>

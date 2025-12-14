@@ -17,7 +17,7 @@ export default async function ParentLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--paper-50)]">
+    <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
       <ParentNav user={user} />
       {children}
     </div>

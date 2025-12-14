@@ -10,7 +10,7 @@ export function QuoteCard({ quote }: QuoteCardProps) {
       <blockquote className="text-lg italic text-gray-700 dark:text-gray-200">
         &ldquo;{quote.text}&rdquo;
       </blockquote>
-      <p className="text-right text-sm text-gray-500 dark:text-gray-400 mt-2">
+      <p className="text-right text-sm text-muted mt-2">
         — {quote.author}
       </p>
     </div>

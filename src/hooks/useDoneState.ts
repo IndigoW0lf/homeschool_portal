@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useSyncExternalStore } from 'react';
 import { isDone as checkIsDone, setDone } from '@/lib/storage';
+import { awardStars, checkAndGrantUnlocks } from '@/lib/supabase/mutations';
 
 // Create a subscription mechanism for localStorage changes
 function subscribe(callback: () => void) {
@@ -23,22 +24,27 @@ export function useDoneState(kidId: string, date: string, lessonId: string) {
   // Use optimistic value if set, otherwise use stored value
   const done = optimisticDone !== null ? optimisticDone : storedDone;
 
-  const toggle = useCallback(() => {
+  const toggle = useCallback(async () => {
     const newState = !done;
     setOptimisticDone(newState);
     setDone(kidId, date, lessonId, newState);
 
     // Award star if marking done for first time
     if (newState) {
-      // Import dynamically to avoid SSR issues
-      import('@/lib/progressState').then(({ isAwarded, markAwarded, addStars }) => {
-        if (!isAwarded(kidId, date, lessonId)) {
-          addStars(kidId, 1);
-          markAwarded(kidId, date, lessonId);
+      try {
+        // Call server action to award stars
+        const result = await awardStars(kidId, date, lessonId, 1);
+        
+        // Check and grant any new unlocks
+        if (result.newTotal) {
+          await checkAndGrantUnlocks(kidId, result.newTotal);
         }
-      });
+      } catch (err) {
+        console.error('Error awarding stars:', err);
+      }
     }
   }, [done, kidId, date, lessonId]);
 
   return { done, toggle, isLoaded: true };
 }
+

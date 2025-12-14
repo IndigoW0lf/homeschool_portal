@@ -12,6 +12,23 @@ export interface Quote {
   author: string;
 }
 
+export interface Holiday {
+  id: string;
+  name: string;
+  emoji: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string | null; // YYYY-MM-DD or null for single day
+}
+
+export interface HolidayRow {
+  id: string;
+  name: string;
+  emoji: string;
+  start_date: string;
+  end_date: string | null;
+  created_at: string;
+}
+
 export interface ResourceLink {
   label: string;
   url: string;
@@ -37,15 +54,28 @@ export interface LessonAttachment {
   url: string;
 }
 
+// Structured lesson content (for new lessons with explicit columns)
+export interface LessonContent {
+  description: string;
+  keyQuestions: string[];
+  materials: string;
+  links: LessonLink[];
+}
+
+// Domain model for lessons (used in UI)
 export interface Lesson {
   id: string;
   title: string;
-  type?: string; 
-  instructions: string;
+  type?: string;
+  instructions: string; // Legacy - may contain JSON
+  description?: string;
+  keyQuestions?: string[];
+  materials?: string;
   tags: string[];
   estimatedMinutes: number;
   links: LessonLink[];
   attachments: LessonAttachment[];
+  parentNotes?: string;
 }
 
 export interface CalendarEntry {
@@ -127,7 +157,7 @@ export interface ShopItems {
   items: ShopItem[];
 }
 
-// Supabase database types
+// Database row types
 export interface KidRow {
   id: string;
   name: string;
@@ -138,24 +168,45 @@ export interface LessonRow {
   id: string;
   title: string;
   type: string | null;
-  instructions: string | null;
+  instructions: string | null; // Legacy - may contain JSON
+  description: string | null;
+  key_questions: { text: string }[] | string[] | null; // JSONB array
+  materials: string | null;
+  links: { label: string; url: string }[] | null; // JSONB array
   tags: string[];
   estimated_minutes: number;
+  parent_notes: string | null;
   created_at: string;
-  parent_notes?: string | null;
 }
 
+// Assignment step (for the "Do" part)
+export interface AssignmentStep {
+  text: string;
+}
+
+// Assignment rubric item (success criteria)
+export interface AssignmentRubricItem {
+  text: string;
+}
+
+// Assignment link
+export interface AssignmentLink {
+  label: string;
+  url: string;
+}
+
+// Database row for assignments
 export interface AssignmentItemRow {
   id: string;
   title: string;
   type: string | null;
   deliverable: string | null;
-  rubric: Record<string, unknown>[] | null; // jsonb
-  steps: Record<string, unknown>[] | null; // jsonb
+  rubric: AssignmentRubricItem[] | null;
+  steps: AssignmentStep[] | null;
   parent_notes: string | null;
   estimated_minutes: number;
   tags: string[];
-  links: Record<string, unknown>[] | null; // jsonb
+  links: AssignmentLink[] | null;
   is_template: boolean;
   created_at: string;
 }

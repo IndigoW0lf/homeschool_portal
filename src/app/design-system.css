@@ -1,0 +1,226 @@
+/* =============================================================================
+   DESIGN SYSTEM
+   Semantic utility classes using Tailwind @apply
+   Import this in globals.css
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   BUTTONS
+   ----------------------------------------------------------------------------- */
+
+.btn-primary {
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-[var(--ember-500)] text-white hover:opacity-90 shadow-md;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700;
+}
+
+.btn-ghost {
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400;
+}
+
+.btn-danger {
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-red-500 text-white hover:bg-red-600;
+}
+
+.btn-sm {
+  @apply px-3 py-1.5 text-sm rounded-lg font-medium transition-all inline-flex items-center gap-1.5;
+}
+
+/* Pill buttons (rounded-full) */
+.btn-pill {
+  @apply px-4 py-2 rounded-full text-sm font-medium transition-all;
+}
+
+.btn-pill-active {
+  @apply bg-[var(--ember-500)] text-white shadow-lg shadow-[var(--ember-500)]/20;
+}
+
+.btn-pill-inactive {
+  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700;
+}
+
+/* Icon buttons */
+.btn-icon {
+  @apply p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+}
+
+.btn-icon-sm {
+  @apply p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+}
+
+/* -----------------------------------------------------------------------------
+   CARDS
+   ----------------------------------------------------------------------------- */
+
+.card {
+  @apply bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm;
+}
+
+.card-elevated {
+  @apply bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-lg;
+}
+
+.card-section {
+  @apply p-4 border-b border-gray-100 dark:border-gray-700;
+}
+
+.card-body {
+  @apply p-4;
+}
+
+.card-header {
+  @apply p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between;
+}
+
+/* List item variant */
+.list-item {
+  @apply flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors;
+}
+
+.list-item-clickable {
+  @apply flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer;
+}
+
+/* -----------------------------------------------------------------------------
+   INPUTS
+   ----------------------------------------------------------------------------- */
+
+.input {
+  @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all;
+}
+
+.input-sm {
+  @apply px-2.5 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-1 focus:ring-[var(--ember-500)] outline-none;
+}
+
+.textarea {
+  @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all min-h-[100px] resize-y;
+}
+
+.select {
+  @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all appearance-none cursor-pointer;
+}
+
+.input-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+}
+
+.input-error {
+  @apply border-red-500 focus:ring-red-500;
+}
+
+/* -----------------------------------------------------------------------------
+   TYPOGRAPHY
+   ----------------------------------------------------------------------------- */
+
+.text-muted {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+.text-heading {
+  @apply text-gray-900 dark:text-white;
+}
+
+.heading-xl {
+  @apply text-3xl font-bold text-gray-900 dark:text-white;
+}
+
+.heading-lg {
+  @apply text-2xl font-bold text-gray-900 dark:text-white;
+}
+
+.heading-md {
+  @apply text-xl font-semibold text-gray-900 dark:text-white;
+}
+
+.heading-sm {
+  @apply text-lg font-semibold text-gray-900 dark:text-white;
+}
+
+.section-label {
+  @apply text-xs font-semibold text-gray-500 uppercase tracking-wider;
+}
+
+.link {
+  @apply text-[var(--ember-500)] hover:text-[var(--ember-600)] transition-colors;
+}
+
+/* -----------------------------------------------------------------------------
+   LAYOUT
+   ----------------------------------------------------------------------------- */
+
+.page-container {
+  @apply min-h-screen bg-[var(--paper-50)] dark:bg-gray-900;
+}
+
+.page-content {
+  @apply max-w-7xl mx-auto px-4 py-8;
+}
+
+.section-header {
+  @apply flex items-center justify-between mb-6;
+}
+
+.flex-center {
+  @apply flex items-center justify-center;
+}
+
+.flex-between {
+  @apply flex items-center justify-between;
+}
+
+/* Stack layouts */
+.stack {
+  @apply flex flex-col gap-4;
+}
+
+.stack-sm {
+  @apply flex flex-col gap-2;
+}
+
+.stack-lg {
+  @apply flex flex-col gap-6;
+}
+
+/* -----------------------------------------------------------------------------
+   BADGES & TAGS
+   ----------------------------------------------------------------------------- */
+
+.badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-blue {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300;
+}
+
+.badge-purple {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300;
+}
+
+.badge-green {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300;
+}
+
+.badge-ember {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--ember-100)] text-[var(--ember-700)] dark:bg-[var(--ember-900)/30] dark:text-[var(--ember-400)];
+}
+
+/* Tag pills (removable) */
+.tag {
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300;
+}
+
+/* -----------------------------------------------------------------------------
+   MODAL & OVERLAY
+   ----------------------------------------------------------------------------- */
+
+.modal-backdrop {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden;
+}

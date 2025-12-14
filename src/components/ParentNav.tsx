@@ -1,16 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase/browser';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
+import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 
 interface ParentNavProps {
   user: User;
 }
 
-export function ParentNav({ user }: ParentNavProps) {
+export function ParentNav({ }: ParentNavProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -21,10 +23,10 @@ export function ParentNav({ user }: ParentNavProps) {
   };
 
   const tabs = [
-    { href: '/parent', label: 'Overview' },
-    { href: '/parent/lessons', label: 'Lessons' },
-    { href: '/parent/assignments', label: 'Assignments' },
-    { href: '/parent/resources', label: 'Resources' },
+    { href: '/parent', label: 'Overview', svg: '/assets/titles/overview.svg' },
+    { href: '/parent/lessons', label: 'Lessons', svg: '/assets/titles/lessons.svg' },
+    { href: '/parent/assignments', label: 'Assignments', svg: '/assets/titles/assignments.svg' },
+    { href: '/parent/resources', label: 'Resources', svg: '/assets/titles/resources.svg' },
   ];
 
   return (
@@ -34,28 +36,30 @@ export function ParentNav({ user }: ParentNavProps) {
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              className="text-muted hover:text-gray-600 dark:hover:text-gray-300"
             >
               ←
             </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-                👤 Parent Dashboard
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {user.email}
-              </p>
-            </div>
+            <Image 
+              src="/assets/titles/parent_dashboard.svg" 
+              alt="Parent Dashboard" 
+              width={280} 
+              height={50}
+              className="h-10 w-auto dark:brightness-110"
+            />
           </div>
-          <button
-            onClick={handleSignOut}
-            className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            Sign Out
-          </button>
+          <div className="flex items-center gap-3">
+            <DarkModeToggle />
+            <button
+              onClick={handleSignOut}
+              className="btn-ghost text-sm"
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
 
-        <nav className="flex gap-1 border-b border-gray-200 dark:border-gray-700">
+        <nav className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
           {tabs.map(tab => {
             const isActive = pathname === tab.href || (tab.href !== '/parent' && pathname?.startsWith(tab.href));
             return (
@@ -63,13 +67,19 @@ export function ParentNav({ user }: ParentNavProps) {
                 key={tab.href}
                 href={tab.href}
                 className={`
-                  px-4 py-2 font-medium text-sm transition-colors border-b-2
+                  px-4 py-2 transition-all border-b-2
                   ${isActive
-                    ? 'border-[var(--ember-500)] text-[var(--ember-500)]'
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}
+                    ? 'border-[var(--ember-500)]'
+                    : 'border-transparent opacity-60 hover:opacity-100'}
                 `}
               >
-                {tab.label}
+                <Image 
+                  src={tab.svg} 
+                  alt={tab.label} 
+                  width={100} 
+                  height={25}
+                  className="h-5 w-auto dark:brightness-110"
+                />
               </Link>
             );
           })}
@@ -78,6 +88,3 @@ export function ParentNav({ user }: ParentNavProps) {
     </header>
   );
 }
-
-
-

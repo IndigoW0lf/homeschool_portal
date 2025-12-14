@@ -4,7 +4,7 @@ import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
-import { BookOpen, Clock, Link as LinkIcon, Plus, X, EyeOff, HelpCircle, Layers, Users } from 'lucide-react';
+import { BookOpen, Clock, Link, Plus, X, EyeClosed, Question, Stack, Users } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS, STUDENTS as MOCK_STUDENTS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
@@ -94,20 +94,15 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
 
   const onSubmit = async (data: LessonFormData) => {
      try {
-        // Construct the payload to match LessonRow exactly
-        // We append extra fields to instructions for now as a JSON string to persist them
-        // until we add a proper 'content' jsonb column.
-        const extendedData = {
-           description: data.description,
-           keyQuestions: data.keyQuestions,
-           materials: data.materials,
-           links: data.links
-        };
-
+        // Save to new explicit JSONB columns (no more JSON embedding in instructions)
         const lessonData = {
            title: data.title,
            type: data.type,
-           instructions: JSON.stringify(extendedData), // HACK: Storing rich content in instructions TEXT column
+           instructions: data.description || '', // Use description as main content
+           description: data.description,
+           key_questions: data.keyQuestions, // JSONB array of {text: string}
+           materials: data.materials,
+           links: data.links, // JSONB array of {label, url}
            tags: data.tags,
            estimated_minutes: data.estimatedMinutes,
            parent_notes: data.parentNotes,
@@ -164,10 +159,10 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
       {/* HEADER */}
       <div className="flex items-center justify-between">
          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+             <h2 className="heading-lg flex items-center gap-2">
                <BookOpen className="text-[var(--ember-500)]" /> Create Lesson
-            </h2>
-            <p className="text-sm text-gray-500">Design a reusable teaching unit (Input / Teach)</p>
+             </h2>
+             <p className="text-sm text-muted">Design a reusable teaching unit (Input / Teach)</p>
          </div>
          <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
             <span className="text-xs font-medium px-2 text-gray-500">Template?</span>
@@ -179,7 +174,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lesson Title</label>
+               <label className="input-label">Lesson Title</label>
                <input
                   {...register('title')}
                   placeholder="e.g. Introduction to Fractions"
@@ -190,19 +185,19 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
 
              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Schedule Date</label>
+                   <label className="input-label mb-2">Schedule Date</label>
                    <input 
                       type="date"
                       {...register('date')}
-                      className="w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-[var(--ember-500)] outline-none"
+                      className="input"
                    />
                 </div>
 
                 <div>
-                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject / Type</label>
+                   <label className="input-label mb-2">Subject / Type</label>
                    <select
                       {...register('type')}
-                      className="w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-[var(--ember-500)] outline-none"
+                      className="select"
                    >
                       {LESSON_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                    </select>
@@ -210,7 +205,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
 
                 {/* Students Selection */}
                 <div>
-                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                   <label className="input-label mb-2 flex items-center gap-2">
                       <Users size={16} className="text-[var(--ember-500)]" /> Assign To
                    </label>
                    <div className="flex gap-2">
@@ -235,11 +230,11 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
       {/* 2. TEACHING CONTENT */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Key Questions */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
-               <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                  <HelpCircle size={18} className="text-[var(--ember-500)]" /> Key Questions
+           <div className="card p-6 space-y-4">
+               <h3 className="heading-sm flex items-center gap-2">
+                   <Question size={18} weight="duotone" color="#e7b58d" /> Key Questions
                </h3>
-               <p className="text-xs text-gray-500">2-5 checks for understanding.</p>
+               <p className="text-xs text-muted">2-5 checks for understanding.</p>
                
                <div className="space-y-3">
                   {questionFields.map((field, index) => (
@@ -247,7 +242,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
                         <span className="text-xs font-bold text-gray-300 w-4">{index + 1}</span>
                         <input
                            {...register(`keyQuestions.${index}.text` as const)}
-                           className="flex-1 p-2 text-sm rounded bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 focus:ring-1 focus:ring-[var(--ember-500)] outline-none"
+                           className="input-sm flex-1"
                            placeholder="e.g. What is the numerator?"
                         />
                         <button type="button" onClick={() => removeQuestion(index)} className="text-gray-300 hover:text-red-400">
@@ -269,7 +264,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
           <div className="space-y-6">
              <div className="bg-amber-50 dark:bg-amber-900/10 p-5 rounded-xl border border-amber-100 dark:border-amber-900/30 space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-amber-800 dark:text-amber-400">
-                   <EyeOff size={16} /> Parent Notes (Private)
+                    <EyeClosed size={16} weight="duotone" color="#e7b58d" /> Parent Notes (Private)
                 </label>
                 <textarea
                    {...register('parentNotes')}
@@ -280,11 +275,11 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
              </div>
 
              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Materials Needed</label>
+                <label className="input-label">Materials Needed</label>
                 <textarea
                    {...register('materials')}
                    rows={2}
-                   className="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-[var(--ember-500)] outline-none resize-none"
+                   className="textarea text-sm"
                    placeholder="e.g. Ruler, graph paper, colored pencils"
                 />
              </div>
@@ -292,14 +287,14 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
       </div>
 
       {/* 3. LOGISTICS & LINKS */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
+       <div className="card p-6 space-y-6">
          <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <Layers size={18} className="text-[var(--ember-500)]" /> Resources & Tags
+             <Stack size={18} weight="duotone" color="#e7b58d" /> Resources & Tags
          </h3>
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
+                <label className="input-label">Tags</label>
                 <TagInput
                    value={tags}
                    onChange={(newTags) => setValue('tags', newTags)}
@@ -308,20 +303,20 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
                 />
              </div>
              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1">
+                <label className="input-label flex items-center gap-1">
                    <Clock size={14} /> Est. Minutes
                 </label>
                 <input
                    type="number"
                    {...register('estimatedMinutes', { valueAsNumber: true })}
-                   className="w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+                   className="input"
                 />
              </div>
          </div>
          
          <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Attachments & Links</label>
+                 <label className="input-label">Attachments & Links</label>
                 <button type="button" onClick={() => appendLink({ url: '', label: '' })} className="text-xs flex items-center gap-1 text-[var(--ember-600)] hover:underline">
                    <Plus size={14} /> Add Resource
                 </button>
@@ -330,7 +325,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
              <div className="space-y-2">
                 {linkFields.map((field, index) => (
                    <div key={field.id} className="flex flex-wrap items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
-                      <LinkIcon size={14} className="text-gray-400" />
+                       <Link size={14} weight="duotone" color="#b6e1d8" />
                       <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
                        <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
                        {/* Link Type removed from schema for now to fix errors */}
@@ -344,7 +339,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
       <div className="flex justify-end pt-4">
          <button
             type="submit"
-            className="px-8 py-3 bg-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 shadow-lg shadow-[var(--ember-500)/20] transition-all hover:-translate-y-0.5"
+             className="btn-primary px-8 py-3 shadow-lg shadow-[var(--ember-500)/20] hover:-translate-y-0.5"
          >
             Save Lesson to Library
          </button>

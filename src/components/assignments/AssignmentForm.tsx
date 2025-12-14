@@ -3,7 +3,7 @@
 import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { PenTool, CheckSquare, Clock, Link as LinkIcon, Plus, X, EyeOff, FileText, Layers, Users, Trash2 } from 'lucide-react';
+import { Pencil, CheckSquare, Clock, Link, Plus, X, EyeClosed, FileText, Stack, Users, Trash } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS, STUDENTS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
@@ -129,10 +129,10 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
       {/* HEADER */}
       <div className="flex items-center justify-between">
          <div>
-             <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <PenTool className="text-[var(--ember-500)]" /> Create Assignment
-             </h2>
-             <p className="text-sm text-gray-500 mt-2">Design a task or project (Output / Do)</p>
+              <h2 className="heading-lg flex items-center gap-2">
+                  <Pencil size={24} weight="duotone" color="#caa2d8" /> Create Assignment
+              </h2>
+              <p className="text-sm text-muted mt-2">Design a task or project (Output / Do)</p>
           </div>
          <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
             <span className="text-xs font-medium px-2 text-gray-500">Template?</span>
@@ -142,9 +142,9 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
 
       {/* 1. CORE INFO & DELIVERABLE */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6 md:col-span-2">
+          <div className="card p-6 space-y-6 md:col-span-2">
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Assignment Title</label>
+               <label className="input-label">Assignment Title</label>
                <input
                   {...register('title')}
                   placeholder="e.g. Fraction Pizza Project"
@@ -155,10 +155,10 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Process / Type</label>
-                  <select
-                     {...register('type')}
-                     className="w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-[var(--ember-500)] outline-none"
+                   <label className="input-label mb-2">Process / Type</label>
+                   <select
+                      {...register('type')}
+                      className="select"
                   >
                      {ASSIGNMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -166,7 +166,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                
                {/* Students Selection */}
                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                   <label className="input-label mb-2 flex items-center gap-2">
                      <Users size={16} className="text-[var(--ember-500)]" /> Assign To
                   </label>
                   <div className="flex gap-2">
@@ -187,13 +187,13 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
             </div>
 
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                  <FileText size={16} className="text-blue-500" /> Expected Deliverable
-               </label>
-               <input
-                  {...register('deliverable')}
-                  placeholder="e.g. A drawing of 3 pizzas"
-                  className="w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-[var(--ember-500)] outline-none"
+                   <label className="input-label mb-2 flex items-center gap-2">
+                   <FileText size={16} className="text-blue-500" /> Expected Deliverable
+                </label>
+                <input
+                   {...register('deliverable')}
+                   placeholder="e.g. A drawing of 3 pizzas"
+                   className="input"
                />
                {errors.deliverable && <p className="text-red-500 text-xs mt-1">{errors.deliverable.message}</p>}
             </div>
@@ -203,11 +203,11 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
       {/* 2. RUBRIC & INSTRUCTIONS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Rubric / Criteria */}
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-4">
-               <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                  <CheckSquare size={18} className="text-green-500" /> Success Criteria (Rubric)
-               </h3>
-               <p className="text-xs text-gray-500">I can...</p>
+           <div className="card p-6 space-y-4">
+                <h3 className="heading-sm flex items-center gap-2">
+                   <CheckSquare size={18} className="text-green-500" /> Success Criteria (Rubric)
+                </h3>
+                <p className="text-xs text-muted">I can...</p>
                
                <div className="space-y-3">
                   {rubricFields.map((field, index) => (
@@ -215,7 +215,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                         <input type="checkbox" disabled className="text-gray-300 rounded" />
                         <input
                            {...register(`rubric.${index}.text` as const)}
-                           className="flex-1 p-2 text-sm rounded bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 focus:ring-1 focus:ring-[var(--ember-500)] outline-none"
+                           className="input-sm flex-1"
                            placeholder="e.g. I can identify 1/2 of a circle..."
                         />
                         <button type="button" onClick={() => removeRubric(index)} className="text-gray-300 hover:text-red-400">
@@ -236,7 +236,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
           {/* Instructions & Notes */}
           <div className="space-y-6">
              <div>
-                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Student Steps</label>
+                  <label className="input-label">Student Steps</label>
                  <div className="space-y-3">
                     {stepFields.map((field, index) => (
                        <div key={field.id} className="flex gap-2 items-start">
@@ -264,7 +264,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
 
              <div className="bg-amber-50 dark:bg-amber-900/10 p-5 rounded-xl border border-amber-100 dark:border-amber-900/30 space-y-2">
                 <label className="flex items-center gap-2 text-sm font-medium text-amber-800 dark:text-amber-400">
-                   <EyeOff size={16} /> Parent Notes (Private)
+                    <EyeClosed size={16} weight="duotone" color="#e7b58d" /> Parent Notes (Private)
                 </label>
                 <textarea
                    {...register('parentNotes')}
@@ -277,14 +277,14 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
       </div>
 
       {/* 3. LOGISTICS & LINKS */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
-         <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <Layers size={18} className="text-[var(--ember-500)]" /> Resources & Tags
+       <div className="card p-6 space-y-6">
+          <h3 className="heading-sm flex items-center gap-2">
+             <Stack size={18} weight="duotone" color="#e7b58d" /> Resources & Tags
          </h3>
 
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tags</label>
+                <label className="input-label">Tags</label>
                 <TagInput
                    value={tags}
                    onChange={(newTags) => setValue('tags', newTags)}
@@ -293,20 +293,20 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                 />
              </div>
              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1">
+                <label className="input-label flex items-center gap-1">
                    <Clock size={14} /> Est. Minutes
                 </label>
                 <input
                    type="number"
                    {...register('estimatedMinutes', { valueAsNumber: true })}
-                   className="w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+                   className="input"
                 />
              </div>
          </div>
          
          <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Attachments & Links</label>
+                 <label className="input-label">Attachments & Links</label>
                 <button type="button" onClick={() => appendLink({ url: '', label: '' })} className="text-xs flex items-center gap-1 text-[var(--ember-600)] hover:underline">
                    <Plus size={14} /> Add Link
                 </button>
@@ -315,7 +315,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
              <div className="space-y-2">
                 {linkFields.map((field, index) => (
                    <div key={field.id} className="flex flex-wrap items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
-                      <LinkIcon size={14} className="text-gray-400" />
+                       <Link size={14} weight="duotone" color="#b6e1d8" />
                       <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
                       <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
                       <button type="button" onClick={() => removeLink(index)} className="text-gray-400 hover:text-red-500"><X size={16} /></button>
@@ -336,9 +336,9 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                     router.refresh();
                  }
               }}
-              className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2"
+               className="btn-danger"
            >
-              <Trash2 size={16} /> Delete
+               <Trash size={16} weight="duotone" color="#ffcdf6" /> Delete
            </button>
          )}
          <div className="flex gap-2 ml-auto">
@@ -346,14 +346,14 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                 <button
                    type="button"
                    onClick={onCancel}
-                   className="px-6 py-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg font-medium transition-colors"
+                    className="btn-ghost"
                 >
                    Cancel
                 </button>
              )}
              <button
                 type="submit"
-                className="px-8 py-3 bg-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 shadow-lg shadow-[var(--ember-500)/20] transition-all hover:-translate-y-0.5"
+                 className="btn-primary px-8 py-3 shadow-lg shadow-[var(--ember-500)/20] hover:-translate-y-0.5"
              >
                 {initialData?.id ? 'Save Changes' : 'Save Assignment to Library'}
              </button>

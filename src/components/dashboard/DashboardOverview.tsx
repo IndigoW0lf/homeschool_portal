@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { addWeeks, subWeeks } from 'date-fns';
 import { WeekView } from './WeekView';
 import { DayModal } from './DayModal';
@@ -14,6 +15,7 @@ import { LessonForm } from '@/components/lessons/LessonForm';
 import { Lesson, AssignmentItemRow, ResourceRow, Kid } from '@/types';
 import { deleteLesson, deleteAssignment, cloneLesson, cloneAssignment } from '@/lib/supabase/mutations';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface DashboardOverviewProps {
   lessons: Lesson[];
@@ -38,6 +40,13 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [viewingItemId, setViewingItemId] = useState<string | null>(null);
   const [viewingItemType, setViewingItemType] = useState<'lesson' | 'assignment'>('lesson');
+  const [filterStudentId, setFilterStudentId] = useState<string | null>(null); // null = show all
+
+  // Filter schedule by selected student
+  const filteredSchedule = filterStudentId 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ? schedule.filter((s: any) => s.studentId === filterStudentId)
+    : schedule;
 
   const handlePrevWeek = () => setCurrentDate(subWeeks(currentDate, 1));
   const handleNextWeek = () => setCurrentDate(addWeeks(currentDate, 1));
@@ -124,27 +133,43 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
-      {/* 1. Header & Quick Stats */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Weekly Overview
-          </h1>
-          <p className="text-gray-500">
-            Manage the learning playlist for the week.
-          </p>
-        </div>
+      {/* 1. Header - Custom SVG title */}
+      <div className="text-center py-6">
+        <Image 
+          src="/assets/titles/weekly_overview.svg" 
+          alt="Weekly Overview" 
+          width={560} 
+          height={100}
+          className="h-20 w-auto mx-auto mb-2 dark:brightness-110"
+        />
+        <p className="text-muted">
+          Manage the learning playlist for the week
+        </p>
         
-        {/* Active Students (Just visual for now) */}
-        <div className="flex items-center gap-2 bg-white dark:bg-gray-800 p-2 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-           <span className="text-xs font-semibold text-gray-400 px-2 uppercase">Students</span>
-           <div className="flex -space-x-2">
-              {students.map(s => (
-                 <div key={s.id} className="ring-2 ring-white dark:ring-gray-800 rounded-full">
-                    <StudentAvatar name={s.name} className="w-8 h-8" />
-                 </div>
-              ))}
-           </div>
+        {/* Student Filter Pills */}
+        <div className="flex-center gap-3 mt-6">
+           <button
+              onClick={() => setFilterStudentId(null)}
+              className={cn(
+                 "btn-pill",
+                 filterStudentId === null ? "btn-pill-active" : "btn-pill-inactive"
+              )}
+           >
+              All Students
+           </button>
+           {students.map(s => (
+              <button
+                 key={s.id}
+                 onClick={() => setFilterStudentId(filterStudentId === s.id ? null : s.id)}
+                 className={cn(
+                    "btn-pill flex items-center gap-2",
+                    filterStudentId === s.id ? "btn-pill-active" : "btn-pill-inactive"
+                 )}
+              >
+                 <StudentAvatar name={s.name} className="w-6 h-6 text-[10px]" />
+                 {s.name}
+              </button>
+           ))}
         </div>
       </div>
 
@@ -155,13 +180,15 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
          onSelectDate={setSelectedDay}
          onPrevWeek={handlePrevWeek}
          onNextWeek={handleNextWeek}
-         schedule={schedule}
+         schedule={filteredSchedule}
+         students={students}
       />
 
       {/* 3. Library Shortcuts */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <RecentList
           title="Your Lessons"
+          titleImage="/assets/titles/lessons.svg"
           items={lessons.slice(0, 5).map(l => ({ id: l.id, title: l.title, subtitle: 'Lesson' }))}
           type="lesson"
           createLink="/parent/lessons"
@@ -171,6 +198,7 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
         />
         <RecentList
           title="Upcoming Assignments"
+          titleImage="/assets/titles/assignments.svg"
           items={assignments.slice(0, 5).map(a => ({ id: a.id, title: a.title, subtitle: a.type || 'Practice' }))}
           type="assignment"
           createLink="/parent/assignments"
@@ -180,6 +208,7 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
         />
         <RecentList
           title="Active Resources"
+          titleImage="/assets/titles/resources.svg"
           items={resources.slice(0, 5).map(r => ({ id: r.id, title: r.label, subtitle: r.category }))}
           type="resource"
           createLink="/parent/resources"
@@ -197,6 +226,7 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
             students={students}
             lessons={lessons}
             assignments={assignments}
+            filterStudentId={filterStudentId}
          />
       )}
 

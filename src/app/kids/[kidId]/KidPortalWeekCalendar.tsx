@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 interface ScheduleItem {
   id: string;
   date: string;
@@ -42,7 +44,13 @@ export function KidPortalWeekCalendar({ entries, kidId }: KidPortalWeekCalendarP
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-      <h3 className="font-semibold text-gray-800 dark:text-white mb-4">📆 This Week</h3>
+      <Image 
+        src="/assets/titles/this_week.svg" 
+        alt="This Week" 
+        width={120} 
+        height={30}
+        className="h-6 w-auto mb-4 dark:brightness-110"
+      />
       <div className="grid grid-cols-7 gap-1 text-center">
         {weekDates.map(date => {
           const dateKey = formatDateKey(date);

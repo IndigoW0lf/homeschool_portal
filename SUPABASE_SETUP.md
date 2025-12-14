@@ -94,7 +94,7 @@ npm run dev
 
 4. Access:
 - Main dashboard: http://localhost:3000
-- Kid portal: http://localhost:3000/kids/kid-9
+- Kid portal: http://localhost:3000/kids/atlas
 - Parent login: http://localhost:3000/parent/login
 - Parent dashboard: http://localhost:3000/parent (requires auth)
 

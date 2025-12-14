@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { ScheduleItemCard } from '@/components/ScheduleItemCard';
 import { Modal } from '@/components/ui/Modal';
-import { Clock, BookOpen, PenTool, CheckSquare, FileText } from 'lucide-react';
+import { Clock, BookOpen, Pencil, CheckSquare, FileText, Link as LinkIcon } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
+import { isDone, setDone } from '@/lib/storage';
+import { addStars, isAwarded, markAwarded } from '@/lib/progressState';
 
 interface ScheduleItem {
   id: string;
@@ -27,6 +29,7 @@ interface ScheduleItem {
     steps?: { text: string }[];
     deliverable?: string;
     rubric?: { text: string }[];
+    links?: { url: string; label: string }[];
   } | null;
 }
 
@@ -38,11 +41,12 @@ interface ScheduleItemsListProps {
 
 export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps) {
   const [selectedItem, setSelectedItem] = useState<ScheduleItem | null>(null);
+  const [, setAutoCompleted] = useState(false);
 
   const isLesson = selectedItem?.itemType === 'lesson';
 
   // Parse lesson instructions if it's JSON
-  let lessonDetails = { description: '', keyQuestions: [] as string[], materials: '' };
+  let lessonDetails = { description: '', keyQuestions: [] as string[], materials: '', links: [] as { url: string; label: string }[] };
   if (isLesson && selectedItem?.details?.instructions) {
     try {
       const parsed = JSON.parse(selectedItem.details.instructions);
@@ -52,6 +56,25 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
       lessonDetails.description = selectedItem.details.instructions;
     }
   }
+
+  // Function to auto-mark item as done when clicking a link
+  const handleLinkClick = () => {
+    if (!selectedItem) return;
+    const itemId = selectedItem.id;
+    
+    // Check if already done
+    if (isDone(kidId, date, itemId)) return;
+    
+    // Mark as done
+    setDone(kidId, date, itemId, true);
+    setAutoCompleted(true);
+    
+    // Award star if not already awarded
+    if (!isAwarded(kidId, date, itemId)) {
+      addStars(kidId, 1);
+      markAwarded(kidId, date, itemId);
+    }
+  };
 
   return (
     <>
@@ -77,9 +100,9 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
             <div className="flex items-center gap-3 flex-wrap">
               <div className={cn(
                 "p-2 rounded-lg",
-                isLesson ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"
+                isLesson ? "bg-blue-100" : "bg-purple-100"
               )}>
-                {isLesson ? <BookOpen size={20} /> : <PenTool size={20} />}
+                {isLesson ? <BookOpen size={28} weight="duotone" color="#b6e1d8" /> : <Pencil size={28} weight="duotone" color="#caa2d8" />}
               </div>
               <span className={cn(
                 "text-xs font-bold uppercase tracking-wider px-2 py-1 rounded",
@@ -88,7 +111,7 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
                 {selectedItem.type}
               </span>
               <span className="text-sm text-gray-500 flex items-center gap-1">
-                <Clock size={14} />
+                <Clock size={18} weight="duotone" color="#e7b58d" />
                 {selectedItem.estimatedMinutes || 20} min
               </span>
             </div>
@@ -137,6 +160,34 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
                     </p>
                   </div>
                 )}
+
+                {/* Links - clicking auto-marks as done */}
+                {lessonDetails.links.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                      <LinkIcon size={20} weight="duotone" color="#caa2d8" />
+                      Resources & Links
+                    </h4>
+                    <div className="space-y-2">
+                      {lessonDetails.links.map((link, i) => (
+                        <a
+                          key={i}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={handleLinkClick}
+                          className="flex items-center gap-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
+                        >
+                          <span className="text-[var(--ember-500)]">🔗</span>
+                          <span className="text-gray-700 dark:text-gray-300 flex-1 group-hover:text-[var(--ember-600)]">
+                            {link.label || link.url}
+                          </span>
+                          <span className="text-xs text-gray-400">Opens link & marks done ✓</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -147,7 +198,7 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
                 {selectedItem.details.deliverable && (
                   <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
                     <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <FileText size={16} className="text-blue-500" />
+                      <FileText size={24} weight="duotone" color="#b6e1d8" />
                       What to Turn In
                     </h4>
                     <p className="text-gray-700 dark:text-gray-300 font-medium">
@@ -179,7 +230,7 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
                 {selectedItem.details.rubric && selectedItem.details.rubric.length > 0 && (
                   <div>
                     <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                      <CheckSquare size={16} className="text-green-500" />
+                      <CheckSquare size={24} weight="duotone" color="#b6e1d8" />
                       Success Criteria
                     </h4>
                     <div className="space-y-2">

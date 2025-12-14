@@ -40,44 +40,57 @@ export async function getLessonsFromDB(): Promise<Lesson[]> {
     return [];
   }
 
-  const { data: links, error: linksError } = await supabase
-    .from('lesson_links')
-    .select('*');
+  // Fallback: fetch from junction tables for legacy lessons without JSONB links
+  let linksByLesson: Record<string, { label: string; url: string }[]> = {};
+  let attachmentsByLesson: Record<string, { label: string; url: string }[]> = {};
+  
+  // Only fetch from junction tables if needed (for backwards compat)
+  const lessonsWithoutJsonLinks = (lessons || []).filter(l => !l.links || l.links.length === 0);
+  if (lessonsWithoutJsonLinks.length > 0) {
+    const { data: links } = await supabase.from('lesson_links').select('*');
+    const { data: attachments } = await supabase.from('lesson_attachments').select('*');
+    
+    linksByLesson = (links || []).reduce((acc, link) => {
+      if (!acc[link.lesson_id]) acc[link.lesson_id] = [];
+      acc[link.lesson_id].push({ label: link.label, url: link.url });
+      return acc;
+    }, {} as Record<string, { label: string; url: string }[]>);
 
-  if (linksError) {
-    console.error('Error fetching lesson links:', linksError);
+    attachmentsByLesson = (attachments || []).reduce((acc, att) => {
+      if (!acc[att.lesson_id]) acc[att.lesson_id] = [];
+      acc[att.lesson_id].push({ label: att.label, url: att.url });
+      return acc;
+    }, {} as Record<string, { label: string; url: string }[]>);
   }
 
-  const { data: attachments, error: attachmentsError } = await supabase
-    .from('lesson_attachments')
-    .select('*');
-
-  if (attachmentsError) {
-    console.error('Error fetching lesson attachments:', attachmentsError);
-  }
-
-  const linksByLesson = (links || []).reduce((acc, link) => {
-    if (!acc[link.lesson_id]) acc[link.lesson_id] = [];
-    acc[link.lesson_id].push({ label: link.label, url: link.url });
-    return acc;
-  }, {} as Record<string, { label: string; url: string }[]>);
-
-  const attachmentsByLesson = (attachments || []).reduce((acc, att) => {
-    if (!acc[att.lesson_id]) acc[att.lesson_id] = [];
-    acc[att.lesson_id].push({ label: att.label, url: att.url });
-    return acc;
-  }, {} as Record<string, { label: string; url: string }[]>);
-
-  return (lessons || []).map(lesson => ({
-    id: lesson.id,
-    title: lesson.title,
-    type: lesson.type, // Added type
-    instructions: lesson.instructions,
-    tags: lesson.tags || [],
-    estimatedMinutes: lesson.estimated_minutes || 0,
-    links: linksByLesson[lesson.id] || [],
-    attachments: attachmentsByLesson[lesson.id] || [],
-  }));
+  return (lessons || []).map(lesson => {
+    // Use new JSONB columns if available, otherwise fallback to junction tables
+    const jsonLinks = Array.isArray(lesson.links) ? lesson.links : [];
+    const links = jsonLinks.length > 0 ? jsonLinks : (linksByLesson[lesson.id] || []);
+    
+    // Parse key_questions (handle both string[] and {text:string}[] formats)
+    let keyQuestions: string[] = [];
+    if (Array.isArray(lesson.key_questions)) {
+      keyQuestions = lesson.key_questions.map((q: string | { text: string }) => 
+        typeof q === 'string' ? q : q.text || ''
+      ).filter(Boolean);
+    }
+    
+    return {
+      id: lesson.id,
+      title: lesson.title,
+      type: lesson.type,
+      instructions: lesson.instructions || '',
+      description: lesson.description || undefined,
+      keyQuestions: keyQuestions.length > 0 ? keyQuestions : undefined,
+      materials: lesson.materials || undefined,
+      tags: lesson.tags || [],
+      estimatedMinutes: lesson.estimated_minutes || 0,
+      links,
+      attachments: attachmentsByLesson[lesson.id] || [],
+      parentNotes: lesson.parent_notes || undefined,
+    };
+  });
 }
 
 export async function getLessonByIdFromDB(id: string): Promise<Lesson | undefined> {
@@ -276,5 +289,52 @@ export async function getScheduleItemsForStudent(
     estimatedMinutes: row.lesson?.estimated_minutes || row.assignment?.estimated_minutes || 20,
     // Full details for item modal
     details: row.lesson || row.assignment || null
+  }));
+}
+
+// Holidays
+export async function getHolidaysFromDB(): Promise<import('@/types').Holiday[]> {
+  const supabase = await createServerClient();
+  const { data, error } = await supabase
+    .from('holidays')
+    .select('*')
+    .order('start_date', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching holidays:', error);
+    return [];
+  }
+
+  return (data || []).map(row => ({
+    id: row.id,
+    name: row.name,
+    emoji: row.emoji || '📅',
+    startDate: row.start_date,
+    endDate: row.end_date,
+  }));
+}
+
+export async function getUpcomingHolidaysFromDB(limit = 5): Promise<import('@/types').Holiday[]> {
+  const supabase = await createServerClient();
+  const today = new Date().toISOString().split('T')[0];
+  
+  const { data, error } = await supabase
+    .from('holidays')
+    .select('*')
+    .or(`start_date.gte.${today},end_date.gte.${today}`)
+    .order('start_date', { ascending: true })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching upcoming holidays:', error);
+    return [];
+  }
+
+  return (data || []).map(row => ({
+    id: row.id,
+    name: row.name,
+    emoji: row.emoji || '📅',
+    startDate: row.start_date,
+    endDate: row.end_date,
   }));
 }

@@ -1,9 +1,10 @@
 'use client';
 
 import { startOfWeek, addDays, format, isSameDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { CaretLeft, CaretRight, CalendarBlank } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
-// Remove MOCK_SCHEDULE import
+import { StudentAvatar } from '@/components/ui/StudentAvatar';
+import { Kid } from '@/types';
 
 interface WeekViewProps {
   currentDate: Date;
@@ -12,9 +13,10 @@ interface WeekViewProps {
   onPrevWeek: () => void;
   onNextWeek: () => void;
   schedule?: any[]; // TODO: Strict type
+  students?: Kid[];
 }
 
-export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, onNextWeek, schedule = [] }: WeekViewProps) {
+export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, onNextWeek, schedule = [], students = [] }: WeekViewProps) {
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday start
 
   const weekDays = Array.from({ length: 7 }).map((_, i) => {
@@ -25,24 +27,27 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
     // Count types
     const lessonCount = items.filter((i: any) => i.itemType === 'lesson').length;
     const assignmentCount = items.filter((i: any) => i.itemType === 'assignment').length;
+    
+    // Get unique student IDs for this day
+    const studentIds = [...new Set(items.map((i: any) => i.studentId).filter(Boolean))];
 
-    return { date: day, dateStr, lessonCount, assignmentCount, total: items.length };
+    return { date: day, dateStr, lessonCount, assignmentCount, total: items.length, studentIds };
   });
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div className="card overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-          <CalendarIcon className="text-[var(--ember-500)]" size={20} />
+      <div className="card-header">
+        <h2 className="heading-sm flex items-center gap-2">
+          <CalendarBlank weight="duotone" color="#e7b58d" size={24} />
           {format(weekStart, 'MMMM yyyy')}
         </h2>
         <div className="flex gap-2">
-          <button onClick={onPrevWeek} className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-            <ChevronLeft size={20} />
+          <button onClick={onPrevWeek} className="btn-icon-sm">
+            <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
           </button>
-          <button onClick={onNextWeek} className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-            <ChevronRight size={20} />
+          <button onClick={onNextWeek} className="btn-icon-sm">
+            <CaretRight size={24} weight="duotone" color="#b6e1d8" />
           </button>
         </div>
       </div>
@@ -58,7 +63,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
               key={day.dateStr}
               onClick={() => onSelectDate(day.date)}
               className={cn(
-                "flex flex-col items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors h-32 relative text-left",
+                "flex flex-col items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors h-40 relative text-left",
                 isSelected ? "bg-[var(--ember-50)] dark:bg-[var(--ember-900)/20]" : ""
               )}
             >
@@ -72,18 +77,34 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
 
               {/* Chips */}
               <div className="flex flex-col gap-1 w-full px-1">
+                 {/* Kid avatars row */}
+                 {day.studentIds.length > 0 && (
+                    <div className="flex justify-center gap-0.5 mb-1">
+                       {day.studentIds.map((studentId: string) => {
+                          const student = students.find(s => s.id === studentId);
+                          return student ? (
+                             <StudentAvatar 
+                                key={studentId} 
+                                name={student.name} 
+                                className="w-6 h-6 text-[8px]" 
+                             />
+                          ) : null;
+                       })}
+                    </div>
+                 )}
+                 
                  {day.lessonCount > 0 && (
-                    <div className="text-[10px] font-medium px-2 py-1 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 w-full truncate text-center">
+                    <div className="badge-blue text-[10px] w-full truncate text-center">
                        {day.lessonCount} Lesson{day.lessonCount > 1 ? 's' : ''}
                     </div>
                  )}
                  {day.assignmentCount > 0 && (
-                    <div className="text-[10px] font-medium px-2 py-1 rounded bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 w-full truncate text-center">
+                    <div className="badge-purple text-[10px] w-full truncate text-center">
                        {day.assignmentCount} Assignment{day.assignmentCount > 1 ? 's' : ''}
                     </div>
                  )}
                  {day.total === 0 && (
-                    <div className="text-[10px] text-gray-300 dark:text-gray-600 text-center mt-2">Empty</div>
+                    <div className="text-[10px] text-muted text-center mt-2">Empty</div>
                  )}
               </div>
               

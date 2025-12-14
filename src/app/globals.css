@@ -1,25 +1,29 @@
 @import "tailwindcss";
+@import "./design-system.css";
 
+/* Enable dark mode with class strategy for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Light mode - default */
 :root {
-  /* Default to dark mode */
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #ffffff;
+  --foreground: #171717;
 
   /* Neutrals / Structure */
-  --ink-900: #E5E5E5;        /* text, outlines (lightened for dark mode) */
-  --ink-700: #B5B5B5;
-  --paper-50: #1A1A1A;       /* backgrounds (darkened for dark mode) */
-  --paper-100: #2D2D2D;
+  --ink-900: #2B2B2B;        /* text, outlines */
+  --ink-700: #4A4A4A;
+  --paper-50: #FAF9F7;       /* backgrounds */
+  --paper-100: #F2EFEA;
 
   /* Warm Naturals (world cohesion) */
   --wood-600: #8B6A4E;
   --wood-400: #B99A7A;
   --stone-500: #9DA3A6;
-  --stone-300: #6B7073;      /* darkened for dark mode */
+  --stone-300: #C9CED1;
 
   /* Greens (world + calm energy) */
-  --leaf-700: #6F8F73;       /* lightened for dark mode */
-  --leaf-500: #8FAF93;
+  --leaf-700: #4E6B50;
+  --leaf-500: #6F8F73;
   --leaf-300: #AFC4B2;
 
   /* Fabric / Play (avatars, outfits) */
@@ -34,34 +38,29 @@
   --sky-400: #7FB3D5;        /* selection, highlights */
 
   /* Shadows */
-  --shadow-soft: rgba(0,0,0,0.3);  /* stronger shadow for dark mode */
+  --shadow-soft: rgba(0,0,0,0.12);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-}
-
-/* Light mode override (if needed in future) */
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #ffffff;
-    --foreground: #171717;
-    --ink-900: #2B2B2B;
-    --ink-700: #4A4A4A;
-    --paper-50: #FAF9F7;
-    --paper-100: #F2EFEA;
-    --stone-300: #C9CED1;
-    --leaf-700: #4E6B50;
-    --leaf-500: #6F8F73;
-    --shadow-soft: rgba(0,0,0,0.12);
-  }
+/* Dark mode - ONLY via .dark class on html element */
+/* The toggle in layout.tsx manages this class based on localStorage */
+html.dark,
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --ink-900: #E5E5E5;
+  --ink-700: #B5B5B5;
+  --paper-50: #1A1A1A;
+  --paper-100: #2D2D2D;
+  --stone-300: #6B7073;
+  --leaf-700: #6F8F73;
+  --leaf-500: #8FAF93;
+  --shadow-soft: rgba(0,0,0,0.3);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-quicksand), 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .avatar-shadow {

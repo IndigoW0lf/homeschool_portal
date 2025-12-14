@@ -260,3 +260,231 @@ export async function deleteScheduleItemAction(id: string) {
   if (error) throw error;
   return true;
 }
+
+// ========== PROGRESS MUTATIONS ==========
+
+// Award stars for completing an item (prevents double-awarding)
+export async function awardStars(
+  kidId: string,
+  date: string,
+  itemId: string,
+  starsToAward: number = 1
+): Promise<{ success: boolean; alreadyAwarded: boolean; newTotal?: number }> {
+  const supabase = await createServerClient();
+  
+  // Try to insert award (will fail if already awarded due to unique constraint)
+  const { error: awardError } = await supabase
+    .from('progress_awards')
+    .insert({
+      kid_id: kidId,
+      date,
+      item_id: itemId,
+      stars_earned: starsToAward
+    });
+  
+  if (awardError) {
+    if (awardError.code === '23505') {
+      // Unique constraint violation - already awarded
+      return { success: true, alreadyAwarded: true };
+    }
+    console.error('Error awarding stars:', awardError);
+    return { success: false, alreadyAwarded: false };
+  }
+  
+  // Update total stars in student_progress
+  const { data: progress, error: fetchError } = await supabase
+    .from('student_progress')
+    .select('total_stars')
+    .eq('kid_id', kidId)
+    .single();
+  
+  if (fetchError && fetchError.code !== 'PGRST116') {
+    console.error('Error fetching progress:', fetchError);
+  }
+  
+  const currentStars = progress?.total_stars || 0;
+  const newTotal = currentStars + starsToAward;
+  
+  await supabase
+    .from('student_progress')
+    .upsert({
+      kid_id: kidId,
+      total_stars: newTotal,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'kid_id' });
+  
+  return { success: true, alreadyAwarded: false, newTotal };
+}
+
+// Update streak when completing all items for a school day
+export async function updateStreak(kidId: string, completionDate: string): Promise<void> {
+  const supabase = await createServerClient();
+  
+  // Fetch current progress
+  const { data: progress } = await supabase
+    .from('student_progress')
+    .select('*')
+    .eq('kid_id', kidId)
+    .single();
+  
+  const schoolDays = progress?.school_days || [2, 3, 4]; // Tue, Wed, Thu
+  const date = new Date(completionDate + 'T12:00:00'); // Noon to avoid timezone issues
+  const dayOfWeek = date.getDay();
+  
+  // Only count school days
+  if (!schoolDays.includes(dayOfWeek)) {
+    return;
+  }
+  
+  const lastCompleted = progress?.last_completed_date;
+  let newStreak = progress?.current_streak || 0;
+  let bestStreak = progress?.best_streak || 0;
+  
+  if (!lastCompleted) {
+    // First completion ever
+    newStreak = 1;
+  } else {
+    // Check if this is the next expected school day
+    const lastDate = new Date(lastCompleted + 'T12:00:00');
+    const nextExpected = getNextSchoolDay(lastDate, schoolDays);
+    const nextExpectedStr = formatDateString(nextExpected);
+    
+    if (completionDate === nextExpectedStr) {
+      // Perfect continuation
+      newStreak += 1;
+    } else if (completionDate > nextExpectedStr) {
+      // Missed days, reset streak
+      newStreak = 1;
+    }
+    // If completionDate < nextExpectedStr, already completed (do nothing)
+  }
+  
+  if (newStreak > bestStreak) {
+    bestStreak = newStreak;
+  }
+  
+  // Update progress
+  await supabase
+    .from('student_progress')
+    .upsert({
+      kid_id: kidId,
+      current_streak: newStreak,
+      best_streak: bestStreak,
+      last_completed_date: completionDate,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'kid_id' });
+}
+
+// Helper: get next school day after a given date
+function getNextSchoolDay(date: Date, schoolDays: number[]): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + 1);
+  while (!schoolDays.includes(next.getDay())) {
+    next.setDate(next.getDate() + 1);
+  }
+  return next;
+}
+
+// Helper: format date as YYYY-MM-DD
+function formatDateString(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Grant an unlock (badge)
+export async function grantUnlock(kidId: string, unlockId: string): Promise<boolean> {
+  const supabase = await createServerClient();
+  
+  const { error } = await supabase
+    .from('student_unlocks')
+    .insert({
+      kid_id: kidId,
+      unlock_id: unlockId
+    });
+  
+  if (error && error.code !== '23505') {
+    console.error('Error granting unlock:', error);
+    return false;
+  }
+  
+  return true;
+}
+
+// Check and grant unlocks based on star thresholds
+const UNLOCK_THRESHOLDS: { stars: number; unlockId: string }[] = [
+  { stars: 5, unlockId: 'unlock-badge-1' },
+  { stars: 10, unlockId: 'unlock-badge-2' },
+  { stars: 20, unlockId: 'unlock-badge-3' },
+  { stars: 35, unlockId: 'unlock-badge-4' },
+  { stars: 50, unlockId: 'unlock-badge-5' },
+  { stars: 75, unlockId: 'unlock-badge-6' },
+];
+
+export async function checkAndGrantUnlocks(kidId: string, totalStars: number): Promise<string[]> {
+  const newUnlocks: string[] = [];
+  
+  for (const threshold of UNLOCK_THRESHOLDS) {
+    if (totalStars >= threshold.stars) {
+      const success = await grantUnlock(kidId, threshold.unlockId);
+      if (success) {
+        newUnlocks.push(threshold.unlockId);
+      }
+    }
+  }
+  
+  return newUnlocks;
+}
+
+// Holidays
+export async function createHoliday(holiday: { 
+  name: string; 
+  emoji?: string; 
+  start_date: string; 
+  end_date?: string | null;
+}) {
+  const supabase = await createServerClient();
+  const { data, error } = await supabase
+    .from('holidays')
+    .insert({
+      name: holiday.name,
+      emoji: holiday.emoji || '📅',
+      start_date: holiday.start_date,
+      end_date: holiday.end_date || null,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateHoliday(id: string, holiday: Partial<{
+  name: string;
+  emoji: string;
+  start_date: string;
+  end_date: string | null;
+}>) {
+  const supabase = await createServerClient();
+  const { data, error } = await supabase
+    .from('holidays')
+    .update(holiday)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteHoliday(id: string) {
+  const supabase = await createServerClient();
+  const { error } = await supabase
+    .from('holidays')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+  return true;
+}

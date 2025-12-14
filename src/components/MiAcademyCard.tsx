@@ -36,26 +36,38 @@ export function MiAcademyCard({ kidId, date, url, onDoneChange }: MiAcademyCardP
   return (
     <div 
       id="today-item-miacademy"
-      className="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700"
+      className="card p-5"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+            <h3 className="heading-sm">
               MiAcademy (Daily)
             </h3>
-            <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+            <span className="badge-blue text-xs">
               Task 0
             </span>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
+          <p className="text-muted text-sm mb-3">
             Complete today&apos;s MiAcademy work.
           </p>
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+            onClick={() => {
+              // Auto-mark as done when clicking the link
+              if (!done) {
+                setDone(kidId, date, itemId, true);
+                setDoneState(true);
+                if (!isAwarded(kidId, date, itemId)) {
+                  addStars(kidId, 1);
+                  markAwarded(kidId, date, itemId);
+                }
+                onDoneChange?.(true);
+              }
+            }}
+            className="btn-primary text-sm"
           >
             Open MiAcademy →
           </a>

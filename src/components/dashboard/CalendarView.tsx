@@ -14,7 +14,7 @@ import {
   subMonths,
   isToday 
 } from 'date-fns';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 export function CalendarView() {
@@ -41,30 +41,30 @@ export function CalendarView() {
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
+    <div className="card p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+        <h2 className="heading-md">
           {format(currentDate, 'MMMM yyyy')}
         </h2>
         <div className="flex gap-2">
           <button 
             onClick={prevMonth}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-600 dark:text-gray-400"
+            className="btn-icon"
           >
-            <ChevronLeft size={20} />
+            <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
           </button>
           <button 
             onClick={() => setCurrentDate(new Date())}
-            className="text-sm font-medium px-3 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md text-gray-700 dark:text-gray-300 transition-colors"
+            className="btn-sm btn-secondary"
           >
             Today
           </button>
           <button 
             onClick={nextMonth}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-600 dark:text-gray-400"
+            className="btn-icon"
           >
-            <ChevronRight size={20} />
+            <CaretRight size={24} weight="duotone" color="#b6e1d8" />
           </button>
         </div>
       </div>
@@ -72,7 +72,7 @@ export function CalendarView() {
       {/* Weekdays */}
       <div className="grid grid-cols-7 mb-2">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-          <div key={day} className="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider py-2">
+          <div key={day} className="section-label text-center py-2">
             {day}
           </div>
         ))}
