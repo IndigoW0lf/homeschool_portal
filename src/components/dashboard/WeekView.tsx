@@ -4,6 +4,7 @@ import { startOfWeek, addDays, format, isSameDay } from 'date-fns';
 import { CaretLeft, CaretRight, CalendarBlank } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
+import { LunaTriggerButton } from '@/components/luna';
 import { Kid } from '@/types';
 
 interface WeekViewProps {
@@ -18,6 +19,7 @@ interface WeekViewProps {
 
 export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, onNextWeek, schedule = [], students = [] }: WeekViewProps) {
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday start
+  const weekStartDate = format(weekStart, 'yyyy-MM-dd');
 
   const weekDays = Array.from({ length: 7 }).map((_, i) => {
     const day = addDays(weekStart, i);
@@ -42,7 +44,13 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
           <CalendarBlank weight="duotone" color="#e7b58d" size={24} />
           {format(weekStart, 'MMMM yyyy')}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <LunaTriggerButton
+            context="WEEK_THINK"
+            weekStartDate={weekStartDate}
+            label="Think with Luna"
+            iconOnly
+          />
           <button onClick={onPrevWeek} className="btn-icon-sm">
             <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
           </button>

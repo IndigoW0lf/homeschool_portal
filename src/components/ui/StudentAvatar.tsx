@@ -19,11 +19,12 @@ export function StudentAvatar({
   color
 }: StudentAvatarProps) {
   
+  // Slightly larger font sizes for better readability
   const sizeClasses = {
-    sm: 'w-8 h-8 text-xs',
-    md: 'w-10 h-10 text-sm',
-    lg: 'w-16 h-16 text-lg',
-    xl: 'w-24 h-24 text-2xl'
+    sm: 'w-8 h-8 text-sm',      // was text-xs
+    md: 'w-10 h-10 text-base',  // was text-sm
+    lg: 'w-16 h-16 text-xl',    // was text-lg
+    xl: 'w-24 h-24 text-3xl'    // was text-2xl
   };
 
   const initials = name.slice(0, 2).toUpperCase();
@@ -31,9 +32,13 @@ export function StudentAvatar({
   return (
     <div 
       className={cn(
-        'relative rounded-full flex items-center justify-center font-bold overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm transition-transform hover:scale-105',
+        // Stronger border for light mode visibility
+        'relative rounded-full flex items-center justify-center font-bold overflow-hidden',
+        'border-2 border-gray-300 dark:border-gray-700',
+        'shadow-sm transition-transform hover:scale-105',
         sizeClasses[size],
-        !avatarUrl && (color || 'bg-gray-200 text-gray-500'),
+        // Darker text for better contrast in light mode
+        !avatarUrl && (color || 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'),
         className
       )}
     >
@@ -45,7 +50,7 @@ export function StudentAvatar({
           className="object-cover"
         />
       ) : (
-        <span>{initials}</span>
+        <span className="font-semibold">{initials}</span>
       )}
     </div>
   );

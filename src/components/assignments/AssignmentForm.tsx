@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -9,7 +10,8 @@ import { TAGS, STUDENTS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
 import { createAssignment, updateAssignment, deleteAssignment } from '@/lib/supabase/mutations';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { LunaTriggerButton } from '@/components/luna';
 
 export const ASSIGNMENT_TYPES = [
   'Practice', 'Project', 'Journal', 'Creative', 'Logic Drill', 'Experiment', 'Essay'
@@ -43,6 +45,8 @@ interface AssignmentFormProps {
 
 export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete, onCancel }: AssignmentFormProps = {}) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isFromLuna = searchParams.get('from') === 'luna';
   const resolver = zodResolver(assignmentSchema) as unknown as Resolver<AssignmentFormData>;
 
   const defaultValues: AssignmentFormData = {
@@ -60,10 +64,31 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
       ...initialData
   };
 
-  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<AssignmentFormData>({
+  const { register, handleSubmit, control, watch, setValue, reset, formState: { errors } } = useForm<AssignmentFormData>({
     resolver,
     defaultValues,
   });
+
+  // Check for Luna pre-fill data on mount
+  useEffect(() => {
+    if (isFromLuna && typeof window !== 'undefined') {
+      const prefillData = sessionStorage.getItem('luna-prefill');
+      if (prefillData) {
+        try {
+          const { type, data } = JSON.parse(prefillData);
+          if (type === 'assignment' && data) {
+            reset({
+              ...defaultValues,
+              ...data,
+            });
+            sessionStorage.removeItem('luna-prefill');
+          }
+        } catch (e) {
+          console.error('Failed to parse Luna pre-fill data:', e);
+        }
+      }
+    }
+  }, [isFromLuna, reset]);
 
   const { fields: rubricFields, append: appendRubric, remove: removeRubric } = useFieldArray({
     control,
@@ -134,9 +159,12 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
               </h2>
               <p className="text-sm text-muted mt-2">Design a task or project (Output / Do)</p>
           </div>
-         <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-            <span className="text-xs font-medium px-2 text-gray-500">Template?</span>
-            <input type="checkbox" {...register('isTemplate')} className="w-4 h-4 text-[var(--ember-500)] rounded" />
+         <div className="flex items-center gap-3">
+            <LunaTriggerButton context="GENERAL" label="Need ideas?" iconOnly={false} />
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+               <span className="text-xs font-medium px-2 text-gray-500">Template?</span>
+               <input type="checkbox" {...register('isTemplate')} className="w-4 h-4 text-[var(--ember-500)] rounded" />
+            </div>
          </div>
       </div>
 
@@ -166,8 +194,8 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                
                {/* Students Selection */}
                <div>
-                   <label className="input-label mb-2 flex items-center gap-2">
-                     <Users size={16} className="text-[var(--ember-500)]" /> Assign To
+                   <label className="input-label mb-2 flex items-center gap-1">
+                     <Users size={14} className="text-[var(--ember-500)]" /> Assign To
                   </label>
                   <div className="flex gap-2">
                      {STUDENTS.map(student => (
@@ -293,7 +321,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                 />
              </div>
              <div>
-                <label className="input-label flex items-center gap-1">
+                <label className="input-label mb-2 flex items-center gap-1">
                    <Clock size={14} /> Est. Minutes
                 </label>
                 <input

@@ -261,6 +261,28 @@ export async function deleteScheduleItemAction(id: string) {
   return true;
 }
 
+// Remove all schedule items within a date range (used when creating holidays)
+export async function removeScheduleItemsForDateRange(
+  startDate: string,
+  endDate: string
+): Promise<number> {
+  const supabase = await createServerClient();
+  
+  const { data, error } = await supabase
+    .from('schedule_items')
+    .delete()
+    .gte('date', startDate)
+    .lte('date', endDate)
+    .select('id');
+
+  if (error) {
+    console.error('Error removing schedule items for date range:', error);
+    throw error;
+  }
+  
+  return data?.length || 0;
+}
+
 // ========== PROGRESS MUTATIONS ==========
 
 // Award stars for completing an item (prevents double-awarding)

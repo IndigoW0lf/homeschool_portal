@@ -1,14 +1,16 @@
 import { Resources, ResourceCategory } from '@/types';
+import { BookOpen, PuzzlePiece, PencilLine, Palette } from '@phosphor-icons/react/dist/ssr';
+import { ReactNode } from 'react';
 
 interface ResourceSectionProps {
   resources: Resources;
 }
 
-const categoryIcons: Record<ResourceCategory, string> = {
-  reading: '📖',
-  logic: '🧩',
-  writing: '✍️',
-  projects: '🎨',
+const categoryIcons: Record<ResourceCategory, ReactNode> = {
+  reading: <BookOpen size={20} weight="duotone" className="text-[var(--fabric-sky)]" />,
+  logic: <PuzzlePiece size={20} weight="duotone" className="text-[var(--fabric-lilac)]" />,
+  writing: <PencilLine size={20} weight="duotone" className="text-[var(--fabric-mint)]" />,
+  projects: <Palette size={20} weight="duotone" className="text-[var(--fabric-peach)]" />,
 };
 
 const categoryLabels: Record<ResourceCategory, string> = {

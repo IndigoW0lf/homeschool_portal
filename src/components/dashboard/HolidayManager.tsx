@@ -114,7 +114,16 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
         endDate: newHoliday.end_date,
       }]);
       
-      toast.success('Holiday added!');
+      // Show toast about removed items if any
+      if (newHoliday.removedItemsCount > 0) {
+        toast.success('Holiday added!', {
+          description: `${newHoliday.removedItemsCount} scheduled item(s) were removed from this date range.`,
+          duration: 5000
+        });
+      } else {
+        toast.success('Holiday added!');
+      }
+      
       resetForm();
       router.refresh();
     } catch {
@@ -199,9 +208,9 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
         <Image 
           src="/assets/titles/breaks_holidays.svg" 
           alt="Holidays & Days Off" 
-          width={200} 
-          height={35}
-          className="h-6 w-auto dark:brightness-110"
+          width={300} 
+          height={40}
+          className="h-8 w-auto dark:brightness-110"
         />
         <button
           onClick={() => { 

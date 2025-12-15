@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -10,7 +11,9 @@ import { TAGS, STUDENTS as MOCK_STUDENTS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
 import { Kid } from '@/types';
-
+import { createLesson, updateLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { LunaTriggerButton } from '@/components/luna';
 
 const LESSON_TYPES = [
   'Math', 'Science', 'History', 'Language Arts', 'Art', 'Music', 'PE', 'Life Skills', 'Coding'
@@ -19,13 +22,13 @@ const LESSON_TYPES = [
 const lessonSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   type: z.enum(LESSON_TYPES as [string, ...string[]]).default('Math'),
-  description: z.string().default(''), // Content / Script
-  keyQuestions: z.array(z.object({ text: z.string() })).default([]), // For Socratic dialogue
+  description: z.string().default(''),
+  keyQuestions: z.array(z.object({ text: z.string() })).default([]),
   estimatedMinutes: z.number().min(1).default(30),
   materials: z.string().default(''),
   parentNotes: z.string().default(''),
-  assignTo: z.array(z.string()).default([]), // Student IDs
-  date: z.string().optional(), // YYYY-MM-DD
+  assignTo: z.array(z.string()).default([]),
+  date: z.string().optional(),
   tags: z.array(z.string()).default([]),
   links: z.array(z.object({ 
     url: z.string().url(), 
@@ -35,11 +38,9 @@ const lessonSchema = z.object({
 });
 
 type LessonFormData = z.infer<typeof lessonSchema>;
-import { createLesson, updateLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
-import { useRouter } from 'next/navigation';
 
 interface LessonFormProps {
-  initialData?: LessonFormData & { id: string }; // Assuming initialData might have an ID for updates
+  initialData?: LessonFormData & { id: string };
   onSubmit?: (data: LessonFormData) => void;
   onCancel?: () => void;
   onDelete?: (id: string) => void;
@@ -48,27 +49,53 @@ interface LessonFormProps {
 
 export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [] }: LessonFormProps = {}) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isFromLuna = searchParams.get('from') === 'luna';
   const resolver = zodResolver(lessonSchema) as unknown as Resolver<LessonFormData>;
 
-  const effectiveStudents = students.length > 0 ? students : MOCK_STUDENTS; // Fallback to mock only if no real data passed (for isolated dev)
+  const effectiveStudents = students.length > 0 ? students : MOCK_STUDENTS;
 
-  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<LessonFormData>({
+  const defaultValues: LessonFormData = {
+    title: '',
+    type: 'Math',
+    tags: [],
+    links: [],
+    keyQuestions: [{ text: '' }],
+    isTemplate: true,
+    estimatedMinutes: 20,
+    materials: '',
+    parentNotes: '',
+    assignTo: initialData?.assignTo || effectiveStudents.map(s => s.id),
+    description: '',
+    date: new Date().toISOString().split('T')[0],
+    ...initialData,
+  };
+
+  const { register, handleSubmit, setValue, watch, control, reset, formState: { errors } } = useForm<LessonFormData>({
     resolver,
-    defaultValues: {
-      type: 'Math',
-      tags: [],
-      links: [],
-      keyQuestions: [{ text: '' }],
-      isTemplate: true,
-      estimatedMinutes: 20,
-      materials: '',
-      parentNotes: '',
-      assignTo: initialData?.assignTo || effectiveStudents.map(s => s.id), // Default to ALL students if new
-      description: '',
-      date: new Date().toISOString().split('T')[0], // Default to today
-      ...initialData,
-    }
+    defaultValues,
   });
+
+  // Check for Luna pre-fill data on mount
+  useEffect(() => {
+    if (isFromLuna && typeof window !== 'undefined') {
+      const prefillData = sessionStorage.getItem('luna-prefill');
+      if (prefillData) {
+        try {
+          const { type, data } = JSON.parse(prefillData);
+          if (type === 'lesson' && data) {
+            reset({
+              ...defaultValues,
+              ...data,
+            });
+            sessionStorage.removeItem('luna-prefill');
+          }
+        } catch (e) {
+          console.error('Failed to parse Luna pre-fill data:', e);
+        }
+      }
+    }
+  }, [isFromLuna, reset]);
 
   const { fields: questionFields, append: appendQuestion, remove: removeQuestion } = useFieldArray({
     control,
@@ -164,16 +191,18 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
              </h2>
              <p className="text-sm text-muted">Design a reusable teaching unit (Input / Teach)</p>
          </div>
-         <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-            <span className="text-xs font-medium px-2 text-gray-500">Template?</span>
-            <input type="checkbox" {...register('isTemplate')} className="w-4 h-4 text-[var(--ember-500)] rounded" />
+         <div className="flex items-center gap-3">
+            <LunaTriggerButton context="GENERAL" label="Need ideas?" iconOnly={false} />
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+               <span className="text-xs font-medium px-2 text-gray-500">Template?</span>
+               <input type="checkbox" {...register('isTemplate')} className="w-4 h-4 text-[var(--ember-500)] rounded" />
+            </div>
          </div>
       </div>
 
       {/* 1. CORE INFO */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="md:col-span-2">
+            <div>
                <label className="input-label">Lesson Title</label>
                <input
                   {...register('title')}
@@ -183,48 +212,51 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
                {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
             </div>
 
-             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                   <label className="input-label mb-2">Schedule Date</label>
-                   <input 
-                      type="date"
-                      {...register('date')}
-                      className="input"
-                   />
-                </div>
+            {/* Row 2: Schedule Date + Assign To */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div>
+                  <label className="input-label mb-2">Schedule Date</label>
+                  <input 
+                     type="date"
+                     {...register('date')}
+                     className="input"
+                  />
+               </div>
 
-                <div>
-                   <label className="input-label mb-2">Subject / Type</label>
-                   <select
-                      {...register('type')}
-                      className="select"
-                   >
-                      {LESSON_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                   </select>
-                </div>
+               {/* Students Selection - Right side */}
+               <div>
+                  <label className="input-label mb-2 flex items-center gap-1">
+                     <Users size={14} className="text-[var(--ember-500)]" /> Assign To
+                  </label>
+                  <div className="flex gap-2">
+                     {effectiveStudents.map(student => (
+                        <div 
+                           key={student.id} 
+                           onClick={() => toggleStudent(student.id)}
+                           className={cn(
+                              "cursor-pointer p-1 rounded-full border-2 transition-all",
+                              assignedTo?.includes(student.id) ? "border-[var(--ember-500)] ring-2 ring-[var(--ember-500)]/20" : "border-transparent opacity-50 hover:opacity-100"
+                           )}
+                        >
+                           <StudentAvatar name={student.name} className="w-10 h-10" />
+                        </div>
+                     ))}
+                  </div>
+               </div>
+            </div>
 
-                {/* Students Selection */}
-                <div>
-                   <label className="input-label mb-2 flex items-center gap-2">
-                      <Users size={16} className="text-[var(--ember-500)]" /> Assign To
-                   </label>
-                   <div className="flex gap-2">
-                      {effectiveStudents.map(student => (
-                         <div 
-                            key={student.id} 
-                            onClick={() => toggleStudent(student.id)}
-                            className={cn(
-                               "cursor-pointer p-1 rounded-full border-2 transition-all",
-                               assignedTo?.includes(student.id) ? "border-[var(--ember-500)] ring-2 ring-[var(--ember-500)]/20" : "border-transparent opacity-50 hover:opacity-100"
-                            )}
-                         >
-                            <StudentAvatar name={student.name} className="w-10 h-10" />
-                         </div>
-                      ))}
-                   </div>
-                </div>
-             </div>
-          </div>
+            {/* Row 3: Subject/Type only */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div>
+                  <label className="input-label mb-2">Subject / Type</label>
+                  <select
+                     {...register('type')}
+                     className="select"
+                  >
+                     {LESSON_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+               </div>
+            </div>
        </div>
 
       {/* 2. TEACHING CONTENT */}
@@ -303,7 +335,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
                 />
              </div>
              <div>
-                <label className="input-label flex items-center gap-1">
+                <label className="input-label mb-2 flex items-center gap-1">
                    <Clock size={14} /> Est. Minutes
                 </label>
                 <input

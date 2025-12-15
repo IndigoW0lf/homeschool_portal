@@ -5,7 +5,6 @@ import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
 import { formatDateString } from '@/lib/dateUtils';
 import { ProgressCard, TodayCompletionSummary, ResourceSection } from '@/components';
-import { MiAcademyCardWrapper } from '@/components/MiAcademyCardWrapper';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { CaretLeft, CaretRight, CalendarBlank } from '@phosphor-icons/react/dist/ssr';
@@ -160,21 +159,14 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
             )}
           </div>
           
-          {/* Today Completion Summary (handles awards) */}
           <TodayCompletionSummary
             kidId={kidId}
             date={viewDateString}
-            itemIds={[
-              'miacademy',
-              ...todayItems.map(item => item.id)
-            ]}
+            itemIds={todayItems.map(item => item.id)}
           />
 
           <div className="space-y-4">
-            {/* MiAcademy Card (always first) */}
-            <MiAcademyCardWrapper kidId={kidId} date={viewDateString} />
-
-            {/* Scheduled Items */}
+            {/* Scheduled Items (including MiAcademy from database) */}
             {todayItems.length > 0 ? (
               <ScheduleItemsList
                 items={todayItems}

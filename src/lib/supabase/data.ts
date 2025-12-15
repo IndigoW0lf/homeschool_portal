@@ -292,6 +292,47 @@ export async function getScheduleItemsForStudent(
   }));
 }
 
+// Get schedule items for a date range (all students)
+export async function getScheduleItemsForDateRange(
+  startDate: string,
+  endDate: string
+): Promise<Array<{
+  id: string;
+  date: string;
+  student_id: string;
+  title?: string;
+  title_override?: string;
+  item_type: string;
+}>> {
+  const supabase = await createServerClient();
+  
+  const { data, error } = await supabase
+    .from('schedule_items')
+    .select(`
+      id, date, student_id, item_type, title_override,
+      lessons:lesson_id ( title ),
+      assignment_items:assignment_id ( title ),
+      resources:resource_id ( label )
+    `)
+    .gte('date', startDate)
+    .lte('date', endDate);
+    
+  if (error) {
+    console.error('Error fetching schedule items for date range:', error);
+    return [];
+  }
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    date: row.date,
+    student_id: row.student_id,
+    item_type: row.item_type,
+    title_override: row.title_override,
+    title: row.lessons?.title || row.assignment_items?.title || row.resources?.label || row.title_override || 'Untitled'
+  }));
+}
+
 // Holidays
 export async function getHolidaysFromDB(): Promise<import('@/types').Holiday[]> {
   const supabase = await createServerClient();

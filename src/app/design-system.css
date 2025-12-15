@@ -224,3 +224,34 @@
 .modal-content {
   @apply bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden;
 }
+
+/* -----------------------------------------------------------------------------
+   SIDE PANEL (Luna)
+   ----------------------------------------------------------------------------- */
+
+.side-panel-backdrop {
+  @apply fixed inset-0 z-40 bg-black/20 backdrop-blur-sm;
+}
+
+.side-panel {
+  @apply fixed right-0 top-0 z-50 h-full w-full max-w-md;
+  @apply bg-white dark:bg-gray-900 shadow-2xl;
+  @apply flex flex-col;
+}
+
+/* Animation classes (Tailwind animate-in plugin) */
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-right {
+    animation: none;
+  }
+}
+

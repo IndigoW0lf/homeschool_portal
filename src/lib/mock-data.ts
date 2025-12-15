@@ -2,13 +2,13 @@
 
 export const STUDENTS = [
   { 
-    id: '1', 
+    id: 'atlas', 
     name: 'Atlas', 
     color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300',
     avatar: '/assets/avatars/atlas.png' 
   },
   { 
-    id: '2', 
+    id: 'stella', 
     name: 'Stella', 
     color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
     avatar: '/assets/avatars/stella.png'

@@ -12,6 +12,7 @@ import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { Modal } from '@/components/ui/Modal';
 import { AssignmentForm } from '@/components/assignments/AssignmentForm';
 import { LessonForm } from '@/components/lessons/LessonForm';
+import { LunaTriggerButton } from '@/components/luna';
 import { Lesson, AssignmentItemRow, ResourceRow, Kid } from '@/types';
 import { deleteLesson, deleteAssignment, cloneLesson, cloneAssignment } from '@/lib/supabase/mutations';
 import { toast } from 'sonner';
@@ -237,17 +238,26 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
          title="Edit Assignment"
       >
          {editingAssignment && (
-            <AssignmentForm
-               initialData={mapAssignmentToForm(editingAssignment)} 
-               onCancel={() => setEditingAssignmentId(null)}
-               onDelete={() => {
-                  setEditingAssignmentId(null);
-                  // Refresh happens via router.refresh in form
-               }}
-               onSubmit={() => {
-                  setEditingAssignmentId(null);
-               }}
-            />
+            <div className="space-y-4">
+               <div className="flex justify-end">
+                  <LunaTriggerButton 
+                     context="GENERAL" 
+                     label="Need ideas?" 
+                     iconOnly={false}
+                  />
+               </div>
+               <AssignmentForm
+                  initialData={mapAssignmentToForm(editingAssignment)} 
+                  onCancel={() => setEditingAssignmentId(null)}
+                  onDelete={() => {
+                     setEditingAssignmentId(null);
+                     // Refresh happens via router.refresh in form
+                  }}
+                  onSubmit={() => {
+                     setEditingAssignmentId(null);
+                  }}
+               />
+            </div>
          )}
       </Modal>
 
@@ -286,17 +296,27 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
             };
 
             return (
-               <LessonForm
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  initialData={formData as any} // Keeping this any for now as formData structure is loose vs Zod schema
-                  onCancel={() => setEditingLessonId(null)}
-                  onDelete={() => setEditingLessonId(null)}
-                  onSubmit={() => {
-                     toast.success('Lesson Updated! ✨');
-                     setEditingLessonId(null);
-                  }}
-                  students={students}
-               />
+               <div className="space-y-4">
+                  <div className="flex justify-end">
+                     <LunaTriggerButton 
+                        context="LESSON_STUCK" 
+                        lessonId={rawLesson.id}
+                        label="Need ideas?" 
+                        iconOnly={false}
+                     />
+                  </div>
+                  <LessonForm
+                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                     initialData={formData as any} // Keeping this any for now as formData structure is loose vs Zod schema
+                     onCancel={() => setEditingLessonId(null)}
+                     onDelete={() => setEditingLessonId(null)}
+                     onSubmit={() => {
+                        toast.success('Lesson Updated! ✨');
+                        setEditingLessonId(null);
+                     }}
+                     students={students}
+                  />
+               </div>
             );
          })()}
       </Modal>

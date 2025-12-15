@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Raw assets (source files, not processed)
 /raw-assets
+
+# Internal product docs (not for version control)
+/docs/internal

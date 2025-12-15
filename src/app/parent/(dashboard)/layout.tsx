@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/lib/supabase/server';
 import { ParentNav } from '@/components/ParentNav';
+import { LunaProvider, LunaPanel } from '@/components/luna';
 
 export default async function ParentLayout({
   children,
@@ -17,11 +18,12 @@ export default async function ParentLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
-      <ParentNav user={user} />
-      {children}
-    </div>
+    <LunaProvider>
+      <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
+        <ParentNav user={user} />
+        {children}
+      </div>
+      <LunaPanel />
+    </LunaProvider>
   );
 }
-
-

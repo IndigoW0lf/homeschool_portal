@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { X, CheckCircle, Circle, Plus, Copy, Sparkle, Trash, DotsSixVertical } from '@phosphor-icons/react';
+import { X, CheckCircle, Circle, Plus, Copy, Sparkle, Trash, DotsSixVertical, PencilSimple, BookOpen, Timer, Question, Tag, ListBullets, CaretLeft } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { toggleScheduleItemComplete, deleteScheduleItemAction, assignItemToSchedule } from '@/lib/supabase/mutations';
@@ -22,6 +22,9 @@ interface DayModalProps {
   filterStudentId?: string | null; // Filter items by this student, null = show all (grouped)
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ScheduleItem = any;
+
 export function DayModal({ date, isOpen, onClose, schedule = [], students = [], lessons = [], assignments = [], filterStudentId = null }: DayModalProps) {
 
   const router = useRouter();
@@ -30,6 +33,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [pickerType, setPickerType] = useState<'lesson' | 'assignment' | null>(null);
   const [selectedKids, setSelectedKids] = useState<string[]>(students.map(s => s.id)); // Default to all 
+  const [viewingItem, setViewingItem] = useState<ScheduleItem | null>(null); // Item detail view 
 
   // Reset selectedKids when students change
   const toggleKidSelection = (kidId: string) => {
@@ -163,10 +167,151 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
           </button>
         </div>
 
-         {/* Scrollable Playlist OR Picker */}
+         {/* Scrollable Playlist OR Picker OR Item Detail */}
          <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50 dark:bg-black/20">
            
-           {pickerType ? (
+           {viewingItem ? (
+              /* Item Detail View */
+              <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+                 <div className="flex items-center gap-2 mb-4">
+                    <button onClick={() => setViewingItem(null)} className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
+                       <CaretLeft size={20} weight="bold" className="text-gray-500" />
+                    </button>
+                    <h3 className="font-bold text-lg flex-1 text-gray-900 dark:text-white">{viewingItem.itemType === 'lesson' ? 'Lesson' : 'Assignment'} Details</h3>
+                    <button 
+                       onClick={() => {
+                          // Navigate to edit page
+                          const editPath = viewingItem.itemType === 'lesson' 
+                             ? `/parent/lessons/${viewingItem.itemId || viewingItem.id}` 
+                             : `/parent/assignments/${viewingItem.itemId || viewingItem.id}`;
+                          router.push(editPath);
+                       }}
+                       className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white rounded-lg text-sm font-medium transition-colors"
+                    >
+                       <PencilSimple size={16} weight="bold" />
+                       Edit
+                    </button>
+                 </div>
+                 
+                 {/* Item Title Card */}
+                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                    <div className="flex items-start gap-3">
+                       <div className={cn(
+                          "w-10 h-10 rounded-lg flex items-center justify-center",
+                          viewingItem.itemType === 'lesson' 
+                             ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600" 
+                             : "bg-purple-100 dark:bg-purple-900/30 text-purple-600"
+                       )}>
+                          <BookOpen size={22} weight="duotone" />
+                       </div>
+                       <div className="flex-1">
+                          <span className={cn(
+                             "text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mb-1 inline-block",
+                             viewingItem.itemType === 'lesson' ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                          )}>
+                             {viewingItem.details?.type || viewingItem.type || viewingItem.itemType}
+                          </span>
+                          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{viewingItem.title || 'Untitled'}</h2>
+                          <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
+                             <span className="flex items-center gap-1">
+                                <Timer size={14} weight="duotone" />
+                                {viewingItem.details?.estimated_minutes || viewingItem.estimatedMinutes || 20} mins
+                             </span>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+                 
+                 {/* Details Section */}
+                 {viewingItem.details && (
+                    <div className="space-y-4">
+                       {/* Key Questions (for lessons) */}
+                       {viewingItem.details.key_questions && viewingItem.details.key_questions.length > 0 && (
+                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                                <Question size={18} weight="duotone" className="text-[var(--ember-500)]" />
+                                Key Questions
+                             </h3>
+                             <ul className="space-y-2">
+                                {viewingItem.details.key_questions.map((q: { text: string } | string, i: number) => (
+                                   <li key={i} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                      <span className="text-[var(--ember-500)] font-bold">{i + 1}.</span>
+                                      <span>{typeof q === 'string' ? q : q.text}</span>
+                                   </li>
+                                ))}
+                             </ul>
+                          </div>
+                       )}
+                       
+                       {/* Steps (for assignments) */}
+                       {viewingItem.details.steps && viewingItem.details.steps.length > 0 && (
+                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                                <ListBullets size={18} weight="duotone" className="text-[var(--fabric-lilac)]" />
+                                Steps
+                             </h3>
+                             <ul className="space-y-2">
+                                {viewingItem.details.steps.map((step: { text: string } | string, i: number) => (
+                                   <li key={i} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                      <span className="text-[var(--fabric-lilac)] font-bold">{i + 1}.</span>
+                                      <span>{typeof step === 'string' ? step : step.text}</span>
+                                   </li>
+                                ))}
+                             </ul>
+                          </div>
+                       )}
+                       
+                       {/* Deliverable (for assignments) */}
+                       {viewingItem.details.deliverable && (
+                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Expected Deliverable</h3>
+                             <p className="text-gray-700 dark:text-gray-300">{viewingItem.details.deliverable}</p>
+                          </div>
+                       )}
+                       
+                       {/* Materials (for lessons) */}
+                       {viewingItem.details.materials && (
+                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Materials Needed</h3>
+                             <p className="text-gray-700 dark:text-gray-300">{viewingItem.details.materials}</p>
+                          </div>
+                       )}
+                       
+                       {/* Tags */}
+                       {viewingItem.details.tags && viewingItem.details.tags.length > 0 && (
+                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                                <Tag size={18} weight="duotone" className="text-[var(--fabric-mint)]" />
+                                Tags
+                             </h3>
+                             <div className="flex flex-wrap gap-2">
+                                {viewingItem.details.tags.map((tag: string, i: number) => (
+                                   <span key={i} className="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+                                      {tag}
+                                   </span>
+                                ))}
+                             </div>
+                          </div>
+                       )}
+                       
+                       {/* Parent Notes */}
+                       {viewingItem.details.parent_notes && (
+                          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-900/30 p-5">
+                             <h3 className="font-semibold text-amber-800 dark:text-amber-300 mb-2">🔒 Parent Notes</h3>
+                             <p className="text-amber-700 dark:text-amber-200 text-sm">{viewingItem.details.parent_notes}</p>
+                          </div>
+                       )}
+                    </div>
+                 )}
+                 
+                 {/* No details message */}
+                 {!viewingItem.details && (
+                    <div className="text-center py-10 text-gray-400">
+                       <p>No additional details available for this item.</p>
+                    </div>
+                 )}
+              </div>
+           ) : pickerType ? (
               <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                  <div className="flex items-center gap-2 mb-4">
                     <button onClick={() => setPickerType(null)} className="p-1 hover:bg-gray-200 rounded-full">
@@ -322,7 +467,10 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                 {item.status === 'completed' ? <CheckCircle size={24} /> : <Circle size={24} />}
                              </div>
      
-                             <div className="flex-1">
+                             <div 
+                                className="flex-1 cursor-pointer"
+                                onClick={() => setViewingItem(item)}
+                             >
                                 <div className="flex items-center gap-2 mb-1">
                                    <span className={cn(
                                       "text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded",
@@ -335,7 +483,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       <StudentAvatar name={student.name} className="w-5 h-5 text-[8px]" />
                                    )}
                                 </div>
-                                <h3 className="font-semibold text-gray-900 dark:text-white text-lg">
+                                <h3 className="font-semibold text-gray-900 dark:text-white text-lg hover:text-[var(--ember-600)] transition-colors">
                                    {item.title || 'Untitled Item'}
                                 </h3>
                                 {item.type && (

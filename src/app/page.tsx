@@ -124,9 +124,9 @@ export default async function Dashboard() {
             <Image 
               src="/assets/titles/breaks_holidays.svg" 
               alt="Upcoming Breaks & Holidays" 
-              width={280} 
-              height={40}
-              className="h-8 w-auto mb-4 dark:brightness-110"
+              width={315} 
+              height={60}
+              className="h-12 w-auto mb-4 dark:brightness-110"
             />
             <div className="card overflow-hidden divide-y divide-gray-100 dark:divide-gray-700">
               {upcomingHolidays.map(holiday => (
