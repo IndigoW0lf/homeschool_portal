@@ -76,11 +76,11 @@
 
 /* List item variant */
 .list-item {
-  @apply flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors;
+  @apply flex items-center justify-between gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors;
 }
 
 .list-item-clickable {
-  @apply flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer;
+  @apply flex items-center justify-between gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer;
 }
 
 /* -----------------------------------------------------------------------------
