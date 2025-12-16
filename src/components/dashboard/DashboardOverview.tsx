@@ -270,29 +270,49 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
             const rawLesson = lessons.find(l => l.id === editingLessonId);
             if (!rawLesson) return null;
             
-            // Parse instructions JSON back to form fields
-            let extra = { description: '', keyQuestions: [], materials: '', links: [] };
-            try {
-               if (rawLesson.instructions) {
-                  const items = JSON.parse(rawLesson.instructions);
-                  extra = { ...extra, ...items };
+            // Prepare initial data from structured columns
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const keyQuestions = (rawLesson.keyQuestions || []).map((q: any) => ({ text: typeof q === 'string' ? q : q.text }));
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const links = (rawLesson.links || []).map((l: any) => ({ url: l.url, label: l.label || l.title || 'Link' }));
+            let description = rawLesson.description || '';
+            let materials = rawLesson.materials || '';
+
+            // Fallback: If description is missing, check legacy instructions
+            if (!description && rawLesson.instructions) {
+               try {
+                  // If instructions is JSON strings (legacy format)
+                  if (rawLesson.instructions.trim().startsWith('{')) {
+                     const parsed = JSON.parse(rawLesson.instructions);
+                     description = parsed.description || '';
+                     if (!materials) materials = parsed.materials || '';
+                     
+                     if (keyQuestions.length === 0 && parsed.keyQuestions) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        parsed.keyQuestions.forEach((q: any) => keyQuestions.push({ text: typeof q === 'string' ? q : q.text }));
+                     }
+                  } else {
+                     description = rawLesson.instructions;
+                  }
+               } catch (e) {
+                  description = rawLesson.instructions;
                }
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (e) {
-               // Fallback for plain text legacy
-               extra.description = rawLesson.instructions || '';
             }
 
             const formData = {
                id: rawLesson.id,
                title: rawLesson.title,
-               type: rawLesson.type || 'Math', // TODO: Fix specific type match
+               type: rawLesson.type || 'Math',
                estimatedMinutes: rawLesson.estimatedMinutes,
                tags: rawLesson.tags,
-               assignTo: [], // TODO: fetch from schedule or junction if needed
+               assignTo: [], 
                date: new Date().toISOString().split('T')[0],
                isTemplate: true,
-               ...extra
+               description,
+               keyQuestions,
+               materials,
+               links,
+               parentNotes: rawLesson.parentNotes
             };
 
             return (
