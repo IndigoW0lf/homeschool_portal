@@ -42,7 +42,7 @@ export function MiAcademyCard({ kidId, date, url, onDoneChange }: MiAcademyCardP
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <h3 className="heading-sm">
-              MiAcademy (Daily)
+              MiAcademy
             </h3>
             <span className="badge-blue text-xs">
               Task 0

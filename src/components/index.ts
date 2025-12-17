@@ -9,6 +9,7 @@ export { AvatarBuilder } from './AvatarBuilder';
 export { StudioEditor } from './StudioEditor';
 export { MiAcademyCard } from './MiAcademyCard';
 export { ProgressCard } from './ProgressCard';
+export { ProgressCardWrapper } from './ProgressCardWrapper';
 export { TodayCompletionSummary } from './TodayCompletionSummary';
 export { Shop } from './Shop';
 export { ShopItemCard } from './ShopItemCard';

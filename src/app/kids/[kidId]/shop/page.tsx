@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getKidById, getShopItems } from '@/lib/content';
 import { Shop } from '@/components/Shop';
-import { Star } from '@phosphor-icons/react/dist/ssr';
+import { Moon } from '@phosphor-icons/react/dist/ssr';
 
 interface ShopPageProps {
   params: Promise<{
@@ -25,15 +25,15 @@ export default async function ShopPage({ params }: ShopPageProps) {
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-white">
-              <Star size={28} weight="fill" />
+            <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 text-white">
+              <Moon size={28} weight="fill" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Rewards Shop
+                Moons Shop
               </h1>
               <p className="text-gray-500 dark:text-gray-400">
-                Spend your stars, {kid.name}!
+                Spend your moons, {kid.name}!
               </p>
             </div>
           </div>
@@ -47,7 +47,3 @@ export default async function ShopPage({ params }: ShopPageProps) {
     </div>
   );
 }
-
-
-
-

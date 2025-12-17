@@ -1,6 +1,6 @@
 'use client';
 
-import { X, PencilSimple, Trash, Copy, Clock, BookOpen, Pencil, CheckSquare, FileText, Link } from '@phosphor-icons/react';
+import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow } from '@/types';
 
@@ -11,7 +11,7 @@ interface ItemDetailModalProps {
   itemType: 'lesson' | 'assignment';
   onEdit: () => void;
   onDelete: () => void;
-  onClone: () => void;
+  onSchedule: () => void;  // Changed from onClone
 }
 
 export function ItemDetailModal({ 
@@ -21,7 +21,7 @@ export function ItemDetailModal({
   itemType, 
   onEdit, 
   onDelete, 
-  onClone 
+  onSchedule 
 }: ItemDetailModalProps) {
   if (!isOpen || !item) return null;
 
@@ -306,11 +306,11 @@ export function ItemDetailModal({
           </button>
           <div className="flex gap-2">
             <button
-              onClick={onClone}
+              onClick={onSchedule}
               className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center gap-2"
             >
-              <Copy size={18} />
-              Clone
+              <CalendarPlus size={18} weight="duotone" />
+              Schedule
             </button>
             <button
               onClick={onEdit}

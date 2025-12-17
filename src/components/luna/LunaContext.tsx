@@ -341,8 +341,26 @@ export function LunaProvider({ children }: { children: ReactNode }) {
 
 export function useLuna() {
   const context = useContext(LunaContext);
+  
+  // Return a safe no-op version if outside provider (prevents crashes during SSR/hot-reload)
   if (!context) {
-    throw new Error('useLuna must be used within a LunaProvider');
+    return {
+      isOpen: false,
+      isLoading: false,
+      isSaving: false,
+      messages: [],
+      error: null,
+      currentContext: null,
+      inputValue: '',
+      currentSessionId: null,
+      recentSessions: [],
+      openPanel: () => console.warn('useLuna called outside LunaProvider'),
+      closePanel: () => {},
+      setInputValue: () => {},
+      sendMessage: async () => {},
+      clearMessages: () => {},
+      loadSession: () => {},
+    } as LunaContextValue;
   }
   return context;
 }

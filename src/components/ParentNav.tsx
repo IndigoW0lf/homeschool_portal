@@ -1,16 +1,33 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase/browser';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
+import { 
+  House, 
+  BookOpen, 
+  ClipboardText, 
+  Lightbulb, 
+  FolderOpen, 
+  SignOut,
+  Sparkle
+} from '@phosphor-icons/react';
+import { cn } from '@/lib/utils';
 
 interface ParentNavProps {
   user: User;
 }
+
+const navItems = [
+  { href: '/parent', label: 'Overview', icon: House },
+  { href: '/parent/lessons', label: 'Lessons', icon: BookOpen },
+  { href: '/parent/assignments', label: 'Assignments', icon: ClipboardText },
+  { href: '/parent/ideas', label: 'Ideas', icon: Lightbulb },
+  { href: '/parent/resources', label: 'Resources', icon: FolderOpen },
+];
 
 export function ParentNav({ }: ParentNavProps) {
   const pathname = usePathname();
@@ -22,69 +39,54 @@ export function ParentNav({ }: ParentNavProps) {
     router.refresh();
   };
 
-  const tabs = [
-    { href: '/parent', label: 'Overview', svg: '/assets/titles/overview.svg' },
-    { href: '/parent/lessons', label: 'Lessons', svg: '/assets/titles/lessons.svg' },
-    { href: '/parent/assignments', label: 'Assignments', svg: '/assets/titles/assignments.svg' },
-    { href: '/parent/resources', label: 'Resources', svg: '/assets/titles/resources.svg' },
-  ];
-
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-      <div className="max-w-6xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="text-muted hover:text-gray-600 dark:hover:text-gray-300"
-            >
-              ←
-            </Link>
-            <Image 
-              src="/assets/titles/parent_dashboard.svg" 
-              alt="Parent Dashboard" 
-              width={280} 
-              height={50}
-              className="h-10 w-auto dark:brightness-110"
-            />
-          </div>
-          <div className="flex items-center gap-3">
-            <DarkModeToggle />
-            <button
-              onClick={handleSignOut}
-              className="btn-ghost text-sm"
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-
-        <nav className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
-          {tabs.map(tab => {
-            const isActive = pathname === tab.href || (tab.href !== '/parent' && pathname?.startsWith(tab.href));
-            return (
-              <Link
-                key={tab.href}
-                href={tab.href}
-                className={`
-                  px-4 py-2 transition-all border-b-2
-                  ${isActive
-                    ? 'border-[var(--ember-500)]'
-                    : 'border-transparent opacity-60 hover:opacity-100'}
-                `}
-              >
-                <Image 
-                  src={tab.svg} 
-                  alt={tab.label} 
-                  width={100} 
-                  height={25}
-                  className="h-5 w-auto dark:brightness-110"
-                />
-              </Link>
-            );
-          })}
-        </nav>
+    <aside className="fixed left-0 top-0 h-full w-56 bg-gray-800 dark:bg-gray-900 flex flex-col z-30">
+      {/* Logo / Header */}
+      <div className="p-4 border-b border-gray-700">
+        <Link href="/" className="flex items-center gap-2 text-white hover:opacity-80 transition-opacity">
+          <Sparkle size={24} weight="duotone" className="text-[var(--fabric-lilac)]" />
+          <span className="font-bold text-lg">Lunara Quest</span>
+        </Link>
       </div>
-    </header>
+
+      {/* Navigation */}
+      <nav className="flex-1 py-4">
+        {navItems.map(item => {
+          const isActive = pathname === item.href || 
+            (item.href !== '/parent' && pathname?.startsWith(item.href));
+          const Icon = item.icon;
+          
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all",
+                isActive 
+                  ? "bg-gray-700 text-white" 
+                  : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+              )}
+            >
+              <Icon size={22} weight={isActive ? "fill" : "regular"} />
+              <span className="font-semibold">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-700 space-y-2">
+        <div className="flex items-center justify-between">
+          <DarkModeToggle />
+        </div>
+        <button
+          onClick={handleSignOut}
+          className="flex items-center gap-2 w-full px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all"
+        >
+          <SignOut size={20} />
+          <span className="text-sm font-medium">Sign Out</span>
+        </button>
+      </div>
+    </aside>
   );
 }

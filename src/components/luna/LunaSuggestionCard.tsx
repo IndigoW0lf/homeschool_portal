@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookmarkSimple, X, Check, Sparkle, BookOpen, Pencil } from '@phosphor-icons/react';
+import { BookmarkSimple, X, Check, BookOpen, Pencil } from '@phosphor-icons/react';
 import { Suggestion } from '@/lib/ai/types';
 import { cn } from '@/lib/utils';
 
 interface LunaSuggestionCardProps {
   suggestion: Suggestion;
+  userMessage?: string;  // The parent's original message for context
   onSave?: (suggestion: Suggestion) => Promise<void>;
 }
 
@@ -19,7 +20,7 @@ interface LunaSuggestionCardProps {
  * - [Save to my ideas] → calls onSave (writes to ideas table)
  * - [Ignore] → removes from view (no DB write)
  */
-export function LunaSuggestionCard({ suggestion, onSave }: LunaSuggestionCardProps) {
+export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSuggestionCardProps) {
   const router = useRouter();
   const [status, setStatus] = useState<'visible' | 'saving' | 'saved' | 'ignored'>('visible');
 
@@ -67,6 +68,19 @@ export function LunaSuggestionCard({ suggestion, onSave }: LunaSuggestionCardPro
   const handleSave = async () => {
     setStatus('saving');
     try {
+      const res = await fetch('/api/ideas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: suggestion.title,
+          content: suggestion.why_this_might_help,
+          user_message: userMessage,
+          suggestion_data: suggestion,
+        }),
+      });
+      
+      if (!res.ok) throw new Error('Failed to save');
+      
       if (onSave) {
         await onSave(suggestion);
       }
@@ -109,7 +123,7 @@ export function LunaSuggestionCard({ suggestion, onSave }: LunaSuggestionCardPro
       </p>
 
       {/* Steps */}
-      {suggestion.steps.length > 0 && (
+      {(suggestion.steps?.length ?? 0) > 0 && (
         <ul className="space-y-1.5 text-sm text-gray-700 dark:text-gray-300">
           {suggestion.steps.map((step, i) => (
             <li key={i} className="flex items-start gap-2">

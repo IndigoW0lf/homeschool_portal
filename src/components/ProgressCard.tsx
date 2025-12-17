@@ -2,24 +2,28 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { Moon, Confetti, CheckCircle, Medal } from '@phosphor-icons/react';
+import { cn } from '@/lib/utils';
 
 interface ProgressCardProps {
   kidId: string;
   initialStars?: number;
-  initialStreak?: { current: number; best: number };
+  todayCompleted?: number;
+  todayTotal?: number;
   initialUnlocks?: string[];
 }
 
 export function ProgressCard({ 
   kidId, 
   initialStars = 0,
-  initialStreak = { current: 0, best: 0 },
+  todayCompleted = 0,
+  todayTotal = 0,
   initialUnlocks = []
 }: ProgressCardProps) {
   const stars = initialStars;
-  const streak = initialStreak;
   const unlocks = initialUnlocks;
-
+  
+  const allDone = todayTotal > 0 && todayCompleted === todayTotal;
 
   return (
     <div className="card p-5">
@@ -32,21 +36,44 @@ export function ProgressCard({
         className="h-7 w-auto mb-4 dark:brightness-110"
       />
       
-      {/* Stats Grid - Stars and Streak side by side */}
+      {/* Stats Grid - Moons and Today's Progress side by side */}
       <div className="grid grid-cols-2 gap-4 mb-4">
-        {/* Stars - Yellow/Gold background to match star */}
+        {/* Moons - Yellow/Gold background to match moon */}
         <div className="bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 border border-yellow-200 dark:border-yellow-800/50 rounded-xl p-4 text-center">
-          <div className="text-3xl mb-1">⭐</div>
+          <Moon size={32} weight="fill" className="mx-auto mb-1 text-yellow-500" />
           <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stars}</p>
-          <p className="text-xs text-yellow-700/70 dark:text-yellow-400/70 font-medium">Stars</p>
+          <p className="text-xs text-yellow-700/70 dark:text-yellow-400/70 font-medium">Moons</p>
         </div>
 
-        {/* Streak - Red/Orange background to match fire */}
-        <div className="bg-gradient-to-br from-red-100 to-orange-100 dark:from-red-900/30 dark:to-orange-900/30 border border-red-200 dark:border-red-800/50 rounded-xl p-4 text-center">
-          <div className="text-3xl mb-1">🔥</div>
-          <p className="text-2xl font-bold text-red-500 dark:text-red-400">{streak.current}</p>
-          <p className="text-xs text-red-700/70 dark:text-red-400/70 font-medium">
-            Day Streak <span className="opacity-70">({streak.best} best)</span>
+        {/* Today's Progress - Green when all done, otherwise teal */}
+        <div className={cn(
+          "rounded-xl p-4 text-center border transition-all relative overflow-hidden",
+          allDone 
+            ? "bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border-green-300 dark:border-green-700" 
+            : "bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-900/30 border-teal-200 dark:border-teal-800/50"
+        )}>
+          
+          <div className="mb-1">
+            {allDone 
+              ? <Confetti size={32} weight="fill" className="mx-auto text-green-500" />
+              : <CheckCircle size={32} weight="duotone" className="mx-auto text-teal-500" />
+            }
+          </div>
+          <p className={cn(
+            "text-2xl font-bold",
+            allDone 
+              ? "text-green-600 dark:text-green-400" 
+              : "text-teal-600 dark:text-teal-400"
+          )}>
+            {todayCompleted}/{todayTotal}
+          </p>
+          <p className={cn(
+            "text-xs font-medium",
+            allDone 
+              ? "text-green-700/70 dark:text-green-400/70" 
+              : "text-teal-700/70 dark:text-teal-400/70"
+          )}>
+            {allDone ? "All Done!" : "Today's Quests"}
           </p>
         </div>
       </div>
@@ -67,9 +94,10 @@ export function ProgressCard({
             {unlocks.map(unlockId => (
               <span
                 key={unlockId}
-                className="px-2 py-0.5 bg-[var(--fabric-gold)] text-[var(--ink-900)] rounded-full text-xs font-medium"
+                className="px-2 py-0.5 bg-[var(--fabric-gold)] text-[var(--ink-900)] rounded-full text-xs font-medium flex items-center gap-1"
               >
-                🏅 {unlockId.split('-').pop()}
+                <Medal size={14} weight="fill" />
+                {unlockId.split('-').pop()}
               </span>
             ))}
           </div>
@@ -96,4 +124,3 @@ export function ProgressCard({
     </div>
   );
 }
-

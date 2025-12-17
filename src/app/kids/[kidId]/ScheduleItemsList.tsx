@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ScheduleItemCard } from '@/components/ScheduleItemCard';
 import { Modal } from '@/components/ui/Modal';
-import { Clock, BookOpen, Pencil, CheckSquare, FileText, Link as LinkIcon } from '@phosphor-icons/react';
+import { Clock, BookOpen, Pencil, CheckSquare, FileText, Link as LinkIcon, Question, LinkSimple, Sparkle, Check } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { isDone, setDone } from '@/lib/storage';
 import { addStars, isAwarded, markAwarded } from '@/lib/progressState';
@@ -36,12 +36,18 @@ interface ScheduleItem {
 interface ScheduleItemsListProps {
   items: ScheduleItem[];
   kidId: string;
-  date: string;
+  date: string;  // Default date for items without date
+  showDates?: boolean;  // Show date on each item (for upcoming items)
 }
 
-export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps) {
+export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleItemsListProps) {
   const [selectedItem, setSelectedItem] = useState<ScheduleItem | null>(null);
   const [, setAutoCompleted] = useState(false);
+  
+  // Sort items by date (earliest first) if showing dates
+  const sortedItems = showDates 
+    ? [...items].sort((a, b) => a.date.localeCompare(b.date))
+    : items;
 
   const isLesson = selectedItem?.itemType === 'lesson';
 
@@ -78,12 +84,14 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
 
   return (
     <>
-      {items.map(item => (
+      {sortedItems.map(item => (
         <ScheduleItemCard
           key={item.id}
           item={item}
           kidId={kidId}
-          date={date}
+          date={item.date || date}
+          showDate={showDates}
+          readOnly={showDates}
           onClick={() => setSelectedItem(item)}
         />
       ))}
@@ -141,7 +149,7 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
                         const questionText = typeof q === 'string' ? q : (q as { text?: string })?.text || '';
                         return questionText ? (
                           <li key={i} className="flex gap-2 text-gray-700 dark:text-gray-300">
-                            <span className="text-blue-500">❓</span>
+                            <Question size={18} weight="duotone" className="text-blue-500 flex-shrink-0 mt-0.5" />
                             {questionText}
                           </li>
                         ) : null;
@@ -178,11 +186,13 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
                           onClick={handleLinkClick}
                           className="flex items-center gap-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
                         >
-                          <span className="text-[var(--ember-500)]">🔗</span>
+                          <LinkSimple size={18} weight="duotone" className="text-[var(--ember-500)]" />
                           <span className="text-gray-700 dark:text-gray-300 flex-1 group-hover:text-[var(--ember-600)]">
                             {link.label || link.url}
                           </span>
-                          <span className="text-xs text-gray-400">Opens link & marks done ✓</span>
+                          <span className="text-xs text-gray-400 flex items-center gap-1">
+                            Opens link <Check size={12} weight="bold" />
+                          </span>
                         </a>
                       ))}
                     </div>
@@ -250,8 +260,8 @@ export function ScheduleItemsList({ items, kidId, date }: ScheduleItemsListProps
 
             {/* Encouragement message */}
             <div className="bg-[var(--ember-50)] dark:bg-[var(--ember-900)/20] p-4 rounded-xl text-center">
-              <p className="text-[var(--ember-600)] dark:text-[var(--ember-400)] font-medium">
-                You've got this! 🌟
+              <p className="text-[var(--ember-600)] dark:text-[var(--ember-400)] font-medium flex items-center justify-center gap-2">
+                You've got this! <Sparkle size={18} weight="fill" className="text-yellow-500" />
               </p>
             </div>
           </div>

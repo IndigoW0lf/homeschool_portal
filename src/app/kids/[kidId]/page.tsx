@@ -4,10 +4,10 @@ import { notFound } from 'next/navigation';
 import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
 import { formatDateString } from '@/lib/dateUtils';
-import { ProgressCard, TodayCompletionSummary, ResourceSection } from '@/components';
+import { ProgressCardWrapper, TodayCompletionSummary, ResourceSection } from '@/components';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
-import { CaretLeft, CaretRight, CalendarBlank } from '@phosphor-icons/react/dist/ssr';
+import { CaretLeft, CaretRight, CalendarBlank, Scroll } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, isSameDay, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 
 interface KidPortalPageProps {
@@ -69,6 +69,13 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
   const prevWeek = format(subWeeks(viewDate, 1), 'yyyy-MM-dd');
   const nextWeek = format(addWeeks(viewDate, 1), 'yyyy-MM-dd');
+  
+  // Check if viewing current week
+  const currentWeekStart = startOfWeek(today, { weekStartsOn: 1 });
+  const isCurrentWeek = format(weekStart, 'yyyy-MM-dd') === format(currentWeekStart, 'yyyy-MM-dd');
+  const weekLabel = isCurrentWeek 
+    ? 'This Week' 
+    : `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d')}`;
 
   return (
     <div className="min-h-screen">
@@ -95,7 +102,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                </Link>
                <div className="px-4 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2 cursor-pointer" title="Jump to Today">
                   <CalendarBlank size={20} weight="duotone" color="#caa2d8" />
-                  {!isViewToday ? <Link href={`/kids/${kidId}`}>Back to Today</Link> : <span>This Week</span>}
+                  {!isCurrentWeek ? <Link href={`/kids/${kidId}`} className="hover:text-[var(--ember-500)]">{weekLabel}</Link> : <span>{weekLabel}</span>}
                </div>
                <Link href={`/kids/${kidId}?date=${nextWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
                   <CaretRight size={24} weight="duotone" color="#b6e1d8" />
@@ -110,14 +117,12 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
         {/* Progress Card */}
         <section>
           {isViewToday && (
-            <ProgressCard 
+            <ProgressCardWrapper 
               kidId={kidId}
               initialStars={progressData?.totalStars || 0}
-              initialStreak={{ 
-                current: progressData?.currentStreak || 0, 
-                best: progressData?.bestStreak || 0 
-              }}
               initialUnlocks={unlocks}
+              date={viewDateString}
+              itemIds={todayItems.map(item => item.id)}
             />
           )}
         </section>
@@ -160,19 +165,21 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
         {/* Week Calendar */}
         <section>
-          <KidPortalWeekCalendar entries={weekScheduleItems} kidId={kidId} />
+          <KidPortalWeekCalendar entries={weekScheduleItems} kidId={kidId} viewDate={viewDate} />
         </section>
 
         {/* Upcoming Items */}
         {upcomingItems.length > 0 && (
           <section>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              📚 Coming Up This Week
+              <Scroll size={24} weight="duotone" className="text-[var(--ember-400)]" />
+              Coming Up This Week
             </h2>
             <ScheduleItemsList
               items={upcomingItems}
               kidId={kidId}
-              date={upcomingItems[0]?.date || viewDateString}
+              date={viewDateString}
+              showDates={true}
             />
           </section>
         )}

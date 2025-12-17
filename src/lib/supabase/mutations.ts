@@ -70,6 +70,62 @@ export async function cloneLesson(id: string) {
   return data;
 }
 
+/**
+ * Schedule a lesson to one or more students on a specific date
+ * This assigns an existing lesson to the calendar without duplicating it
+ */
+export async function scheduleLesson(
+  lessonId: string, 
+  studentIds: string[], 
+  date: string
+): Promise<{ success: boolean; scheduled: number }> {
+  const supabase = await createServerClient();
+  
+  // Create schedule items for each student
+  const scheduleItems = studentIds.map(studentId => ({
+    lesson_id: lessonId,
+    student_id: studentId,
+    date: date,
+    item_type: 'lesson',
+    status: 'pending',
+  }));
+  
+  const { data, error } = await supabase
+    .from('schedule_items')
+    .insert(scheduleItems)
+    .select();
+
+  if (error) throw error;
+  return { success: true, scheduled: data?.length || 0 };
+}
+
+/**
+ * Schedule an assignment to one or more students on a specific date
+ */
+export async function scheduleAssignment(
+  assignmentId: string,
+  studentIds: string[],
+  date: string
+): Promise<{ success: boolean; scheduled: number }> {
+  const supabase = await createServerClient();
+  
+  const scheduleItems = studentIds.map(studentId => ({
+    assignment_id: assignmentId,
+    student_id: studentId,
+    date: date,
+    item_type: 'assignment',
+    status: 'pending',
+  }));
+  
+  const { data, error } = await supabase
+    .from('schedule_items')
+    .insert(scheduleItems)
+    .select();
+
+  if (error) throw error;
+  return { success: true, scheduled: data?.length || 0 };
+}
+
 // Assignments (Items)
 export async function createAssignment(assignment: Omit<AssignmentItemRow, 'id' | 'created_at'>) {
   const supabase = await createServerClient();
