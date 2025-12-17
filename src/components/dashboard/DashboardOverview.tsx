@@ -14,7 +14,8 @@ import { AssignmentForm } from '@/components/assignments/AssignmentForm';
 import { LessonForm } from '@/components/lessons/LessonForm';
 import { LunaTriggerButton } from '@/components/luna';
 import { Lesson, AssignmentItemRow, ResourceRow, Kid } from '@/types';
-import { deleteLesson, deleteAssignment, cloneLesson, cloneAssignment } from '@/lib/supabase/mutations';
+import { deleteLesson, deleteAssignment } from '@/lib/supabase/mutations';
+import { ScheduleModal } from './ScheduleModal';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -98,21 +99,17 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
     setViewingItemId(null);
   };
 
-  const handleCloneItem = async () => {
-    if (!viewingItemId) return;
-    try {
-      if (viewingItemType === 'lesson') {
-        await cloneLesson(viewingItemId);
-      } else {
-        await cloneAssignment(viewingItemId);
-      }
-      toast.success('Cloned successfully! 📋', { description: 'Check your library for the copy.' });
-      setViewingItemId(null);
-      router.refresh();
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to clone');
-    }
+  // Schedule modal state (replaced clone)
+  const [scheduleItemId, setScheduleItemId] = useState<string | null>(null);
+  const [scheduleItemType, setScheduleItemType] = useState<'lesson' | 'assignment'>('lesson');
+  const [scheduleItemTitle, setScheduleItemTitle] = useState('');
+
+  const handleScheduleItem = () => {
+    if (!viewingItemId || !viewingItem) return;
+    setScheduleItemId(viewingItemId);
+    setScheduleItemType(viewingItemType);
+    setScheduleItemTitle(viewingItem.title);
+    setViewingItemId(null);
   };
 
   // Helper to map DB row to Form Data
@@ -349,7 +346,17 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
         itemType={viewingItemType}
         onEdit={handleEditItem}
         onDelete={handleDeleteItem}
-        onClone={handleCloneItem}
+        onSchedule={handleScheduleItem}
+      />
+
+      {/* Schedule Modal */}
+      <ScheduleModal
+        isOpen={!!scheduleItemId}
+        onClose={() => setScheduleItemId(null)}
+        itemId={scheduleItemId || ''}
+        itemType={scheduleItemType}
+        itemTitle={scheduleItemTitle}
+        students={students}
       />
 
     </div>

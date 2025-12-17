@@ -35,9 +35,9 @@ export default async function ShopPage({ params }: ShopPageProps) {
               </Link>
               <div>
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white">
-                  ⭐ Rewards Shop
+                  🌙 Moons Shop
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400">Spend your stars, {kid.name}!</p>
+                <p className="text-gray-500 dark:text-gray-400">Spend your moons, {kid.name}!</p>
               </div>
             </div>
           </div>

@@ -1,6 +1,8 @@
 'use client';
 
 import { DoneToggle } from './DoneToggle';
+import { useDoneState } from '@/hooks/useDoneState';
+import { CalendarDots } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface ScheduleItemCardProps {
@@ -13,20 +15,44 @@ interface ScheduleItemCardProps {
   };
   kidId: string;
   date: string;
+  showDate?: boolean;  // Show the date on the card (for upcoming items)
+  readOnly?: boolean;  // Disable auto-check and hide toggle (for preview/upcoming items)
   onClick?: () => void;
 }
 
-export function ScheduleItemCard({ item, kidId, date, onClick }: ScheduleItemCardProps) {
+export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClick }: ScheduleItemCardProps) {
+  const { done, toggle: markDone } = useDoneState(kidId, date, item.id);
+  
+  // Format date for display
+  const formattedDate = showDate ? new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  }) : null;
+
+  // Auto-mark as done when card is clicked (not just the toggle button)
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't trigger if clicking buttons, links, inputs, or labels
+    if ((e.target as HTMLElement).closest('button, a, input, label')) return;
+    
+    // Auto-mark as done if not already done (skip if readOnly)
+    if (!done && !readOnly) {
+      markDone();
+    }
+    
+    // Open the modal
+    onClick?.();
+  };
+
   return (
     <div 
       id={`today-item-${item.id}`}
-      onClick={(e) => {
-        // Don't trigger if clicking buttons or links
-        if ((e.target as HTMLElement).closest('button, a, input, label')) return;
-        onClick?.();
-      }}
+      onClick={handleCardClick}
       className={cn(
-        "bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 transition-all",
+        "bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border transition-all",
+        done 
+          ? "border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10" 
+          : "border-gray-100 dark:border-gray-700",
         onClick && "cursor-pointer hover:shadow-md hover:border-[var(--ember-200)]"
       )}
     >
@@ -42,16 +68,29 @@ export function ScheduleItemCard({ item, kidId, date, onClick }: ScheduleItemCar
             {item.estimatedMinutes && (
               <span className="text-xs text-gray-400">~{item.estimatedMinutes} min</span>
             )}
+            {formattedDate && (
+              <span className="text-xs text-[var(--ember-500)] font-medium flex items-center gap-1">
+                <CalendarDots size={14} weight="duotone" />
+                {formattedDate}
+              </span>
+            )}
           </div>
-          <h3 className="font-semibold text-gray-800 dark:text-white text-lg mb-1">
+          <h3 className={cn(
+            "font-semibold text-lg mb-1",
+            done 
+              ? "text-green-700 dark:text-green-400" 
+              : "text-gray-800 dark:text-white"
+          )}>
             {item.title}
           </h3>
         </div>
-        <DoneToggle
-          kidId={kidId}
-          lessonId={item.id}
-          date={date}
-        />
+        {!readOnly && (
+          <DoneToggle
+            kidId={kidId}
+            lessonId={item.id}
+            date={date}
+          />
+        )}
       </div>
     </div>
   );

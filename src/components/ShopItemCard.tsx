@@ -72,7 +72,7 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
           </p>
           
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl">⭐</span>
+            <span className="text-2xl">🌙</span>
             <span className="text-lg font-bold text-[var(--ember-500)]">{item.cost}</span>
           </div>
         </div>
@@ -89,7 +89,7 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
                 : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'}
           `}
         >
-          {purchased ? 'Owned' : canAfford ? (isPurchasing ? 'Purchasing...' : 'Buy') : 'Not enough stars'}
+          {purchased ? 'Owned' : canAfford ? (isPurchasing ? 'Purchasing...' : 'Buy') : 'Not enough moons'}
         </button>
       </div>
     </div>

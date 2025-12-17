@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { X, Sparkle, PaperPlaneRight, ArrowCounterClockwise } from '@phosphor-icons/react';
+import { X, Sparkle, PaperPlaneRight, ArrowCounterClockwise, Moon } from '@phosphor-icons/react';
 import { useLuna } from './LunaContext';
 import { LunaSuggestionCard } from './LunaSuggestionCard';
 import { cn } from '@/lib/utils';
@@ -31,6 +31,7 @@ export function LunaPanel() {
 
   const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Focus input when panel opens
   useEffect(() => {
@@ -50,6 +51,13 @@ export function LunaPanel() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, closePanel]);
 
+  // Auto-scroll to bottom when messages change or loading state changes
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, isLoading]);
+
   // Handle form submit
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -64,9 +72,9 @@ export function LunaPanel() {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop - dimmed but not blurred for context visibility */}
       <div
-        className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm animate-in fade-in duration-200"
+        className="fixed inset-0 z-40 bg-black/40 animate-in fade-in duration-200"
         onClick={closePanel}
         aria-hidden="true"
       />
@@ -165,7 +173,7 @@ export function LunaPanel() {
               {msg.role === 'luna' && msg.response && (
                 <div className="space-y-4">
                   {/* Clarifying questions */}
-                  {msg.response.clarifying_questions.length > 0 && (
+                  {(msg.response.clarifying_questions?.length ?? 0) > 0 && (
                     <div className="space-y-3">
                       <p className="text-xs font-medium text-muted uppercase tracking-wider">
                         Questions to think about
@@ -188,19 +196,31 @@ export function LunaPanel() {
                   )}
 
                   {/* Suggestions */}
-                  {msg.response.suggestions.length > 0 && (
-                    <div className="space-y-3">
-                      <p className="text-xs font-medium text-muted uppercase tracking-wider">
-                        Some thoughts
-                      </p>
-                      {msg.response.suggestions.map((suggestion, i) => (
-                        <LunaSuggestionCard key={i} suggestion={suggestion} />
-                      ))}
-                    </div>
-                  )}
+                  {(msg.response.suggestions?.length ?? 0) > 0 && (() => {
+                    // Find the previous user message for context
+                    const previousUserMessage = messages
+                      .slice(0, index)
+                      .reverse()
+                      .find(m => m.role === 'user')?.content;
+                    
+                    return (
+                      <div className="space-y-3">
+                        <p className="text-xs font-medium text-muted uppercase tracking-wider">
+                          Some thoughts
+                        </p>
+                        {msg.response.suggestions.map((suggestion, i) => (
+                          <LunaSuggestionCard 
+                            key={i} 
+                            suggestion={suggestion} 
+                            userMessage={previousUserMessage}
+                          />
+                        ))}
+                      </div>
+                    );
+                  })()}
 
                   {/* Empty response */}
-                  {msg.response.clarifying_questions.length === 0 && msg.response.suggestions.length === 0 && (
+                  {(msg.response.clarifying_questions?.length ?? 0) === 0 && (msg.response.suggestions?.length ?? 0) === 0 && (
                     <p className="text-muted text-sm text-center py-4">
                       I don&apos;t have any suggestions right now. Could you tell me more?
                     </p>
@@ -210,11 +230,16 @@ export function LunaPanel() {
             </div>
           ))}
 
-          {/* Loading state */}
+          {/* Loading state - cute moon icon with dots */}
           {isLoading && (
-            <div className="flex items-center gap-3 p-4">
-              <div className="w-5 h-5 border-2 border-[var(--fabric-lilac)] border-t-transparent rounded-full animate-spin" />
-              <span className="text-muted text-sm">Thinking...</span>
+            <div className="flex items-center gap-3 p-4 bg-[var(--fabric-lilac)]/5 rounded-xl mx-2">
+              <Moon size={20} weight="duotone" className="text-[var(--fabric-lilac)] animate-pulse" />
+              <span className="text-[var(--fabric-lilac)] text-sm font-medium">Thinking</span>
+              <span className="flex gap-1">
+                <span className="w-1.5 h-1.5 bg-[var(--fabric-lilac)] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-1.5 h-1.5 bg-[var(--fabric-lilac)] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-1.5 h-1.5 bg-[var(--fabric-lilac)] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </span>
             </div>
           )}
 
@@ -226,6 +251,9 @@ export function LunaPanel() {
               <p className="text-xs mt-1">I&apos;m here to help you think it through.</p>
             </div>
           )}
+          
+          {/* Scroll anchor - always at bottom */}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Input */}

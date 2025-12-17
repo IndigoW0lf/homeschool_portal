@@ -38,17 +38,17 @@ export function Shop({ kidId, items }: ShopProps) {
 
   return (
     <div className="space-y-6">
-      {/* Stars Display */}
-      <div className="card p-6">
+      {/* Moons Display */}
+      <div className="bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 p-4 rounded-xl border border-yellow-200 dark:border-yellow-800/50 mb-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="heading-sm mb-1">
-              Your Stars
-            </h2>
-            <p className="text-3xl font-bold text-[var(--ember-500)] flex items-center gap-2">
-              <span>⭐</span>
+          <span className="text-lg font-semibold text-yellow-700 dark:text-yellow-400">
+              Your Moons
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
               {stars}
-            </p>
+            </span>
+            <span>🌙</span>
           </div>
         </div>
       </div>

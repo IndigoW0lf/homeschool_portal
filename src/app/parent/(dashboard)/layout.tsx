@@ -21,7 +21,10 @@ export default async function ParentLayout({
     <LunaProvider>
       <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
         <ParentNav user={user} />
-        {children}
+        {/* Main content with left margin to account for sidebar */}
+        <main className="ml-56 min-h-screen">
+          {children}
+        </main>
       </div>
       <LunaPanel />
     </LunaProvider>

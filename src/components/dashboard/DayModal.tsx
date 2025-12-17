@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { X, CheckCircle, Circle, Plus, Copy, Sparkle, Trash, DotsSixVertical, PencilSimple, BookOpen, Timer, Question, Tag, ListBullets, CaretLeft } from '@phosphor-icons/react';
+import { X, CheckCircle, Circle, Plus, Copy, Sparkle, Trash, DotsSixVertical, PencilSimple, BookOpen, Timer, Question, Tag, ListBullets, CaretLeft, LinkSimple, ArrowSquareOut } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { toggleScheduleItemComplete, deleteScheduleItemAction, assignItemToSchedule } from '@/lib/supabase/mutations';
@@ -368,13 +368,13 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       rel="noopener noreferrer" 
                                       className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
                                    >
-                                      <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-                                         <BookOpen size={16} weight="duotone" />
+                                      <div className="w-8 h-8 rounded-lg bg-[var(--fabric-mint)]/20 text-[var(--fabric-mint)] flex items-center justify-center">
+                                         <LinkSimple size={16} weight="bold" />
                                       </div>
                                       <span className="flex-1 font-medium text-blue-600 dark:text-blue-400 group-hover:underline">
                                          {link.label || link.url}
                                       </span>
-                                      <Sparkle size={16} className="text-gray-300" />
+                                      <ArrowSquareOut size={16} className="text-gray-400 group-hover:text-blue-500" />
                                    </a>
                                 ))}
                              </div>
