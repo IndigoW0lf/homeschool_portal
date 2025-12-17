@@ -19,10 +19,13 @@ export default function ParentLoginPage() {
     setMessage(null);
 
     try {
+      // Use environment variable for redirect URL, fallback to window.location.origin
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      
       const { error: authError } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/parent`,
+          emailRedirectTo: `${siteUrl}/auth/callback?next=/parent`,
         },
       });
 

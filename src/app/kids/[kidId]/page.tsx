@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation'; // Added redirect
+import { notFound } from 'next/navigation';
 import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
 import { formatDateString } from '@/lib/dateUtils';
@@ -9,7 +9,6 @@ import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { CaretLeft, CaretRight, CalendarBlank } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, isSameDay, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
-import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 
 interface KidPortalPageProps {
   params: Promise<{
@@ -29,7 +28,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
   }
 
   // Date Logic
-  const today = new Date(); // Real today
+  const today = new Date();
   let viewDate = today;
   
   if (date && typeof date === 'string') {
@@ -41,7 +40,6 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
      }
   }
 
-  // If viewDate is invalid or weird, fallback
   if (isNaN(viewDate.getTime())) {
      viewDate = today;
   }
@@ -51,66 +49,47 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
   const resources = await getResourcesFromDB();
   
-  // Fetch progress data from DB
   const progressData = await getStudentProgress(kidId);
   const unlocks = await getStudentUnlocks(kidId);
   
-  // Get week date range
-  const weekStart = startOfWeek(viewDate, { weekStartsOn: 1 }); // Monday
-  const weekEnd = endOfWeek(viewDate, { weekStartsOn: 1 }); // Sunday
+  const weekStart = startOfWeek(viewDate, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(viewDate, { weekStartsOn: 1 });
   const weekStartStr = format(weekStart, 'yyyy-MM-dd');
   const weekEndStr = format(weekEnd, 'yyyy-MM-dd');
   
-  // Fetch schedule items for this student within the week
   const weekScheduleItems = await getScheduleItemsForStudent(kidId, weekStartStr, weekEndStr);
-  
-  // Filter items for "today" (view date)
   const todayItems = weekScheduleItems.filter(item => item.date === viewDateString);
-  
-  // Filter items for upcoming days (after view date)
   const upcomingItems = weekScheduleItems.filter(item => item.date > viewDateString);
 
-  // Format view date
   const formattedDate = viewDate.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
   });
 
-  // Navigation Handlers
   const prevWeek = format(subWeeks(viewDate, 1), 'yyyy-MM-dd');
   const nextWeek = format(addWeeks(viewDate, 1), 'yyyy-MM-dd');
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20">
+    <div className="min-h-screen">
+      {/* Page Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <Link 
-                href="/"
-                className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-                aria-label="Back to Dashboard"
-              >
-                ← 
-              </Link>
-              <div>
-                {/* Custom hello SVG title */}
-                <Image 
-                  src={kid.name.toLowerCase() === 'stella' ? '/assets/titles/hello_stella.svg' : '/assets/titles/hello_atlas.svg'}
-                  alt={`Hello, ${kid.name}!`}
-                  width={200}
-                  height={50}
-                  className="h-10 w-auto mb-1 dark:brightness-110"
-                  priority
-                />
-                <p className="text-gray-500 dark:text-gray-400 opacity-80">{formattedDate}</p>
-              </div>
+            <div>
+              <Image 
+                src={kid.name.toLowerCase() === 'stella' ? '/assets/titles/hello_stella.svg' : '/assets/titles/hello_atlas.svg'}
+                alt={`Hello, ${kid.name}!`}
+                width={200}
+                height={50}
+                className="h-10 w-auto mb-1 dark:brightness-110"
+                priority
+              />
+              <p className="text-gray-500 dark:text-gray-400 opacity-80">{formattedDate}</p>
             </div>
 
             {/* Date Navigation */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-full p-1 self-end sm:self-center">
+            <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-full p-1">
                <Link href={`/kids/${kidId}?date=${prevWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
                   <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
                </Link>
@@ -122,13 +101,12 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                   <CaretRight size={24} weight="duotone" color="#b6e1d8" />
                </Link>
             </div>
-            <DarkModeToggle />
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         {/* Progress Card */}
         <section>
           {isViewToday && (
@@ -166,7 +144,6 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
           />
 
           <div className="space-y-4">
-            {/* Scheduled Items (including MiAcademy from database) */}
             {todayItems.length > 0 ? (
               <ScheduleItemsList
                 items={todayItems}
@@ -211,17 +188,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
           />
           <ResourceSection resources={resources} />
         </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="max-w-4xl mx-auto px-4 py-6 text-center">
-        <Link 
-          href="/"
-          className="text-sm text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-        >
-          ← Back to Dashboard
-        </Link>
-      </footer>
+      </div>
     </div>
   );
 }
