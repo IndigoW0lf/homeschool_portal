@@ -1,0 +1,178 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase/browser';
+import { toast } from 'sonner';
+import { User } from '@supabase/supabase-js';
+import { Envelope, Key, Warning, ArrowRight } from '@phosphor-icons/react';
+
+interface AccountSettingsProps {
+  user: User;
+}
+
+export function AccountSettings({ user }: AccountSettingsProps) {
+  const router = useRouter();
+  const [newEmail, setNewEmail] = useState('');
+  const [isChangingEmail, setIsChangingEmail] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmail || newEmail === user.email) return;
+
+    setIsChangingEmail(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: newEmail,
+      });
+
+      if (error) throw error;
+
+      toast.success('Check your new email for a confirmation link!');
+      setShowEmailForm(false);
+      setNewEmail('');
+    } catch (err: unknown) {
+      console.error(err);
+      const message = err instanceof Error ? err.message : 'Failed to update email';
+      toast.error(message);
+    } finally {
+      setIsChangingEmail(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!user.email) return;
+
+    setIsResettingPassword(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/parent/settings`,
+      });
+
+      if (error) throw error;
+
+      toast.success('Password reset link sent to your email!');
+    } catch (err: unknown) {
+      console.error(err);
+      const message = err instanceof Error ? err.message : 'Failed to send reset link';
+      toast.error(message);
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push('/parent/login');
+    router.refresh();
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* Current Email */}
+      <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3 mb-2">
+          <Envelope size={20} className="text-gray-500" />
+          <h3 className="font-medium text-gray-900 dark:text-white">
+            Email Address
+          </h3>
+        </div>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          {user.email}
+        </p>
+
+        {!showEmailForm ? (
+          <button
+            onClick={() => setShowEmailForm(true)}
+            className="text-sm text-[var(--ember-500)] hover:underline flex items-center gap-1"
+          >
+            Change email address
+            <ArrowRight size={14} />
+          </button>
+        ) : (
+          <form onSubmit={handleEmailChange} className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div>
+              <label htmlFor="newEmail" className="sr-only">New email</label>
+              <input
+                id="newEmail"
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="Enter new email address"
+                required
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={isChangingEmail || !newEmail}
+                className="px-4 py-2 bg-[var(--ember-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+              >
+                {isChangingEmail ? 'Sending...' : 'Send Confirmation'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEmailForm(false);
+                  setNewEmail('');
+                }}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm hover:underline"
+              >
+                Cancel
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              We'll send a confirmation link to your new email. You'll need to click it to complete the change.
+            </p>
+          </form>
+        )}
+      </div>
+
+      {/* Password */}
+      <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3 mb-2">
+          <Key size={20} className="text-gray-500" />
+          <h3 className="font-medium text-gray-900 dark:text-white">
+            Password
+          </h3>
+        </div>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+          Set or update your password for login
+        </p>
+        <button
+          onClick={handlePasswordReset}
+          disabled={isResettingPassword}
+          className="text-sm text-[var(--ember-500)] hover:underline flex items-center gap-1"
+        >
+          {isResettingPassword ? 'Sending...' : 'Send password reset link'}
+          <ArrowRight size={14} />
+        </button>
+      </div>
+
+      {/* Sign Out */}
+      <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3 mb-2">
+          <Warning size={20} className="text-gray-500" />
+          <h3 className="font-medium text-gray-900 dark:text-white">
+            Session
+          </h3>
+        </div>
+        <button
+          onClick={handleSignOut}
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          Sign out
+        </button>
+      </div>
+
+      {/* Account Info */}
+      <div className="text-sm text-gray-500 dark:text-gray-400">
+        <p>Account created: {new Date(user.created_at).toLocaleDateString()}</p>
+        <p>Last sign in: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'N/A'}</p>
+      </div>
+    </div>
+  );
+}

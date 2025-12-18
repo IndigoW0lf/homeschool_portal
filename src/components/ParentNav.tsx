@@ -13,7 +13,9 @@ import {
   Lightbulb, 
   FolderOpen, 
   SignOut,
-  Sparkle
+  Sparkle,
+  UserCircle,
+  Gear
 } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
@@ -27,6 +29,8 @@ const navItems = [
   { href: '/parent/assignments', label: 'Assignments', icon: ClipboardText },
   { href: '/parent/ideas', label: 'Ideas', icon: Lightbulb },
   { href: '/parent/resources', label: 'Resources', icon: FolderOpen },
+  { href: '/parent/profile', label: 'Profile', icon: UserCircle },
+  { href: '/parent/settings', label: 'Settings', icon: Gear },
 ];
 
 export function ParentNav({ }: ParentNavProps) {
@@ -90,3 +94,5 @@ export function ParentNav({ }: ParentNavProps) {
     </aside>
   );
 }
+
+

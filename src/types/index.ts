@@ -5,6 +5,17 @@ export interface Kid {
   id: string;
   name: string;
   gradeBand: string;
+  user_id?: string;
+}
+
+export interface Profile {
+  id: string;
+  display_name: string | null;
+  email: string | null;
+  avatar_url: string | null;
+  timezone: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Quote {

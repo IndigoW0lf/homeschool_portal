@@ -379,3 +379,5 @@ export async function getUpcomingHolidaysFromDB(limit = 5): Promise<import('@/ty
     endDate: row.end_date,
   }));
 }
+
+

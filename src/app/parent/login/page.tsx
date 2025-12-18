@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/browser';
 
 export default function ParentLoginPage() {
-  const router = useRouter(); // Import useRouter again
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
   const [authMethod, setAuthMethod] = useState<'magic_link' | 'password'>('magic_link');
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +69,28 @@ export default function ParentLoginPage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setMessage({ type: 'error', text: 'Please enter your email address first' });
+      return;
+    }
+    setIsResettingPassword(true);
+    setMessage(null);
+    try {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${siteUrl}/auth/callback?next=/parent/settings`,
+      });
+      if (error) throw error;
+      setMessage({ type: 'success', text: 'Password reset link sent! Check your email.' });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send reset link';
+      setMessage({ type: 'error', text: errorMessage });
+    } finally {
+      setIsResettingPassword(false);
     }
   };
 
@@ -179,6 +202,14 @@ export default function ParentLoginPage() {
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
                 placeholder="••••••••"
               />
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={isResettingPassword}
+                className="mt-2 text-sm text-[var(--ember-500)] hover:underline"
+              >
+                {isResettingPassword ? 'Sending...' : 'Forgot password?'}
+              </button>
             </div>
           )}
 
@@ -198,6 +229,8 @@ export default function ParentLoginPage() {
     </div>
   );
 }
+
+
 
 
 
