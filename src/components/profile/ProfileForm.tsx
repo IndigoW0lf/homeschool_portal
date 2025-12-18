@@ -17,21 +17,15 @@ const TIMEZONE_OPTIONS = [
   { value: 'Pacific/Honolulu', label: 'HST (Hawaii)' },
 ];
 
-// DiceBear avatar styles that match our whimsical vibe
-const AVATAR_STYLES = [
-  'lorelei',        // Soft illustrated faces
-  'adventurer',     // Fun adventure characters  
-  'fun-emoji',      // Cute emoji-style
-  'bottts',         // Friendly robots
-  'thumbs',         // Simple thumbs-up characters
-  'avataaars',      // Popular illustrated style
+// DiceBear avatar style categories
+const AVATAR_CATEGORIES = [
+  { id: 'modern', label: 'Clean & Modern', styles: ['micah', 'notionists', 'personas'] },
+  { id: 'illustrated', label: 'Illustrated', styles: ['lorelei', 'adventurer', 'avataaars'] },
+  { id: 'fun', label: 'Fun & Silly', styles: ['fun-emoji', 'bottts', 'thumbs'] },
 ];
 
-// Generate deterministic seeds for avatar variety
-const AVATAR_SEEDS = [
-  'luna', 'stella', 'atlas', 'nova', 'orion', 'sage',
-  'echo', 'river', 'sky', 'meadow', 'willow', 'ember'
-];
+// Varied seeds for different looks
+const AVATAR_SEEDS = ['luna', 'sage', 'morgan', 'alex', 'riley', 'quinn'];
 
 function getAvatarUrl(style: string, seed: string) {
   return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
@@ -45,9 +39,10 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   const router = useRouter();
   const [displayName, setDisplayName] = useState(profile.display_name || '');
   const [timezone, setTimezone] = useState(profile.timezone || 'America/Chicago');
-  const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || getAvatarUrl('lorelei', 'luna'));
+  const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || getAvatarUrl('micah', 'luna'));
   const [isLoading, setIsLoading] = useState(false);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [avatarCategory, setAvatarCategory] = useState('modern');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +69,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     }
   };
 
+  const currentCategory = AVATAR_CATEGORIES.find(c => c.id === avatarCategory) || AVATAR_CATEGORIES[0];
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Avatar Section */}
@@ -99,15 +96,32 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           Click to pick a new avatar
         </p>
 
-        {/* Avatar Picker Grid */}
+        {/* Avatar Picker with Tabs */}
         {showAvatarPicker && (
           <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl w-full animate-in fade-in slide-in-from-top-2 duration-200">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Pick one that feels like you ✨
-            </p>
-            <div className="grid grid-cols-6 gap-3">
-              {AVATAR_STYLES.slice(0, 3).flatMap(style => 
-                AVATAR_SEEDS.slice(0, 4).map(seed => {
+            {/* Category Tabs */}
+            <div className="flex gap-2 mb-4 border-b border-gray-200 dark:border-gray-700 pb-3">
+              {AVATAR_CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setAvatarCategory(cat.id)}
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
+                    avatarCategory === cat.id
+                      ? "bg-[var(--ember-500)] text-white"
+                      : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600"
+                  )}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Avatar Grid for Selected Category */}
+            <div className="grid grid-cols-6 gap-2">
+              {currentCategory.styles.flatMap((style) => 
+                AVATAR_SEEDS.map((seed) => {
                   const url = getAvatarUrl(style, seed);
                   const isSelected = avatarUrl === url;
                   return (
@@ -128,14 +142,14 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={url}
-                        alt={`${style} ${seed} avatar`}
-                        width={48}
-                        height={48}
+                        alt={`${style} avatar`}
+                        width={44}
+                        height={44}
                         className="rounded-lg"
                       />
                       {isSelected && (
                         <Check 
-                          size={16} 
+                          size={14} 
                           weight="bold" 
                           className="absolute -top-1 -right-1 text-white bg-[var(--ember-500)] rounded-full p-0.5"
                         />

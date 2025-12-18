@@ -15,8 +15,13 @@ export function AccountSettings({ user }: AccountSettingsProps) {
   const router = useRouter();
   const [newEmail, setNewEmail] = useState('');
   const [isChangingEmail, setIsChangingEmail] = useState(false);
-  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(false);
+  
+  // Password state
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,24 +47,37 @@ export function AccountSettings({ user }: AccountSettingsProps) {
     }
   };
 
-  const handlePasswordReset = async () => {
-    if (!user.email) return;
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
 
-    setIsResettingPassword(true);
+    setIsUpdatingPassword(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/parent/settings`,
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       });
 
       if (error) throw error;
 
-      toast.success('Password reset link sent to your email!');
+      toast.success('Password updated successfully! 🔐');
+      setShowPasswordForm(false);
+      setNewPassword('');
+      setConfirmPassword('');
     } catch (err: unknown) {
       console.error(err);
-      const message = err instanceof Error ? err.message : 'Failed to send reset link';
+      const message = err instanceof Error ? err.message : 'Failed to update password';
       toast.error(message);
     } finally {
-      setIsResettingPassword(false);
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -140,16 +158,74 @@ export function AccountSettings({ user }: AccountSettingsProps) {
           </h3>
         </div>
         <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-          Set or update your password for login
+          {showPasswordForm ? 'Enter your new password below' : 'Set or update your password for login'}
         </p>
-        <button
-          onClick={handlePasswordReset}
-          disabled={isResettingPassword}
-          className="text-sm text-[var(--ember-500)] hover:underline flex items-center gap-1"
-        >
-          {isResettingPassword ? 'Sending...' : 'Send password reset link'}
-          <ArrowRight size={14} />
-        </button>
+
+        {!showPasswordForm ? (
+          <button
+            onClick={() => setShowPasswordForm(true)}
+            className="text-sm text-[var(--ember-500)] hover:underline flex items-center gap-1"
+          >
+            Set new password
+            <ArrowRight size={14} />
+          </button>
+        ) : (
+          <form onSubmit={handlePasswordUpdate} className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div>
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                New Password
+              </label>
+              <input
+                id="newPassword"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                required
+                minLength={6}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Confirm Password
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                required
+                minLength={6}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={isUpdatingPassword || !newPassword || !confirmPassword}
+                className="px-4 py-2 bg-[var(--ember-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+              >
+                {isUpdatingPassword ? 'Updating...' : 'Update Password'}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPasswordForm(false);
+                  setNewPassword('');
+                  setConfirmPassword('');
+                }}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm hover:underline"
+              >
+                Cancel
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Password must be at least 6 characters
+            </p>
+          </form>
+        )}
       </div>
 
       {/* Sign Out */}
