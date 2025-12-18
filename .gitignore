@@ -49,3 +49,7 @@ next-env.d.ts
 
 # Internal product docs (not for version control)
 /docs/internal
+
+# Synty Assets - Licensed content, do NOT commit
+unity-room-decorator/Assets/_Project/synty_assets/
+unity-room-decorator/Assets/_Project/ThirdParty/Synty/
