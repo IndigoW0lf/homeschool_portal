@@ -94,3 +94,4 @@ export function MiAcademyCard({ kidId, date, url, onDoneChange }: MiAcademyCardP
 
 
 
+

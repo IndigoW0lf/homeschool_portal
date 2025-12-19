@@ -111,7 +111,7 @@ export function ProgressCard({
       {/* Shop Button - Teal/Green to match SHOP text color */}
       <Link
         href={`/kids/${kidId}/shop`}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-teal-100 to-emerald-100 hover:from-teal-200 hover:to-emerald-200 dark:from-teal-900/30 dark:to-emerald-900/30 dark:hover:from-teal-900/50 dark:hover:to-emerald-900/50 border-2 border-teal-300 dark:border-teal-700 rounded-xl font-medium text-sm transition-all shadow-sm hover:shadow-md"
+        className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-teal-100 to-emerald-100 hover:from-teal-200 hover:to-emerald-200 dark:from-teal-900/30 dark:to-emerald-900/30 dark:hover:from-teal-900/50 dark:hover:to-emerald-900/50 border-2 border-teal-300 dark:border-teal-700 rounded-xl font-medium text-sm transition-all shadow-sm hover:shadow-md"
       >
         <Image 
           src="/assets/titles/shop.svg" 
