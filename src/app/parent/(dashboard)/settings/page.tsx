@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/lib/supabase/server';
 import { AccountSettings } from '@/components/profile/AccountSettings';
+import { KidPinManager } from '@/components/profile/KidPinManager';
+import { getKidsFromDB } from '@/lib/supabase/data';
 
 export default async function SettingsPage() {
   const supabase = await createServerClient();
@@ -10,8 +12,11 @@ export default async function SettingsPage() {
     redirect('/parent/login');
   }
 
+  // Fetch kids for PIN management
+  const kids = await getKidsFromDB();
+
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Account Settings
@@ -21,8 +26,14 @@ export default async function SettingsPage() {
         </p>
       </div>
 
+      {/* Account Settings */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <AccountSettings user={user} />
+      </div>
+
+      {/* Kid PIN Management */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <KidPinManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
       </div>
     </div>
   );

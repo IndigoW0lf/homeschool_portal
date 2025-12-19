@@ -1,17 +1,32 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { SignupData } from '../SignupWizard';
 import { Sparkle, CheckSquare, Square } from '@phosphor-icons/react';
+import { Turnstile } from '@/components/ui/Turnstile';
 
 interface WelcomeStepProps {
   data: SignupData;
   updateData: (updates: Partial<SignupData>) => void;
   onNext: () => void;
+  setTurnstileToken: (token: string | null) => void;
 }
 
-export function WelcomeStep({ data, updateData, onNext }: WelcomeStepProps) {
-  const canContinue = data.termsAccepted;
+export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: WelcomeStepProps) {
+  const [isVerified, setIsVerified] = useState(false);
+  
+  const canContinue = data.termsAccepted && isVerified;
+
+  const handleVerify = (token: string) => {
+    setTurnstileToken(token);
+    setIsVerified(true);
+  };
+
+  const handleExpire = () => {
+    setTurnstileToken(null);
+    setIsVerified(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -76,6 +91,20 @@ export function WelcomeStep({ data, updateData, onNext }: WelcomeStepProps) {
             </Link>
           </span>
         </button>
+      </div>
+
+      {/* Turnstile CAPTCHA */}
+      <div className="py-2">
+        <Turnstile
+          onVerify={handleVerify}
+          onExpire={handleExpire}
+          theme="auto"
+        />
+        {!isVerified && (
+          <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+            Please complete the security check above
+          </p>
+        )}
       </div>
 
       {/* Action */}

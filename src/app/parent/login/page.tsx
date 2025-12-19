@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/browser';
+import { Turnstile } from '@/components/ui/Turnstile';
 
 export default function ParentLoginPage() {
   const router = useRouter();
@@ -13,6 +14,18 @@ export default function ParentLoginPage() {
   const [isMagicLinkSent, setIsMagicLinkSent] = useState(false);
   const [authMethod, setAuthMethod] = useState<'magic_link' | 'password'>('magic_link');
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [isVerified, setIsVerified] = useState(false);
+
+  const handleTurnstileVerify = (token: string) => {
+    setTurnstileToken(token);
+    setIsVerified(true);
+  };
+
+  const handleTurnstileExpire = () => {
+    setTurnstileToken(null);
+    setIsVerified(false);
+  };
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +33,21 @@ export default function ParentLoginPage() {
     setMessage(null);
 
     try {
+      // Verify turnstile token first
+      if (turnstileToken) {
+        const verifyRes = await fetch('/api/turnstile/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+        const verifyResult = await verifyRes.json();
+        if (!verifyResult.success) {
+          setMessage({ type: 'error', text: 'Security verification failed' });
+          setIsLoading(false);
+          return;
+        }
+      }
+
       // Use environment variable for redirect URL, fallback to window.location.origin
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
       
@@ -53,6 +81,21 @@ export default function ParentLoginPage() {
     setMessage(null);
 
     try {
+      // Verify turnstile token first
+      if (turnstileToken) {
+        const verifyRes = await fetch('/api/turnstile/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+        const verifyResult = await verifyRes.json();
+        if (!verifyResult.success) {
+          setMessage({ type: 'error', text: 'Security verification failed' });
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const { error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -212,10 +255,18 @@ export default function ParentLoginPage() {
               </button>
             </div>
           )}
+          {/* Turnstile CAPTCHA */}
+          <div className="py-2">
+            <Turnstile
+              onVerify={handleTurnstileVerify}
+              onExpire={handleTurnstileExpire}
+              theme="auto"
+            />
+          </div>
 
           <button
             type="submit"
-            disabled={isLoading || !email || (authMethod === 'password' && !password)}
+            disabled={isLoading || !email || (authMethod === 'password' && !password) || !isVerified}
             className="w-full py-2 px-4 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             {isLoading
@@ -229,6 +280,7 @@ export default function ParentLoginPage() {
     </div>
   );
 }
+
 
 
 

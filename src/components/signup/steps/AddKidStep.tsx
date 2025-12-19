@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { SignupData } from '../SignupWizard';
 import { supabase } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
-import { ArrowLeft, UserCircle, Check } from '@phosphor-icons/react';
+import { ArrowLeft, Check, Lock } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface AddKidStepProps {
@@ -36,11 +36,47 @@ function getAvatarUrl(style: string, seed: string) {
   return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
 }
 
+// Simple hash function for PINs (matches server-side)
+function simpleHash(pin: string): string {
+  let hash = 0;
+  const salt = 'lunara_pin_salt_2024';
+  const salted = salt + pin + salt;
+  for (let i = 0; i < salted.length; i++) {
+    const char = salted.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return hash.toString(16);
+}
+
 export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidStepProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const pinInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const canContinue = data.kidName && data.gradeBand;
+  // PIN must be exactly 4 digits
+  const isPinValid = /^\d{4}$/.test(data.kidPin);
+  const canContinue = data.kidName && data.gradeBand && isPinValid;
+
+  const handlePinChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return; // Only digits
+    
+    const currentPin = data.kidPin.split('');
+    currentPin[index] = value.slice(-1);
+    const newPin = currentPin.join('').slice(0, 4);
+    updateData({ kidPin: newPin });
+
+    // Auto-advance
+    if (value && index < 3) {
+      pinInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePinKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !data.kidPin[index] && index > 0) {
+      pinInputRefs.current[index - 1]?.focus();
+    }
+  };
 
   const handleAddKid = async () => {
     if (!canContinue || !userId) return;
@@ -49,13 +85,17 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
     setError(null);
 
     try {
-      // Create kid in database
+      // Hash the PIN before storing
+      const pinHash = simpleHash(data.kidPin);
+
+      // Create kid in database with PIN
       const { error: kidError } = await supabase
         .from('kids')
         .insert({
           name: data.kidName,
           grade_band: data.gradeBand,
           user_id: userId,
+          pin_hash: pinHash,
         });
 
       if (kidError) throw kidError;
@@ -122,6 +162,32 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
               >
                 {band.label}
               </button>
+            ))}
+          </div>
+        </div>
+
+        {/* PIN Entry */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <Lock size={16} className="inline mr-1" />
+            Secret PIN (4 digits) *
+          </label>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+            Your child will use this to access their portal. You can reset it anytime.
+          </p>
+          <div className="flex justify-center gap-3">
+            {[0, 1, 2, 3].map((index) => (
+              <input
+                key={index}
+                ref={el => { pinInputRefs.current[index] = el; }}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={data.kidPin[index] || ''}
+                onChange={(e) => handlePinChange(index, e.target.value)}
+                onKeyDown={(e) => handlePinKeyDown(index, e)}
+                className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[var(--lavender-500)] focus:ring-2 focus:ring-[var(--lavender-500)]/20 outline-none transition-all"
+              />
             ))}
           </div>
         </div>

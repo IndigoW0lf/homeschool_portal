@@ -25,6 +25,7 @@ export interface SignupData {
   kidName: string;
   gradeBand: string;
   kidAvatarUrl: string;
+  kidPin: string; // 4-digit PIN for kid access
   // Meta
   termsAccepted: boolean;
 }
@@ -36,6 +37,7 @@ const initialData: SignupData = {
   kidName: '',
   gradeBand: '3-5',
   kidAvatarUrl: '',
+  kidPin: '',
   termsAccepted: false,
 };
 
@@ -44,12 +46,32 @@ export function SignupWizard() {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<SignupData>(initialData);
   const [userId, setUserId] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const updateData = (updates: Partial<SignupData>) => {
     setData(prev => ({ ...prev, ...updates }));
   };
 
-  const nextStep = () => {
+  const nextStep = async () => {
+    // Verify turnstile token on first step transition
+    if (currentStep === 0 && turnstileToken) {
+      try {
+        const response = await fetch('/api/turnstile/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+        const result = await response.json();
+        if (!result.success) {
+          console.error('Turnstile verification failed');
+          return;
+        }
+      } catch (err) {
+        console.error('Turnstile verification error:', err);
+        return;
+      }
+    }
+    
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(prev => prev + 1);
     }
@@ -122,6 +144,7 @@ export function SignupWizard() {
             data={data}
             updateData={updateData}
             onNext={nextStep}
+            setTurnstileToken={setTurnstileToken}
           />
         )}
         {currentStep === 1 && (
