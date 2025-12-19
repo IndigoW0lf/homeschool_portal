@@ -2,12 +2,18 @@ import { createServerClient } from './server';
 import { Kid, Lesson, CalendarEntry, Resources } from '@/types';
 import { formatDateString } from '../dateUtils';
 
-// Kids
+// Kids - filtered by authenticated user
 export async function getKidsFromDB(): Promise<Kid[]> {
   const supabase = await createServerClient();
+  
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return []; // Not logged in, no kids
+  
   const { data, error } = await supabase
     .from('kids')
     .select('*')
+    .eq('user_id', user.id)
     .order('id');
 
   if (error) {
@@ -27,12 +33,18 @@ export async function getKidByIdFromDB(id: string): Promise<Kid | undefined> {
   return kids.find(k => k.id === id);
 }
 
-// Lessons
+// Lessons - filtered by authenticated user
 export async function getLessonsFromDB(): Promise<Lesson[]> {
   const supabase = await createServerClient();
+  
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return []; // Not logged in
+  
   const { data: lessons, error: lessonsError } = await supabase
     .from('lessons')
     .select('*')
+    .or(`user_id.eq.${user.id},user_id.is.null`) // Include legacy data with null user_id
     .order('created_at', { ascending: false });
 
   if (lessonsError) {
@@ -103,12 +115,18 @@ export async function getLessonsByIdsFromDB(ids: string[]): Promise<Lesson[]> {
   return lessons.filter(l => ids.includes(l.id));
 }
 
-// Assignments (Task Items)
+// Assignments (Task Items) - filtered by authenticated user
 export async function getAssignmentItemsFromDB(): Promise<import('@/types').AssignmentItemRow[]> {
   const supabase = await createServerClient();
+  
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return []; // Not logged in
+  
   const { data, error } = await supabase
     .from('assignment_items')
     .select('*')
+    .or(`user_id.eq.${user.id},user_id.is.null`) // Include legacy data
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -165,12 +183,18 @@ export async function getWeekEntriesFromDB(date: Date = new Date()): Promise<Cal
   });
 }
 
-// Resources
+// Resources - filtered by authenticated user
 export async function getResourcesFromDB(): Promise<Resources> {
   const supabase = await createServerClient();
+  
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { reading: [], logic: [], writing: [], projects: [] };
+  
   const { data, error } = await supabase
     .from('resources')
     .select('*')
+    .or(`user_id.eq.${user.id},user_id.is.null`) // Include legacy data
     .order('sort_order');
 
   if (error) {
@@ -208,9 +232,14 @@ export async function getMiAcademyResourceFromDB(): Promise<{ label: string; url
 
 
 
-// Schedule Items
+// Schedule Items - filtered by authenticated user
 export async function getScheduleItemsFromDB() {
   const supabase = await createServerClient();
+  
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+  
   const { data, error } = await supabase
     .from('schedule_items')
     .select(`
@@ -218,6 +247,7 @@ export async function getScheduleItemsFromDB() {
       lesson:lessons!schedule_items_lesson_id_fkey(id, title, type),
       assignment:assignment_items(id, title, type)
     `)
+    .or(`user_id.eq.${user.id},user_id.is.null`) // Include legacy data
     .order('date');
 
   if (error) {
