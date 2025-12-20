@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 interface TurnstileProps {
   onVerify: (token: string) => void;
@@ -40,8 +40,15 @@ export function Turnstile({
 }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const initializedRef = useRef(false);
+  const callbacksRef = useRef({ onVerify, onExpire, onError });
+  
+  // Keep callbacks ref updated without causing re-renders
+  callbacksRef.current = { onVerify, onExpire, onError };
 
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+
+  // Load script once
   useEffect(() => {
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (!siteKey) {
@@ -49,68 +56,79 @@ export function Turnstile({
       return;
     }
 
-    // Load the Turnstile script if not already loaded
-    const existingScript = document.querySelector('script[src*="turnstile"]');
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-      script.async = true;
-      script.defer = true;
-      script.onload = () => setIsLoaded(true);
-      document.head.appendChild(script);
-    } else {
-      // Script already exists, check if turnstile is ready
-      if (window.turnstile) {
-        setIsLoaded(true);
-      } else {
-        // Wait for it to load
-        const checkInterval = setInterval(() => {
-          if (window.turnstile) {
-            setIsLoaded(true);
-            clearInterval(checkInterval);
-          }
-        }, 100);
-        return () => clearInterval(checkInterval);
-      }
+    // Check if already loaded
+    if (window.turnstile) {
+      setScriptLoaded(true);
+      return;
     }
+
+    const existingScript = document.querySelector('script[src*="turnstile"]');
+    if (existingScript) {
+      // Wait for existing script to load
+      const checkInterval = setInterval(() => {
+        if (window.turnstile) {
+          setScriptLoaded(true);
+          clearInterval(checkInterval);
+        }
+      }, 100);
+      return () => clearInterval(checkInterval);
+    }
+
+    // Load new script
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      // Small delay to ensure turnstile is ready
+      setTimeout(() => setScriptLoaded(true), 100);
+    };
+    document.head.appendChild(script);
   }, []);
 
+  // Render widget once when script is loaded
   useEffect(() => {
-    if (!isLoaded || !containerRef.current || !window.turnstile) return;
+    if (!scriptLoaded || !containerRef.current || !window.turnstile || initializedRef.current) {
+      return;
+    }
 
     const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
     if (!siteKey) return;
 
-    // Render the widget
+    // Prevent double initialization
+    initializedRef.current = true;
+
     try {
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: siteKey,
-        callback: onVerify,
-        'expired-callback': onExpire,
-        'error-callback': onError,
+        callback: (token: string) => callbacksRef.current.onVerify(token),
+        'expired-callback': () => callbacksRef.current.onExpire?.(),
+        'error-callback': () => callbacksRef.current.onError?.(),
         theme,
         size,
       });
     } catch (e) {
       console.error('Failed to render Turnstile:', e);
+      initializedRef.current = false;
     }
 
-    // Cleanup
     return () => {
       if (widgetIdRef.current && window.turnstile) {
         try {
           window.turnstile.remove(widgetIdRef.current);
-        } catch (e) {
-          // Widget might already be removed
+        } catch {
+          // Ignore removal errors
         }
+        widgetIdRef.current = null;
+        initializedRef.current = false;
       }
     };
-  }, [isLoaded, onVerify, onExpire, onError, theme, size]);
+  }, [scriptLoaded, theme, size]);
 
   return (
     <div 
       ref={containerRef} 
-      className="flex justify-center"
+      className="flex justify-center min-h-[65px]"
       aria-label="Security verification"
     />
   );
@@ -121,20 +139,20 @@ export function useTurnstile() {
   const [token, setToken] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState(false);
 
-  const handleVerify = (newToken: string) => {
+  const handleVerify = useCallback((newToken: string) => {
     setToken(newToken);
     setIsVerified(true);
-  };
+  }, []);
 
-  const handleExpire = () => {
+  const handleExpire = useCallback(() => {
     setToken(null);
     setIsVerified(false);
-  };
+  }, []);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setToken(null);
     setIsVerified(false);
-  };
+  }, []);
 
   return {
     token,

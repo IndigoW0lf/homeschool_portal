@@ -79,7 +79,10 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
   };
 
   const handleAddKid = async () => {
-    if (!canContinue || !userId) return;
+    if (!canContinue || !userId) {
+      console.error('Cannot add kid:', { canContinue, userId, kidName: data.kidName, gradeBand: data.gradeBand, pinValid: isPinValid });
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -87,24 +90,36 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
     try {
       // Hash the PIN before storing
       const pinHash = simpleHash(data.kidPin);
+      
+      console.log('Attempting to add kid:', { 
+        name: data.kidName, 
+        grade_band: data.gradeBand, 
+        user_id: userId,
+        pin_hash: '***' 
+      });
 
       // Create kid in database with PIN
-      const { error: kidError } = await supabase
+      const { data: insertedKid, error: kidError } = await supabase
         .from('kids')
         .insert({
           name: data.kidName,
           grade_band: data.gradeBand,
           user_id: userId,
           pin_hash: pinHash,
-        });
+        })
+        .select();
 
-      if (kidError) throw kidError;
+      if (kidError) {
+        console.error('Supabase error:', kidError);
+        throw kidError;
+      }
 
+      console.log('Kid added successfully:', insertedKid);
       toast.success(`${data.kidName} added! 🌟`);
       onNext();
     } catch (err: unknown) {
-      console.error(err);
-      const message = err instanceof Error ? err.message : 'Failed to add kid';
+      console.error('Failed to add kid:', err);
+      const message = err instanceof Error ? err.message : String(err);
       setError(message);
       toast.error(message);
     } finally {
