@@ -65,10 +65,11 @@ export default function ParentLoginPage() {
         type: 'success',
         text: 'Magic link sent! Check your email to log in.',
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send magic link';
       setMessage({
         type: 'error',
-        text: err.message || 'Failed to send magic link',
+        text: errorMessage,
       });
     } finally {
       setIsLoading(false);
@@ -105,10 +106,11 @@ export default function ParentLoginPage() {
 
       router.push('/parent');
       router.refresh();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
       setMessage({
         type: 'error',
-        text: err.message || 'Login failed',
+        text: errorMessage,
       });
     } finally {
       setIsLoading(false);

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { MagicWand, ArrowClockwise, House } from '@phosphor-icons/react';
+import Link from 'next/link';
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -34,13 +35,13 @@ export default function Error({ error, reset }: ErrorProps) {
             Try Again
           </button>
           
-          <a
+          <Link
             href="/"
             className="btn-secondary"
           >
             <House size={18} weight="bold" />
             Home
-          </a>
+          </Link>
         </div>
         
         {process.env.NODE_ENV === 'development' && error.message && (

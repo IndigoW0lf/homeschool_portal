@@ -79,10 +79,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
   };
 
   const handleAddKid = async () => {
-    if (!canContinue || !userId) {
-      console.error('Cannot add kid:', { canContinue, userId, kidName: data.kidName, gradeBand: data.gradeBand, pinValid: isPinValid });
-      return;
-    }
+    if (!canContinue || !userId) return;
 
     setIsLoading(true);
     setError(null);
@@ -91,35 +88,33 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
       // Hash the PIN before storing
       const pinHash = simpleHash(data.kidPin);
       
-      console.log('Attempting to add kid:', { 
-        name: data.kidName, 
-        grade_band: data.gradeBand, 
-        user_id: userId,
-        pin_hash: '***' 
-      });
+      // Generate a unique ID for the kid
+      const kidId = crypto.randomUUID();
 
       // Create kid in database with PIN
-      const { data: insertedKid, error: kidError } = await supabase
+      const { error: kidError } = await supabase
         .from('kids')
         .insert({
+          id: kidId,
           name: data.kidName,
           grade_band: data.gradeBand,
           user_id: userId,
           pin_hash: pinHash,
-        })
-        .select();
+        });
 
-      if (kidError) {
-        console.error('Supabase error:', kidError);
-        throw kidError;
-      }
+      if (kidError) throw kidError;
 
-      console.log('Kid added successfully:', insertedKid);
       toast.success(`${data.kidName} added! 🌟`);
       onNext();
     } catch (err: unknown) {
       console.error('Failed to add kid:', err);
-      const message = err instanceof Error ? err.message : String(err);
+      // Handle various error types including Supabase errors
+      let message = 'Failed to add kid';
+      if (err instanceof Error) {
+        message = err.message;
+      } else if (typeof err === 'object' && err !== null && 'message' in err) {
+        message = String((err as { message: unknown }).message);
+      }
       setError(message);
       toast.error(message);
     } finally {
