@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SignupData } from '../SignupWizard';
 import { supabase } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
-import { EnvelopeSimple, Lock, User, ArrowLeft } from '@phosphor-icons/react';
+import { EnvelopeSimple, Lock, User, ArrowLeft, Eye, EyeSlash } from '@phosphor-icons/react';
 
 interface ParentAccountStepProps {
   data: SignupData;
@@ -17,6 +17,7 @@ interface ParentAccountStepProps {
 export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId }: ParentAccountStepProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const canContinue = data.email && data.password && data.password.length >= 6;
 
@@ -38,6 +39,18 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
 
       if (authError) throw authError;
       if (!authData.user) throw new Error('Failed to create account');
+
+      // Sign in immediately after signup to ensure session is active
+      // This is needed for RLS policies to work correctly
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (signInError) {
+        console.warn('Auto sign-in failed, but account was created:', signInError);
+        // Continue anyway - the account was created
+      }
 
       // Update profile with display name if provided
       if (data.displayName) {
@@ -120,14 +133,22 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
             <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={data.password}
               onChange={(e) => updateData({ password: e.target.value })}
               placeholder="At least 6 characters"
               required
               minLength={6}
-              className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-12 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
+            </button>
           </div>
           <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
         </div>

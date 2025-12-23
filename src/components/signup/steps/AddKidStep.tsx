@@ -22,18 +22,25 @@ const GRADE_BANDS = [
   { value: '9-12', label: '9-12 (Ages 14-18)' },
 ];
 
-// Simple avatar options using DiceBear
+// Cute avatar options using DiceBear
+// Styles: lorelei (illustrated), adventurer-neutral (cartoon), thumbs (hand emoji), fun-emoji (cute emojis)
 const AVATAR_OPTIONS = [
-  { style: 'adventurer', seed: 'luna' },
-  { style: 'adventurer', seed: 'atlas' },
+  { style: 'lorelei', seed: 'Luna' },
+  { style: 'lorelei', seed: 'Sunshine' },
+  { style: 'lorelei', seed: 'Starlight' },
+  { style: 'adventurer-neutral', seed: 'Buddy' },
+  { style: 'adventurer-neutral', seed: 'Happy' },
+  { style: 'adventurer-neutral', seed: 'Sparkle' },
+  { style: 'thumbs', seed: 'yay' },
+  { style: 'thumbs', seed: 'woohoo' },
+  { style: 'fun-emoji', seed: 'love' },
+  { style: 'fun-emoji', seed: 'rainbow' },
   { style: 'fun-emoji', seed: 'star' },
-  { style: 'fun-emoji', seed: 'happy' },
-  { style: 'bottts', seed: 'robot1' },
-  { style: 'bottts', seed: 'robot2' },
+  { style: 'fun-emoji', seed: 'sunshine' },
 ];
 
 function getAvatarUrl(style: string, seed: string) {
-  return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9`;
+  return `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 }
 
 // Simple hash function for PINs (matches server-side)
