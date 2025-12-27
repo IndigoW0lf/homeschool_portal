@@ -5,9 +5,16 @@ import { useRouter } from 'next/navigation';
 import { BookmarkSimple, X, Check, BookOpen, Pencil } from '@phosphor-icons/react';
 import { Suggestion } from '@/lib/ai/types';
 import { cn } from '@/lib/utils';
+import { VideoResourceList } from './VideoResourceCard';
+import type { VideoResource } from '@/lib/resources/types';
+
+// Extended suggestion type with optional enriched resources
+interface EnrichedSuggestion extends Suggestion {
+  videos?: VideoResource[];
+}
 
 interface LunaSuggestionCardProps {
-  suggestion: Suggestion;
+  suggestion: EnrichedSuggestion;
   userMessage?: string;  // The parent's original message for context
   onSave?: (suggestion: Suggestion) => Promise<void>;
 }
@@ -134,6 +141,13 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
             </li>
           ))}
         </ul>
+      )}
+
+      {/* Video Resources - shown when enriched with YouTube videos */}
+      {suggestion.videos && suggestion.videos.length > 0 && (
+        <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+          <VideoResourceList videos={suggestion.videos} compact />
+        </div>
       )}
 
       {/* Create Actions - shown when form data is available */}

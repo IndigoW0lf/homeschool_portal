@@ -4,6 +4,7 @@ import { ThinkRequestSchema, ThinkResponse, THINK_RESPONSE_JSON_SCHEMA } from '@
 import { LUNA_SYSTEM_PROMPT, CONTEXT_PROMPTS } from '@/lib/ai/system-prompt';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/ai/rate-limiter';
 import { loadContextForRequest } from '@/lib/ai/context-loader';
+import { enrichWithResources, isYouTubeConfigured } from '@/lib/ai/resource-enricher';
 
 /**
  * POST /api/ai/think
@@ -155,8 +156,28 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Return structured response
-    return NextResponse.json(parsedResponse, { headers: rateLimitHeaders });
+    // Enrich with educational resources (videos, worksheets) if configured
+    let enrichedResponse = parsedResponse;
+    if (isYouTubeConfigured()) {
+      try {
+        enrichedResponse = await enrichWithResources(parsedResponse, {
+          includeVideos: true,
+          includeWorksheets: false, // Enable when Tavily is configured
+          // TODO: Extract grade level from child profile context
+        });
+        console.log('[AI Think] Resources enriched:', {
+          suggestionsWithVideos: enrichedResponse.suggestions.filter(
+            (s) => 'videos' in s && Array.isArray(s.videos) && s.videos.length > 0
+          ).length,
+        });
+      } catch (error) {
+        console.error('[AI Think] Resource enrichment failed:', error);
+        // Continue with unenriched response
+      }
+    }
+    
+    // Return structured response (enriched if YouTube is configured)
+    return NextResponse.json(enrichedResponse, { headers: rateLimitHeaders });
     
   } catch (error) {
     console.error('AI think endpoint error:', error);
