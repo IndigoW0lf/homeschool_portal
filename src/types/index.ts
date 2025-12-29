@@ -6,6 +6,25 @@ export interface Kid {
   name: string;
   gradeBand: string;
   user_id?: string;
+  // Profile fields
+  avatarUrl?: string;
+  favoriteColor?: string;
+  birthday?: string; // YYYY-MM-DD
+  bio?: string;
+  // Fun favorites (MiAcademy-style)
+  favoriteShows?: string;
+  favoriteMusic?: string;
+  favoriteFoods?: string;
+  favoriteSubjects?: string;
+  hobbies?: string;
+  nickname?: string;
+  // Avatar builder state
+  avatarState?: {
+    base: string;
+    outfit: string;
+    accessory?: string;
+    colors: Record<string, string>;
+  };
 }
 
 export interface Profile {
@@ -173,6 +192,26 @@ export interface KidRow {
   id: string;
   name: string;
   grade_band: string | null;
+  user_id: string | null;
+  pin_hash: string | null;
+  avatar_url: string | null;
+  favorite_color: string | null;
+  birthday: string | null;
+  bio: string | null;
+  // Fun favorites
+  favorite_shows: string | null;
+  favorite_music: string | null;
+  favorite_foods: string | null;
+  favorite_subjects: string | null;
+  hobbies: string | null;
+  nickname: string | null;
+  // Avatar state
+  avatar_state: {
+    base: string;
+    outfit: string;
+    accessory?: string;
+    colors: Record<string, string>;
+  } | null;
 }
 
 export interface LessonRow {

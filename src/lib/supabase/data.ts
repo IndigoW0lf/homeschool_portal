@@ -25,6 +25,17 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     id: row.id,
     name: row.name,
     gradeBand: row.grade_band || '',
+    avatarUrl: row.avatar_url || undefined,
+    favoriteColor: row.favorite_color || undefined,
+    birthday: row.birthday || undefined,
+    bio: row.bio || undefined,
+    favoriteShows: row.favorite_shows || undefined,
+    favoriteMusic: row.favorite_music || undefined,
+    favoriteFoods: row.favorite_foods || undefined,
+    favoriteSubjects: row.favorite_subjects || undefined,
+    hobbies: row.hobbies || undefined,
+    nickname: row.nickname || undefined,
+    avatarState: row.avatar_state || undefined,
   }));
 }
 

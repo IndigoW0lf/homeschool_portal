@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { House, GameController, UserCircle, Moon, Palette, List, X } from '@phosphor-icons/react';
+import { House, GameController, UserCircle, Moon, Palette, List, X, Star } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { useState } from 'react';
 
@@ -29,6 +29,13 @@ export function KidsNav({ kidId, kidName }: KidsNavProps) {
       label: 'Play', 
       icon: GameController,
       color: 'var(--ember-500)',
+      exactMatch: false
+    },
+    { 
+      href: `/kids/${kidId}/profile`, 
+      label: 'Me', 
+      icon: Star,
+      color: '#f59e0b', // amber
       exactMatch: false
     },
     { 

@@ -104,6 +104,13 @@ export function KidManager({ kids: initialKids }: KidManagerProps) {
 
     setIsAdding(true);
     try {
+      // Get current user for RLS
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        toast.error('Please sign in to add a kid');
+        return;
+      }
+
       const pinHash = simpleHash(newKidPin);
       const kidId = crypto.randomUUID();
 
@@ -114,6 +121,7 @@ export function KidManager({ kids: initialKids }: KidManagerProps) {
           name: newKidName.trim(),
           grade_band: newKidGrade,
           pin_hash: pinHash,
+          user_id: user.id, // Required for RLS!
         });
 
       if (error) throw error;
