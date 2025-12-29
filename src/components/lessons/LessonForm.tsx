@@ -1,19 +1,20 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import { BookOpen, Clock, Link, Plus, X, EyeClosed, Question, Stack, Users } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
-import { TAGS, STUDENTS as MOCK_STUDENTS } from '@/lib/mock-data';
+import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
 import { Kid } from '@/types';
 import { createLesson, updateLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
+import { supabase } from '@/lib/supabase/browser';
 
 const LESSON_TYPES = [
   'Math', 'Science', 'History', 'Language Arts', 'Art', 'Music', 'PE', 'Life Skills', 'Coding'
@@ -47,13 +48,52 @@ interface LessonFormProps {
   students?: Kid[];
 }
 
-export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [] }: LessonFormProps = {}) {
+export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: propStudents = [] }: LessonFormProps = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isFromLuna = searchParams.get('from') === 'luna';
   const resolver = zodResolver(lessonSchema) as unknown as Resolver<LessonFormData>;
+  
+  // State for fetched students
+  const [fetchedStudents, setFetchedStudents] = useState<Kid[]>([]);
+  const [studentsLoading, setStudentsLoading] = useState(propStudents.length === 0);
+  
+  // Fetch students from database if not passed as prop
+  useEffect(() => {
+    async function fetchKids() {
+      if (propStudents.length > 0) {
+        setFetchedStudents(propStudents);
+        setStudentsLoading(false);
+        return;
+      }
+      
+      try {
+        const { data, error } = await supabase
+          .from('kids')
+          .select('id, name, grade_band')
+          .order('name');
+        
+        if (error) throw error;
+        
+        // Map DB fields to Kid type
+        const mappedKids: Kid[] = (data || []).map(k => ({
+          id: k.id,
+          name: k.name,
+          gradeBand: k.grade_band || '3-5',
+        }));
+        
+        setFetchedStudents(mappedKids);
+      } catch (err) {
+        console.error('Failed to fetch kids:', err);
+      } finally {
+        setStudentsLoading(false);
+      }
+    }
+    
+    fetchKids();
+  }, [propStudents]);
 
-  const effectiveStudents = students.length > 0 ? students : MOCK_STUDENTS;
+  const effectiveStudents = fetchedStudents;
 
   const defaultValues: LessonFormData = {
     title: '',
@@ -65,7 +105,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
     estimatedMinutes: 20,
     materials: '',
     parentNotes: '',
-    assignTo: initialData?.assignTo || effectiveStudents.map(s => s.id),
+    assignTo: initialData?.assignTo || [],
     description: '',
     date: new Date().toISOString().split('T')[0],
     ...initialData,
@@ -228,20 +268,28 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students = [
                   <label className="input-label mb-2 flex items-center gap-1">
                      <Users size={14} className="text-[var(--ember-500)]" /> Assign To
                   </label>
-                  <div className="flex gap-2">
-                     {effectiveStudents.map(student => (
-                        <div 
-                           key={student.id} 
-                           onClick={() => toggleStudent(student.id)}
-                           className={cn(
-                              "cursor-pointer p-1 rounded-full border-2 transition-all",
-                              assignedTo?.includes(student.id) ? "border-[var(--ember-500)] ring-2 ring-[var(--ember-500)]/20" : "border-transparent opacity-50 hover:opacity-100"
-                           )}
-                        >
-                           <StudentAvatar name={student.name} className="w-10 h-10" />
-                        </div>
-                     ))}
-                  </div>
+                  {studentsLoading ? (
+                    <div className="text-sm text-muted">Loading kids...</div>
+                  ) : effectiveStudents.length === 0 ? (
+                    <div className="text-sm text-muted italic">
+                      No kids added yet. <a href="/parent/settings" className="text-[var(--ember-500)] underline">Add a kid</a> to assign lessons.
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                       {effectiveStudents.map(student => (
+                          <div 
+                             key={student.id} 
+                             onClick={() => toggleStudent(student.id)}
+                             className={cn(
+                                "cursor-pointer p-1 rounded-full border-2 transition-all",
+                                assignedTo?.includes(student.id) ? "border-[var(--ember-500)] ring-2 ring-[var(--ember-500)]/20" : "border-transparent opacity-50 hover:opacity-100"
+                             )}
+                          >
+                             <StudentAvatar name={student.name} className="w-10 h-10" />
+                          </div>
+                       ))}
+                    </div>
+                  )}
                </div>
             </div>
 

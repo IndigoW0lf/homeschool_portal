@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getKidById, getShopItems } from '@/lib/content';
+import { getKidByIdFromDB } from '@/lib/supabase/data';
+import { getShopItems } from '@/lib/content';
 import { Shop } from '@/components/Shop';
 import { Moon } from '@phosphor-icons/react/dist/ssr';
 
@@ -11,7 +12,7 @@ interface ShopPageProps {
 
 export default async function ShopPage({ params }: ShopPageProps) {
   const { kidId } = await params;
-  const kid = getKidById(kidId);
+  const kid = await getKidByIdFromDB(kidId);
   
   if (!kid) {
     notFound();

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getKidById, getStudioTemplates } from '@/lib/content';
+import { getKidByIdFromDB } from '@/lib/supabase/data';
+import { getStudioTemplates } from '@/lib/content';
 import { StudioEditor } from '@/components/StudioEditor';
 import { Palette } from '@phosphor-icons/react/dist/ssr';
 
@@ -11,7 +12,7 @@ interface StudioPageProps {
 
 export default async function StudioPage({ params }: StudioPageProps) {
   const { kidId } = await params;
-  const kid = getKidById(kidId);
+  const kid = await getKidByIdFromDB(kidId);
   
   if (!kid) {
     notFound();

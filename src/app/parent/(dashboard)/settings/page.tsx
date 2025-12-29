@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { createServerClient } from '@/lib/supabase/server';
 import { AccountSettings } from '@/components/profile/AccountSettings';
 import { KidPinManager } from '@/components/profile/KidPinManager';
+import { KidManager } from '@/components/profile/KidManager';
+import { PasswordResetToast } from '@/components/profile/PasswordResetToast';
 import { getKidsFromDB } from '@/lib/supabase/data';
 
 export default async function SettingsPage() {
@@ -12,11 +14,13 @@ export default async function SettingsPage() {
     redirect('/parent/login');
   }
 
-  // Fetch kids for PIN management
+  // Fetch kids for management
   const kids = await getKidsFromDB();
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      {/* Password reset toast trigger */}
+      <PasswordResetToast />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Account Settings
@@ -29,6 +33,11 @@ export default async function SettingsPage() {
       {/* Account Settings */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <AccountSettings user={user} />
+      </div>
+
+      {/* Kid Management - Add/Edit/Delete */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <KidManager kids={kids.map(k => ({ id: k.id, name: k.name, gradeBand: k.gradeBand }))} />
       </div>
 
       {/* Kid PIN Management */}

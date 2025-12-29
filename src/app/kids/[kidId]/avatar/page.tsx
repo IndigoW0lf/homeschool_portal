@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getKidById, getAvatarAssets } from '@/lib/content';
+import { getKidByIdFromDB } from '@/lib/supabase/data';
+import { getAvatarAssets } from '@/lib/content';
 import { AvatarBuilder } from '@/components/AvatarBuilder';
 import { UserCircle } from '@phosphor-icons/react/dist/ssr';
 
@@ -11,7 +12,7 @@ interface AvatarPageProps {
 
 export default async function AvatarPage({ params }: AvatarPageProps) {
   const { kidId } = await params;
-  const kid = getKidById(kidId);
+  const kid = await getKidByIdFromDB(kidId);
   
   if (!kid) {
     notFound();

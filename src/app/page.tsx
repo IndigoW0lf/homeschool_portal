@@ -242,10 +242,10 @@ export default async function Dashboard() {
                 No kids added yet! Add your first child to get started.
               </p>
               <Link 
-                href="/parent"
+                href="/parent/settings"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 transition-all"
               >
-                Go to Dashboard
+                Add Your First Kid
               </Link>
             </div>
           )}
