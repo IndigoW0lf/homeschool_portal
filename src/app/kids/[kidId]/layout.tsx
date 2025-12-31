@@ -40,7 +40,12 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <KidsNav kidId={kidId} kidName={kid.name} />
+      <KidsNav 
+        kidId={kidId} 
+        kidName={kid.name}
+        kidNickname={kid.nickname}
+        kidFavoriteColor={kid.favoriteColor}
+      />
       
       {/* Main content area - offset for sidebar on desktop, header on mobile */}
       <main className="pt-16 lg:pt-0 lg:pl-20">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MusicNote, FilmStrip, Pizza, GraduationCap, GameController, User, PencilSimple } from '@phosphor-icons/react';
+import { Heart, MusicNote, FilmStrip, Pizza, GraduationCap, GameController, User, PencilSimple, X, Check } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/browser';
 import { useRouter } from 'next/navigation';
@@ -74,8 +74,23 @@ const PROFILE_FIELDS: ProfileField[] = [
   },
 ];
 
+// Check if profile has any data filled in
+function hasProfileData(data: Kid): boolean {
+  return !!(
+    data.nickname || 
+    data.bio || 
+    data.favoriteShows || 
+    data.favoriteMusic || 
+    data.favoriteFoods || 
+    data.favoriteSubjects || 
+    data.hobbies || 
+    data.favoriteColor
+  );
+}
+
 export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) {
   const router = useRouter();
+  const [isEditing, setIsEditing] = useState(!hasProfileData(initialData));
   const [formData, setFormData] = useState<Partial<Kid>>({
     nickname: initialData.nickname || '',
     bio: initialData.bio || '',
@@ -84,7 +99,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
     favoriteFoods: initialData.favoriteFoods || '',
     favoriteSubjects: initialData.favoriteSubjects || '',
     hobbies: initialData.hobbies || '',
-    favoriteColor: initialData.favoriteColor || '',
+    favoriteColor: initialData.favoriteColor || '#ff6b6b',
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -112,6 +127,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       if (error) throw error;
 
       toast.success('Profile saved! ⭐');
+      setIsEditing(false);
       router.refresh();
     } catch (err) {
       console.error('Failed to save profile:', err);
@@ -121,34 +137,151 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
     }
   };
 
+  const handleCancel = () => {
+    // Reset to initial data
+    setFormData({
+      nickname: initialData.nickname || '',
+      bio: initialData.bio || '',
+      favoriteShows: initialData.favoriteShows || '',
+      favoriteMusic: initialData.favoriteMusic || '',
+      favoriteFoods: initialData.favoriteFoods || '',
+      favoriteSubjects: initialData.favoriteSubjects || '',
+      hobbies: initialData.hobbies || '',
+      favoriteColor: initialData.favoriteColor || '#ff6b6b',
+    });
+    setIsEditing(false);
+  };
+
+  // ============ VIEW MODE ============
+  if (!isEditing) {
+    return (
+      <div className="space-y-6">
+        {/* Header with Edit Button */}
+        <div className="flex justify-end">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[var(--ember-500)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)]/20 rounded-lg transition-colors"
+          >
+            <PencilSimple size={18} />
+            Edit Profile
+          </button>
+        </div>
+
+        {/* Favorite Color Display */}
+        {formData.favoriteColor && (
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div 
+              className="w-12 h-12 rounded-full shadow-inner border-2 border-white dark:border-gray-600"
+              style={{ backgroundColor: formData.favoriteColor }}
+            />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                <Heart size={14} weight="fill" className="text-red-400" /> My Favorite Color
+              </p>
+              <p className="font-medium text-gray-900 dark:text-white capitalize">
+                {formData.favoriteColor.startsWith('#') ? formData.favoriteColor : formData.favoriteColor}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Profile Fields Display */}
+        <div className="grid gap-4">
+          {PROFILE_FIELDS.map(field => {
+            const value = formData[field.key] as string;
+            if (!value) return null;
+            
+            return (
+              <div 
+                key={field.key}
+                className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
+              >
+                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-1">
+                  {field.icon}
+                  {field.label}
+                </div>
+                <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                  {value}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Empty state */}
+        {!hasProfileData(initialData) && (
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <p>No profile info yet!</p>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="mt-2 text-[var(--ember-500)] hover:underline"
+            >
+              Fill out your profile
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ============ EDIT MODE ============
   return (
     <div className="space-y-6">
-      {/* Favorite Color Picker */}
+      {/* Edit Mode Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-gray-900 dark:text-white">
+          ✏️ Editing Profile
+        </h3>
+        <button
+          onClick={handleCancel}
+          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+        >
+          <X size={16} />
+          Cancel
+        </button>
+      </div>
+
+      {/* Color Picker */}
       <div className="p-4 rounded-xl bg-gradient-to-r from-red-100 via-yellow-100 via-green-100 via-blue-100 to-purple-100 dark:from-red-900/20 dark:via-yellow-900/20 dark:via-green-900/20 dark:via-blue-900/20 dark:to-purple-900/20 border border-gray-200 dark:border-gray-700">
         <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           <Heart size={20} className="text-red-500" weight="fill" />
-          What's your favorite color?
+          Pick your favorite color!
         </label>
-        <div className="flex flex-wrap gap-2">
-          {['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'teal'].map(color => (
-            <button
-              key={color}
-              onClick={() => handleChange('favoriteColor', color)}
-              className={`w-10 h-10 rounded-full transition-all ${
-                formData.favoriteColor === color 
-                  ? 'ring-4 ring-offset-2 ring-gray-400 scale-110' 
-                  : 'hover:scale-105'
-              }`}
+        <div className="flex items-center gap-4">
+          {/* Color Picker Input */}
+          <div className="relative">
+            <input
+              type="color"
+              value={formData.favoriteColor || '#ff6b6b'}
+              onChange={(e) => handleChange('favoriteColor', e.target.value)}
+              className="w-16 h-16 rounded-full cursor-pointer border-4 border-white dark:border-gray-700 shadow-lg"
               style={{ 
-                backgroundColor: color === 'teal' ? '#14b8a6' : color,
+                appearance: 'none',
+                WebkitAppearance: 'none',
               }}
-              title={color}
             />
-          ))}
+          </div>
+          {/* Quick presets */}
+          <div className="flex flex-wrap gap-2">
+            {['#ff6b6b', '#ffa94d', '#ffd43b', '#69db7c', '#4dabf7', '#9775fa', '#f783ac', '#20c997', '#343a40'].map(color => (
+              <button
+                key={color}
+                onClick={() => handleChange('favoriteColor', color)}
+                className={`w-8 h-8 rounded-full transition-all border-2 ${
+                  formData.favoriteColor === color 
+                    ? 'border-gray-800 dark:border-white scale-110' 
+                    : 'border-white dark:border-gray-600 hover:scale-105'
+                }`}
+                style={{ backgroundColor: color }}
+                title={color}
+              />
+            ))}
+          </div>
         </div>
+        <p className="text-xs text-gray-500 mt-2">Click the big circle to pick any color you want!</p>
       </div>
 
-      {/* Profile Fields */}
+      {/* Profile Fields Form */}
       <div className="grid gap-4">
         {PROFILE_FIELDS.map(field => (
           <div 
@@ -181,13 +314,20 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       </div>
 
       {/* Save Button */}
-      <div className="flex justify-center pt-4">
+      <div className="flex justify-center gap-3 pt-4">
+        <button
+          onClick={handleCancel}
+          className="px-6 py-3 text-gray-600 dark:text-gray-400 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        >
+          Cancel
+        </button>
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-8 py-3 bg-[var(--ember-500)] text-white rounded-xl font-semibold text-lg shadow-lg hover:bg-[var(--ember-600)] disabled:opacity-50 transition-all hover:-translate-y-0.5"
+          className="flex items-center gap-2 px-8 py-3 bg-[var(--ember-500)] text-white rounded-xl font-semibold text-lg shadow-lg hover:bg-[var(--ember-600)] disabled:opacity-50 transition-all hover:-translate-y-0.5"
         >
-          {isSaving ? 'Saving...' : 'Save My Profile ⭐'}
+          <Check size={20} weight="bold" />
+          {isSaving ? 'Saving...' : 'Save Profile'}
         </button>
       </div>
     </div>

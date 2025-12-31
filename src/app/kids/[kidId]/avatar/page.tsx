@@ -19,6 +19,7 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
   }
 
   const assets = getAvatarAssets();
+  const displayName = kid.nickname || kid.name;
 
   return (
     <div className="min-h-screen">
@@ -34,7 +35,7 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
                 Avatar Builder
               </h1>
               <p className="text-gray-500 dark:text-gray-400">
-                Customize your avatar, {kid.name}!
+                Customize your avatar, {displayName}!
               </p>
             </div>
           </div>
@@ -43,7 +44,11 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
-        <AvatarBuilder kidId={kidId} assets={assets} />
+        <AvatarBuilder 
+          kidId={kidId} 
+          assets={assets} 
+          initialAvatarState={kid.avatarState}
+        />
       </div>
     </div>
   );

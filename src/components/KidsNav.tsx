@@ -10,11 +10,16 @@ import { useState } from 'react';
 interface KidsNavProps {
   kidId: string;
   kidName: string;
+  kidNickname?: string;
+  kidFavoriteColor?: string;
 }
 
-export function KidsNav({ kidId, kidName }: KidsNavProps) {
+export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor }: KidsNavProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Use nickname if available, otherwise formal name
+  const displayName = kidNickname || kidName;
 
   const tabs = [
     { 
@@ -143,7 +148,10 @@ export function KidsNav({ kidId, kidName }: KidsNavProps) {
       </header>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-20">
+      <aside 
+        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-20"
+        style={kidFavoriteColor ? { '--kid-accent': kidFavoriteColor } as React.CSSProperties : undefined}
+      >
         {/* Top Section */}
         <div className="flex flex-col items-center py-6 border-b border-gray-100 dark:border-gray-700">
           <Link 
@@ -153,11 +161,18 @@ export function KidsNav({ kidId, kidName }: KidsNavProps) {
           >
             ←
           </Link>
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--sage-400)] to-[var(--lavender-400)] flex items-center justify-center text-white font-bold text-lg">
-            {kidName.charAt(0).toUpperCase()}
+          <div 
+            className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+            style={{ 
+              background: kidFavoriteColor 
+                ? `linear-gradient(135deg, ${kidFavoriteColor}, ${kidFavoriteColor}88)`
+                : 'linear-gradient(135deg, var(--sage-400), var(--lavender-400))'
+            }}
+          >
+            {displayName.charAt(0).toUpperCase()}
           </div>
           <span className="mt-2 text-xs font-medium text-gray-600 dark:text-gray-400 text-center">
-            {kidName}
+            {displayName}
           </span>
         </div>
 

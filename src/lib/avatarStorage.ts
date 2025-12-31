@@ -1,7 +1,9 @@
 // localStorage utilities for avatar state persistence
 // Key format: `homeschool_avatar::${kidId}`
+// Now also syncs to database for cross-device persistence
 
 import { AvatarState } from '@/types';
+import { supabase } from '@/lib/supabase/browser';
 
 const STORAGE_PREFIX = 'homeschool_avatar';
 
@@ -38,9 +40,17 @@ export function getDefaultAvatarState(): AvatarState {
   };
 }
 
+/**
+ * Save avatar state to database for cross-device persistence
+ */
+export async function saveAvatarToDatabase(kidId: string, state: AvatarState): Promise<void> {
+  const { error } = await supabase
+    .from('kids')
+    .update({ avatar_state: state })
+    .eq('id', kidId);
 
-
-
-
-
-
+  if (error) {
+    console.error('Error saving avatar to database:', error);
+    throw error;
+  }
+}

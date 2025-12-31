@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { AvatarAssets, AvatarAsset, AvatarState } from '@/types';
-import { getAvatarState, setAvatarState, getDefaultAvatarState } from '@/lib/avatarStorage';
+import { getAvatarState, setAvatarState, getDefaultAvatarState, saveAvatarToDatabase } from '@/lib/avatarStorage';
+import { toast } from 'sonner';
 
 interface AvatarBuilderProps {
   kidId: string;
   assets: AvatarAssets;
+  initialAvatarState?: AvatarState | null;
 }
 
 const COLOR_PALETTE = [
@@ -20,17 +22,22 @@ const COLOR_PALETTE = [
   { value: '--sky-400', label: 'Sky', color: '#7FB3D5' },
 ];
 
-export function AvatarBuilder({ kidId, assets }: AvatarBuilderProps) {
+export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuilderProps) {
   const [state, setState] = useState<AvatarState>(getDefaultAvatarState());
   const [activeTab, setActiveTab] = useState<'base' | 'outfit' | 'accessory'>('outfit');
-  const [saved, setSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const savedState = getAvatarState(kidId);
-    if (savedState) {
-      setState(savedState);
+    // Priority: initialAvatarState (from DB) > localStorage > default
+    if (initialAvatarState) {
+      setState(initialAvatarState);
+    } else {
+      const savedState = getAvatarState(kidId);
+      if (savedState) {
+        setState(savedState);
+      }
     }
-  }, [kidId]);
+  }, [kidId, initialAvatarState]);
 
   const handleAssetSelect = (asset: AvatarAsset) => {
     if (asset.category === 'base') {
@@ -52,10 +59,22 @@ export function AvatarBuilder({ kidId, assets }: AvatarBuilderProps) {
     }));
   };
 
-  const handleSave = () => {
-    setAvatarState(kidId, state);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Save to localStorage for quick access
+      setAvatarState(kidId, state);
+      
+      // Save to database for persistence
+      await saveAvatarToDatabase(kidId, state);
+      
+      toast.success('Avatar saved! ✨');
+    } catch (err) {
+      console.error('Failed to save avatar:', err);
+      toast.error('Could not save avatar. Try again?');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const getCurrentAsset = (category: 'base' | 'outfit' | 'accessory'): AvatarAsset | undefined => {
@@ -217,12 +236,12 @@ export function AvatarBuilder({ kidId, assets }: AvatarBuilderProps) {
         {/* Save Button */}
         <button
           onClick={handleSave}
+          disabled={isSaving}
           className="w-full py-3 px-6 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
         >
-          {saved ? '✓ Saved!' : 'Save Avatar'}
+          {isSaving ? 'Saving...' : 'Save Avatar'}
         </button>
       </div>
     </div>
   );
 }
-
