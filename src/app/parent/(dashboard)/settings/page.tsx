@@ -4,6 +4,7 @@ import { AccountSettings } from '@/components/profile/AccountSettings';
 import { KidPinManager } from '@/components/profile/KidPinManager';
 import { KidManager } from '@/components/profile/KidManager';
 import { MoonManager } from '@/components/profile/MoonManager';
+import { RewardManager } from '@/components/profile/RewardManager';
 import { PasswordResetToast } from '@/components/profile/PasswordResetToast';
 import { getKidsFromDB } from '@/lib/supabase/data';
 
@@ -44,6 +45,11 @@ export default async function SettingsPage() {
       {/* Moon Rewards Management */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <MoonManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
+      </div>
+
+      {/* Shop Rewards Management */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <RewardManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
       </div>
 
       {/* Kid PIN Management */}
