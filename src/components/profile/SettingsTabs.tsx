@@ -11,6 +11,7 @@ import { MoonManager } from '@/components/profile/MoonManager';
 import { RewardManager } from '@/components/profile/RewardManager';
 import { RedemptionManager } from '@/components/profile/RedemptionManager';
 import { JournalSettings } from '@/components/profile/JournalSettings';
+import { FamilyManager } from '@/components/profile/FamilyManager';
 
 interface SettingsTabsProps {
   user: User;
@@ -39,8 +40,8 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
               onClick={() => setActiveTab(tab.id)}
               className={cn(
                 "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
-                isActive 
-                  ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm" 
+                isActive
+                  ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
                   : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               )}
             >
@@ -53,7 +54,7 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
 
       {/* Tab Content */}
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-        
+
         {/* General Tab */}
         {activeTab === 'general' && (
           <div className="space-y-6">
@@ -66,10 +67,15 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
         {/* Kids & Access Tab */}
         {activeTab === 'kids' && (
           <div className="space-y-6">
+            {/* Family Members Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+              <FamilyManager />
+            </div>
+
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
               <KidManager kids={kids.map(k => ({ id: k.id, name: k.name, gradeBand: k.gradeBand }))} />
             </div>
-            
+
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
               <KidPinManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
             </div>

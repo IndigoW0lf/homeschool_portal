@@ -42,6 +42,41 @@ export interface Profile {
   updated_at: string;
 }
 
+export interface Family {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+}
+
+export interface FamilyMember {
+  id: string;
+  family_id: string;
+  user_id: string;
+  role: 'admin' | 'member';
+  invited_by?: string;
+  invited_at: string;
+  accepted_at?: string;
+  created_at: string;
+  // Joined fields
+  profile?: Profile;
+}
+
+export interface FamilyInvite {
+  id: string;
+  family_id: string;
+  email: string;
+  role: 'admin' | 'member';
+  invited_by?: string;
+  created_at: string;
+  expires_at: string;
+  accepted_at?: string;
+  // Joined fields
+  inviter_profile?: Profile;
+  family?: Family;
+}
+
 export interface Quote {
   text: string;
   author: string;
@@ -326,12 +361,12 @@ export interface ResourceRow {
   sort_order: number;
   pinned_today: boolean;
   // New fields
-  type: string; 
+  type: string;
   description: string | null;
   tags: string[];
   is_pinned: boolean;
   show_on_today: boolean;
-  frequency: string | null; 
+  frequency: string | null;
   access_instructions: string | null;
   duration: number | null;
   purpose_prompt: string | null;
