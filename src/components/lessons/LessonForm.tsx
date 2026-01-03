@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -57,20 +57,23 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
   // State for fetched students
   const [fetchedStudents, setFetchedStudents] = useState<Kid[]>([]);
   const [studentsLoading, setStudentsLoading] = useState(propStudents.length === 0);
+  // Track if we've already fetched to prevent infinite loops
+  const hasFetchedRef = React.useRef(false);
   
   // Fetch students from database if not passed as prop
   useEffect(() => {
-    // Only fetch if no students were passed as props AND we haven't fetched yet
+    // Only fetch if no students were passed as props
     if (propStudents.length > 0) {
       setFetchedStudents(propStudents);
       setStudentsLoading(false);
       return;
     }
     
-    // Prevent re-fetching if we already have students
-    if (fetchedStudents.length > 0) {
+    // Prevent re-fetching using ref (survives re-renders)
+    if (hasFetchedRef.current) {
       return;
     }
+    hasFetchedRef.current = true;
     
     async function fetchKids() {
       try {
