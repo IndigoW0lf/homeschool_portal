@@ -163,7 +163,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
 
       {/* Desktop Sidebar */}
       <aside 
-        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col border-r border-gray-200 dark:border-gray-700 z-20 transition-colors bg-white dark:bg-gray-800 relative"
+        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col border-r border-gray-200 dark:border-gray-700 z-20 transition-colors bg-white dark:bg-gray-800"
         style={{ 
           '--kid-accent': kidFavoriteColor,
         } as React.CSSProperties}
