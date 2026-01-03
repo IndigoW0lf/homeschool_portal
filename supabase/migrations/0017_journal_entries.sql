@@ -13,8 +13,10 @@ CREATE TABLE IF NOT EXISTS journal_entries (
   date DATE NOT NULL,
   prompt TEXT NOT NULL,
   response TEXT,           -- null if skipped
+  mood TEXT,               -- happy, calm, thoughtful, frustrated, sad
   skipped BOOLEAN DEFAULT false,
   prompt_type TEXT,        -- category of the prompt
+  tags TEXT[],             -- AI-detected themes
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   

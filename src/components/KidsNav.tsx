@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { House, GameController, UserCircle, Moon, Palette, List, X, Star } from '@phosphor-icons/react';
+import { House, GameController, UserCircle, Moon, Palette, List, X, Star, NotePencil } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
@@ -55,6 +55,13 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
       label: 'Avatar', 
       icon: UserCircle,
       color: 'var(--lavender-500)',
+      exactMatch: false
+    },
+    { 
+      href: `/kids/${kidId}/journal`, 
+      label: 'Journal', 
+      icon: NotePencil,
+      color: '#ec4899', // pink
       exactMatch: false
     },
     { 

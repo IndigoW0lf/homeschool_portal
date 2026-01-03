@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { NotePencil, ArrowsClockwise, FastForward, Check, Sparkle } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { addStars, markAwarded, isAwarded } from '@/lib/progressState';
-import { formatDateString } from '@/lib/dateUtils';
 
 interface JournalCardProps {
   kidId: string;
@@ -12,6 +11,17 @@ interface JournalCardProps {
   journalEnabled?: boolean;
   journalAllowSkip?: boolean;
 }
+
+// Mood options
+const MOODS = [
+  { emoji: '😊', label: 'Happy', value: 'happy' },
+  { emoji: '😌', label: 'Calm', value: 'calm' },
+  { emoji: '🤔', label: 'Thoughtful', value: 'thoughtful' },
+  { emoji: '😤', label: 'Frustrated', value: 'frustrated' },
+  { emoji: '😢', label: 'Sad', value: 'sad' },
+] as const;
+
+type MoodValue = typeof MOODS[number]['value'];
 
 export function JournalCard({ 
   kidId, 
@@ -21,6 +31,7 @@ export function JournalCard({
 }: JournalCardProps) {
   const [prompt, setPrompt] = useState<string | null>(null);
   const [response, setResponse] = useState('');
+  const [mood, setMood] = useState<MoodValue | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -57,7 +68,6 @@ export function JournalCard({
       }
     } catch (error) {
       console.error('Failed to fetch journal prompt:', error);
-      // Fallback to a simple prompt
       setPrompt("What's something interesting you learned today?");
     } finally {
       setIsLoading(false);
@@ -76,7 +86,6 @@ export function JournalCard({
     
     setIsSaving(true);
     try {
-      // Save journal entry to database
       const res = await fetch('/api/journal/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,15 +94,15 @@ export function JournalCard({
           date,
           prompt,
           response: response.trim(),
+          mood,
           skipped: false,
         }),
       });
 
       if (res.ok) {
-        // Award moons and mark complete
         const journalItemId = `journal-${date}`;
         if (!isAwarded(kidId, date, journalItemId)) {
-          addStars(kidId, 2); // Journals earn 2 moons
+          addStars(kidId, 2);
           markAwarded(kidId, date, journalItemId);
         }
         setIsComplete(true);
@@ -110,7 +119,6 @@ export function JournalCard({
     
     setIsSaving(true);
     try {
-      // Save skipped entry
       await fetch('/api/journal/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -119,11 +127,11 @@ export function JournalCard({
           date,
           prompt,
           response: null,
+          mood: null,
           skipped: true,
         }),
       });
 
-      // Mark complete but no moons
       const journalItemId = `journal-${date}`;
       markAwarded(kidId, date, journalItemId);
       setIsComplete(true);
@@ -189,6 +197,28 @@ export function JournalCard({
             <p className="text-gray-800 dark:text-gray-200 font-medium">
               {prompt}
             </p>
+          </div>
+
+          {/* Mood Picker */}
+          <div className="mb-4">
+            <p className="text-sm text-purple-600 dark:text-purple-400 mb-2">How are you feeling?</p>
+            <div className="flex gap-2 justify-center">
+              {MOODS.map(({ emoji, label, value }) => (
+                <button
+                  key={value}
+                  onClick={() => setMood(value)}
+                  className={cn(
+                    "text-2xl p-2 rounded-lg transition-all",
+                    mood === value
+                      ? "bg-purple-200 dark:bg-purple-800 scale-110 ring-2 ring-purple-400"
+                      : "hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:scale-105"
+                  )}
+                  title={label}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Response textarea */}

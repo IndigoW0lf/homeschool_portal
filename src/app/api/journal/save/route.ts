@@ -1,19 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { detectJournalTags } from '@/lib/ai/journal-tags';
 
 /**
  * POST /api/journal/save
  * 
- * Saves a journal entry for a kid.
+ * Saves a journal entry for a kid with AI auto-tagging.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { kidId, date, prompt, response, skipped } = body as {
+    const { kidId, date, prompt, response, mood, skipped } = body as {
       kidId: string;
       date: string;
       prompt: string;
       response: string | null;
+      mood: string | null;
       skipped: boolean;
     };
 
@@ -22,6 +24,12 @@ export async function POST(request: NextRequest) {
         { error: 'kidId, date, and prompt are required' },
         { status: 400 }
       );
+    }
+
+    // Detect tags if not skipped and there's a response
+    let tags: string[] = [];
+    if (!skipped && response) {
+      tags = await detectJournalTags(response);
     }
 
     const supabase = await createServerClient();
@@ -34,6 +42,8 @@ export async function POST(request: NextRequest) {
         date,
         prompt,
         response: skipped ? null : response,
+        mood: skipped ? null : mood,
+        tags: tags.length > 0 ? tags : null,
         skipped,
         updated_at: new Date().toISOString(),
       }, {
@@ -53,6 +63,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ 
       success: true, 
       entry: data,
+      tags,
     });
 
   } catch (error) {
