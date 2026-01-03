@@ -8,6 +8,7 @@ import { ProgressCardWrapper, TodayCompletionSummary, ResourceSection } from '@/
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { JournalCard } from '@/components/kids/JournalCard';
+import { StreakDisplay } from '@/components/kids/StreakDisplay';
 import { CaretLeft, CaretRight, CalendarBlank, Scroll } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, isSameDay, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 
@@ -115,6 +116,14 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
+        
+        {/* Streak Display */}
+        {isViewToday && (
+          <section>
+            <StreakDisplay kidId={kidId} />
+          </section>
+        )}
+
         {/* Progress Card */}
         <section>
           {isViewToday && (
