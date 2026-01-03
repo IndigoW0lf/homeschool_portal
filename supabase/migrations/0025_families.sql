@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS family_members (
 
 ALTER TABLE family_members ENABLE ROW LEVEL SECURITY;
 
-CREATE INDEX idx_family_members_family_id ON family_members(family_id);
-CREATE INDEX idx_family_members_user_id ON family_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_family_members_family_id ON family_members(family_id);
+CREATE INDEX IF NOT EXISTS idx_family_members_user_id ON family_members(user_id);
 
 -- ============================================================================
 -- STEP 3: Create family_invites table for pending invitations
@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS family_invites (
 
 ALTER TABLE family_invites ENABLE ROW LEVEL SECURITY;
 
-CREATE INDEX idx_family_invites_email ON family_invites(email);
-CREATE INDEX idx_family_invites_family_id ON family_invites(family_id);
+CREATE INDEX IF NOT EXISTS idx_family_invites_email ON family_invites(email);
+CREATE INDEX IF NOT EXISTS idx_family_invites_family_id ON family_invites(family_id);
 
 -- ============================================================================
 -- STEP 4: Add family_id to kids table
