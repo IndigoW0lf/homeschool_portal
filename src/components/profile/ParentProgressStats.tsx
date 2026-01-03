@@ -1,0 +1,135 @@
+'use client';
+
+import { ChartBar, Trophy, Fire, BookOpen } from '@phosphor-icons/react';
+
+interface ParentProgressStatsProps {
+  kidId: string;
+  kidName: string;
+  stats: {
+    totalStars: number;
+    currentStreak: number;
+    bestStreak: number;
+    subjectCounts: Record<string, number>;
+    weeklyActivity: { date: string; count: number }[];
+  };
+}
+
+export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
+  const { totalStars, currentStreak, bestStreak, subjectCounts, weeklyActivity } = stats;
+
+  const maxActivity = Math.max(...weeklyActivity.map(d => d.count), 5); // Minimum scale of 5
+
+  const subjects = [
+    { key: 'reading', label: 'Reading', color: 'bg-amber-400', icon: '📚' },
+    { key: 'writing', label: 'Writing', color: 'bg-blue-400', icon: '✏️' },
+    { key: 'math', label: 'Math & Logic', color: 'bg-purple-400', icon: '🧮' },
+    { key: 'science', label: 'Science', color: 'bg-green-400', icon: '🌱' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Top Stats Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {/* Streak */}
+        <div className="col-span-2 sm:col-span-2 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 p-4 rounded-xl border border-orange-100 dark:border-orange-800/50 flex items-center gap-4">
+          <div className="p-3 bg-orange-100 dark:bg-orange-800/30 rounded-full text-orange-600 dark:text-orange-400">
+            <Fire size={24} weight="fill" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Current Streak</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">{currentStreak} Days</span>
+              {bestStreak > currentStreak && (
+                <span className="text-xs text-gray-500">Best: {bestStreak}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Total Moons */}
+        <div className="col-span-2 sm:col-span-2 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/50 flex items-center gap-4">
+          <div className="p-3 bg-indigo-100 dark:bg-indigo-800/30 rounded-full text-indigo-600 dark:text-indigo-400">
+            <Trophy size={24} weight="fill" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Total Moons</p>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalStars}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Weekly Activity Chart */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+          <div className="flex items-center gap-2 mb-6">
+            <ChartBar size={20} className="text-gray-400" />
+            <h4 className="font-semibold text-gray-900 dark:text-white">Activity (Last 7 Days)</h4>
+          </div>
+          
+          <div className="flex items-end justify-between h-40 gap-2">
+            {weeklyActivity.map((day) => {
+              const heightPercent = (day.count / maxActivity) * 100;
+              const dateObj = new Date(day.date);
+              // Adding timezone offset to prevent day shift if needed, but for simple display:
+              const dayLabel = dateObj.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
+              
+              return (
+                <div key={day.date} className="flex flex-col items-center gap-2 flex-1 group">
+                  <div className="relative w-full flex justify-center items-end h-full">
+                    {/* Tooltip */}
+                    <div className="absolute -top-8 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
+                      {day.count} items
+                    </div>
+                    {/* Bar */}
+                    <div 
+                      className="w-full max-w-[30px] bg-indigo-500 dark:bg-indigo-400 rounded-t-sm hover:opacity-80 transition-all"
+                      style={{ height: `${Math.max(heightPercent, 4)}%` }} // Min height so 0 isn't invisible
+                    />
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">{dayLabel}</span>
+                </div>
+              );
+            })}
+            {weeklyActivity.length === 0 && (
+              <div className="w-full text-center text-gray-400 text-sm">No activity recorded yet</div>
+            )}
+          </div>
+        </div>
+
+        {/* Subject Breakdown */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+          <div className="flex items-center gap-2 mb-6">
+            <BookOpen size={20} className="text-gray-400" />
+            <h4 className="font-semibold text-gray-900 dark:text-white">Subject Mastery</h4>
+          </div>
+          
+          <div className="space-y-4">
+            {subjects.map(subject => {
+              const count = subjectCounts[subject.key] || 0;
+              // Simple progress to first badge (25) or next milestone
+              const nextMilestone = count < 25 ? 25 : count < 50 ? 50 : count < 75 ? 75 : 100;
+              const progress = Math.min((count / nextMilestone) * 100, 100);
+              
+              return (
+                <div key={subject.key}>
+                  <div className="flex justify-between text-sm mb-1">
+                    <span className="font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                      <span>{subject.icon}</span> {subject.label}
+                    </span>
+                    <span className="text-gray-500">{count} / {nextMilestone}</span>
+                  </div>
+                  <div className="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full ${subject.color} transition-all duration-500`}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

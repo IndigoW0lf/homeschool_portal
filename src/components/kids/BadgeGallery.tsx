@@ -67,6 +67,7 @@ interface BadgeSectionProps {
   earnedIds: string[];
 }
 
+
 function BadgeSection({ title, badges, earnedIds }: BadgeSectionProps) {
   return (
     <div className="mb-6">
@@ -85,8 +86,7 @@ function BadgeSection({ title, badges, earnedIds }: BadgeSectionProps) {
     </div>
   );
 }
-
-export function BadgeGallery({ kidId }: BadgeGalleryProps) {
+export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & { subjectCounts?: Record<string, number> }) {
   const [earnedBadgeIds, setEarnedBadgeIds] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
 
@@ -94,20 +94,43 @@ export function BadgeGallery({ kidId }: BadgeGalleryProps) {
     setIsClient(true);
     
     const updateBadges = () => {
-      // Get current unlocks from localStorage
+      // Get current unlocks from localStorage/db
       const unlocks = getUnlocks(kidId);
       const moons = getStars(kidId);
       
-      // Combine: unlocks from shop + milestone badges from moons
+      // Start with earned list
       const earned = [...unlocks];
       
-      // Add milestone badges based on moons
+      // 1. Milestone Badges (Moons)
       if (moons >= 10) earned.push('star-collector');
       if (moons >= 50) earned.push('moonlit');
       if (moons >= 100) earned.push('lunar-legend');
-      
-      // "First Sprout" badge if they've earned any moons at all
-      if (moons > 0) earned.push('first-sprout');
+      if (moons > 0 || unlocks.length > 0) earned.push('first-sprout');
+
+      // 2. Subject Badges (Counts)
+      // Reading
+      if ((subjectCounts['reading'] || 0) >= 25) earned.push('reading-25');
+      if ((subjectCounts['reading'] || 0) >= 50) earned.push('reading-50');
+      if ((subjectCounts['reading'] || 0) >= 75) earned.push('reading-75');
+      if ((subjectCounts['reading'] || 0) >= 100) earned.push('reading-100');
+
+      // Writing
+      if ((subjectCounts['writing'] || 0) >= 25) earned.push('writing-25');
+      if ((subjectCounts['writing'] || 0) >= 50) earned.push('writing-50');
+      if ((subjectCounts['writing'] || 0) >= 75) earned.push('writing-75');
+      if ((subjectCounts['writing'] || 0) >= 100) earned.push('writing-100');
+
+      // Math
+      if ((subjectCounts['math'] || 0) >= 25) earned.push('math-25');
+      if ((subjectCounts['math'] || 0) >= 50) earned.push('math-50');
+      if ((subjectCounts['math'] || 0) >= 75) earned.push('math-75');
+      if ((subjectCounts['math'] || 0) >= 100) earned.push('math-100');
+
+      // Science
+      if ((subjectCounts['science'] || 0) >= 25) earned.push('science-25');
+      if ((subjectCounts['science'] || 0) >= 50) earned.push('science-50');
+      if ((subjectCounts['science'] || 0) >= 75) earned.push('science-75');
+      if ((subjectCounts['science'] || 0) >= 100) earned.push('science-100');
       
       setEarnedBadgeIds([...new Set(earned)]); // Dedupe
     };
@@ -118,7 +141,7 @@ export function BadgeGallery({ kidId }: BadgeGalleryProps) {
     const interval = setInterval(updateBadges, 2000);
     
     return () => clearInterval(interval);
-  }, [kidId]);
+  }, [kidId, subjectCounts]);
 
   const earnedCount = earnedBadgeIds.length;
   const totalCount = ALL_BADGES.length;

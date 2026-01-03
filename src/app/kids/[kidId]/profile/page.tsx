@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB } from '@/lib/supabase/data';
+import { getKidSubjectCounts } from '@/lib/supabase/progressData';
 import { KidProfileEditor } from '@/components/kids/KidProfileEditor';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { BadgeGallery } from '@/components/kids/BadgeGallery';
@@ -15,6 +16,7 @@ interface ProfilePageProps {
 export default async function KidProfilePage({ params }: ProfilePageProps) {
   const { kidId } = await params;
   const kid = await getKidByIdFromDB(kidId);
+  const subjectCounts = await getKidSubjectCounts(kidId);
   
   if (!kid) {
     notFound();
@@ -77,9 +79,8 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
         </div>
 
         {/* Badge Gallery */}
-        <BadgeGallery kidId={kidId} />
+        <BadgeGallery kidId={kidId} subjectCounts={subjectCounts} />
       </div>
     </div>
   );
 }
-

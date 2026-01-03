@@ -103,3 +103,48 @@ export async function getAwardsForDate(kidId: string, date: string): Promise<Pro
     awardedAt: row.awarded_at
   }));
 }
+
+// Get subject counts for badges
+export async function getKidSubjectCounts(kidId: string): Promise<Record<string, number>> {
+  const supabase = await createServerClient();
+  
+  const { data, error } = await supabase.rpc('get_kid_subject_counts', {
+    p_kid_id: kidId
+  });
+  
+  if (error) {
+    console.error('Error fetching subject counts:', error);
+    return {};
+  }
+  
+  // Normalize data into record
+  const counts: Record<string, number> = {};
+  (data || []).forEach((row: { subject: string; count: number }) => {
+    // Map fuzzy matches to standard keys
+    let key = row.subject;
+    if (key.includes('read')) key = 'reading';
+    else if (key.includes('write')) key = 'writing';
+    else if (key.includes('math') || key.includes('logic')) key = 'math';
+    else if (key.includes('sci')) key = 'science';
+    
+    counts[key] = (counts[key] || 0) + Number(row.count);
+  });
+  
+  return counts;
+}
+
+// Get weekly activity for stats
+export async function getWeeklyActivity(kidId: string): Promise<{ date: string; count: number }[]> {
+  const supabase = await createServerClient();
+  
+  const { data, error } = await supabase.rpc('get_weekly_activity', {
+    p_kid_id: kidId
+  });
+  
+  if (error) {
+    console.error('Error fetching weekly activity:', error);
+    return [];
+  }
+  
+  return data || [];
+}
