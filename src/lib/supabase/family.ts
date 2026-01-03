@@ -125,7 +125,7 @@ export async function inviteFamilyMember(
     familyId: string,
     email: string,
     role: 'admin' | 'member' = 'member'
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; inviteCode?: string }> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { success: false, error: 'Not authenticated' };
 
@@ -156,21 +156,52 @@ export async function inviteFamilyMember(
         return { success: false, error: 'An invitation has already been sent to this email' };
     }
 
-    const { error } = await supabase
+    // Create the invite
+    const { data: invite, error } = await supabase
         .from('family_invites')
         .insert({
             family_id: familyId,
             email,
             role,
             invited_by: user.id,
-        });
+        })
+        .select('invite_code')
+        .single();
 
-    if (error) {
+    if (error || !invite) {
         console.error('Error inviting family member:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: error?.message || 'Failed to create invite' };
     }
 
-    return { success: true };
+    // Get family name and inviter name for the email
+    const [{ data: family }, { data: profile }] = await Promise.all([
+        supabase.from('families').select('name').eq('id', familyId).single(),
+        supabase.from('profiles').select('display_name').eq('id', user.id).single(),
+    ]);
+
+    // Call Edge Function to send email
+    try {
+        const { data, error: fnError } = await supabase.functions.invoke('send-family-invite', {
+            body: {
+                email,
+                familyName: family?.name || 'My Family',
+                inviterName: profile?.display_name || 'A family member',
+                inviteCode: invite.invite_code,
+            },
+        });
+
+        if (fnError) {
+            console.error('Error calling send-family-invite function:', fnError);
+            // Don't fail the invite - it's still created, just email didn't send
+        } else if (data?.error) {
+            console.error('Edge function error:', data.error);
+        }
+    } catch (err) {
+        console.error('Failed to send invite email:', err);
+        // Invite is still valid, just couldn't send email
+    }
+
+    return { success: true, inviteCode: invite.invite_code };
 }
 
 /**
