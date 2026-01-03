@@ -1,8 +1,10 @@
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB } from '@/lib/supabase/data';
 import { getShopItems } from '@/lib/content';
+import { createServerClient } from '@/lib/supabase/server';
 import { Shop } from '@/components/Shop';
 import { Moon } from '@phosphor-icons/react/dist/ssr';
+import { ShopItem } from '@/types';
 
 interface ShopPageProps {
   params: Promise<{
@@ -18,7 +20,29 @@ export default async function ShopPage({ params }: ShopPageProps) {
     notFound();
   }
 
-  const shopItems = getShopItems();
+  // Get digital items from content
+  const digitalItems = getShopItems().items;
+
+  // Get real-world rewards from database
+  const supabase = await createServerClient();
+  const { data: kidRewards } = await supabase
+    .from('kid_rewards')
+    .select('*')
+    .eq('kid_id', kidId)
+    .eq('is_active', true);
+
+  // Convert kid_rewards to ShopItem format
+  const rewardItems: ShopItem[] = (kidRewards || []).map(reward => ({
+    id: reward.id,
+    name: reward.name,
+    type: 'reward' as const,
+    cost: reward.moon_cost,
+    description: reward.description || '',
+    emoji: reward.emoji,
+  }));
+
+  // Combine all items
+  const allItems = [...rewardItems, ...digitalItems];
 
   return (
     <div className="min-h-screen">
@@ -34,7 +58,7 @@ export default async function ShopPage({ params }: ShopPageProps) {
                 Moons Shop
               </h1>
               <p className="text-gray-500 dark:text-gray-400">
-                Spend your moons, {kid.name}!
+                Spend your moons, {kid.nickname || kid.name}!
               </p>
             </div>
           </div>
@@ -43,12 +67,8 @@ export default async function ShopPage({ params }: ShopPageProps) {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8">
-        <Shop kidId={kidId} items={shopItems.items} />
+        <Shop kidId={kidId} items={allItems} />
       </div>
     </div>
   );
 }
-
-
-
-

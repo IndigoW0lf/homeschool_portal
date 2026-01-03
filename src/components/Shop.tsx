@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { ShopItem } from '@/types';
-import { getStars } from '@/lib/progressState';
+import { getStars, addStars } from '@/lib/progressState';
 import { ShopItemCard } from './ShopItemCard';
+import { RewardItemCard } from './RewardItemCard';
 
 interface ShopProps {
   kidId: string;
   items: ShopItem[];
 }
 
-type FilterType = 'all' | 'badge' | 'avatar' | 'home';
+type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'home';
 
 export function Shop({ kidId, items }: ShopProps) {
   const [stars, setStars] = useState(0);
@@ -25,16 +26,39 @@ export function Shop({ kidId, items }: ShopProps) {
     return () => clearInterval(interval);
   }, [kidId]);
 
+  // Count items by type
+  const rewardCount = items.filter(i => i.type === 'reward').length;
+  const digitalCount = items.filter(i => i.type !== 'reward').length;
+
   const filteredItems = filter === 'all' 
     ? items 
     : items.filter(item => item.type === filter);
 
-  const filters: { key: FilterType; label: string }[] = [
-    { key: 'all', label: 'All' },
-    { key: 'badge', label: 'Badges' },
-    { key: 'avatar', label: 'Avatar' },
-    { key: 'home', label: 'Home' },
+  const filters: { key: FilterType; label: string; show: boolean }[] = [
+    { key: 'all', label: 'All', show: true },
+    { key: 'reward', label: `🎁 Rewards (${rewardCount})`, show: rewardCount > 0 },
+    { key: 'badge', label: 'Badges', show: digitalCount > 0 },
+    { key: 'avatar', label: 'Avatar', show: digitalCount > 0 },
+    { key: 'home', label: 'Home', show: digitalCount > 0 },
   ];
+
+  const handleRewardPurchase = async (item: ShopItem) => {
+    if (stars < item.cost) return;
+    
+    // Deduct moons
+    addStars(kidId, -item.cost);
+    setStars(getStars(kidId));
+    
+    // Create redemption request
+    await fetch('/api/rewards/redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        kidId,
+        rewardId: item.id,
+      }),
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -54,16 +78,16 @@ export function Shop({ kidId, items }: ShopProps) {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700">
-        {filters.map(({ key, label }) => (
+      <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+        {filters.filter(f => f.show).map(({ key, label }) => (
           <button
             key={key}
             onClick={() => setFilter(key)}
             className={`
-              px-4 py-2 font-medium transition-colors border-b-2
+              px-4 py-2 font-medium transition-colors rounded-lg
               ${filter === key
-                ? 'border-[var(--ember-500)] text-[var(--ember-500)]'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}
+                ? 'bg-[var(--ember-500)] text-white'
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}
             `}
           >
             {label}
@@ -74,27 +98,31 @@ export function Shop({ kidId, items }: ShopProps) {
       {/* Shop Items Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredItems.map(item => (
-          <ShopItemCard
-            key={item.id}
-            item={item}
-            kidId={kidId}
-            onPurchase={() => setStars(getStars(kidId))}
-          />
+          item.type === 'reward' ? (
+            <RewardItemCard
+              key={item.id}
+              item={item}
+              canAfford={stars >= item.cost}
+              onPurchase={() => handleRewardPurchase(item)}
+            />
+          ) : (
+            <ShopItemCard
+              key={item.id}
+              item={item}
+              kidId={kidId}
+              onPurchase={() => setStars(getStars(kidId))}
+            />
+          )
         ))}
       </div>
 
       {filteredItems.length === 0 && (
         <div className="card p-6 text-center text-muted">
-          No items in this category yet.
+          {filter === 'reward' 
+            ? 'No rewards yet! Ask your parent to add some fun rewards.'
+            : 'No items in this category yet.'}
         </div>
       )}
     </div>
   );
 }
-
-
-
-
-
-
-

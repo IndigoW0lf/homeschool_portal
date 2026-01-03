@@ -29,7 +29,7 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
     if (purchased || stars < item.cost || isPurchasing) return;
     
     setIsPurchasing(true);
-    const success = purchaseItem(kidId, item.id, item.cost, item.unlocks);
+    const success = purchaseItem(kidId, item.id, item.cost, item.unlocks || []);
     
     if (success) {
       setPurchased(true);

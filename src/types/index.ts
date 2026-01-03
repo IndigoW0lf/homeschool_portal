@@ -181,10 +181,11 @@ export interface StudioTemplates {
 export interface ShopItem {
   id: string;
   name: string;
-  type: 'badge' | 'avatar' | 'home';
+  type: 'badge' | 'avatar' | 'home' | 'reward';
   cost: number;
   description: string;
-  unlocks: string[];
+  unlocks?: string[];
+  emoji?: string; // For reward items
 }
 
 export interface ShopItems {

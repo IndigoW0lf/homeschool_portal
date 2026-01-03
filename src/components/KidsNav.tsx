@@ -163,8 +163,14 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
 
       {/* Desktop Sidebar */}
       <aside 
-        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-20"
-        style={kidFavoriteColor ? { '--kid-accent': kidFavoriteColor } as React.CSSProperties : undefined}
+        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col border-r border-gray-200 dark:border-gray-700 z-20 transition-colors"
+        style={{ 
+          backgroundColor: kidFavoriteColor 
+            ? `color-mix(in srgb, ${kidFavoriteColor} 15%, var(--sidebar-bg, white))` 
+            : undefined,
+          '--sidebar-bg': 'white',
+          '--kid-accent': kidFavoriteColor,
+        } as React.CSSProperties}
       >
         {/* Top Section */}
         <div className="flex flex-col items-center py-6 border-b border-gray-100 dark:border-gray-700">

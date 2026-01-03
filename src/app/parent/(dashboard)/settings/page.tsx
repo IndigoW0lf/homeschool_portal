@@ -5,6 +5,8 @@ import { KidPinManager } from '@/components/profile/KidPinManager';
 import { KidManager } from '@/components/profile/KidManager';
 import { MoonManager } from '@/components/profile/MoonManager';
 import { RewardManager } from '@/components/profile/RewardManager';
+import { RedemptionManager } from '@/components/profile/RedemptionManager';
+import { JournalSettings } from '@/components/profile/JournalSettings';
 import { PasswordResetToast } from '@/components/profile/PasswordResetToast';
 import { getKidsFromDB } from '@/lib/supabase/data';
 
@@ -50,6 +52,16 @@ export default async function SettingsPage() {
       {/* Shop Rewards Management */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <RewardManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
+      </div>
+
+      {/* Pending Reward Redemptions */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <RedemptionManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
+      </div>
+
+      {/* Journal Settings */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <JournalSettings kids={kids.map(k => ({ id: k.id, name: k.name }))} />
       </div>
 
       {/* Kid PIN Management */}

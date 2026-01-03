@@ -191,10 +191,10 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
             />
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                <Heart size={14} weight="fill" className="text-red-400" /> My Favorite Color
+                <Heart size={14} weight="fill" className="text-red-400" /> My Profile Color
               </p>
-              <p className="font-medium text-gray-900 dark:text-white capitalize">
-                {formData.favoriteColor.startsWith('#') ? formData.favoriteColor : formData.favoriteColor}
+              <p className="font-medium text-gray-900 dark:text-white">
+                Change anytime in edit mode!
               </p>
             </div>
           </div>
@@ -274,43 +274,39 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       </div>
 
       {/* Color Picker */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-red-100 via-yellow-100 via-green-100 via-blue-100 to-purple-100 dark:from-red-900/20 dark:via-yellow-900/20 dark:via-green-900/20 dark:via-blue-900/20 dark:to-purple-900/20 border border-gray-200 dark:border-gray-700">
+      <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
         <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           <Heart size={20} className="text-red-500" weight="fill" />
-          Pick your favorite color!
+          Pick your profile color!
         </label>
         <div className="flex items-center gap-4">
-          {/* Color Picker Input */}
-          <div className="relative">
+          {/* Color Preview + Click to Change */}
+          <label className="cursor-pointer group relative">
+            <div 
+              className="w-16 h-16 rounded-full shadow-lg border-4 border-white dark:border-gray-600 transition-transform group-hover:scale-105"
+              style={{ backgroundColor: formData.favoriteColor || '#ff6b6b' }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-xs font-medium text-white bg-black/50 px-2 py-1 rounded-full">
+                Change
+              </span>
+            </div>
             <input
               type="color"
               value={formData.favoriteColor || '#ff6b6b'}
               onChange={(e) => handleChange('favoriteColor', e.target.value)}
-              className="w-16 h-16 rounded-full cursor-pointer border-4 border-white dark:border-gray-700 shadow-lg"
-              style={{ 
-                appearance: 'none',
-                WebkitAppearance: 'none',
-              }}
+              className="sr-only"
             />
-          </div>
-          {/* Quick presets */}
-          <div className="flex flex-wrap gap-2">
-            {['#ff6b6b', '#ffa94d', '#ffd43b', '#69db7c', '#4dabf7', '#9775fa', '#f783ac', '#20c997', '#343a40'].map(color => (
-              <button
-                key={color}
-                onClick={() => handleChange('favoriteColor', color)}
-                className={`w-8 h-8 rounded-full transition-all border-2 ${
-                  formData.favoriteColor === color 
-                    ? 'border-gray-800 dark:border-white scale-110' 
-                    : 'border-white dark:border-gray-600 hover:scale-105'
-                }`}
-                style={{ backgroundColor: color }}
-                title={color}
-              />
-            ))}
+          </label>
+          <div className="flex-1">
+            <p className="font-medium text-gray-800 dark:text-white">
+              {formData.favoriteColor || 'Pick a color!'}
+            </p>
+            <p className="text-xs text-gray-500">
+              Click the circle to choose any color
+            </p>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mt-2">Click the big circle to pick any color you want!</p>
       </div>
 
       {/* Birthday Picker */}
