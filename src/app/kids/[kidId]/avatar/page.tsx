@@ -97,3 +97,5 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
     </div>
   );
 }
+
+

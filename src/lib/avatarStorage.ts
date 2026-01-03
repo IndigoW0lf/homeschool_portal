@@ -54,3 +54,5 @@ export async function saveAvatarToDatabase(kidId: string, state: AvatarState): P
     throw error;
   }
 }
+
+
