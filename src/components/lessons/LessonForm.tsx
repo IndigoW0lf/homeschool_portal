@@ -60,13 +60,19 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
   
   // Fetch students from database if not passed as prop
   useEffect(() => {
+    // Only fetch if no students were passed as props AND we haven't fetched yet
+    if (propStudents.length > 0) {
+      setFetchedStudents(propStudents);
+      setStudentsLoading(false);
+      return;
+    }
+    
+    // Prevent re-fetching if we already have students
+    if (fetchedStudents.length > 0) {
+      return;
+    }
+    
     async function fetchKids() {
-      if (propStudents.length > 0) {
-        setFetchedStudents(propStudents);
-        setStudentsLoading(false);
-        return;
-      }
-      
       try {
         const { data, error } = await supabase
           .from('kids')
@@ -91,7 +97,8 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
     }
     
     fetchKids();
-  }, [propStudents]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount only
 
   const effectiveStudents = fetchedStudents;
 
