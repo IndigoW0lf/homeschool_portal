@@ -147,58 +147,22 @@ CREATE POLICY "lesson_attachments_access" ON public.lesson_attachments FOR ALL
     )
   );
 
--- ASSIGNMENTS: User-scoped with public read
+-- ASSIGNMENTS: Public read, authenticated write (no user_id column)
 CREATE POLICY "assignments_access" ON public.assignments FOR ALL
-  USING (
-    user_id = (SELECT auth.uid())
-    OR user_id IS NULL
-    OR (SELECT auth.role()) = 'authenticated'
-  )
-  WITH CHECK (
-    user_id = (SELECT auth.uid())
-  );
+  USING (true)
+  WITH CHECK ((SELECT auth.role()) = 'authenticated');
 
--- ASSIGNMENT_KIDS: Follows parent assignment access
+-- ASSIGNMENT_KIDS: Public read, authenticated write
 CREATE POLICY "assignment_kids_access" ON public.assignment_kids FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.assignments a 
-      WHERE a.id = assignment_id 
-      AND (a.user_id = (SELECT auth.uid()) OR a.user_id IS NULL)
-    )
-  )
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.assignments a 
-      WHERE a.id = assignment_id 
-      AND a.user_id = (SELECT auth.uid())
-    )
-  );
+  USING (true)
+  WITH CHECK ((SELECT auth.role()) = 'authenticated');
 
--- ASSIGNMENT_LESSONS: Follows parent assignment access
+-- ASSIGNMENT_LESSONS: Public read, authenticated write
 CREATE POLICY "assignment_lessons_access" ON public.assignment_lessons FOR ALL
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.assignments a 
-      WHERE a.id = assignment_id 
-      AND (a.user_id = (SELECT auth.uid()) OR a.user_id IS NULL)
-    )
-  )
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.assignments a 
-      WHERE a.id = assignment_id 
-      AND a.user_id = (SELECT auth.uid())
-    )
-  );
+  USING (true)
+  WITH CHECK ((SELECT auth.role()) = 'authenticated');
 
--- RESOURCES: User-scoped with public read
+-- RESOURCES: Public read, authenticated write (no user_id column)
 CREATE POLICY "resources_access" ON public.resources FOR ALL
-  USING (
-    user_id = (SELECT auth.uid())
-    OR user_id IS NULL
-    OR (SELECT auth.role()) = 'authenticated'
-  )
-  WITH CHECK (
-    user_id = (SELECT auth.uid())
-  );
+  USING (true)
+  WITH CHECK ((SELECT auth.role()) = 'authenticated');
