@@ -31,7 +31,7 @@ export async function getUserFamily(): Promise<Family | null> {
  * Get all family members for a family
  */
 export async function getFamilyMembers(familyId: string): Promise<FamilyMember[]> {
-    const { data, error } = await supabase
+    const { data: members, error } = await supabase
         .from('family_members')
         .select('*')
         .eq('family_id', familyId)
@@ -42,7 +42,25 @@ export async function getFamilyMembers(familyId: string): Promise<FamilyMember[]
         return [];
     }
 
-    return (data || []) as FamilyMember[];
+    if (!members || members.length === 0) {
+        return [];
+    }
+
+    // Fetch profiles for all member user_ids
+    const userIds = members.map(m => m.user_id).filter(Boolean);
+    const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, display_name, email')
+        .in('id', userIds);
+
+    // Create a map for quick lookup
+    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+
+    // Merge profiles with members
+    return members.map(member => ({
+        ...member,
+        profile: profileMap.get(member.user_id),
+    })) as FamilyMember[];
 }
 
 /**
