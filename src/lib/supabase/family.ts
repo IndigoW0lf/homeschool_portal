@@ -57,13 +57,9 @@ export async function getFamilyMembers(familyId: string): Promise<FamilyMember[]
 export async function getFamilyInvites(familyId: string): Promise<FamilyInvite[]> {
     const { data, error } = await supabase
         .from('family_invites')
-        .select(`
-      *,
-      inviter_profile:profiles!invited_by(*)
-    `)
+        .select('*')
         .eq('family_id', familyId)
-        .is('accepted_at', null)
-        .gt('expires_at', new Date().toISOString())
+        .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -85,12 +81,10 @@ export async function getMyPendingInvites(): Promise<FamilyInvite[]> {
         .from('family_invites')
         .select(`
       *,
-      family:families(*),
-      inviter_profile:profiles!invited_by(*)
+      family:families(*)
     `)
         .eq('email', user.email)
-        .is('accepted_at', null)
-        .gt('expires_at', new Date().toISOString())
+        .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
     if (error) {
