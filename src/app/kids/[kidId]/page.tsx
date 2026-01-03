@@ -7,6 +7,7 @@ import { formatDateString } from '@/lib/dateUtils';
 import { ProgressCardWrapper, TodayCompletionSummary, ResourceSection } from '@/components';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
+import { JournalCard } from '@/components/kids/JournalCard';
 import { CaretLeft, CaretRight, CalendarBlank, Scroll } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, isSameDay, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 
@@ -159,6 +160,16 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center text-gray-500 dark:text-gray-400">
                 No assignments scheduled for today! 🎉
               </div>
+            )}
+            
+            {/* Daily Journal */}
+            {isViewToday && (
+              <JournalCard
+                kidId={kidId}
+                date={viewDateString}
+                journalEnabled={kid.journalEnabled !== false}
+                journalAllowSkip={kid.journalAllowSkip !== false}
+              />
             )}
           </div>
         </section>

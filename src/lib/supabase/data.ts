@@ -36,6 +36,9 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     hobbies: row.hobbies || undefined,
     nickname: row.nickname || undefined,
     avatarState: row.avatar_state || undefined,
+    journalEnabled: row.journal_enabled ?? true,
+    journalAllowSkip: row.journal_allow_skip ?? true,
+    journalPromptTypes: row.journal_prompt_types || undefined,
   }));
 }
 

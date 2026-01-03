@@ -25,6 +25,10 @@ export interface Kid {
     accessory?: string;
     colors: Record<string, string>;
   };
+  // Journal settings
+  journalEnabled?: boolean;
+  journalAllowSkip?: boolean;
+  journalPromptTypes?: string[];
 }
 
 export interface Profile {
@@ -212,6 +216,33 @@ export interface KidRow {
     accessory?: string;
     colors: Record<string, string>;
   } | null;
+  // Journal settings
+  journal_enabled: boolean | null;
+  journal_allow_skip: boolean | null;
+  journal_prompt_types: string[] | null;
+}
+
+// Journal entry
+export interface JournalEntry {
+  id: string;
+  kidId: string;
+  date: string;
+  prompt: string;
+  response: string | null;
+  skipped: boolean;
+  promptType?: string;
+  createdAt: string;
+}
+
+export interface JournalEntryRow {
+  id: string;
+  kid_id: string;
+  date: string;
+  prompt: string;
+  response: string | null;
+  skipped: boolean;
+  prompt_type: string | null;
+  created_at: string;
 }
 
 export interface LessonRow {
