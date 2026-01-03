@@ -33,10 +33,7 @@ export async function getUserFamily(): Promise<Family | null> {
 export async function getFamilyMembers(familyId: string): Promise<FamilyMember[]> {
     const { data, error } = await supabase
         .from('family_members')
-        .select(`
-      *,
-      profile:profiles(*)
-    `)
+        .select('*')
         .eq('family_id', familyId)
         .order('created_at', { ascending: true });
 
@@ -45,10 +42,7 @@ export async function getFamilyMembers(familyId: string): Promise<FamilyMember[]
         return [];
     }
 
-    return (data || []).map(member => ({
-        ...member,
-        profile: member.profile as Profile | undefined,
-    })) as FamilyMember[];
+    return (data || []) as FamilyMember[];
 }
 
 /**
