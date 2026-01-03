@@ -3,6 +3,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { AccountSettings } from '@/components/profile/AccountSettings';
 import { KidPinManager } from '@/components/profile/KidPinManager';
 import { KidManager } from '@/components/profile/KidManager';
+import { MoonManager } from '@/components/profile/MoonManager';
 import { PasswordResetToast } from '@/components/profile/PasswordResetToast';
 import { getKidsFromDB } from '@/lib/supabase/data';
 
@@ -38,6 +39,11 @@ export default async function SettingsPage() {
       {/* Kid Management - Add/Edit/Delete */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
         <KidManager kids={kids.map(k => ({ id: k.id, name: k.name, gradeBand: k.gradeBand }))} />
+      </div>
+
+      {/* Moon Rewards Management */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <MoonManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
       </div>
 
       {/* Kid PIN Management */}
