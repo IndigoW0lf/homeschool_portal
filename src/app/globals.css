@@ -70,3 +70,15 @@ body {
   border-radius: 50%;
   filter: blur(2px);
 }
+
+/* SVG Title styling for better contrast */
+.svg-title {
+  /* Light mode: slightly darken the SVG and add subtle shadow */
+  filter: brightness(0.85) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Dark mode: brighten slightly and adjust shadow */
+.dark .svg-title,
+html.dark .svg-title {
+  filter: brightness(1.1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+}

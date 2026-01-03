@@ -173,7 +173,7 @@ export default async function Dashboard() {
                 alt="Lunara Homeschool Quest" 
                 width={300} 
                 height={60}
-                className="h-12 w-auto dark:brightness-110 -ml-3"
+                className="h-12 w-auto svg-title -ml-3"
                 priority
               />
               <p className="text-gray-500 dark:text-gray-400 mt-2">{formattedDate}</p>
@@ -201,7 +201,7 @@ export default async function Dashboard() {
             alt="Today's Quest" 
             width={200} 
             height={40}
-            className="h-8 w-auto mb-4 dark:brightness-110"
+            className="h-8 w-auto mb-4 svg-title"
           />
           <QuoteCard quote={quote} />
         </section>

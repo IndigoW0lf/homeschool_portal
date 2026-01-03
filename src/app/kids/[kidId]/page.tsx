@@ -91,7 +91,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                 alt={`Hello, ${kid.name}!`}
                 width={200}
                 height={50}
-                className="h-10 w-auto mb-1 dark:brightness-110"
+                className="h-10 w-auto mb-1 svg-title"
                 priority
               />
               <p className="text-gray-500 dark:text-gray-400 opacity-80">{formattedDate}</p>
@@ -145,7 +145,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
               alt="Today's Quest" 
               width={180} 
               height={40}
-              className="h-8 w-auto dark:brightness-110"
+              className="h-8 w-auto svg-title"
             />
             {!isViewToday && (
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formattedDate}</p>
@@ -211,7 +211,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
             alt="Resources" 
             width={140} 
             height={40}
-            className="h-7 w-auto mb-4 dark:brightness-110"
+            className="h-7 w-auto mb-4 svg-title"
           />
           <ResourceSection resources={resources} />
         </section>
