@@ -62,7 +62,7 @@ export function RecentList({
             alt={title} 
             width={120} 
             height={30}
-            className="h-6 w-auto dark:brightness-110"
+            className="h-6 w-auto svg-title"
           />
         ) : (
           <h3 className="heading-sm">{title}</h3>

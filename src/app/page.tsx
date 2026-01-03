@@ -182,7 +182,7 @@ export default async function Dashboard() {
               <DarkModeToggle />
               <Link 
                 href="/parent"
-                className="px-3 py-2 bg-gradient-to-r from-[var(--lavender-400)] to-[var(--ember-400)] text-white rounded-xl hover:opacity-90 transition-all font-bold text-sm uppercase tracking-wide shadow-md"
+                className="px-4 py-2.5 bg-gradient-to-r from-[#9c8fb8] via-[#E27D60] to-[#D48A8A] text-white rounded-xl hover:opacity-90 transition-all font-bold text-base uppercase tracking-wide shadow-lg"
                 aria-label="Parent Dashboard"
               >
                 {displayName}
