@@ -39,8 +39,10 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   const router = useRouter();
   const [displayName, setDisplayName] = useState(profile.display_name || '');
   const [timezone, setTimezone] = useState(profile.timezone || 'America/Chicago');
+  const [teachingStyle, setTeachingStyle] = useState(profile.teaching_style || '');
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || getAvatarUrl('micah', 'luna'));
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [avatarCategory, setAvatarCategory] = useState('modern');
 
@@ -53,10 +55,12 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         display_name: displayName || null,
         timezone,
         avatar_url: avatarUrl,
+        teaching_style: teachingStyle || undefined,
       });
 
       if (updated) {
-        toast.success('All set! ✨');
+        toast.success('Profile updated! ✨');
+        setIsEditing(false);
         router.refresh();
       } else {
         toast.error('Hmm, that didn\'t work. Try again?');
@@ -71,8 +75,78 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
   const currentCategory = AVATAR_CATEGORIES.find(c => c.id === avatarCategory) || AVATAR_CATEGORIES[0];
 
+  // View Mode
+  if (!isEditing) {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-300">
+        <div className="flex flex-col items-center pb-8 border-b border-gray-100 dark:border-gray-800">
+          <div className="relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={avatarUrl}
+              alt="Your avatar"
+              width={120}
+              height={120}
+              className="rounded-full bg-indigo-50 dark:bg-gray-800/50 shadow-lg ring-4 ring-white dark:ring-gray-800"
+            />
+          </div>
+          <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
+            {displayName || 'Parent'}
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400">{profile.email}</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+              Timezone
+            </h3>
+            <p className="font-medium text-gray-900 dark:text-white">
+              {TIMEZONE_OPTIONS.find(tz => tz.value === timezone)?.label || timezone}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
+            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+              Account Type
+            </h3>
+            <p className="font-medium text-gray-900 dark:text-white">
+              Parent / Admin
+            </p>
+          </div>
+        </div>
+
+        {/* Teaching Style Section */}
+        <div className="rounded-xl border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/50 dark:bg-indigo-900/10 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+            🧑‍🏫 Teaching Style
+          </h3>
+          {teachingStyle ? (
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              {teachingStyle}
+            </p>
+          ) : (
+            <p className="text-gray-500 italic">
+              No teaching style set yet. Add one to help our AI customize lesson plans for you!
+            </p>
+          )}
+        </div>
+
+        <div className="flex justify-end pt-4">
+          <button
+            onClick={() => setIsEditing(true)}
+            className="px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
+          >
+            Edit Profile
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Edit Mode
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-300">
       {/* Avatar Section */}
       <div className="flex flex-col items-center pb-6 border-b border-gray-200 dark:border-gray-700">
         <button
@@ -163,80 +237,85 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         )}
       </div>
 
-      {/* Display Name */}
-      <div>
-        <label 
-          htmlFor="displayName"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
-          What would you like to be called?
-        </label>
-        <input
-          id="displayName"
-          type="text"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          placeholder="Your name or nickname"
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
-        />
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          We&apos;ll use this to greet you on the dashboard
-        </p>
-      </div>
-
-      {/* Email (read-only) */}
-      <div>
-        <label 
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={profile.email || ''}
-          disabled
-          className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-        />
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Need to change your email? Head to{' '}
-          <a 
-            href="/parent/settings" 
-            className="text-[var(--ember-500)] hover:underline"
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Display Name */}
+        <div>
+          <label 
+            htmlFor="displayName"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
           >
-            Account Settings
-          </a>
-        </p>
-      </div>
+            Display Name
+          </label>
+          <input
+            id="displayName"
+            type="text"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Your name"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+          />
+        </div>
 
-      {/* Timezone */}
+        {/* Timezone */}
+        <div>
+          <label 
+            htmlFor="timezone"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            Timezone
+          </label>
+          <select
+            id="timezone"
+            value={timezone}
+            onChange={(e) => setTimezone(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+          >
+            {TIMEZONE_OPTIONS.map(tz => (
+              <option key={tz.value} value={tz.value}>
+                {tz.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      
+      {/* Teaching Style Input */}
       <div>
         <label 
-          htmlFor="timezone"
+          htmlFor="teachingStyle"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
         >
-          Your timezone
+          Teaching Style & Goals
         </label>
-        <select
-          id="timezone"
-          value={timezone}
-          onChange={(e) => setTimezone(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
-        >
-          {TIMEZONE_OPTIONS.map(tz => (
-            <option key={tz.value} value={tz.value}>
-              {tz.label}
-            </option>
-          ))}
-        </select>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Helps us show the right dates and times
+        <textarea
+          id="teachingStyle"
+          rows={4}
+          value={teachingStyle}
+          onChange={(e) => setTeachingStyle(e.target.value)}
+          placeholder="e.g., We follow a Montessori approach with a focus on self-directed learning. My goal is to foster curiosity..."
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all resize-none"
+        />
+        <p className="mt-1 text-xs text-gray-500">
+          This helps our AI understand your preferences when suggesting lesson plans.
         </p>
       </div>
 
-      {/* Submit */}
-      <div className="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+      {/* Buttons */}
+      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <button
+          type="button"
+          onClick={() => {
+            setIsEditing(false);
+            // Reset fields
+            setDisplayName(profile.display_name || '');
+            setTimezone(profile.timezone || 'America/Chicago');
+            setTeachingStyle(profile.teaching_style || '');
+            setAvatarUrl(profile.avatar_url || getAvatarUrl('micah', 'luna'));
+          }}
+          className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
           disabled={isLoading}

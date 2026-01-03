@@ -34,10 +34,11 @@ export interface Kid {
 export interface Profile {
   id: string;
   display_name: string | null;
-  email: string | null;
-  avatar_url: string | null;
-  timezone: string;
-  created_at: string;
+  email?: string;
+  avatar_url?: string;
+  timezone?: string;
+  teaching_style?: string;
+  created_at?: string;
   updated_at: string;
 }
 
