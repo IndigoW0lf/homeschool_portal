@@ -1,217 +1,245 @@
 using UnityEngine;
 
 /// <summary>
-/// Third-person character controller for exploring the town.
-/// Attach this to your character model along with a CharacterController component.
-/// 
-/// Controls:
-/// - WASD: Move
-/// - Mouse: Look around
-/// - Space: Jump
-/// - Shift: Run
+/// Third-person controller configured for Synty's AC_Polygon_Feminine Animator Controller.
+/// Drives all required animator parameters for proper animation playback.
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 public class ThirdPersonController : MonoBehaviour
 {
     [Header("Movement")]
-    [Tooltip("Walking speed in units per second")]
     public float walkSpeed = 3f;
-    
-    [Tooltip("Running speed in units per second")]
     public float runSpeed = 6f;
-    
-    [Tooltip("How fast the character turns to face movement direction")]
     public float rotationSpeed = 10f;
     
-    [Tooltip("Smoothing for movement transitions")]
-    public float movementSmoothing = 0.1f;
-    
     [Header("Jumping")]
-    [Tooltip("How high the character can jump")]
     public float jumpHeight = 1.2f;
-    
-    [Tooltip("Gravity applied to the character")]
     public float gravity = -15f;
     
     [Header("Ground Check")]
-    [Tooltip("Offset for ground check sphere")]
     public float groundCheckOffset = -0.1f;
-    
-    [Tooltip("Radius of ground check sphere")]
     public float groundCheckRadius = 0.3f;
-    
-    [Tooltip("Layers considered as ground")]
-    public LayerMask groundLayers = ~0; // Default to all layers
+    public LayerMask groundLayers = ~0;
     
     [Header("Camera")]
-    [Tooltip("Reference to the camera following this character (auto-finds Main Camera if empty)")]
     public Transform cameraTransform;
     
-    // Private variables
-    private CharacterController controller;
-    private Vector3 velocity;
-    private Vector3 currentMovement;
-    private Vector3 movementVelocity;
-    private bool isGrounded;
-    private float currentSpeed;
+    [Header("Debug")]
+    public bool showAvatarDiagnostics = true;
     
-    // Animation support (optional)
+    private CharacterController controller;
     private Animator animator;
-    private static readonly int SpeedHash = Animator.StringToHash("Speed");
-    private static readonly int GroundedHash = Animator.StringToHash("Grounded");
-    private static readonly int JumpHash = Animator.StringToHash("Jump");
+    private Vector3 velocity;
+    private float currentSpeed;
+    private bool isGrounded;
+    private bool wasGrounded;
+    private bool hasMovementInput;
+    private bool isJumping;
+    private float fallingDuration;
+    private float horizontalInput;
+    private float verticalInput;
     
     void Start()
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
         
-        // Auto-find main camera if not assigned
         if (cameraTransform == null && Camera.main != null)
-        {
             cameraTransform = Camera.main.transform;
-        }
         
-        // Lock cursor for gameplay
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        
+        if (showAvatarDiagnostics)
+            DiagnoseAvatar();
+    }
+    
+    void DiagnoseAvatar()
+    {
+        Debug.Log("=== AVATAR DIAGNOSTICS ===");
+        
+        if (animator == null)
+        {
+            Debug.LogError("❌ NO ANIMATOR FOUND on " + gameObject.name);
+            return;
+        }
+        
+        Debug.Log($"✓ Animator found on: {animator.gameObject.name}");
+        
+        if (animator.avatar == null)
+        {
+            Debug.LogError("❌ AVATAR IS NULL - This causes T-pose! Assign an Avatar to the Animator.");
+        }
+        else
+        {
+            Debug.Log($"✓ Avatar: {animator.avatar.name}");
+            Debug.Log($"  - IsHuman: {animator.avatar.isHuman}");
+            Debug.Log($"  - IsValid: {animator.avatar.isValid}");
+            
+            if (!animator.avatar.isValid)
+                Debug.LogError("❌ AVATAR IS INVALID - Reconfigure the Avatar in the model's Rig settings!");
+            if (!animator.avatar.isHuman && animator.runtimeAnimatorController != null)
+                Debug.LogWarning("⚠️ Avatar is Generic but using Humanoid animations - this causes T-pose!");
+        }
+        
+        if (animator.runtimeAnimatorController == null)
+        {
+            Debug.LogError("❌ NO ANIMATOR CONTROLLER - Assign an Animator Controller!");
+        }
+        else
+        {
+            Debug.Log($"✓ Controller: {animator.runtimeAnimatorController.name}");
+        }
+        
+        var smr = GetComponentInChildren<SkinnedMeshRenderer>();
+        if (smr == null)
+        {
+            Debug.LogError("❌ NO SKINNED MESH RENDERER - Character has no mesh to animate!");
+        }
+        else
+        {
+            Debug.Log($"✓ SkinnedMeshRenderer: {smr.gameObject.name} ({smr.bones.Length} bones)");
+        }
+        
+        Debug.Log("=== END DIAGNOSTICS ===");
     }
     
     void Update()
     {
-        // Ground check
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+            ToggleCursor();
+        
+        if (UnityEngine.Input.GetKeyDown(KeyCode.D) && UnityEngine.Input.GetKey(KeyCode.LeftShift))
+            DiagnoseAvatar();
+        
+        wasGrounded = isGrounded;
         CheckGrounded();
-        
-        // Handle movement input
         HandleMovement();
-        
-        // Handle jumping
         HandleJump();
-        
-        // Apply gravity
         ApplyGravity();
         
-        // Move the character
-        controller.Move((currentMovement + velocity) * Time.deltaTime);
-        
-        // Update animator if present
+        controller.Move(velocity * Time.deltaTime);
         UpdateAnimator();
     }
     
     void CheckGrounded()
     {
-        Vector3 spherePosition = transform.position + Vector3.up * groundCheckOffset;
-        isGrounded = Physics.CheckSphere(spherePosition, groundCheckRadius, groundLayers, QueryTriggerInteraction.Ignore);
+        Vector3 spherePos = transform.position + Vector3.up * groundCheckOffset;
+        isGrounded = Physics.CheckSphere(spherePos, groundCheckRadius, groundLayers, QueryTriggerInteraction.Ignore);
+        
+        // Track falling duration for landing animations
+        if (!isGrounded)
+        {
+            fallingDuration += Time.deltaTime;
+        }
+        else
+        {
+            if (!wasGrounded) // Just landed
+                isJumping = false;
+            fallingDuration = 0f;
+        }
     }
     
     void HandleMovement()
     {
-        // Get input
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        Vector3 inputDirection = new Vector3(horizontal, 0, vertical).normalized;
+        horizontalInput = UnityEngine.Input.GetAxisRaw("Horizontal");
+        verticalInput = UnityEngine.Input.GetAxisRaw("Vertical");
+        Vector3 input = new Vector3(horizontalInput, 0, verticalInput).normalized;
         
-        // Determine speed
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float targetSpeed = inputDirection.magnitude > 0.1f ? (isRunning ? runSpeed : walkSpeed) : 0f;
-        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime / movementSmoothing);
+        hasMovementInput = input.magnitude > 0.1f;
         
-        if (inputDirection.magnitude > 0.1f)
+        bool isRunning = UnityEngine.Input.GetKey(KeyCode.LeftShift);
+        float targetSpeed = hasMovementInput ? (isRunning ? runSpeed : walkSpeed) : 0f;
+        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, 10f * Time.deltaTime);
+        
+        if (hasMovementInput)
         {
-            // Calculate movement direction relative to camera
-            Vector3 moveDirection = inputDirection;
-            
+            Vector3 moveDir = input;
             if (cameraTransform != null)
             {
-                // Get camera forward and right (flattened to horizontal plane)
-                Vector3 camForward = cameraTransform.forward;
-                Vector3 camRight = cameraTransform.right;
-                camForward.y = 0;
-                camRight.y = 0;
-                camForward.Normalize();
-                camRight.Normalize();
-                
-                // Calculate world-space movement direction
-                moveDirection = camForward * vertical + camRight * horizontal;
-                moveDirection.Normalize();
+                Vector3 camFwd = cameraTransform.forward; camFwd.y = 0; camFwd.Normalize();
+                Vector3 camRight = cameraTransform.right; camRight.y = 0; camRight.Normalize();
+                moveDir = (camFwd * verticalInput + camRight * horizontalInput).normalized;
             }
             
-            // Rotate character to face movement direction
-            if (moveDirection.magnitude > 0.1f)
+            if (moveDir.magnitude > 0.1f)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+                transform.rotation = Quaternion.Slerp(transform.rotation, 
+                    Quaternion.LookRotation(moveDir), Time.deltaTime * rotationSpeed);
             }
             
-            // Apply movement
-            Vector3 targetMovement = moveDirection * currentSpeed;
-            currentMovement = Vector3.SmoothDamp(currentMovement, targetMovement, ref movementVelocity, movementSmoothing);
+            velocity.x = moveDir.x * currentSpeed;
+            velocity.z = moveDir.z * currentSpeed;
         }
         else
         {
-            // Slow down when not moving
-            currentMovement = Vector3.SmoothDamp(currentMovement, Vector3.zero, ref movementVelocity, movementSmoothing);
+            velocity.x = Mathf.MoveTowards(velocity.x, 0, 10f * Time.deltaTime);
+            velocity.z = Mathf.MoveTowards(velocity.z, 0, 10f * Time.deltaTime);
         }
     }
     
     void HandleJump()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (UnityEngine.Input.GetButtonDown("Jump") && isGrounded)
         {
-            // Calculate jump velocity using physics formula: v = sqrt(2 * g * h)
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            
-            // Trigger jump animation if available
-            if (animator != null)
-            {
-                animator.SetTrigger(JumpHash);
-            }
+            isJumping = true;
         }
     }
     
     void ApplyGravity()
     {
         if (isGrounded && velocity.y < 0)
-        {
-            // Keep a small downward velocity when grounded to maintain ground contact
             velocity.y = -2f;
-        }
         else
-        {
-            // Apply gravity over time
             velocity.y += gravity * Time.deltaTime;
-        }
     }
     
     void UpdateAnimator()
     {
         if (animator == null) return;
         
-        // Update animation parameters (if your character has an Animator)
-        animator.SetFloat(SpeedHash, currentSpeed);
-        animator.SetBool(GroundedHash, isGrounded);
+        // Debug: Press Shift+D to see values
+        if (UnityEngine.Input.GetKeyDown(KeyCode.V))
+        {
+            Debug.Log($"[DEBUG] currentSpeed={currentSpeed}, hasMovement={hasMovementInput}, isGrounded={isGrounded}");
+        }
+        
+        // IMPORTANT: Set 'Speed' - this is what CleanFeminineController uses!
+        animator.SetFloat("Speed", currentSpeed);
+        animator.SetFloat("MoveSpeed", currentSpeed);
+        
+        animator.SetBool("MovementInputHeld", hasMovementInput);
+        animator.SetBool("IsStopped", !hasMovementInput && currentSpeed < 0.1f);
+        animator.SetBool("IsWalking", hasMovementInput && currentSpeed > 0.1f && currentSpeed <= walkSpeed + 0.5f);
+        
+        // Ground and jump state
+        animator.SetBool("IsGrounded", isGrounded);
+        animator.SetBool("IsJumping", isJumping && !isGrounded);
+        animator.SetFloat("FallingDuration", fallingDuration);
+        
+        // Strafe/direction parameters (for more advanced movement)
+        animator.SetFloat("StrafeDirectionX", horizontalInput);
+        animator.SetFloat("StrafeDirectionZ", verticalInput);
+        
+        // CurrentGait: 0 = idle, 1 = walk, 2 = run (roughly)
+        float gait = 0f;
+        if (currentSpeed > 0.5f) gait = 1f;
+        if (currentSpeed > walkSpeed + 0.5f) gait = 2f;
+        animator.SetFloat("CurrentGait", gait);
     }
     
-    // Visual debugging in editor
+    void ToggleCursor()
+    {
+        bool locked = Cursor.lockState == CursorLockMode.Locked;
+        Cursor.lockState = locked ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = locked;
+    }
+    
     void OnDrawGizmosSelected()
     {
-        // Draw ground check sphere
-        Vector3 spherePosition = transform.position + Vector3.up * groundCheckOffset;
         Gizmos.color = isGrounded ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(spherePosition, groundCheckRadius);
-    }
-    
-    // Public method to unlock cursor (for menus, etc.)
-    public void UnlockCursor()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
-    
-    // Public method to lock cursor (resume gameplay)
-    public void LockCursor()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * groundCheckOffset, groundCheckRadius);
     }
 }
+

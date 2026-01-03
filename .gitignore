@@ -53,3 +53,5 @@ next-env.d.ts
 # Synty Assets - Licensed content, do NOT commit
 unity-room-decorator/Assets/_Project/synty_assets/
 unity-room-decorator/Assets/_Project/ThirdParty/Synty/
+# Synty Animation packs
+unity-room-decorator/Assets/_Project/ThirdParty/Synty/ANIMATION_*/
