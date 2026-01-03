@@ -39,12 +39,16 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div 
+      className="min-h-screen bg-gray-50 dark:bg-gray-900"
+      style={kid.favoriteColor ? { '--kid-accent': kid.favoriteColor } as React.CSSProperties : undefined}
+    >
       <KidsNav 
         kidId={kidId} 
         kidName={kid.name}
         kidNickname={kid.nickname}
         kidFavoriteColor={kid.favoriteColor}
+        kidAvatarState={kid.avatarState}
       />
       
       {/* Main content area - offset for sidebar on desktop, header on mobile */}

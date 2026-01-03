@@ -5,21 +5,28 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { House, GameController, UserCircle, Moon, Palette, List, X, Star } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
+import { AvatarPreview } from '@/components/kids/AvatarPreview';
+import { MoonsCounter } from '@/components/kids/MoonsCounter';
 import { useState } from 'react';
+import { AvatarState } from '@/types';
 
 interface KidsNavProps {
   kidId: string;
   kidName: string;
   kidNickname?: string;
   kidFavoriteColor?: string;
+  kidAvatarState?: AvatarState | null;
 }
 
-export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor }: KidsNavProps) {
+export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvatarState }: KidsNavProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Use nickname if available, otherwise formal name
   const displayName = kidNickname || kidName;
+  
+  // Use kid's favorite color for active indicators, fallback to tab's default color
+  const getActiveColor = (tabColor: string) => kidFavoriteColor || tabColor;
 
   const tabs = [
     { 
@@ -161,19 +168,19 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor }: KidsN
           >
             ←
           </Link>
-          <div 
-            className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
-            style={{ 
-              background: kidFavoriteColor 
-                ? `linear-gradient(135deg, ${kidFavoriteColor}, ${kidFavoriteColor}88)`
-                : 'linear-gradient(135deg, var(--sage-400), var(--lavender-400))'
-            }}
-          >
-            {displayName.charAt(0).toUpperCase()}
-          </div>
+          <AvatarPreview 
+            avatarState={kidAvatarState}
+            size="sm"
+            fallbackName={displayName}
+            fallbackColor={kidFavoriteColor}
+          />
           <span className="mt-2 text-xs font-medium text-gray-600 dark:text-gray-400 text-center">
             {displayName}
           </span>
+          {/* Moons Counter */}
+          <div className="mt-3">
+            <MoonsCounter kidId={kidId} size="sm" showLink />
+          </div>
         </div>
 
         {/* Navigation */}
@@ -206,7 +213,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor }: KidsN
                   {active && (
                     <div 
                       className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full"
-                      style={{ backgroundColor: tab.color }}
+                      style={{ backgroundColor: getActiveColor(tab.color) }}
                     />
                   )}
                 </Link>

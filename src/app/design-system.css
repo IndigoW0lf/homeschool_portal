@@ -255,3 +255,38 @@
   }
 }
 
+/* -----------------------------------------------------------------------------
+   KID ACCENT COLOR UTILITIES
+   Use --kid-accent CSS variable set in the kid layout for personalized colors
+   ----------------------------------------------------------------------------- */
+
+.kid-accent-bg {
+  background-color: var(--kid-accent, var(--ember-500));
+}
+
+.kid-accent-text {
+  color: var(--kid-accent, var(--ember-500));
+}
+
+.kid-accent-border {
+  border-color: var(--kid-accent, var(--ember-500));
+}
+
+.kid-accent-ring {
+  --tw-ring-color: var(--kid-accent, var(--ember-500));
+}
+
+/* Gradient variants using kid accent */
+.kid-accent-gradient {
+  background: linear-gradient(135deg, var(--kid-accent, var(--ember-500)), var(--kid-accent-light, var(--ember-400)));
+}
+
+/* Hover states */
+.hover\:kid-accent-bg:hover {
+  background-color: var(--kid-accent, var(--ember-500));
+}
+
+.hover\:kid-accent-text:hover {
+  color: var(--kid-accent, var(--ember-500));
+}
+

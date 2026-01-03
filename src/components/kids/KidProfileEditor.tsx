@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, MusicNote, FilmStrip, Pizza, GraduationCap, GameController, User, PencilSimple, X, Check } from '@phosphor-icons/react';
+import { Heart, MusicNote, FilmStrip, Pizza, GraduationCap, GameController, User, PencilSimple, X, Check, Calendar } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/browser';
 import { useRouter } from 'next/navigation';
@@ -84,8 +84,20 @@ function hasProfileData(data: Kid): boolean {
     data.favoriteFoods || 
     data.favoriteSubjects || 
     data.hobbies || 
-    data.favoriteColor
+    data.favoriteColor ||
+    data.birthday
   );
+}
+
+// Format birthday for display
+function formatBirthday(dateString?: string): string {
+  if (!dateString) return '';
+  try {
+    const date = new Date(dateString + 'T00:00:00'); // Ensure local timezone
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  } catch {
+    return dateString;
+  }
 }
 
 export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) {
@@ -100,6 +112,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
     favoriteSubjects: initialData.favoriteSubjects || '',
     hobbies: initialData.hobbies || '',
     favoriteColor: initialData.favoriteColor || '#ff6b6b',
+    birthday: initialData.birthday || '',
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -121,6 +134,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           favorite_subjects: formData.favoriteSubjects || null,
           hobbies: formData.hobbies || null,
           favorite_color: formData.favoriteColor || null,
+          birthday: formData.birthday || null,
         })
         .eq('id', kidId);
 
@@ -148,6 +162,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       favoriteSubjects: initialData.favoriteSubjects || '',
       hobbies: initialData.hobbies || '',
       favoriteColor: initialData.favoriteColor || '#ff6b6b',
+      birthday: initialData.birthday || '',
     });
     setIsEditing(false);
   };
@@ -180,6 +195,23 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
               </p>
               <p className="font-medium text-gray-900 dark:text-white capitalize">
                 {formData.favoriteColor.startsWith('#') ? formData.favoriteColor : formData.favoriteColor}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Birthday Display */}
+        {formData.birthday && (
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center">
+              <Calendar size={24} weight="fill" className="text-white" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                🎂 My Birthday
+              </p>
+              <p className="font-medium text-gray-900 dark:text-white">
+                {formatBirthday(formData.birthday as string)}
               </p>
             </div>
           </div>
@@ -279,6 +311,20 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           </div>
         </div>
         <p className="text-xs text-gray-500 mt-2">Click the big circle to pick any color you want!</p>
+      </div>
+
+      {/* Birthday Picker */}
+      <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <Calendar size={20} className="text-pink-500" weight="fill" />
+          When is your birthday? 🎂
+        </label>
+        <input
+          type="date"
+          value={(formData.birthday as string) || ''}
+          onChange={(e) => handleChange('birthday', e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+        />
       </div>
 
       {/* Profile Fields Form */}
