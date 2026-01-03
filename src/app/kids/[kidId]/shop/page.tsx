@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB } from '@/lib/supabase/data';
-import { getShopItems } from '@/lib/content';
 import { createServerClient } from '@/lib/supabase/server';
 import { Shop } from '@/components/Shop';
 import { Moon } from '@phosphor-icons/react/dist/ssr';
@@ -20,10 +19,7 @@ export default async function ShopPage({ params }: ShopPageProps) {
     notFound();
   }
 
-  // Get digital items from content
-  const digitalItems = getShopItems().items;
-
-  // Get real-world rewards from database
+  // Get real-world rewards from database (parent-created only)
   const supabase = await createServerClient();
   const { data: kidRewards } = await supabase
     .from('kid_rewards')
@@ -41,8 +37,8 @@ export default async function ShopPage({ params }: ShopPageProps) {
     emoji: reward.emoji,
   }));
 
-  // Combine all items
-  const allItems = [...rewardItems, ...digitalItems];
+  // Only show parent-created rewards (digital items removed for now)
+  const allItems = rewardItems;
 
   return (
     <div className="min-h-screen">

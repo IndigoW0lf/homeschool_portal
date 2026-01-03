@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { NotePencil, Check, ArrowsClockwise } from '@phosphor-icons/react';
+import { NotePencil, Check, ArrowsClockwise, Fire } from '@phosphor-icons/react';
 import { supabase } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
 
@@ -22,6 +22,7 @@ interface KidJournalSettings {
   journalEnabled: boolean;
   journalAllowSkip: boolean;
   journalPromptTypes: string[];
+  streakEnabled: boolean;
 }
 
 export function JournalSettings({ kids }: JournalSettingsProps) {
@@ -30,6 +31,7 @@ export function JournalSettings({ kids }: JournalSettingsProps) {
     journalEnabled: true,
     journalAllowSkip: true,
     journalPromptTypes: ['gratitude', 'reflection', 'creativity'],
+    streakEnabled: true,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -44,7 +46,7 @@ export function JournalSettings({ kids }: JournalSettingsProps) {
     try {
       const { data } = await supabase
         .from('kids')
-        .select('journal_enabled, journal_allow_skip, journal_prompt_types')
+        .select('journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled')
         .eq('id', selectedKid)
         .single();
 
@@ -53,6 +55,7 @@ export function JournalSettings({ kids }: JournalSettingsProps) {
           journalEnabled: data.journal_enabled ?? true,
           journalAllowSkip: data.journal_allow_skip ?? true,
           journalPromptTypes: data.journal_prompt_types || ['gratitude', 'reflection', 'creativity'],
+          streakEnabled: data.streak_enabled ?? true,
         });
       }
     } catch (error) {
@@ -71,6 +74,7 @@ export function JournalSettings({ kids }: JournalSettingsProps) {
           journal_enabled: settings.journalEnabled,
           journal_allow_skip: settings.journalAllowSkip,
           journal_prompt_types: settings.journalPromptTypes,
+          streak_enabled: settings.streakEnabled,
         })
         .eq('id', selectedKid);
 
@@ -133,6 +137,23 @@ export function JournalSettings({ kids }: JournalSettingsProps) {
               checked={settings.journalEnabled}
               onChange={(e) => setSettings(prev => ({ ...prev, journalEnabled: e.target.checked }))}
               className="w-5 h-5 rounded text-pink-500 focus:ring-pink-500"
+            />
+          </label>
+
+          {/* Streak Display Toggle */}
+          <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg cursor-pointer">
+            <div className="flex items-center gap-3">
+              <Fire size={20} weight="fill" className="text-orange-500" />
+              <div>
+                <p className="font-medium text-gray-800 dark:text-white">Show Streak Counter</p>
+                <p className="text-sm text-gray-500">Display current streak on {selectedKidName}'s home</p>
+              </div>
+            </div>
+            <input
+              type="checkbox"
+              checked={settings.streakEnabled}
+              onChange={(e) => setSettings(prev => ({ ...prev, streakEnabled: e.target.checked }))}
+              className="w-5 h-5 rounded text-orange-500 focus:ring-orange-500"
             />
           </label>
 

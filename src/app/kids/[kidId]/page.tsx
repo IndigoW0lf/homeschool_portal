@@ -117,8 +117,8 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         
-        {/* Streak Display */}
-        {isViewToday && (
+        {/* Streak Display - only show if enabled for this kid */}
+        {isViewToday && kid.streakEnabled !== false && (
           <section>
             <StreakDisplay kidId={kidId} />
           </section>

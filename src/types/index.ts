@@ -29,6 +29,8 @@ export interface Kid {
   journalEnabled?: boolean;
   journalAllowSkip?: boolean;
   journalPromptTypes?: string[];
+  // Gamification settings
+  streakEnabled?: boolean;
 }
 
 export interface Profile {

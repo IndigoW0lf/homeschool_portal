@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getKidsFromDB, getUpcomingHolidaysFromDB } from '@/lib/supabase/data';
+import { getKidsFromDB, getUpcomingHolidaysFromDB, getUserProfileFromDB } from '@/lib/supabase/data';
 import { getDailyQuote } from '@/lib/content';
 import { QuoteCard } from '@/components';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
@@ -31,6 +31,8 @@ export default async function Dashboard() {
   const quote = getDailyQuote();
   const today = new Date();
   const upcomingHolidays = user ? await getUpcomingHolidaysFromDB(6) : [];
+  const profile = user ? await getUserProfileFromDB() : null;
+  const displayName = profile?.display_name || 'Parent';
 
   // Format today's date nicely
   const formattedDate = today.toLocaleDateString('en-US', {
@@ -165,13 +167,13 @@ export default async function Dashboard() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              {/* Custom Page Title */}
+              {/* Custom Page Title - negative margin to compensate for SVG whitespace */}
               <Image 
                 src="/assets/titles/page_title.svg" 
                 alt="Lunara Homeschool Quest" 
                 width={300} 
                 height={60}
-                className="h-12 w-auto dark:brightness-110"
+                className="h-12 w-auto dark:brightness-110 -ml-3"
                 priority
               />
               <p className="text-gray-500 dark:text-gray-400 mt-2">{formattedDate}</p>
@@ -180,16 +182,10 @@ export default async function Dashboard() {
               <DarkModeToggle />
               <Link 
                 href="/parent"
-                className="p-2 bg-gray-100 dark:bg-gray-700 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="px-3 py-2 bg-gradient-to-r from-[var(--lavender-400)] to-[var(--ember-400)] text-white rounded-xl hover:opacity-90 transition-all font-bold text-sm uppercase tracking-wide shadow-md"
                 aria-label="Parent Dashboard"
               >
-                <Image 
-                  src="/assets/titles/mom.svg" 
-                  alt="Parent" 
-                  width={32} 
-                  height={32}
-                  className="h-8 w-auto dark:brightness-110"
-                />
+                {displayName}
               </Link>
             </div>
           </div>

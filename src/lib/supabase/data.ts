@@ -1,6 +1,28 @@
 import { createServerClient } from './server';
 import { Kid, Lesson, CalendarEntry, Resources } from '@/types';
 import { formatDateString } from '../dateUtils';
+import type { Profile } from '@/types';
+
+// User Profile
+export async function getUserProfileFromDB(): Promise<Profile | null> {
+  const supabase = await createServerClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+  
+  if (error) {
+    console.error('Error fetching profile:', error);
+    return null;
+  }
+  
+  return data as Profile;
+}
 
 // Kids - filtered by authenticated user
 export async function getKidsFromDB(): Promise<Kid[]> {
@@ -39,6 +61,7 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     journalEnabled: row.journal_enabled ?? true,
     journalAllowSkip: row.journal_allow_skip ?? true,
     journalPromptTypes: row.journal_prompt_types || undefined,
+    streakEnabled: row.streak_enabled ?? true,
   }));
 }
 
