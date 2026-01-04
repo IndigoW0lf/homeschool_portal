@@ -11,6 +11,11 @@ interface ParsedCurriculumItem {
   itemType: string;
 }
 
+interface ParsedChunkResult {
+  items: ParsedCurriculumItem[];
+  parseWarnings: string[];
+}
+
 const SYSTEM_PROMPT = `You are an expert at parsing educational curriculum data. 
 Your job is to take raw text from curriculum export reports (CSV, TSV, or pasted text) and extract structured data.
 
@@ -46,70 +51,167 @@ Respond ONLY with valid JSON in this exact format:
   "parseWarnings": ["any warnings about ambiguous or unparseable data"]
 }`;
 
+// Configuration for chunking
+const ROWS_PER_CHUNK = 100; // Process 100 rows at a time
+const MAX_CONCURRENT_CHUNKS = 3; // Limit concurrent API calls
+
+/**
+ * Split CSV text into chunks, preserving the header for each chunk
+ */
+function splitIntoChunks(rawText: string): string[] {
+  const lines = rawText.split('\n');
+
+  // Find the header line (first non-empty line that looks like a header)
+  let headerLine = '';
+  let dataStartIndex = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line && !line.startsWith('This grade report') && !line.startsWith('Disclaimer')) {
+      headerLine = lines[i];
+      dataStartIndex = i + 1;
+      break;
+    }
+  }
+
+  // Get all data lines (non-empty lines after header)
+  const dataLines = lines.slice(dataStartIndex).filter(line => line.trim());
+
+  // If small enough, return as single chunk
+  if (dataLines.length <= ROWS_PER_CHUNK) {
+    return [rawText];
+  }
+
+  // Split into chunks
+  const chunks: string[] = [];
+  for (let i = 0; i < dataLines.length; i += ROWS_PER_CHUNK) {
+    const chunkLines = dataLines.slice(i, i + ROWS_PER_CHUNK);
+    // Prepend header to each chunk so AI knows the column structure
+    chunks.push(headerLine + '\n' + chunkLines.join('\n'));
+  }
+
+  return chunks;
+}
+
+/**
+ * Parse a single chunk of curriculum data
+ */
+async function parseChunk(
+  openai: ReturnType<typeof getOpenAIClient>,
+  chunkText: string,
+  source: string,
+  chunkIndex: number
+): Promise<ParsedChunkResult> {
+  const completion = await openai.chat.completions.create({
+    model: AI_MODELS.default,
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      {
+        role: 'user',
+        content: `Parse this curriculum data from ${source} (chunk ${chunkIndex + 1}):\n\n${chunkText}`
+      }
+    ],
+    temperature: 0.1,
+    max_tokens: 8000, // Smaller per-chunk limit
+    response_format: { type: 'json_object' },
+  });
+
+  const choice = completion.choices[0];
+  const content = choice?.message?.content;
+
+  if (!content) {
+    throw new Error(`Chunk ${chunkIndex + 1}: No response from AI`);
+  }
+
+  if (choice.finish_reason === 'length') {
+    throw new Error(`Chunk ${chunkIndex + 1}: Response truncated`);
+  }
+
+  try {
+    return JSON.parse(content) as ParsedChunkResult;
+  } catch {
+    console.error(`Chunk ${chunkIndex + 1} parse error. Content:`, content.substring(0, 500));
+    throw new Error(`Chunk ${chunkIndex + 1}: Invalid JSON response`);
+  }
+}
+
+/**
+ * Process chunks with limited concurrency
+ */
+async function processChunksWithConcurrency(
+  openai: ReturnType<typeof getOpenAIClient>,
+  chunks: string[],
+  source: string
+): Promise<ParsedChunkResult[]> {
+  const results: ParsedChunkResult[] = [];
+
+  // Process in batches of MAX_CONCURRENT_CHUNKS
+  for (let i = 0; i < chunks.length; i += MAX_CONCURRENT_CHUNKS) {
+    const batch = chunks.slice(i, i + MAX_CONCURRENT_CHUNKS);
+    const batchPromises = batch.map((chunk, idx) =>
+      parseChunk(openai, chunk, source, i + idx)
+    );
+
+    const batchResults = await Promise.all(batchPromises);
+    results.push(...batchResults);
+  }
+
+  return results;
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Verify authentication
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { rawText, source = 'unknown' } = await request.json();
-    
+
     if (!rawText || typeof rawText !== 'string') {
       return NextResponse.json({ error: 'Missing rawText' }, { status: 400 });
     }
 
-    // Truncate if too long (avoid token limits)
-    const maxLength = 50000; // ~15k tokens
-    const truncatedText = rawText.length > maxLength 
-      ? rawText.substring(0, maxLength) + '\n... (truncated)'
-      : rawText;
-
     const openai = getOpenAIClient();
-    
-    const completion = await openai.chat.completions.create({
-      model: AI_MODELS.default,
-      messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { 
-          role: 'user', 
-          content: `Parse this curriculum data from ${source}:\n\n${truncatedText}`
-        }
-      ],
-      temperature: 0.1, // Low temperature for consistent parsing
-      max_tokens: 16000, // Allow for many items
-      response_format: { type: 'json_object' },
-    });
 
-    const content = completion.choices[0]?.message?.content;
-    
-    if (!content) {
-      return NextResponse.json({ error: 'No response from AI' }, { status: 500 });
+    // Split into chunks
+    const chunks = splitIntoChunks(rawText);
+    console.log(`Processing ${chunks.length} chunk(s) for curriculum parsing`);
+
+    // Parse all chunks
+    const chunkResults = await processChunksWithConcurrency(openai, chunks, source);
+
+    // Combine results from all chunks
+    const allItems: ParsedCurriculumItem[] = [];
+    const allWarnings: string[] = [];
+
+    for (const result of chunkResults) {
+      allItems.push(...(result.items || []));
+      allWarnings.push(...(result.parseWarnings || []));
     }
 
-    const parsed = JSON.parse(content) as {
-      items: ParsedCurriculumItem[];
-      parseWarnings: string[];
-    };
-
     // Validate and clean up the parsed data
-    const validItems = parsed.items.filter(item => {
-      return item.taskName && item.course && item.date && 
-             /^\d{4}-\d{2}-\d{2}$/.test(item.date);
+    const validItems = allItems.filter(item => {
+      return item.taskName && item.course && item.date &&
+        /^\d{4}-\d{2}-\d{2}$/.test(item.date);
     });
+
+    // Deduplicate warnings
+    const uniqueWarnings = [...new Set(allWarnings)];
 
     return NextResponse.json({
       success: true,
       items: validItems,
-      warnings: parsed.parseWarnings || [],
-      totalParsed: parsed.items.length,
+      warnings: uniqueWarnings,
+      totalParsed: allItems.length,
       validCount: validItems.length,
-      skipped: parsed.items.length - validItems.length,
+      skipped: allItems.length - validItems.length,
+      chunksProcessed: chunks.length,
     });
-    
+
   } catch (error) {
     console.error('AI parse error:', error);
     return NextResponse.json(
