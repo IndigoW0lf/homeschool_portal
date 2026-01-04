@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import { createServerClient } from '@/lib/supabase/server';
 import { ParentNav } from '@/components/ParentNav';
 import { LunaProvider, LunaPanel } from '@/components/luna';
+import { ParentOnboardingWrapper } from '@/components/onboarding/ParentOnboardingWrapper';
 
 export default async function ParentLayout({
   children,
@@ -17,6 +19,15 @@ export default async function ParentLayout({
     redirect('/parent/login');
   }
 
+  // Check if user has seen the tutorial
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('has_seen_tutorial')
+    .eq('id', user.id)
+    .single();
+
+  const hasSeenTutorial = profile?.has_seen_tutorial ?? false;
+
   return (
     <LunaProvider>
       <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
@@ -27,6 +38,9 @@ export default async function ParentLayout({
         </main>
       </div>
       <LunaPanel />
+      <Suspense fallback={null}>
+        <ParentOnboardingWrapper userId={user.id} hasSeenTutorial={hasSeenTutorial} />
+      </Suspense>
     </LunaProvider>
   );
 }

@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { getKidByIdFromDB } from '@/lib/supabase/data';
 import { KidsNav } from '@/components/KidsNav';
 import { createServerClient } from '@/lib/supabase/server';
+import { KidOnboardingWrapper } from '@/components/onboarding/KidOnboardingWrapper';
 
 interface KidsLayoutProps {
   children: React.ReactNode;
@@ -21,14 +22,14 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
 
   // Check if PIN is required for this kid
   const supabase = await createServerClient();
-  const { data: kidWithPin } = await supabase
+  const { data: kidWithDetails } = await supabase
     .from('kids')
-    .select('pin_hash')
+    .select('pin_hash, has_seen_tutorial')
     .eq('id', kidId)
     .single();
 
   // If kid has a PIN set, check for trusted device cookie
-  if (kidWithPin?.pin_hash) {
+  if (kidWithDetails?.pin_hash) {
     const cookieStore = await cookies();
     const trustCookie = cookieStore.get(`kid_trust_${kidId}`);
     
@@ -37,6 +38,8 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
       redirect(`/unlock/${kidId}`);
     }
   }
+
+  const hasSeenTutorial = kidWithDetails?.has_seen_tutorial ?? false;
 
   return (
     <div 
@@ -55,6 +58,14 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
       <main className="pt-16 lg:pt-0 lg:pl-20">
         {children}
       </main>
+
+      {/* Kid onboarding tutorial */}
+      <KidOnboardingWrapper 
+        kidId={kidId} 
+        kidName={kid.nickname || kid.name} 
+        hasSeenTutorial={hasSeenTutorial} 
+      />
     </div>
   );
 }
+
