@@ -82,3 +82,13 @@ body {
 html.dark .svg-title {
   filter: brightness(1.1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
 }
+
+/* Marketing page animations */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}

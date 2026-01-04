@@ -53,6 +53,7 @@ export default async function KidJournalPage({ params }: JournalPageProps) {
         <JournalBrowser 
           entries={entries || []} 
           kidName={kid.nickname || kid.name}
+          kidId={kidId}
         />
       </div>
     </div>

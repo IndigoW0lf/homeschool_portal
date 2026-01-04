@@ -1,9 +1,19 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { MagnifyingGlass, Shuffle, Tag, Calendar } from '@phosphor-icons/react';
+import { 
+  MagnifyingGlass, 
+  Shuffle, 
+  Tag, 
+  Calendar, 
+  Plus, 
+  PencilSimple,
+  Check,
+  X
+} from '@phosphor-icons/react';
 import { formatDistanceToNow, format, parseISO } from 'date-fns';
 import { JournalTag } from '@/lib/ai/journal-tags';
+import { supabase } from '@/lib/supabase/browser';
 
 interface JournalEntry {
   id: string;
@@ -20,6 +30,7 @@ interface JournalEntry {
 interface JournalBrowserProps {
   entries: JournalEntry[];
   kidName: string;
+  kidId: string;
 }
 
 const MOOD_EMOJIS: Record<string, string> = {
@@ -30,11 +41,19 @@ const MOOD_EMOJIS: Record<string, string> = {
   sad: '😢',
 };
 
-export function JournalBrowser({ entries, kidName }: JournalBrowserProps) {
+const ENTRIES_PER_PAGE = 10;
+
+export function JournalBrowser({ entries: initialEntries, kidName, kidId }: JournalBrowserProps) {
+  const [entries, setEntries] = useState(initialEntries);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<JournalTag | null>(null);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [randomEntry, setRandomEntry] = useState<JournalEntry | null>(null);
+  const [visibleCount, setVisibleCount] = useState(ENTRIES_PER_PAGE);
+  const [showNewEntryForm, setShowNewEntryForm] = useState(false);
+  const [newEntryText, setNewEntryText] = useState('');
+  const [newEntryMood, setNewEntryMood] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Get all unique tags from entries
   const allTags = useMemo(() => {
@@ -71,12 +90,15 @@ export function JournalBrowser({ entries, kidName }: JournalBrowserProps) {
     });
   }, [entries, searchQuery, selectedTag, selectedMood]);
 
+  // Paginate
+  const visibleEntries = filteredEntries.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredEntries.length;
+
   // Random memory function
   const pickRandomEntry = () => {
     if (entries.length === 0) return;
     const randomIndex = Math.floor(Math.random() * entries.length);
     setRandomEntry(entries[randomIndex]);
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -85,24 +107,131 @@ export function JournalBrowser({ entries, kidName }: JournalBrowserProps) {
     setSelectedTag(null);
     setSelectedMood(null);
     setRandomEntry(null);
+    setVisibleCount(ENTRIES_PER_PAGE);
   };
 
-  if (entries.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">📔</div>
-        <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-          No journal entries yet
-        </h3>
-        <p className="text-gray-500 dark:text-gray-400">
-          Complete your daily journal to start building your collection!
-        </p>
-      </div>
-    );
-  }
+  const loadMore = () => {
+    setVisibleCount(prev => prev + ENTRIES_PER_PAGE);
+  };
+
+  const handleNewEntry = async () => {
+    if (!newEntryText.trim() || isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      const { data, error } = await supabase
+        .from('journal_entries')
+        .insert({
+          kid_id: kidId,
+          date: today,
+          prompt: 'Free writing',
+          response: newEntryText.trim(),
+          mood: newEntryMood,
+          skipped: false,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Add to local state
+      setEntries(prev => [data, ...prev]);
+      setNewEntryText('');
+      setNewEntryMood(null);
+      setShowNewEntryForm(false);
+    } catch (err) {
+      console.error('Error creating journal entry:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdateEntry = async (entryId: string, newResponse: string) => {
+    try {
+      const { error } = await supabase
+        .from('journal_entries')
+        .update({ response: newResponse })
+        .eq('id', entryId);
+
+      if (error) throw error;
+
+      // Update local state
+      setEntries(prev => prev.map(e => 
+        e.id === entryId ? { ...e, response: newResponse } : e
+      ));
+    } catch (err) {
+      console.error('Error updating journal entry:', err);
+    }
+  };
 
   return (
     <div className="space-y-6">
+      {/* New Entry Button */}
+      {!showNewEntryForm && (
+        <button
+          onClick={() => setShowNewEntryForm(true)}
+          className="w-full p-4 rounded-xl border-2 border-dashed border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors flex items-center justify-center gap-2"
+        >
+          <Plus size={20} weight="bold" />
+          Write a New Entry
+        </button>
+      )}
+
+      {/* New Entry Form */}
+      {showNewEntryForm && (
+        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
+          <h3 className="font-semibold text-purple-800 dark:text-purple-300 mb-3">
+            New Journal Entry
+          </h3>
+          <textarea
+            value={newEntryText}
+            onChange={(e) => setNewEntryText(e.target.value)}
+            placeholder="What's on your mind today?"
+            className="w-full p-3 rounded-lg border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-none"
+            rows={4}
+          />
+          <div className="flex items-center justify-between mt-3">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Mood:</span>
+              {Object.entries(MOOD_EMOJIS).map(([mood, emoji]) => (
+                <button
+                  key={mood}
+                  onClick={() => setNewEntryMood(newEntryMood === mood ? null : mood)}
+                  className={`text-xl p-1 rounded transition-all ${
+                    newEntryMood === mood
+                      ? 'bg-purple-200 dark:bg-purple-800 scale-110'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowNewEntryForm(false);
+                  setNewEntryText('');
+                  setNewEntryMood(null);
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleNewEntry}
+                disabled={!newEntryText.trim() || isSubmitting}
+                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isSubmitting ? 'Saving...' : 'Save Entry'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Random Memory */}
       {randomEntry && (
         <div className="p-4 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
@@ -116,7 +245,7 @@ export function JournalBrowser({ entries, kidName }: JournalBrowserProps) {
               Close
             </button>
           </div>
-          <JournalEntryCard entry={randomEntry} />
+          <JournalEntryCard entry={randomEntry} onUpdate={handleUpdateEntry} />
         </div>
       )}
 
@@ -196,22 +325,67 @@ export function JournalBrowser({ entries, kidName }: JournalBrowserProps) {
 
       {/* Results count */}
       <p className="text-sm text-gray-500">
-        Showing {filteredEntries.length} of {entries.length} entries
+        Showing {visibleEntries.length} of {filteredEntries.length} entries
       </p>
 
       {/* Entries List */}
-      <div className="space-y-4">
-        {filteredEntries.map(entry => (
-          <JournalEntryCard key={entry.id} entry={entry} />
-        ))}
-      </div>
+      {entries.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">📔</div>
+          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            No journal entries yet
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400">
+            Write your first journal entry above!
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {visibleEntries.map(entry => (
+            <JournalEntryCard 
+              key={entry.id} 
+              entry={entry} 
+              onUpdate={handleUpdateEntry}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Load More */}
+      {hasMore && (
+        <button
+          onClick={loadMore}
+          className="w-full py-3 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
+        >
+          Load More ({filteredEntries.length - visibleCount} remaining)
+        </button>
+      )}
     </div>
   );
 }
 
-function JournalEntryCard({ entry }: { entry: JournalEntry }) {
+function JournalEntryCard({ 
+  entry, 
+  onUpdate 
+}: { 
+  entry: JournalEntry;
+  onUpdate: (id: string, response: string) => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedResponse, setEditedResponse] = useState(entry.response || '');
+  
   const formattedDate = format(parseISO(entry.date), 'EEEE, MMMM d, yyyy');
   const relativeDate = formatDistanceToNow(parseISO(entry.date), { addSuffix: true });
+
+  const handleSave = () => {
+    onUpdate(entry.id, editedResponse);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditedResponse(entry.response || '');
+    setIsEditing(false);
+  };
 
   return (
     <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -223,22 +397,60 @@ function JournalEntryCard({ entry }: { entry: JournalEntry }) {
           <span className="text-gray-300 dark:text-gray-600">•</span>
           <span>{relativeDate}</span>
         </div>
-        {entry.mood && (
-          <span className="text-xl" title={entry.mood}>
-            {MOOD_EMOJIS[entry.mood]}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {entry.mood && (
+            <span className="text-xl" title={entry.mood}>
+              {MOOD_EMOJIS[entry.mood]}
+            </span>
+          )}
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="p-1 text-gray-400 hover:text-purple-500 transition-colors"
+              title="Edit entry"
+            >
+              <PencilSimple size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Prompt */}
-      <p className="text-sm text-purple-600 dark:text-purple-400 mb-2 italic">
-        "{entry.prompt}"
-      </p>
+      {entry.prompt !== 'Free writing' && (
+        <p className="text-sm text-purple-600 dark:text-purple-400 mb-2 italic">
+          "{entry.prompt}"
+        </p>
+      )}
 
       {/* Response */}
-      <p className="text-gray-800 dark:text-gray-200">
-        {entry.response}
-      </p>
+      {isEditing ? (
+        <div className="space-y-2">
+          <textarea
+            value={editedResponse}
+            onChange={(e) => setEditedResponse(e.target.value)}
+            className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 resize-none"
+            rows={4}
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={handleCancel}
+              className="p-2 text-gray-500 hover:text-gray-700"
+            >
+              <X size={18} />
+            </button>
+            <button
+              onClick={handleSave}
+              className="p-2 text-green-500 hover:text-green-600"
+            >
+              <Check size={18} weight="bold" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-gray-800 dark:text-gray-200">
+          {entry.response}
+        </p>
+      )}
 
       {/* Tags */}
       {entry.tags && entry.tags.length > 0 && (
