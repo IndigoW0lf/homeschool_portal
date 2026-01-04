@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 
 // Model configuration
 export const AI_MODELS = {
-  default: 'gpt-4.1-mini',
+  default: 'gpt-4.1-nano',
   escalation: 'gpt-4.1',
 } as const;
 
