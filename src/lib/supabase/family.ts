@@ -135,28 +135,35 @@ export async function inviteFamilyMember(
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { success: false, error: 'Not authenticated' };
 
-    // Check if user is already a member
-    const { data: existingMember } = await supabase
-        .from('family_members')
+    // Check if user already exists and is a member
+    const { data: existingProfile } = await supabase
+        .from('profiles')
         .select('id')
-        .eq('family_id', familyId)
-        .eq('user_id', (
-            await supabase.from('profiles').select('id').eq('email', email).single()
-        ).data?.id || '')
-        .single();
+        .eq('email', email)
+        .maybeSingle();  // Returns null instead of error if not found
 
-    if (existingMember) {
-        return { success: false, error: 'This person is already a family member' };
+    if (existingProfile?.id) {
+        // User exists - check if already a family member
+        const { data: existingMember } = await supabase
+            .from('family_members')
+            .select('id')
+            .eq('family_id', familyId)
+            .eq('user_id', existingProfile.id)
+            .maybeSingle();
+
+        if (existingMember) {
+            return { success: false, error: 'This person is already a family member' };
+        }
     }
 
-    // Check if invite already exists
+    // Check if invite already exists (by email, regardless of user account)
     const { data: existingInvite } = await supabase
         .from('family_invites')
         .select('id')
         .eq('family_id', familyId)
         .eq('email', email)
-        .is('accepted_at', null)
-        .single();
+        .eq('status', 'pending')
+        .maybeSingle();
 
     if (existingInvite) {
         return { success: false, error: 'An invitation has already been sent to this email' };
