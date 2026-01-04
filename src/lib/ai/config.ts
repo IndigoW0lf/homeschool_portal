@@ -9,7 +9,7 @@ export const AI_MODELS = {
 // API configuration
 export const AI_CONFIG = {
   temperature: 0.7,
-  maxTokens: 1024,
+  maxTokens: 3000, // Increased to allow detailed lesson plans
   // Rate limiting
   maxRequestsPerMinute: 10,
 } as const;
