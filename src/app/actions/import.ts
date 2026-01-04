@@ -153,46 +153,74 @@ export async function getExternalCurriculumStats(kidIds: string[]) {
 
   if (error) {
     console.error('Error fetching external curriculum:', error);
-    return { items: [], stats: null };
+    return { byKid: {} };
   }
 
   const items = data || [];
 
-  // Calculate stats
-  const subjectGrades: Record<string, { total: number; count: number }> = {};
-  let totalItems = 0;
-  let gradedItems = 0;
-  let totalScore = 0;
+  // Group by kid_id
+  const byKid: Record<string, {
+    items: typeof items;
+    stats: {
+      totalItems: number;
+      gradedItems: number;
+      avgGrade: number | null;
+      subjectAverages: { subject: string; average: number; count: number }[];
+    };
+  }> = {};
 
-  items.forEach(item => {
-    totalItems++;
-    if (item.score !== null) {
-      gradedItems++;
-      totalScore += item.score;
-      
-      if (!subjectGrades[item.subject]) {
-        subjectGrades[item.subject] = { total: 0, count: 0 };
-      }
-      subjectGrades[item.subject].total += item.score;
-      subjectGrades[item.subject].count++;
-    }
+  // Initialize for each kid
+  kidIds.forEach(kidId => {
+    byKid[kidId] = {
+      items: [],
+      stats: { totalItems: 0, gradedItems: 0, avgGrade: null, subjectAverages: [] }
+    };
   });
 
-  const avgGrade = gradedItems > 0 ? Math.round(totalScore / gradedItems) : null;
-  
-  const subjectAverages = Object.entries(subjectGrades).map(([subject, data]) => ({
-    subject,
-    average: Math.round(data.total / data.count),
-    count: data.count,
-  })).sort((a, b) => b.count - a.count);
+  // Process items by kid
+  items.forEach(item => {
+    if (!byKid[item.kid_id]) {
+      byKid[item.kid_id] = {
+        items: [],
+        stats: { totalItems: 0, gradedItems: 0, avgGrade: null, subjectAverages: [] }
+      };
+    }
+    byKid[item.kid_id].items.push(item);
+  });
 
-  return {
-    items,
-    stats: {
-      totalItems,
-      gradedItems,
-      avgGrade,
-      subjectAverages,
-    },
-  };
+  // Calculate stats per kid
+  for (const kidId of Object.keys(byKid)) {
+    const kidItems = byKid[kidId].items;
+    const subjectGrades: Record<string, { total: number; count: number }> = {};
+    let totalItems = 0;
+    let gradedItems = 0;
+    let totalScore = 0;
+
+    kidItems.forEach(item => {
+      totalItems++;
+      if (item.score !== null) {
+        gradedItems++;
+        totalScore += item.score;
+        
+        if (!subjectGrades[item.subject]) {
+          subjectGrades[item.subject] = { total: 0, count: 0 };
+        }
+        subjectGrades[item.subject].total += item.score;
+        subjectGrades[item.subject].count++;
+      }
+    });
+
+    const avgGrade = gradedItems > 0 ? Math.round(totalScore / gradedItems) : null;
+    
+    const subjectAverages = Object.entries(subjectGrades).map(([subject, data]) => ({
+      subject,
+      average: Math.round(data.total / data.count),
+      count: data.count,
+    })).sort((a, b) => b.count - a.count);
+
+    byKid[kidId].stats = { totalItems, gradedItems, avgGrade, subjectAverages };
+  }
+
+  return { byKid };
 }
+
