@@ -36,6 +36,21 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     const lines = text.trim().split('\n');
     const rows: ParsedRow[] = [];
     
+    // Skip known non-data lines (Miacademy disclaimers, etc.)
+    const skipPatterns = [
+      'grade report was printed',
+      'curriculum provider',
+      'not an official transcript',
+      'miacademy is a',
+    ];
+    
+    // Auto-detect delimiter: check if first data line has tabs
+    const firstDataLine = lines.find(l => 
+      l.trim() && 
+      !skipPatterns.some(p => l.toLowerCase().includes(p))
+    );
+    const delimiter = firstDataLine?.includes('\t') ? '\t' : ',';
+    
     // Skip header row if it looks like headers
     const startIdx = lines[0]?.toLowerCase().includes('task') ? 1 : 0;
     
@@ -43,14 +58,18 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
       const line = lines[i].trim();
       if (!line) continue;
       
-      // Handle CSV with possible quoted values
-      const parts = line.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+      // Skip disclaimer/non-data lines
+      if (skipPatterns.some(p => line.toLowerCase().includes(p))) continue;
       
-      if (parts.length >= 3) {
+      // Split by detected delimiter and clean up quotes
+      const parts = line.split(delimiter).map(p => p.trim().replace(/^"|"$/g, ''));
+      
+      // Need at least task name, course, and date
+      if (parts.length >= 3 && parts[0] && parts[1] && parts[2]) {
         rows.push({
-          taskName: parts[0] || '',
-          course: parts[1] || '',
-          date: parts[2] || '',
+          taskName: parts[0],
+          course: parts[1],
+          date: parts[2],
           score: parts[3] || null,
         });
       }
