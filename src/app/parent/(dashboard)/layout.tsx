@@ -4,6 +4,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { ParentNav } from '@/components/ParentNav';
 import { LunaProvider, LunaPanel } from '@/components/luna';
 import { ParentOnboardingWrapper } from '@/components/onboarding/ParentOnboardingWrapper';
+import { WelcomeSetupModal } from '@/components/onboarding/WelcomeSetupModal';
 
 export default async function ParentLayout({
   children,
@@ -28,6 +29,17 @@ export default async function ParentLayout({
 
   const hasSeenTutorial = profile?.has_seen_tutorial ?? false;
 
+  // Get user's family name for welcome modal
+  const { data: familyMember } = await supabase
+    .from('family_members')
+    .select('family:families(name)')
+    .eq('user_id', user.id)
+    .limit(1)
+    .maybeSingle();
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any  
+  const familyName = (familyMember?.family as any)?.name || 'the family';
+
   return (
     <LunaProvider>
       <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
@@ -40,7 +52,9 @@ export default async function ParentLayout({
       <LunaPanel />
       <Suspense fallback={null}>
         <ParentOnboardingWrapper userId={user.id} hasSeenTutorial={hasSeenTutorial} />
+        <WelcomeSetupModal userId={user.id} familyName={familyName} />
       </Suspense>
     </LunaProvider>
   );
 }
+

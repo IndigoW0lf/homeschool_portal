@@ -6,16 +6,17 @@ interface ParentProgressStatsProps {
   kidId: string;
   kidName: string;
   stats: {
-    totalStars: number;
+    totalMoons: number;
     currentStreak: number;
     bestStreak: number;
+    streakEnabled?: boolean;
     subjectCounts: Record<string, number>;
     weeklyActivity: { date: string; count: number }[];
   };
 }
 
 export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
-  const { totalStars, currentStreak, bestStreak, subjectCounts, weeklyActivity } = stats;
+  const { totalMoons, currentStreak, bestStreak, streakEnabled = true, subjectCounts, weeklyActivity } = stats;
 
   const maxActivity = Math.max(...weeklyActivity.map(d => d.count), 5); // Minimum scale of 5
 
@@ -29,22 +30,24 @@ export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
   return (
     <div className="space-y-6">
       {/* Top Stats Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {/* Streak */}
-        <div className="col-span-2 sm:col-span-2 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 p-4 rounded-xl border border-orange-100 dark:border-orange-800/50 flex items-center gap-4">
-          <div className="p-3 bg-orange-100 dark:bg-orange-800/30 rounded-full text-orange-600 dark:text-orange-400">
-            <Fire size={24} weight="fill" />
-          </div>
-          <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Current Streak</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">{currentStreak} Days</span>
-              {bestStreak > currentStreak && (
-                <span className="text-xs text-gray-500">Best: {bestStreak}</span>
-              )}
+      <div className={`grid ${streakEnabled ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-1 sm:grid-cols-2'} gap-4`}>
+        {/* Streak - only show if enabled */}
+        {streakEnabled && (
+          <div className="col-span-2 sm:col-span-2 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 p-4 rounded-xl border border-orange-100 dark:border-orange-800/50 flex items-center gap-4">
+            <div className="p-3 bg-orange-100 dark:bg-orange-800/30 rounded-full text-orange-600 dark:text-orange-400">
+              <Fire size={24} weight="fill" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Current Streak</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">{currentStreak} Days</span>
+                {bestStreak > currentStreak && (
+                  <span className="text-xs text-gray-500">Best: {bestStreak}</span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Total Moons */}
         <div className="col-span-2 sm:col-span-2 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/50 flex items-center gap-4">
@@ -53,7 +56,7 @@ export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
           </div>
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Total Moons</p>
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalStars}</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalMoons}</span>
           </div>
         </div>
       </div>

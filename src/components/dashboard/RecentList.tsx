@@ -55,21 +55,21 @@ export function RecentList({
   return (
     <div className="card flex flex-col h-full">
       {/* Header */}
-      <div className="card-header">
+      <div className="card-header min-h-[3.5rem]">
         {titleImage ? (
           <Image 
             src={titleImage} 
             alt={title} 
             width={120} 
             height={30}
-            className="h-6 w-auto svg-title"
+            className="h-6 w-auto svg-title flex-shrink-0"
           />
         ) : (
           <h3 className="heading-sm">{title}</h3>
         )}
         <Link 
           href={createLink}
-          className="btn-sm btn-ghost text-[var(--ember-600)] dark:text-[var(--ember-400)]"
+          className="btn-sm btn-ghost text-[var(--ember-600)] dark:text-[var(--ember-400)] whitespace-nowrap flex-shrink-0"
         >
           <Plus size={16} weight="bold" color="#e7b58d" /> {createLabel}
         </Link>
