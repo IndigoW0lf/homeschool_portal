@@ -201,7 +201,7 @@ export async function getExternalCurriculumStats(kidIds: string[]) {
       if (item.score !== null) {
         gradedItems++;
         totalScore += item.score;
-        
+
         if (!subjectGrades[item.subject]) {
           subjectGrades[item.subject] = { total: 0, count: 0 };
         }
@@ -211,7 +211,7 @@ export async function getExternalCurriculumStats(kidIds: string[]) {
     });
 
     const avgGrade = gradedItems > 0 ? Math.round(totalScore / gradedItems) : null;
-    
+
     const subjectAverages = Object.entries(subjectGrades).map(([subject, data]) => ({
       subject,
       average: Math.round(data.total / data.count),
@@ -224,3 +224,28 @@ export async function getExternalCurriculumStats(kidIds: string[]) {
   return { byKid };
 }
 
+export async function deleteExternalCurriculumItem(
+  itemId: string
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createServerClient();
+
+  // Verify user is authenticated
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  // Delete the item (RLS will verify ownership)
+  const { error } = await supabase
+    .from('external_curriculum')
+    .delete()
+    .eq('id', itemId);
+
+  if (error) {
+    console.error('Delete error:', error);
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/parent/progress');
+  return { success: true };
+}

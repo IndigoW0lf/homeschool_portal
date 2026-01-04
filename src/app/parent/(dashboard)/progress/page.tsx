@@ -5,6 +5,7 @@ import { getExternalCurriculumStats } from '@/app/actions/import';
 import { ParentProgressStats } from '@/components/profile/ParentProgressStats';
 import { ImportButton } from '@/components/dashboard/ImportButton';
 import { SubjectDonut } from '@/components/dashboard/SubjectDonut';
+import { ExternalCurriculumList } from '@/components/dashboard/ExternalCurriculumList';
 import { redirect } from 'next/navigation';
 import { ChartLineUp, GraduationCap } from '@phosphor-icons/react/dist/ssr';
 
@@ -24,7 +25,7 @@ export default async function ProgressPage() {
     const progress = await getStudentProgress(kid.id);
     const subjectCounts = await getKidSubjectCounts(kid.id);
     const weeklyActivity = await getWeeklyActivity(kid.id);
-    
+
     return {
       kid,
       stats: {
@@ -62,11 +63,11 @@ export default async function ProgressPage() {
         {kidStats.map(({ kid, stats }) => {
           const kidExternal = externalData.byKid[kid.id];
           const hasExternalData = kidExternal && kidExternal.stats.totalItems > 0;
-          
+
           return (
             <div key={kid.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
               {/* Kid Header */}
-              <div 
+              <div
                 className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50"
                 style={{ borderLeftColor: kid.favoriteColor || '#9c8fb8', borderLeftWidth: '4px' }}
               >
@@ -74,7 +75,7 @@ export default async function ProgressPage() {
                   🌙 {kid.name}
                 </h2>
               </div>
-              
+
               <div className="p-6 space-y-6">
                 {/* Lunara Quest Section */}
                 <div>
@@ -95,10 +96,9 @@ export default async function ProgressPage() {
                         MiAcademy • {kidExternal.stats.totalItems} items
                       </span>
                       {kidExternal.stats.avgGrade !== null && (
-                        <span className={`text-sm font-bold ${
-                          kidExternal.stats.avgGrade >= 80 ? 'text-green-600' : 
-                          kidExternal.stats.avgGrade >= 60 ? 'text-amber-600' : 'text-red-600'
-                        }`}>
+                        <span className={`text-sm font-bold ${kidExternal.stats.avgGrade >= 80 ? 'text-green-600' :
+                            kidExternal.stats.avgGrade >= 60 ? 'text-amber-600' : 'text-red-600'
+                          }`}>
                           {kidExternal.stats.avgGrade}% avg
                         </span>
                       )}
@@ -116,64 +116,36 @@ export default async function ProgressPage() {
                         {/* Subject Performance bars */}
                         <div className="bg-gray-50 dark:bg-gray-900/30 rounded-lg p-4">
                           <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Subject Performance</h4>
-                        <div className="space-y-2">
-                          {kidExternal.stats.subjectAverages.map((subj) => (
-                            <div key={subj.subject} className="flex items-center gap-3">
-                              <span className="w-28 text-sm text-gray-600 dark:text-gray-400 truncate">{subj.subject}</span>
-                              <div className="flex-1 h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                <div 
-                                  className={`h-full rounded-full transition-all ${
-                                    subj.average >= 80 ? 'bg-green-500' : 
-                                    subj.average >= 60 ? 'bg-amber-500' : 'bg-red-500'
-                                  }`}
-                                  style={{ width: `${subj.average}%` }}
-                                />
+                          <div className="space-y-2">
+                            {kidExternal.stats.subjectAverages.map((subj) => (
+                              <div key={subj.subject} className="flex items-center gap-3">
+                                <span className="w-28 text-sm text-gray-600 dark:text-gray-400 truncate">{subj.subject}</span>
+                                <div className="flex-1 h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                  <div
+                                    className={`h-full rounded-full transition-all ${subj.average >= 80 ? 'bg-green-500' :
+                                        subj.average >= 60 ? 'bg-amber-500' : 'bg-red-500'
+                                      }`}
+                                    style={{ width: `${subj.average}%` }}
+                                  />
+                                </div>
+                                <span className={`text-sm font-medium w-10 text-right ${subj.average >= 80 ? 'text-green-600 dark:text-green-400' :
+                                    subj.average >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'
+                                  }`}>
+                                  {subj.average}%
+                                </span>
+                                <span className="text-xs text-gray-400 w-10">({subj.count})</span>
                               </div>
-                              <span className={`text-sm font-medium w-10 text-right ${
-                                subj.average >= 80 ? 'text-green-600 dark:text-green-400' : 
-                                subj.average >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'
-                              }`}>
-                                {subj.average}%
-                              </span>
-                              <span className="text-xs text-gray-400 w-10">({subj.count})</span>
-                            </div>
-                          ))}
-                        </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
 
-                    {/* Recent Activity */}
-                    {kidExternal.items.length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Recent Activity</h4>
-                        <div className="space-y-1 max-h-40 overflow-y-auto">
-                          {kidExternal.items.slice(0, 5).map((item) => (
-                            <div 
-                              key={item.id}
-                              className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-sm"
-                            >
-                              <span>🏫</span>
-                              <span className="flex-1 truncate text-gray-700 dark:text-gray-300">
-                                {item.task_name}
-                              </span>
-                              <span className="text-xs text-gray-400">
-                                {new Date(item.date).toLocaleDateString()}
-                              </span>
-                              {item.score !== null && (
-                                <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${
-                                  item.score >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                                  item.score >= 60 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
-                                  'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                                }`}>
-                                  {item.score}%
-                                </span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    {/* Recent Activity - Using client component */}
+                    <ExternalCurriculumList
+                      items={kidExternal.items}
+                      kidName={kid.name}
+                    />
                   </div>
                 )}
               </div>

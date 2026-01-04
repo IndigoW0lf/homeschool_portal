@@ -11,152 +11,228 @@ interface ParsedCurriculumItem {
   itemType: string;
 }
 
-interface ParsedChunkResult {
-  items: ParsedCurriculumItem[];
-  parseWarnings: string[];
+interface ManuallyParsedRow {
+  taskName: string;
+  course: string;
+  date: string;
+  score: number | null;
 }
 
-const SYSTEM_PROMPT = `You are an expert at parsing educational curriculum data. 
-Your job is to take raw text from curriculum export reports (CSV, TSV, or pasted text) and extract structured data.
+// Simpler prompt since we're just asking AI to categorize pre-parsed data
+const REVIEW_PROMPT = `You are categorizing pre-parsed educational curriculum items.
 
-For each item, extract:
-- taskName: The name of the task/lesson/assignment
-- course: The course or curriculum name
+For each item in the input array, determine:
 - subject: The subject area (Reading, Math, Science, Language Arts, History, Writing, Art, etc.)
-- date: The date in YYYY-MM-DD format
-- score: The score as a number (0-100), or null if not graded
 - itemType: One of "assessment", "practice", "video", "supplemental", or "lesson"
 
 Rules:
-1. Parse ALL rows, don't skip any
-2. Handle various date formats (MM/DD/YYYY, YYYY-MM-DD, etc.) and convert to YYYY-MM-DD
-3. Extract percentages as numbers (83% → 83)
-4. Determine subject from the course name (e.g., "Reading Comprehension: Level E" → "Reading")
-5. Determine itemType from the task name (Quiz/Assessment → "assessment", Practice → "practice", Video → "video", Supplemental → "supplemental", otherwise → "lesson")
-6. Handle embedded quotes and special characters in task names
-7. Skip header rows and disclaimer text (like "This grade report was printed...")
+- Determine subject from the course name (e.g., "Reading Comprehension: Level E" → "Reading", "Math Foundations" → "Math")
+- Determine itemType from the task name:
+  * Quiz/Test/Assessment → "assessment"
+  * Practice → "practice"
+  * Video → "video"
+  * Supplemental → "supplemental"
+  * Otherwise → "lesson"
 
-Respond ONLY with valid JSON in this exact format:
-{
-  "items": [
-    {
-      "taskName": "Example Task",
-      "course": "Example Course",
-      "subject": "Reading",
-      "date": "2025-10-27",
-      "score": 83,
-      "itemType": "assessment"
-    }
-  ],
-  "parseWarnings": ["any warnings about ambiguous or unparseable data"]
-}`;
-
-// Configuration for chunking
-const ROWS_PER_CHUNK = 100; // Process 100 rows at a time
-const MAX_CONCURRENT_CHUNKS = 3; // Limit concurrent API calls
+Input is a JSON array of items with taskName and course.
+Output ONLY valid JSON: { "categories": [ { "subject": "...", "itemType": "..." }, ... ] }
+The output array MUST have the same length as the input array, in the same order.`;
 
 /**
- * Split CSV text into chunks, preserving the header for each chunk
+ * Parse CSV manually - extract basic fields without AI
  */
-function splitIntoChunks(rawText: string): string[] {
-  const lines = rawText.split('\n');
+function parseCSVManually(rawText: string): ManuallyParsedRow[] {
+  const lines = rawText.trim().split('\n');
+  const rows: ManuallyParsedRow[] = [];
 
-  // Find the header line (first non-empty line that looks like a header)
-  let headerLine = '';
-  let dataStartIndex = 0;
+  // Patterns to skip
+  const skipPatterns = [
+    'grade report was printed',
+    'curriculum provider',
+    'not an official transcript',
+    'disclaimer',
+  ];
 
-  for (let i = 0; i < lines.length; i++) {
+  // Find delimiter and header
+  const firstDataLine = lines.find(l =>
+    l.trim() && !skipPatterns.some(p => l.toLowerCase().includes(p))
+  );
+  const delimiter = firstDataLine?.includes('\t') ? '\t' : ',';
+
+  // Check if first line is header
+  const firstLine = lines[0]?.toLowerCase() || '';
+  const startIdx = (firstLine.includes('task') || firstLine.includes('name') || firstLine.includes('course')) ? 1 : 0;
+
+  for (let i = startIdx; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (line && !line.startsWith('This grade report') && !line.startsWith('Disclaimer')) {
-      headerLine = lines[i];
-      dataStartIndex = i + 1;
-      break;
+    if (!line) continue;
+    if (skipPatterns.some(p => line.toLowerCase().includes(p))) continue;
+
+    // Parse CSV/TSV row, handling quoted fields
+    const parts = parseCSVLine(line, delimiter);
+
+    if (parts.length >= 3 && parts[0] && parts[1] && parts[2]) {
+      const date = parseDate(parts[2]);
+      if (date) {
+        rows.push({
+          taskName: parts[0],
+          course: parts[1],
+          date: date,
+          score: parseScore(parts[3] || null),
+        });
+      }
     }
   }
 
-  // Get all data lines (non-empty lines after header)
-  const dataLines = lines.slice(dataStartIndex).filter(line => line.trim());
-
-  // If small enough, return as single chunk
-  if (dataLines.length <= ROWS_PER_CHUNK) {
-    return [rawText];
-  }
-
-  // Split into chunks
-  const chunks: string[] = [];
-  for (let i = 0; i < dataLines.length; i += ROWS_PER_CHUNK) {
-    const chunkLines = dataLines.slice(i, i + ROWS_PER_CHUNK);
-    // Prepend header to each chunk so AI knows the column structure
-    chunks.push(headerLine + '\n' + chunkLines.join('\n'));
-  }
-
-  return chunks;
+  return rows;
 }
 
 /**
- * Parse a single chunk of curriculum data
+ * Parse a CSV line handling quoted fields
  */
-async function parseChunk(
-  openai: ReturnType<typeof getOpenAIClient>,
-  chunkText: string,
-  source: string,
-  chunkIndex: number
-): Promise<ParsedChunkResult> {
+function parseCSVLine(line: string, delimiter: string): string[] {
+  const parts: string[] = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === delimiter && !inQuotes) {
+      parts.push(current.trim().replace(/^"|"$/g, ''));
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  parts.push(current.trim().replace(/^"|"$/g, ''));
+
+  return parts;
+}
+
+/**
+ * Parse date string to YYYY-MM-DD format
+ */
+function parseDate(dateStr: string): string | null {
+  const cleaned = dateStr.trim().replace(/^"|"$/g, '');
+
+  // Try MM/DD/YYYY
+  const slashParts = cleaned.split('/');
+  if (slashParts.length === 3) {
+    const [month, day, year] = slashParts;
+    const m = month.padStart(2, '0');
+    const d = day.padStart(2, '0');
+    const y = year.length === 2 ? '20' + year : year;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(`${y}-${m}-${d}`)) {
+      return `${y}-${m}-${d}`;
+    }
+  }
+
+  // Try YYYY-MM-DD (already correct)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) {
+    return cleaned;
+  }
+
+  // Try ISO date
+  const isoDate = new Date(cleaned);
+  if (!isNaN(isoDate.getTime())) {
+    return isoDate.toISOString().split('T')[0];
+  }
+
+  return null;
+}
+
+/**
+ * Parse score string to number
+ */
+function parseScore(scoreStr: string | null): number | null {
+  if (!scoreStr || scoreStr.trim() === '' || scoreStr === '-') return null;
+  const cleaned = scoreStr.replace('%', '').trim();
+  const num = parseInt(cleaned, 10);
+  return isNaN(num) ? null : num;
+}
+
+/**
+ * Use AI to categorize items (single API call for all items)
+ */
+async function categorizeWithAI(
+  rows: ManuallyParsedRow[],
+): Promise<{ subject: string; itemType: string }[]> {
+  const openai = getOpenAIClient();
+
+  // Create compact input for AI - just task names and courses
+  const input = rows.map(r => ({ taskName: r.taskName, course: r.course }));
+
   const completion = await openai.chat.completions.create({
     model: AI_MODELS.default,
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      {
-        role: 'user',
-        content: `Parse this curriculum data from ${source} (chunk ${chunkIndex + 1}):\n\n${chunkText}`
-      }
+      { role: 'system', content: REVIEW_PROMPT },
+      { role: 'user', content: JSON.stringify(input) }
     ],
     temperature: 0.1,
-    max_tokens: 8000, // Smaller per-chunk limit
+    max_tokens: Math.min(rows.length * 50 + 500, 8000), // ~50 tokens per item
     response_format: { type: 'json_object' },
   });
 
-  const choice = completion.choices[0];
-  const content = choice?.message?.content;
-
+  const content = completion.choices[0]?.message?.content;
   if (!content) {
-    throw new Error(`Chunk ${chunkIndex + 1}: No response from AI`);
+    throw new Error('No response from AI');
   }
 
-  if (choice.finish_reason === 'length') {
-    throw new Error(`Chunk ${chunkIndex + 1}: Response truncated`);
+  const parsed = JSON.parse(content) as { categories: { subject: string; itemType: string }[] };
+
+  // Validate length matches
+  if (parsed.categories.length !== rows.length) {
+    console.warn(`AI returned ${parsed.categories.length} categories for ${rows.length} items`);
   }
 
-  try {
-    return JSON.parse(content) as ParsedChunkResult;
-  } catch {
-    console.error(`Chunk ${chunkIndex + 1} parse error. Content:`, content.substring(0, 500));
-    throw new Error(`Chunk ${chunkIndex + 1}: Invalid JSON response`);
-  }
+  return parsed.categories;
 }
 
 /**
- * Process chunks with limited concurrency
+ * Fallback categorization without AI
  */
-async function processChunksWithConcurrency(
-  openai: ReturnType<typeof getOpenAIClient>,
-  chunks: string[],
-  source: string
-): Promise<ParsedChunkResult[]> {
-  const results: ParsedChunkResult[] = [];
+function categorizeLocally(rows: ManuallyParsedRow[]): { subject: string; itemType: string }[] {
+  const courseToSubject: Record<string, string> = {
+    'reading': 'Reading',
+    'math': 'Math',
+    'science': 'Science',
+    'writing': 'Writing',
+    'history': 'History',
+    'social studies': 'Social Studies',
+    'art': 'Art',
+    'music': 'Music',
+    'language': 'Language Arts',
+  };
 
-  // Process in batches of MAX_CONCURRENT_CHUNKS
-  for (let i = 0; i < chunks.length; i += MAX_CONCURRENT_CHUNKS) {
-    const batch = chunks.slice(i, i + MAX_CONCURRENT_CHUNKS);
-    const batchPromises = batch.map((chunk, idx) =>
-      parseChunk(openai, chunk, source, i + idx)
-    );
+  return rows.map(row => {
+    const lowerCourse = row.course.toLowerCase();
+    const lowerTask = row.taskName.toLowerCase();
 
-    const batchResults = await Promise.all(batchPromises);
-    results.push(...batchResults);
-  }
+    // Determine subject
+    let subject = 'Other';
+    for (const [key, value] of Object.entries(courseToSubject)) {
+      if (lowerCourse.includes(key)) {
+        subject = value;
+        break;
+      }
+    }
 
-  return results;
+    // Determine item type
+    let itemType = 'lesson';
+    if (lowerTask.includes('assessment') || lowerTask.includes('quiz') || lowerTask.includes('test')) {
+      itemType = 'assessment';
+    } else if (lowerTask.includes('practice')) {
+      itemType = 'practice';
+    } else if (lowerTask.includes('video')) {
+      itemType = 'video';
+    } else if (lowerTask.includes('supplemental')) {
+      itemType = 'supplemental';
+    }
+
+    return { subject, itemType };
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -175,45 +251,56 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing rawText' }, { status: 400 });
     }
 
-    const openai = getOpenAIClient();
+    // Step 1: Manual CSV parsing (fast, no AI)
+    console.log('Step 1: Manual CSV parsing...');
+    const manuallyParsed = parseCSVManually(rawText);
+    console.log(`Parsed ${manuallyParsed.length} rows manually`);
 
-    // Split into chunks
-    const chunks = splitIntoChunks(rawText);
-    console.log(`Processing ${chunks.length} chunk(s) for curriculum parsing`);
-
-    // Parse all chunks
-    const chunkResults = await processChunksWithConcurrency(openai, chunks, source);
-
-    // Combine results from all chunks
-    const allItems: ParsedCurriculumItem[] = [];
-    const allWarnings: string[] = [];
-
-    for (const result of chunkResults) {
-      allItems.push(...(result.items || []));
-      allWarnings.push(...(result.parseWarnings || []));
+    if (manuallyParsed.length === 0) {
+      return NextResponse.json({ error: 'No valid rows found in file' }, { status: 400 });
     }
 
-    // Validate and clean up the parsed data
-    const validItems = allItems.filter(item => {
-      return item.taskName && item.course && item.date &&
-        /^\d{4}-\d{2}-\d{2}$/.test(item.date);
-    });
+    // Step 2: AI categorization (single call)
+    let categories: { subject: string; itemType: string }[];
+    const warnings: string[] = [];
 
-    // Deduplicate warnings
-    const uniqueWarnings = [...new Set(allWarnings)];
+    try {
+      console.log('Step 2: AI categorization (single call)...');
+      categories = await categorizeWithAI(manuallyParsed);
+    } catch (err) {
+      console.error('AI categorization failed, using local fallback:', err);
+      warnings.push('AI categorization unavailable, used local rules');
+      categories = categorizeLocally(manuallyParsed);
+    }
+
+    // Step 3: Combine manual parsing + AI categories
+    const items: ParsedCurriculumItem[] = manuallyParsed.map((row, i) => ({
+      taskName: row.taskName,
+      course: row.course,
+      date: row.date,
+      score: row.score,
+      subject: categories[i]?.subject || 'Other',
+      itemType: categories[i]?.itemType || 'lesson',
+    }));
+
+    // Validate dates
+    const validItems = items.filter(item =>
+      item.taskName && item.course && item.date &&
+      /^\d{4}-\d{2}-\d{2}$/.test(item.date)
+    );
 
     return NextResponse.json({
       success: true,
       items: validItems,
-      warnings: uniqueWarnings,
-      totalParsed: allItems.length,
+      warnings,
+      totalParsed: items.length,
       validCount: validItems.length,
-      skipped: allItems.length - validItems.length,
-      chunksProcessed: chunks.length,
+      skipped: items.length - validItems.length,
+      chunksProcessed: 1, // Always 1 now!
     });
 
   } catch (error) {
-    console.error('AI parse error:', error);
+    console.error('Parse error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Parse failed' },
       { status: 500 }

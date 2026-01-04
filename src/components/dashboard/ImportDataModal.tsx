@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { X, Upload, FileText, Check, Warning, Spinner, Sparkle } from '@phosphor-icons/react';
+import { X, Upload, FileText, Check, Warning, Spinner, Sparkle, CaretDown, CaretUp } from '@phosphor-icons/react';
 import { importExternalCurriculum } from '@/app/actions/import';
 import { toast } from 'sonner';
 
@@ -45,6 +45,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
   const [step, setStep] = useState<'upload' | 'preview' | 'complete'>('upload');
   const [result, setResult] = useState<{ imported: number; errors: string[] } | null>(null);
   const [useAI, setUseAI] = useState(true);
+  const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
 
   // AI-powered parsing
   const parseWithAI = async (text: string) => {
@@ -80,26 +81,26 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
   const parseCSVManual = useCallback((text: string): ParsedRow[] => {
     const lines = text.trim().split('\n');
     const rows: ParsedRow[] = [];
-    
+
     const skipPatterns = [
       'grade report was printed',
       'curriculum provider',
       'not an official transcript',
     ];
-    
-    const firstDataLine = lines.find(l => 
+
+    const firstDataLine = lines.find(l =>
       l.trim() && !skipPatterns.some(p => l.toLowerCase().includes(p))
     );
     const delimiter = firstDataLine?.includes('\t') ? '\t' : ',';
     const startIdx = lines[0]?.toLowerCase().includes('task') ? 1 : 0;
-    
+
     for (let i = startIdx; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
       if (skipPatterns.some(p => line.toLowerCase().includes(p))) continue;
-      
+
       const parts = line.split(delimiter).map(p => p.trim().replace(/^"|"$/g, ''));
-      
+
       if (parts.length >= 3 && parts[0] && parts[1] && parts[2]) {
         rows.push({
           taskName: parts[0],
@@ -109,7 +110,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
         });
       }
     }
-    
+
     return rows;
   }, []);
 
@@ -118,12 +119,12 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     if (!file) return;
 
     setFileName(file.name);
-    
+
     const reader = new FileReader();
     reader.onload = async (event) => {
       const text = event.target?.result as string;
       setRawText(text);
-      
+
       if (useAI) {
         await parseWithAI(text);
       } else {
@@ -141,12 +142,12 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     if (!file) return;
 
     setFileName(file.name);
-    
+
     const reader = new FileReader();
     reader.onload = async (event) => {
       const text = event.target?.result as string;
       setRawText(text);
-      
+
       if (useAI) {
         await parseWithAI(text);
       } else {
@@ -165,10 +166,10 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
         toast.error('Clipboard is empty');
         return;
       }
-      
+
       setFileName('Pasted data');
       setRawText(text);
-      
+
       if (useAI) {
         await parseWithAI(text);
       } else {
@@ -184,26 +185,26 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
   const handleImport = async () => {
     if (!selectedKidId) return;
-    
+
     const dataToImport = useAI && aiParsedData.length > 0 ? aiParsedData : parsedData;
     if (dataToImport.length === 0) return;
-    
+
     setIsImporting(true);
     try {
       // Convert AI parsed data to the format expected by importExternalCurriculum
       const rows: ParsedRow[] = useAI && aiParsedData.length > 0
         ? aiParsedData.map(item => ({
-            taskName: item.taskName,
-            course: item.course,
-            date: item.date,
-            score: item.score !== null ? `${item.score}%` : null,
-          }))
+          taskName: item.taskName,
+          course: item.course,
+          date: item.date,
+          score: item.score !== null ? `${item.score}%` : null,
+        }))
         : parsedData;
-      
+
       const res = await importExternalCurriculum(selectedKidId, source, rows);
       setResult({ imported: res.imported, errors: res.errors });
       setStep('complete');
-      
+
       if (res.success) {
         toast.success(`Imported ${res.imported} items!`);
       } else {
@@ -301,13 +302,11 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                 </div>
                 <button
                   onClick={() => setUseAI(!useAI)}
-                  className={`relative w-12 h-6 rounded-full transition-colors ${
-                    useAI ? 'bg-purple-500' : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${useAI ? 'bg-purple-500' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
                 >
-                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
-                    useAI ? 'translate-x-6' : 'translate-x-0.5'
-                  }`} />
+                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${useAI ? 'translate-x-6' : 'translate-x-0.5'
+                    }`} />
                 </button>
               </div>
 
@@ -348,9 +347,25 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
           {step === 'preview' && (
             <div className="space-y-4">
               {isParsing ? (
-                <div className="text-center py-8">
-                  <Spinner size={40} className="mx-auto text-purple-500 animate-spin mb-3" />
-                  <p className="text-gray-600 dark:text-gray-400">AI is analyzing your data...</p>
+                <div className="text-center py-12">
+                  {/* Animated Loading Indicator */}
+                  <div className="relative mx-auto w-16 h-16 mb-4">
+                    <div className="absolute inset-0 rounded-full border-4 border-purple-200 dark:border-purple-900/50"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
+                    <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-purple-500 animate-pulse" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    AI is analyzing your data
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-1">
+                    Parsing and categorizing each item...
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-500">
+                    This may take up to <span className="font-medium text-purple-600 dark:text-purple-400">30 seconds</span> for large files.
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">
+                    Please be patient and don&apos;t close this window.
+                  </p>
                 </div>
               ) : (
                 <>
@@ -382,7 +397,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                   )}
 
                   {/* Preview Table */}
-                  <div className="max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <div className={`${isPreviewExpanded ? 'max-h-[400px]' : 'max-h-64'} overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg transition-all duration-300`}>
                     <table className="w-full text-sm">
                       <thead className="bg-gray-50 dark:bg-gray-900/50 sticky top-0">
                         <tr>
@@ -395,7 +410,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-                        {displayData.slice(0, 15).map((row, idx) => (
+                        {(isPreviewExpanded ? displayData : displayData.slice(0, 15)).map((row, idx) => (
                           <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                             <td className="px-3 py-2 text-gray-900 dark:text-white truncate max-w-[200px]">
                               {'taskName' in row ? row.taskName : ''}
@@ -420,12 +435,27 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                         ))}
                       </tbody>
                     </table>
-                    {displayData.length > 15 && (
-                      <p className="text-center py-2 text-gray-500 text-xs">
-                        + {displayData.length - 15} more items
-                      </p>
-                    )}
                   </div>
+
+                  {/* Expand/Collapse Toggle */}
+                  {displayData.length > 15 && (
+                    <button
+                      onClick={() => setIsPreviewExpanded(!isPreviewExpanded)}
+                      className="w-full py-2 text-sm text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors flex items-center justify-center gap-1"
+                    >
+                      {isPreviewExpanded ? (
+                        <>
+                          <CaretUp size={16} weight="bold" />
+                          Show Less
+                        </>
+                      ) : (
+                        <>
+                          <CaretDown size={16} weight="bold" />
+                          Show All {displayData.length} Items
+                        </>
+                      )}
+                    </button>
+                  )}
 
                   <div className="flex gap-3 justify-end">
                     <button
@@ -471,7 +501,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 Successfully imported <strong>{result.imported}</strong> items
               </p>
-              
+
               {result.errors.length > 0 && (
                 <div className="text-left p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg mb-4 max-h-48 overflow-y-auto">
                   <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 mb-2">
