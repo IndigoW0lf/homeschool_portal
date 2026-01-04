@@ -194,27 +194,59 @@ async function categorizeWithAI(
  * Fallback categorization without AI
  */
 function categorizeLocally(rows: ManuallyParsedRow[]): { subject: string; itemType: string }[] {
-  const courseToSubject: Record<string, string> = {
-    'reading': 'Reading',
-    'math': 'Math',
-    'science': 'Science',
-    'writing': 'Writing',
-    'history': 'History',
-    'social studies': 'Social Studies',
-    'art': 'Art',
-    'music': 'Music',
-    'language': 'Language Arts',
-  };
+  // Ordered by specificity - more specific patterns first
+  const courseToSubject: [string, string][] = [
+    // Social-Emotional Learning / Life Skills
+    ['beliefs', 'Social-Emotional'],
+    ['self-management', 'Social-Emotional'],
+    ['self management', 'Social-Emotional'],
+    ['emotions', 'Social-Emotional'],
+    ['growth mindset', 'Social-Emotional'],
+    ['thinking traps', 'Social-Emotional'],
+    ['self-awareness', 'Social-Emotional'],
+    ['decision making', 'Social-Emotional'],
+    ['social awareness', 'Social-Emotional'],
+    ['relationship', 'Social-Emotional'],
+
+    // Core subjects
+    ['reading comprehension', 'Reading'],
+    ['reading', 'Reading'],
+    ['survivor', 'Reading'], // Survivor's Quest is reading
+    ['math', 'Math'],
+    ['logic', 'Logic'],
+    ['critical thinking', 'Logic'],
+    ['science', 'Science'],
+    ['biology', 'Science'],
+    ['chemistry', 'Science'],
+    ['physics', 'Science'],
+    ['writing', 'Writing'],
+    ['essay', 'Writing'],
+    ['grammar', 'Writing'],
+    ['spelling', 'Writing'],
+    ['vocabulary', 'Language Arts'],
+    ['history', 'History'],
+    ['geography', 'History'],
+    ['civics', 'History'],
+    ['social studies', 'Social Studies'],
+    ['art', 'Art'],
+    ['music', 'Music'],
+    ['language arts', 'Language Arts'],
+    ['language', 'Language Arts'],
+    ['typing', 'Technology'],
+    ['coding', 'Technology'],
+    ['computer', 'Technology'],
+  ];
 
   return rows.map(row => {
     const lowerCourse = row.course.toLowerCase();
     const lowerTask = row.taskName.toLowerCase();
+    const combined = lowerCourse + ' ' + lowerTask;
 
-    // Determine subject
+    // Determine subject - check combined text
     let subject = 'Other';
-    for (const [key, value] of Object.entries(courseToSubject)) {
-      if (lowerCourse.includes(key)) {
-        subject = value;
+    for (const [pattern, subj] of courseToSubject) {
+      if (combined.includes(pattern)) {
+        subject = subj;
         break;
       }
     }

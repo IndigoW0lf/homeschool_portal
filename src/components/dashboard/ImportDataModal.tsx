@@ -42,7 +42,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
   const [rawText, setRawText] = useState('');
   const [isImporting, setIsImporting] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
-  const [step, setStep] = useState<'upload' | 'preview' | 'complete'>('upload');
+  const [step, setStep] = useState<'upload' | 'parsing' | 'preview' | 'complete'>('upload');
   const [result, setResult] = useState<{ imported: number; errors: string[] } | null>(null);
   const [useAI, setUseAI] = useState(true);
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
@@ -119,6 +119,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     if (!file) return;
 
     setFileName(file.name);
+    setStep('parsing'); // Show loading immediately
 
     const reader = new FileReader();
     reader.onload = async (event) => {
@@ -142,6 +143,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     if (!file) return;
 
     setFileName(file.name);
+    setStep('parsing'); // Show loading immediately
 
     const reader = new FileReader();
     reader.onload = async (event) => {
@@ -168,6 +170,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
       }
 
       setFileName('Pasted data');
+      setStep('parsing'); // Show loading immediately
       setRawText(text);
 
       if (useAI) {
@@ -234,7 +237,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden animate-in zoom-in-95 fade-in duration-300">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700">
@@ -341,6 +344,29 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                   AI will automatically detect columns and parse your data
                 </p>
               </div>
+            </div>
+          )}
+
+          {step === 'parsing' && (
+            <div className="text-center py-12">
+              {/* Animated Loading Indicator */}
+              <div className="relative mx-auto w-16 h-16 mb-4">
+                <div className="absolute inset-0 rounded-full border-4 border-purple-200 dark:border-purple-900/50"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
+                <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-purple-500 animate-pulse" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Parsing Your Data
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-1">
+                {fileName}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-500">
+                This may take up to <span className="font-medium text-purple-600 dark:text-purple-400">30 seconds</span> for large files.
+              </p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">
+                Please be patient and don&apos;t close this window.
+              </p>
             </div>
           )}
 
