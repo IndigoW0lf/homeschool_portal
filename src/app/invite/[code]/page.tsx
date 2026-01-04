@@ -53,14 +53,14 @@ export default async function InvitePage({ params }: InvitePageProps) {
   // Fetch family name and inviter name separately
   const [{ data: family }, { data: inviterProfile }] = await Promise.all([
     supabase.from('families').select('name').eq('id', invite.family_id).single(),
-    supabase.from('profiles').select('display_name').eq('id', invite.invited_by).single(),
+    supabase.from('profiles').select('display_name, email').eq('id', invite.invited_by).single(),
   ]);
   
   // Check if invite is for a different email than logged in user
   const emailMismatch = user && invite.email !== user.email;
   
   const familyName = family?.name || 'a family';
-  const inviterName = inviterProfile?.display_name || 'Someone';
+  const inviterName = inviterProfile?.display_name || inviterProfile?.email?.split('@')[0] || 'Someone';
   
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--lavender-100)] to-[var(--ember-100)] dark:from-gray-900 dark:to-gray-800 p-4">

@@ -24,7 +24,7 @@ export async function getUserProfileFromDB(): Promise<Profile | null> {
   return data as Profile;
 }
 
-// Kids - filtered by authenticated user
+// Kids - filtered by family membership (all family members can see kids)
 export async function getKidsFromDB(): Promise<Kid[]> {
   const supabase = await createServerClient();
   
@@ -32,11 +32,26 @@ export async function getKidsFromDB(): Promise<Kid[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return []; // Not logged in, no kids
   
-  const { data, error } = await supabase
-    .from('kids')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('id');
+  // Get user's family IDs
+  const { data: families } = await supabase
+    .from('family_members')
+    .select('family_id')
+    .eq('user_id', user.id);
+  
+  const familyIds = families?.map(f => f.family_id) || [];
+  
+  // Query kids by family_id OR user_id (for backwards compatibility)
+  let query = supabase.from('kids').select('*');
+  
+  if (familyIds.length > 0) {
+    // Family-based access: get kids from any family the user belongs to
+    query = query.or(`family_id.in.(${familyIds.join(',')}),user_id.eq.${user.id}`);
+  } else {
+    // Fallback: legacy user_id based access
+    query = query.eq('user_id', user.id);
+  }
+  
+  const { data, error } = await query.order('id');
 
   if (error) {
     console.error('Error fetching kids:', error);
@@ -70,7 +85,7 @@ export async function getKidByIdFromDB(id: string): Promise<Kid | undefined> {
   return kids.find(k => k.id === id);
 }
 
-// Lessons - filtered by authenticated user
+// Lessons - filtered by family membership (all family members can see lessons)
 export async function getLessonsFromDB(): Promise<Lesson[]> {
   const supabase = await createServerClient();
   
@@ -78,10 +93,31 @@ export async function getLessonsFromDB(): Promise<Lesson[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return []; // Not logged in
   
+  // Get all user IDs in user's families (for shared lessons)
+  const { data: families } = await supabase
+    .from('family_members')
+    .select('family_id')
+    .eq('user_id', user.id);
+  
+  const familyIds = families?.map(f => f.family_id) || [];
+  
+  // Get all family member user_ids
+  let familyUserIds = [user.id];
+  if (familyIds.length > 0) {
+    const { data: allMembers } = await supabase
+      .from('family_members')
+      .select('user_id')
+      .in('family_id', familyIds);
+    
+    familyUserIds = [...new Set(allMembers?.map(m => m.user_id) || [user.id])];
+  }
+  
+  // Query lessons from any family member or legacy null user_id
+  const userIdList = familyUserIds.map(id => `user_id.eq.${id}`).join(',');
   const { data: lessons, error: lessonsError } = await supabase
     .from('lessons')
     .select('*')
-    .or(`user_id.eq.${user.id},user_id.is.null`) // Include legacy data with null user_id
+    .or(`${userIdList},user_id.is.null`)
     .order('created_at', { ascending: false });
 
   if (lessonsError) {
