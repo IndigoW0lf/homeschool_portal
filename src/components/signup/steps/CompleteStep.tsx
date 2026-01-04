@@ -1,33 +1,47 @@
 'use client';
 
 import { SignupData } from '../SignupWizard';
-import { Confetti, RocketLaunch } from '@phosphor-icons/react';
-import Link from 'next/link';
+import { Confetti, RocketLaunch, UsersThree } from '@phosphor-icons/react';
 
 interface CompleteStepProps {
   data: SignupData;
   onComplete: () => void;
+  joiningFamily?: string | null;
 }
 
-export function CompleteStep({ data, onComplete }: CompleteStepProps) {
+export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepProps) {
   return (
     <div className="space-y-6 text-center">
       {/* Celebration Icon */}
       <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 mb-2">
-        <Confetti size={40} weight="fill" className="text-white" />
+        {joiningFamily ? (
+          <UsersThree size={40} weight="fill" className="text-white" />
+        ) : (
+          <Confetti size={40} weight="fill" className="text-white" />
+        )}
       </div>
 
       {/* Success Message */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          You're all set! 🎉
+          {joiningFamily ? "You're in! 🎉" : "You're all set! 🎉"}
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Welcome to Lunara Quest, {data.displayName || 'friend'}! 
-          {data.kidName && (
+          {joiningFamily ? (
             <>
+              Welcome to <strong>{joiningFamily}</strong>, {data.displayName || 'friend'}!
               <br />
-              {data.kidName} is ready for their learning adventure.
+              You can now view and manage the family's homeschool activities.
+            </>
+          ) : (
+            <>
+              Welcome to Lunara Quest, {data.displayName || 'friend'}! 
+              {data.kidName && (
+                <>
+                  <br />
+                  {data.kidName} is ready for their learning adventure.
+                </>
+              )}
             </>
           )}
         </p>
@@ -39,18 +53,37 @@ export function CompleteStep({ data, onComplete }: CompleteStepProps) {
           What's next:
         </h3>
         <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-          <li className="flex items-center gap-2">
-            <span className="text-[var(--ember-500)]">→</span>
-            Set up your first lesson or assignment
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-[var(--ember-500)]">→</span>
-            Explore {data.kidName || "your child"}'s portal
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="text-[var(--ember-500)]">→</span>
-            Ask Luna for planning help anytime
-          </li>
+          {joiningFamily ? (
+            <>
+              <li className="flex items-center gap-2">
+                <span className="text-[var(--ember-500)]">→</span>
+                View the family's lessons and assignments
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[var(--ember-500)]">→</span>
+                Check in on the kids' progress
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[var(--ember-500)]">→</span>
+                Collaborate on planning together
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="flex items-center gap-2">
+                <span className="text-[var(--ember-500)]">→</span>
+                Set up your first lesson or assignment
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[var(--ember-500)]">→</span>
+                Explore {data.kidName || "your child"}'s portal
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-[var(--ember-500)]">→</span>
+                Ask Luna for planning help anytime
+              </li>
+            </>
+          )}
         </ul>
       </div>
 

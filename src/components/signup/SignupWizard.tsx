@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Check } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { WelcomeStep } from './steps/WelcomeStep';
@@ -9,7 +9,8 @@ import { ParentAccountStep } from './steps/ParentAccountStep';
 import { AddKidStep } from './steps/AddKidStep';
 import { CompleteStep } from './steps/CompleteStep';
 
-const STEPS = [
+// Steps can be skipped for invite flow
+const ALL_STEPS = [
   { id: 'welcome', label: 'Welcome', number: 1 },
   { id: 'account', label: 'Your Account', number: 2 },
   { id: 'kid', label: 'Add Kid', number: 3 },
@@ -43,13 +44,59 @@ const initialData: SignupData = {
 
 export function SignupWizard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<SignupData>(initialData);
   const [userId, setUserId] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [skipKidStep, setSkipKidStep] = useState(false);
+  const [inviteCode, setInviteCode] = useState<string | null>(null);
+  const [joiningFamilyName, setJoiningFamilyName] = useState<string | null>(null);
+
+  // Check for invite redirect
+  useEffect(() => {
+    const redirect = searchParams.get('redirect');
+    const email = searchParams.get('email');
+    
+    // Pre-fill email from invite
+    if (email) {
+      setData(prev => ({ ...prev, email }));
+    }
+    
+    // Extract invite code from redirect path
+    if (redirect?.startsWith('/invite/')) {
+      const code = redirect.replace('/invite/', '');
+      setInviteCode(code);
+    }
+  }, [searchParams]);
+
+  // Determine which steps to show
+  const steps = skipKidStep
+    ? ALL_STEPS.filter(s => s.id !== 'kid').map((s, i) => ({ ...s, number: i + 1 }))
+    : ALL_STEPS;
 
   const updateData = (updates: Partial<SignupData>) => {
     setData(prev => ({ ...prev, ...updates }));
+  };
+
+  // Check if joining family has kids after account creation
+  const checkFamilyForKids = async () => {
+    if (!inviteCode || !userId) return false;
+    
+    try {
+      // Fetch the invite and family
+      const response = await fetch(`/api/invites/check-family?code=${inviteCode}`);
+      const result = await response.json();
+      
+      if (result.hasKids) {
+        setSkipKidStep(true);
+        setJoiningFamilyName(result.familyName);
+        return true;
+      }
+    } catch (err) {
+      console.error('Error checking family:', err);
+    }
+    return false;
   };
 
   const nextStep = async () => {
@@ -72,7 +119,18 @@ export function SignupWizard() {
       }
     }
     
-    if (currentStep < STEPS.length - 1) {
+    // After account creation (step 1 -> 2), check if we should skip kid step
+    if (currentStep === 1 && inviteCode) {
+      const hasKids = await checkFamilyForKids();
+      if (hasKids) {
+        // Skip to complete step (which will handle invite acceptance)
+        const completeStepIndex = steps.findIndex(s => s.id === 'complete');
+        setCurrentStep(completeStepIndex);
+        return;
+      }
+    }
+    
+    if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -83,15 +141,43 @@ export function SignupWizard() {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    // If we have an invite code, accept it before redirecting
+    if (inviteCode) {
+      try {
+        const response = await fetch('/api/invites/accept', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ code: inviteCode }),
+        });
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+      } catch (err) {
+        console.error('Error accepting invite:', err);
+      }
+    }
     router.push('/parent');
   };
 
+  // Map step index to step id for rendering
+  const currentStepId = steps[currentStep]?.id;
+
   return (
     <div className="card p-6 sm:p-8">
+      {/* Show joining family message if applicable */}
+      {joiningFamilyName && (
+        <div className="mb-6 p-4 bg-[var(--lavender-100)] dark:bg-[var(--lavender-900)]/20 rounded-xl border border-[var(--lavender-200)] dark:border-[var(--lavender-800)]">
+          <p className="text-sm text-[var(--lavender-700)] dark:text-[var(--lavender-300)]">
+            ✨ You're joining <strong>{joiningFamilyName}</strong> – the kids are already set up!
+          </p>
+        </div>
+      )}
+
       {/* Stepper Header */}
       <div className="flex items-center justify-between mb-8">
-        {STEPS.map((step, index) => {
+        {steps.map((step, index) => {
           const isActive = index === currentStep;
           const isCompleted = index < currentStep;
           
@@ -122,7 +208,7 @@ export function SignupWizard() {
               </div>
               
               {/* Connector Line */}
-              {index < STEPS.length - 1 && (
+              {index < steps.length - 1 && (
                 <div
                   className={cn(
                     "w-12 sm:w-16 h-0.5 mx-2",
@@ -139,7 +225,7 @@ export function SignupWizard() {
 
       {/* Step Content */}
       <div className="min-h-[300px]">
-        {currentStep === 0 && (
+        {currentStepId === 'welcome' && (
           <WelcomeStep
             data={data}
             updateData={updateData}
@@ -147,7 +233,7 @@ export function SignupWizard() {
             setTurnstileToken={setTurnstileToken}
           />
         )}
-        {currentStep === 1 && (
+        {currentStepId === 'account' && (
           <ParentAccountStep
             data={data}
             updateData={updateData}
@@ -156,7 +242,7 @@ export function SignupWizard() {
             setUserId={setUserId}
           />
         )}
-        {currentStep === 2 && (
+        {currentStepId === 'kid' && (
           <AddKidStep
             data={data}
             updateData={updateData}
@@ -165,10 +251,11 @@ export function SignupWizard() {
             userId={userId}
           />
         )}
-        {currentStep === 3 && (
+        {currentStepId === 'complete' && (
           <CompleteStep
             data={data}
             onComplete={handleComplete}
+            joiningFamily={joiningFamilyName}
           />
         )}
       </div>
