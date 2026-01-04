@@ -6,11 +6,14 @@ import { BookmarkSimple, X, Check, BookOpen, Pencil } from '@phosphor-icons/reac
 import { Suggestion } from '@/lib/ai/types';
 import { cn } from '@/lib/utils';
 import { VideoResourceList } from './VideoResourceCard';
+import { WorksheetResourceList } from './WorksheetResourceCard';
 import type { VideoResource } from '@/lib/resources/types';
+import type { WorksheetResource } from '@/lib/resources/tavily';
 
 // Extended suggestion type with optional enriched resources
 interface EnrichedSuggestion extends Suggestion {
   videos?: VideoResource[];
+  worksheets?: WorksheetResource[];
 }
 
 interface LunaSuggestionCardProps {
@@ -35,39 +38,52 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
   const hasLessonData = !!suggestion.lesson_data;
 
   const handleCreateAssignment = () => {
+    console.log('[Luna] Create Assignment clicked', suggestion.assignment_data);
     if (suggestion.assignment_data) {
       // Store pre-fill data in sessionStorage
-      sessionStorage.setItem('luna-prefill', JSON.stringify({
+      const prefillData = {
         type: 'assignment',
         data: {
           title: suggestion.assignment_data.title,
           type: suggestion.assignment_data.type,
           deliverable: suggestion.assignment_data.deliverable,
-          rubric: suggestion.assignment_data.rubric.map(text => ({ text })),
-          steps: suggestion.assignment_data.steps.map(text => ({ text })),
-          tags: suggestion.assignment_data.tags,
-          estimatedMinutes: suggestion.assignment_data.estimatedMinutes,
+          rubric: Array.isArray(suggestion.assignment_data.rubric) 
+            ? suggestion.assignment_data.rubric.map(text => typeof text === 'string' ? { text } : text)
+            : [],
+          steps: Array.isArray(suggestion.assignment_data.steps)
+            ? suggestion.assignment_data.steps.map(text => typeof text === 'string' ? { text } : text)
+            : [],
+          tags: suggestion.assignment_data.tags || [],
+          estimatedMinutes: suggestion.assignment_data.estimatedMinutes || 30,
           parentNotes: suggestion.assignment_data.parentNotes || '',
         }
-      }));
+      };
+      console.log('[Luna] Storing prefill data:', prefillData);
+      sessionStorage.setItem('luna-prefill', JSON.stringify(prefillData));
       router.push('/parent/assignments?from=luna');
     }
   };
 
   const handleCreateLesson = () => {
+    console.log('[Luna] Create Lesson clicked', suggestion.lesson_data);
     if (suggestion.lesson_data) {
-      sessionStorage.setItem('luna-prefill', JSON.stringify({
+      const prefillData = {
         type: 'lesson',
         data: {
           title: suggestion.lesson_data.title,
           type: suggestion.lesson_data.type,
-          keyQuestions: suggestion.lesson_data.keyQuestions.map(text => ({ text })),
-          materials: suggestion.lesson_data.materials,
-          tags: suggestion.lesson_data.tags,
-          estimatedMinutes: suggestion.lesson_data.estimatedMinutes,
+          keyQuestions: Array.isArray(suggestion.lesson_data.keyQuestions)
+            ? suggestion.lesson_data.keyQuestions.map(text => typeof text === 'string' ? { text } : text)
+            : [],
+          materials: suggestion.lesson_data.materials || '',
+          tags: suggestion.lesson_data.tags || [],
+          estimatedMinutes: suggestion.lesson_data.estimatedMinutes || 30,
           parentNotes: suggestion.lesson_data.parentNotes || '',
+          description: suggestion.lesson_data.parentNotes || '', // Use parentNotes as description too
         }
-      }));
+      };
+      console.log('[Luna] Storing prefill data:', prefillData);
+      sessionStorage.setItem('luna-prefill', JSON.stringify(prefillData));
       router.push('/parent/lessons?from=luna');
     }
   };
@@ -150,13 +166,24 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
         </div>
       )}
 
+      {/* Worksheet Resources - shown when enriched with Tavily search */}
+      {suggestion.worksheets && suggestion.worksheets.length > 0 && (
+        <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+          <WorksheetResourceList worksheets={suggestion.worksheets} />
+        </div>
+      )}
+
       {/* Create Actions - shown when form data is available */}
       {(hasAssignmentData || hasLessonData) && (
         <div className="flex gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
           {hasAssignmentData && (
             <button
               type="button"
-              onClick={handleCreateAssignment}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleCreateAssignment();
+              }}
               className="px-3 py-1.5 text-sm rounded-lg font-medium transition-all inline-flex items-center gap-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white shadow-sm cursor-pointer"
             >
               <Pencil size={16} weight="duotone" />
@@ -166,7 +193,11 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
           {hasLessonData && (
             <button
               type="button"
-              onClick={handleCreateLesson}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleCreateLesson();
+              }}
               className="px-3 py-1.5 text-sm rounded-lg font-medium transition-all inline-flex items-center gap-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white shadow-sm cursor-pointer"
             >
               <BookOpen size={16} weight="duotone" />

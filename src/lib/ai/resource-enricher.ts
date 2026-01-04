@@ -1,6 +1,7 @@
 import { ThinkResponse, Suggestion } from './types';
 import { VideoResource } from '../resources/types';
 import { searchEducationalVideos } from '../resources/youtube';
+import { searchWorksheets, isTavilyConfigured, WorksheetResource } from '../resources/tavily';
 
 // ============================================
 // ENRICHED RESPONSE TYPE
@@ -12,12 +13,7 @@ import { searchEducationalVideos } from '../resources/youtube';
 export interface EnrichedSuggestion extends Suggestion {
   // Enriched resources
   videos?: VideoResource[];
-  worksheets?: Array<{
-    url: string;
-    title: string;
-    description: string;
-    source: string;
-  }>;
+  worksheets?: WorksheetResource[];
 }
 
 /**
@@ -92,7 +88,7 @@ function extractSearchKeywords(suggestion: ThinkResponse['suggestions'][0]): {
 export interface EnrichmentOptions {
   /** Whether to fetch video resources */
   includeVideos?: boolean;
-  /** Whether to fetch worksheet resources (requires web search API) */
+  /** Whether to fetch worksheet resources (requires Tavily API) */
   includeWorksheets?: boolean;
   /** Grade level for filtering resources */
   gradeLevel?: string;
@@ -108,7 +104,7 @@ export interface EnrichmentOptions {
  * This is a post-processing step that:
  * 1. Extracts topic keywords from each suggestion
  * 2. Searches for relevant YouTube videos
- * 3. (Future) Searches for worksheets via web search
+ * 3. Searches for worksheets via Tavily web search
  * 4. Attaches resources to each suggestion
  * 
  * @param response - Luna's original think response
@@ -121,9 +117,10 @@ export async function enrichWithResources(
 ): Promise<EnrichedThinkResponse> {
   const {
     includeVideos = true,
-    includeWorksheets = false, // Not implemented yet
+    includeWorksheets = true, // Now enabled by default!
     gradeLevel,
     maxVideos = 2,
+    maxWorksheets = 2,
   } = options;
 
   // Skip enrichment if no suggestions or no resources requested
@@ -161,8 +158,8 @@ export async function enrichWithResources(
         // Extract keywords for search
         const keywords = extractSearchKeywords(suggestion);
 
-        // Fetch videos if enabled
-        if (includeVideos && keywords.query) {
+        // Fetch videos if enabled and YouTube is configured
+        if (includeVideos && keywords.query && isYouTubeConfigured()) {
           try {
             const videos = await searchEducationalVideos(keywords.query, {
               gradeLevel,
@@ -176,11 +173,20 @@ export async function enrichWithResources(
           }
         }
 
-        // Future: Fetch worksheets if enabled
-        if (includeWorksheets) {
-          // TODO: Implement worksheet search via Tavily or similar
-          console.log('[Resource Enricher] Worksheet search not yet implemented');
-          enriched.worksheets = [];
+        // Fetch worksheets if enabled and Tavily is configured
+        if (includeWorksheets && keywords.query && isTavilyConfigured()) {
+          try {
+            const worksheets = await searchWorksheets({
+              query: keywords.query,
+              gradeLevel,
+              subject: keywords.subject,
+              maxResults: maxWorksheets,
+            });
+            enriched.worksheets = worksheets;
+          } catch (error) {
+            console.error('[Resource Enricher] Worksheet search failed:', error);
+            // Continue without worksheets - don't break the response
+          }
         }
 
       } catch (error) {
@@ -204,3 +210,8 @@ export async function enrichWithResources(
 export function isYouTubeConfigured(): boolean {
   return !!process.env.YOUTUBE_API_KEY;
 }
+
+/**
+ * Re-export Tavily check
+ */
+export { isTavilyConfigured };
