@@ -15,20 +15,17 @@ export default async function InvitePage({ params }: InvitePageProps) {
   // Get current user
   const { data: { user } } = await supabase.auth.getUser();
   
-  // Fetch the invite
+  // Fetch the invite - simplified query without FK joins
   const { data: invite, error } = await supabase
     .from('family_invites')
-    .select(`
-      *,
-      families:family_id (name),
-      inviter:invited_by (display_name)
-    `)
+    .select('*')
     .eq('invite_code', code)
     .eq('status', 'pending')
     .single();
   
   // Handle invalid/expired invite
   if (error || !invite) {
+    console.error('Invite lookup error:', error);
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
         <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
@@ -53,11 +50,17 @@ export default async function InvitePage({ params }: InvitePageProps) {
     );
   }
   
+  // Fetch family name and inviter name separately
+  const [{ data: family }, { data: inviterProfile }] = await Promise.all([
+    supabase.from('families').select('name').eq('id', invite.family_id).single(),
+    supabase.from('profiles').select('display_name').eq('id', invite.invited_by).single(),
+  ]);
+  
   // Check if invite is for a different email than logged in user
   const emailMismatch = user && invite.email !== user.email;
   
-  const familyName = invite.families?.name || 'a family';
-  const inviterName = invite.inviter?.display_name || 'Someone';
+  const familyName = family?.name || 'a family';
+  const inviterName = inviterProfile?.display_name || 'Someone';
   
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--lavender-100)] to-[var(--ember-100)] dark:from-gray-900 dark:to-gray-800 p-4">
