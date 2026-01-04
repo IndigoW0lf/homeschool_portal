@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+import { createServerClient } from '@/lib/supabase/server';
 import { 
   Hero, 
   Features, 
@@ -10,8 +12,16 @@ import {
   Footer
 } from '@/components/marketing';
 
-export default function HomePage() {
-  // Root always shows marketing - logged in users can find family at /home
+export default async function HomePage() {
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Logged-in users go to family home
+  if (user) {
+    redirect('/home');
+  }
+
+  // Root always shows marketing for guests
   return (
     <div className="min-h-screen bg-gray-900">
       <MarketingNav />

@@ -47,7 +47,7 @@ export function ParentNav({ }: ParentNavProps) {
     <aside className="fixed left-0 top-0 h-full w-56 bg-gray-800 dark:bg-gray-900 flex flex-col z-30">
       {/* Logo / Header */}
       <div className="p-4 border-b border-gray-700">
-        <Link href="/" className="flex items-center gap-2 text-white hover:opacity-80 transition-opacity">
+        <Link href="/home" className="flex items-center gap-2 text-white hover:opacity-80 transition-opacity">
           <Sparkle size={24} weight="duotone" className="text-[var(--fabric-lilac)]" />
           <span className="font-bold text-lg">Lunara Quest</span>
         </Link>
