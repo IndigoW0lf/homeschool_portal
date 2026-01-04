@@ -56,6 +56,23 @@ export interface ChildContext {
   interests: string[];  // From parent-stated notes, not inferred
 }
 
+/**
+ * Family context - always loaded so Luna knows about all kids
+ * Used for tailoring lessons to specific ages and creating content
+ */
+export interface FamilyContext {
+  kids: Array<{
+    id: string;
+    name: string;
+    gradeBand: string | null;
+    age?: number | null;  // Calculated from birthdate if available
+    interests?: string[];
+    learningStyle?: string | null;
+  }>;
+  // Family-level preferences (could be extended later)
+  homeschoolStyle?: string | null; // e.g., "Charlotte Mason", "Classical", "Eclectic"
+}
+
 // ============================================
 // CONTEXT LOADERS
 // ============================================
@@ -192,6 +209,56 @@ export async function loadChildContext(
   };
 }
 
+/**
+ * Load ALL kids in the family - used for every request
+ * This lets Luna know about your family automatically
+ */
+export async function loadFamilyContext(): Promise<FamilyContext | null> {
+  const supabase = await createServerClient();
+  
+  // RLS automatically filters to only this family's kids
+  const { data: kidsData, error } = await supabase
+    .from('kids')
+    .select('id, name, grade_band, birthdate, bio')
+    .order('name');
+  
+  if (error) {
+    console.error('Error loading family context:', error);
+    return null;
+  }
+  
+  if (!kidsData || kidsData.length === 0) {
+    return { kids: [] };
+  }
+  
+  // Calculate ages from birthdates
+  const today = new Date();
+  const kids = kidsData.map(kid => {
+    let age: number | null = null;
+    if (kid.birthdate) {
+      const birthDate = new Date(kid.birthdate);
+      age = today.getFullYear() - birthDate.getFullYear();
+      // Adjust if birthday hasn't occurred yet this year
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+    }
+    
+    return {
+      id: kid.id,
+      name: kid.name,
+      gradeBand: kid.grade_band,
+      age,
+      // Could parse interests from bio if they're listed there
+      interests: [],
+      learningStyle: null,
+    };
+  });
+  
+  return { kids };
+}
+
 // ============================================
 // CONTEXT FORMATTING (for prompt injection)
 // ============================================
@@ -206,9 +273,20 @@ export function formatContextForPrompt(
     week?: WeekContext | null;
     lesson?: LessonContext | null;
     child?: ChildContext | null;
+    family?: FamilyContext | null;
   }
 ): string {
   const lines: string[] = [];
+  
+  // Always include family context if available (so Luna knows about all kids)
+  if (data.family && data.family.kids.length > 0) {
+    lines.push('[Your Family]');
+    data.family.kids.forEach(kid => {
+      const ageStr = kid.age ? `${kid.age} years old` : kid.gradeBand || 'age unknown';
+      lines.push(`- ${kid.name}: ${ageStr}`);
+    });
+    lines.push(''); // Empty line for separation
+  }
   
   switch (context) {
     case 'WEEK_THINK':
@@ -249,7 +327,7 @@ export function formatContextForPrompt(
       break;
       
     default:
-      // REFLECTION and GENERAL modes don't load context
+      // REFLECTION and GENERAL modes still get family context (added above)
       break;
   }
   
@@ -266,12 +344,15 @@ export interface LoadedContext {
     week?: WeekContext | null;
     lesson?: LessonContext | null;
     child?: ChildContext | null;
+    family?: FamilyContext | null;
   };
 }
 
 /**
  * Load context based on request type
  * Returns formatted string for prompt + raw data for debugging
+ * 
+ * ALWAYS loads family context so Luna knows about all kids
  */
 export async function loadContextForRequest(params: {
   context: ThinkContext;
@@ -283,7 +364,10 @@ export async function loadContextForRequest(params: {
   
   const raw: LoadedContext['raw'] = {};
   
-  // Load only what's needed for this context type
+  // ALWAYS load family context so Luna knows about your kids
+  raw.family = await loadFamilyContext();
+  
+  // Load additional context specific to the request type
   switch (context) {
     case 'WEEK_THINK':
       if (childProfileId && weekStartDate) {
@@ -304,7 +388,7 @@ export async function loadContextForRequest(params: {
       break;
       
     default:
-      // REFLECTION and GENERAL don't load context
+      // REFLECTION and GENERAL still get family context (loaded above)
       break;
   }
   
