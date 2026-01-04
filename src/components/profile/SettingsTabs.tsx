@@ -12,11 +12,10 @@ import { RewardManager } from '@/components/profile/RewardManager';
 import { RedemptionManager } from '@/components/profile/RedemptionManager';
 import { JournalSettings } from '@/components/profile/JournalSettings';
 import { FamilyManager } from '@/components/profile/FamilyManager';
-import { DemoDataManager } from '@/components/profile/DemoDataManager';
 
 interface SettingsTabsProps {
   user: User;
-  kids: any[]; // Using any to avoid complex type imports for now, matching the page usage
+  kids: any[];
 }
 
 export function SettingsTabs({ user, kids }: SettingsTabsProps) {
@@ -62,8 +61,6 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
               <AccountSettings user={user} />
             </div>
-            
-            <DemoDataManager />
           </div>
         )}
 
