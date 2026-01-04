@@ -40,6 +40,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   const [displayName, setDisplayName] = useState(profile.display_name || '');
   const [timezone, setTimezone] = useState(profile.timezone || 'America/Chicago');
   const [teachingStyle, setTeachingStyle] = useState(profile.teaching_style || '');
+  const [favoriteColor, setFavoriteColor] = useState(profile.favorite_color || '#9c8fb8');
   const [avatarUrl, setAvatarUrl] = useState(profile.avatar_url || getAvatarUrl('micah', 'luna'));
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -56,6 +57,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         timezone,
         avatar_url: avatarUrl,
         teaching_style: teachingStyle || undefined,
+        favorite_color: favoriteColor,
       });
 
       if (updated) {
@@ -276,6 +278,28 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               </option>
             ))}
           </select>
+        </div>
+      </div>
+
+      {/* Favorite Color */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Favorite Color
+        </label>
+        <div className="flex items-center gap-3">
+          <input
+            type="color"
+            value={favoriteColor}
+            onChange={(e) => setFavoriteColor(e.target.value)}
+            className="w-12 h-12 rounded-lg cursor-pointer border-2 border-gray-200 dark:border-gray-600"
+          />
+          <div 
+            className="flex-1 h-12 rounded-lg flex items-center justify-center text-white font-medium"
+            style={{ backgroundColor: favoriteColor }}
+          >
+            {displayName || 'Preview'}
+          </div>
+          <span className="text-xs text-gray-500 dark:text-gray-400">Just for fun! 🌈</span>
         </div>
       </div>
       

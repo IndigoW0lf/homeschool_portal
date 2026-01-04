@@ -40,6 +40,7 @@ export interface Profile {
   avatar_url?: string;
   timezone?: string;
   teaching_style?: string;
+  favorite_color?: string | null;
   created_at?: string;
   updated_at: string;
 }
