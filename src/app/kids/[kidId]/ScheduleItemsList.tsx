@@ -53,7 +53,10 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
   const isLesson = selectedItem?.itemType === 'lesson';
 
   // Parse lesson instructions if it's JSON
-  let lessonDetails = { description: '', keyQuestions: [] as string[], materials: '', links: [] as { url: string; label: string }[] };
+  let lessonDetails = { description: '', keyQuestions: [] as string[], materials: '' };
+  // Links come from the separate links column, not from parsed instructions
+  const lessonLinks = (isLesson && selectedItem?.details?.links) || [] as { url: string; label: string }[];
+  
   if (isLesson && selectedItem?.details?.instructions) {
     try {
       const parsed = JSON.parse(selectedItem.details.instructions);
@@ -169,14 +172,14 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
                 )}
 
                 {/* Links - clicking auto-marks as done */}
-                {lessonDetails.links.length > 0 && (
+                {lessonLinks.length > 0 && (
                   <div>
                     <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
                       <LinkIcon size={20} weight="duotone" color="#caa2d8" />
                       Resources & Links
                     </h4>
                     <div className="space-y-2">
-                      {lessonDetails.links.map((link, i) => (
+                      {lessonLinks.map((link, i) => (
                         <a
                           key={i}
                           href={link.url}
