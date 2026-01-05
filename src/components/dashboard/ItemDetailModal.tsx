@@ -1,6 +1,6 @@
 'use client';
 
-import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link } from '@phosphor-icons/react';
+import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link, Printer } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow } from '@/types';
 import { MarkdownText } from '@/components/ui/MarkdownText';
@@ -310,6 +310,16 @@ export function ItemDetailModal({
             Delete
           </button>
           <div className="flex gap-2">
+            {assignment?.worksheet_data && (
+              <a
+                href={`/print/worksheet/${item.id}`}
+                target="_blank"
+                className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors flex items-center gap-2 font-medium"
+              >
+                <Printer size={18} weight="duotone" />
+                Print Worksheet
+              </a>
+            )}
             <button
               onClick={onSchedule}
               className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center gap-2"

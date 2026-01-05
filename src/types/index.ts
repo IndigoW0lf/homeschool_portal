@@ -316,6 +316,27 @@ export interface AssignmentLink {
   url: string;
 }
 
+// Worksheet Data Structure
+export interface WorksheetQuestion {
+  id: string;
+  type: 'text' | 'multiple_choice' | 'fill_in_blank' | 'drawing_space';
+  question: string;
+  options?: string[];
+  answer?: string;
+  space_lines?: number;
+}
+
+export interface WorksheetSection {
+  title?: string;
+  items: WorksheetQuestion[];
+}
+
+export interface WorksheetData {
+  title: string;
+  instructions: string;
+  sections: WorksheetSection[];
+}
+
 // Database row for assignments
 export interface AssignmentItemRow {
   id: string;
@@ -330,6 +351,7 @@ export interface AssignmentItemRow {
   links: AssignmentLink[] | null;
   is_template: boolean;
   created_at: string;
+  worksheet_data: WorksheetData | null;
 }
 
 export interface DayPlanRow {

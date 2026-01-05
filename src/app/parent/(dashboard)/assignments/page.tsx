@@ -1,10 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AssignmentForm } from '@/components/assignments/AssignmentForm';
+import { WorksheetGeneratorModal } from '@/components/worksheets/WorksheetGeneratorModal';
+import { MagicWand } from '@phosphor-icons/react';
 
 export default function AssignmentsPage() {
   const router = useRouter();
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only navigate if clicking directly on the backdrop (not on children)
@@ -22,19 +26,34 @@ export default function AssignmentsPage() {
         className="max-w-3xl mx-auto cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Create Assignment
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Assign new work to students.
-          </p>
+        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Create Assignment
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              Assign new work to students manually or generate it.
+            </p>
+          </div>
+          
+          <button
+            onClick={() => setIsGeneratorOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold shadow-md hover:shadow-lg transition-all hover:scale-105"
+          >
+            <MagicWand size={20} weight="fill" />
+            Generate Worksheet
+          </button>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
           <AssignmentForm />
         </div>
       </div>
+      
+      <WorksheetGeneratorModal 
+        isOpen={isGeneratorOpen} 
+        onClose={() => setIsGeneratorOpen(false)} 
+      />
     </div>
   );
 }

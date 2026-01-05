@@ -131,6 +131,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
            rubric: data.rubric,
            steps: data.steps, 
            links: data.links,
+           worksheet_data: (initialData as any)?.worksheet_data || null,
         };
 
         if (initialData?.id) {
