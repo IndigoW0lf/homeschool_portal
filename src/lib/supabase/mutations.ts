@@ -91,6 +91,10 @@ export async function scheduleLesson(
 ): Promise<{ success: boolean; scheduled: number }> {
   const supabase = await createServerClient();
   
+  // Get the authenticated user for RLS
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
   // Create schedule items for each student
   const scheduleItems = studentIds.map(studentId => ({
     lesson_id: lessonId,
@@ -98,6 +102,7 @@ export async function scheduleLesson(
     date: date,
     item_type: 'lesson',
     status: 'pending',
+    user_id: user.id
   }));
   
   const { data, error } = await supabase
@@ -119,12 +124,17 @@ export async function scheduleAssignment(
 ): Promise<{ success: boolean; scheduled: number }> {
   const supabase = await createServerClient();
   
+  // Get the authenticated user for RLS
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
   const scheduleItems = studentIds.map(studentId => ({
     assignment_id: assignmentId,
     student_id: studentId,
     date: date,
     item_type: 'assignment',
     status: 'pending',
+    user_id: user.id
   }));
   
   const { data, error } = await supabase
@@ -264,6 +274,13 @@ export async function assignItemToSchedule(
     console.warn('assignItemToSchedule: No student IDs provided!');
     return false;
   }
+  
+  // Get the authenticated user for RLS
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    console.error('assignItemToSchedule: Not authenticated');
+    throw new Error('Not authenticated');
+  }
 
   const rows = studentIds.map(studentId => ({
     date,
@@ -271,7 +288,8 @@ export async function assignItemToSchedule(
     item_type: type,
     lesson_id: type === 'lesson' ? itemId : null,
     assignment_id: type === 'assignment' ? itemId : null,
-    status: 'pending'
+    status: 'pending',
+    user_id: user.id
   }));
   
   console.log('Inserting rows:', rows);
@@ -291,11 +309,16 @@ export async function assignItemToSchedule(
 
 export async function addToSchedule(item: Omit<ScheduleItemRow, 'id' | 'status' | 'completed_at'>) {
   const supabase = await createServerClient();
+  
+  // Get the authenticated user for RLS
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
   // TODO: Validate item_type matches ID presence (e.g. if type='lesson', lesson_id must be set)
   
   const { data, error } = await supabase
     .from('schedule_items')
-    .insert(item)
+    .insert({ ...item, user_id: user.id })
     .select()
     .single();
 

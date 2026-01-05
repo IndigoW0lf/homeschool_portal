@@ -3,6 +3,7 @@
 import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow } from '@/types';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 
 interface ItemDetailModalProps {
   isOpen: boolean;
@@ -104,9 +105,10 @@ export function ItemDetailModal({
                   <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                     Description
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {lessonDetails.description}
-                  </p>
+                  <MarkdownText 
+                    content={lessonDetails.description} 
+                    className="bg-white dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700"
+                  />
                 </div>
               )}
 
@@ -137,9 +139,10 @@ export function ItemDetailModal({
                   <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                     Materials
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    {lessonDetails.materials}
-                  </p>
+                  <MarkdownText 
+                    content={lessonDetails.materials} 
+                    className="text-gray-700 dark:text-gray-300"
+                  />
                 </div>
               )}
 
@@ -194,9 +197,10 @@ export function ItemDetailModal({
                     <FileText size={16} className="text-blue-500" />
                     Expected Deliverable
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300 font-medium">
-                    {assignment.deliverable}
-                  </p>
+                  <MarkdownText 
+                    content={assignment.deliverable} 
+                    className="text-gray-700 dark:text-gray-300 font-medium"
+                  />
                 </div>
               )}
 
@@ -245,9 +249,10 @@ export function ItemDetailModal({
                   <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">
                     Parent Notes (Private)
                   </h3>
-                  <p className="text-amber-800 dark:text-amber-300 text-sm">
-                    {assignment.parent_notes}
-                  </p>
+                  <MarkdownText 
+                    content={assignment.parent_notes} 
+                    className="text-amber-800 dark:text-amber-300"
+                  />
                 </div>
               )}
 
