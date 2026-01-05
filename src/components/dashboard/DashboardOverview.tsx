@@ -13,6 +13,7 @@ import { Modal } from '@/components/ui/Modal';
 import { AssignmentForm } from '@/components/assignments/AssignmentForm';
 import { LessonForm } from '@/components/lessons/LessonForm';
 import { LunaTriggerButton } from '@/components/luna';
+import { QuickStartPanel } from './QuickStartPanel';
 import { Lesson, AssignmentItemRow, ResourceRow, Kid } from '@/types';
 import { deleteLesson, deleteAssignment } from '@/lib/supabase/mutations';
 import { ScheduleModal } from './ScheduleModal';
@@ -220,6 +221,12 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
           createLabel="Add Resource"
         />
       </div>
+
+      {/* 3.5 Quick Start Templates */}
+      <QuickStartPanel 
+        kids={students.map(s => ({ id: s.id, name: s.name }))}
+        compact={true}
+      />
 
       {/* 4. The Day Modal */}
       {selectedDay && (
