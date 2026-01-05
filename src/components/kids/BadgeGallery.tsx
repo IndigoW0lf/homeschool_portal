@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Lock } from '@phosphor-icons/react';
 import { Badge, ALL_BADGES, MILESTONE_BADGES, READING_BADGES, WRITING_BADGES, MATH_BADGES, SCIENCE_BADGES, IDENTITY_BADGES } from '@/lib/badges';
 import { getStars, getUnlocks } from '@/lib/progressState';
+import { BadgeUnlockModal } from './BadgeUnlockModal';
 
 interface BadgeGalleryProps {
   kidId: string;
@@ -89,6 +90,8 @@ function BadgeSection({ title, badges, earnedIds }: BadgeSectionProps) {
 export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & { subjectCounts?: Record<string, number> }) {
   const [earnedBadgeIds, setEarnedBadgeIds] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
+  const [celebrateBadge, setCelebrateBadge] = useState<string | null>(null);
+  const previousBadgesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     setIsClient(true);
@@ -132,7 +135,24 @@ export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & 
       if ((subjectCounts['science'] || 0) >= 75) earned.push('science-75');
       if ((subjectCounts['science'] || 0) >= 100) earned.push('science-100');
       
-      setEarnedBadgeIds([...new Set(earned)]); // Dedupe
+      const uniqueEarned = [...new Set(earned)];
+      
+      // Check for NEW badges to celebrate
+      const seenBadgesKey = `lunara_seen_badges_${kidId}`;
+      const seenBadges = new Set(JSON.parse(localStorage.getItem(seenBadgesKey) || '[]'));
+      
+      // Find first new badge (not seen before)
+      const newBadge = uniqueEarned.find(id => !seenBadges.has(id) && !previousBadgesRef.current.has(id));
+      
+      if (newBadge && isClient) {
+        // Mark as seen so we don't celebrate again
+        seenBadges.add(newBadge);
+        localStorage.setItem(seenBadgesKey, JSON.stringify([...seenBadges]));
+        setCelebrateBadge(newBadge);
+      }
+      
+      previousBadgesRef.current = new Set(uniqueEarned);
+      setEarnedBadgeIds(uniqueEarned);
     };
     
     updateBadges();
@@ -193,6 +213,12 @@ export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & 
         title="Collection" 
         badges={IDENTITY_BADGES} 
         earnedIds={earnedBadgeIds} 
+      />
+      
+      {/* Badge unlock celebration modal */}
+      <BadgeUnlockModal 
+        badgeId={celebrateBadge} 
+        onClose={() => setCelebrateBadge(null)} 
       />
     </div>
   );

@@ -28,8 +28,11 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
     .eq('id', kidId)
     .single();
 
-  // If kid has a PIN set, check for trusted device cookie
-  if (kidWithDetails?.pin_hash) {
+  // If kid has a REAL PIN set (bcrypt hashes start with $2), check for trusted device cookie
+  // Placeholder hashes like "-fffaaaa" mean PIN is disabled
+  const hasRealPin = kidWithDetails?.pin_hash && kidWithDetails.pin_hash.startsWith('$2');
+  
+  if (hasRealPin) {
     const cookieStore = await cookies();
     const trustCookie = cookieStore.get(`kid_trust_${kidId}`);
     
