@@ -25,6 +25,8 @@ export async function saveWorksheetAssignmentAction(
   kidIds: string[] = [] // Optional: auto-assign to kids?
 ) {
   try {
+    console.log('Saving worksheet assignment:', { title, worksheetDataKeys: Object.keys(worksheetData) });
+    
     // Create an assignment item with the worksheet data
     const assignment = await createAssignment({
       title: title,
@@ -36,9 +38,11 @@ export async function saveWorksheetAssignmentAction(
       estimated_minutes: 20,
       tags: ['worksheet', 'ai-generated'],
       links: [],
-      is_template: false,
+      is_template: true, // Changed to true so it appears in library
       worksheet_data: worksheetData
     });
+
+    console.log('Assignment created:', assignment);
 
     revalidatePath('/parent/assignments');
     revalidatePath('/parent/lessons');
@@ -46,6 +50,7 @@ export async function saveWorksheetAssignmentAction(
     return { success: true, assignmentId: assignment.id };
   } catch (error) {
     console.error('Failed to save worksheet assignment:', error);
-    return { success: false, error: 'Failed to save assignment' };
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return { success: false, error: `Failed to save assignment: ${errorMessage}` };
   }
 }
