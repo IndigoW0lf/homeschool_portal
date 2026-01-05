@@ -68,15 +68,16 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
   }
 
   // Function to auto-mark item as done when clicking a link
-  const handleLinkClick = () => {
+  const handleLinkClick = async () => {
     if (!selectedItem) return;
-    const itemId = selectedItem.id;
+    const scheduleItemId = selectedItem.id;
+    const itemId = selectedItem.itemId || scheduleItemId;
     
     // Check if already done
     if (isDone(kidId, date, itemId)) return;
     
-    // Mark as done
-    setDone(kidId, date, itemId, true);
+    // Mark as done - syncs to database for cross-device visibility!
+    await setDone(kidId, date, itemId, true, scheduleItemId);
     setAutoCompleted(true);
     
     // Award star if not already awarded

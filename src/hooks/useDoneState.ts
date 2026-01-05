@@ -27,7 +27,10 @@ export function useDoneState(kidId: string, date: string, lessonId: string) {
   const toggle = useCallback(async () => {
     const newState = !done;
     setOptimisticDone(newState);
-    setDone(kidId, date, lessonId, newState);
+    
+    // Sync to BOTH localStorage AND database for cross-device visibility
+    // lessonId here is actually the schedule_item.id when called from ScheduleItemCard
+    await setDone(kidId, date, lessonId, newState, lessonId);
 
     // Award star if marking done for first time
     if (newState) {
