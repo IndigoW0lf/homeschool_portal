@@ -47,6 +47,8 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
   const router = useRouter();
   const searchParams = useSearchParams();
   const isFromLuna = searchParams.get('from') === 'luna';
+  const isFromQuickStart = searchParams.get('from') === 'quickstart';
+  const shouldPrefill = isFromLuna || isFromQuickStart;
   const resolver = zodResolver(assignmentSchema) as unknown as Resolver<AssignmentFormData>;
 
   const defaultValues: AssignmentFormData = {
@@ -69,9 +71,9 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
     defaultValues,
   });
 
-  // Check for Luna pre-fill data on mount
+  // Check for Luna/QuickStart pre-fill data on mount
   useEffect(() => {
-    if (isFromLuna && typeof window !== 'undefined') {
+    if (shouldPrefill && typeof window !== 'undefined') {
       const prefillData = sessionStorage.getItem('luna-prefill');
       if (prefillData) {
         try {
@@ -311,9 +313,9 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
              <Stack size={18} weight="duotone" color="#e7b58d" /> Resources & Tags
          </h3>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
              <div>
-                <label className="input-label">Tags</label>
+                <label className="input-label mb-2">Tags</label>
                 <TagInput
                    value={tags}
                    onChange={(newTags) => setValue('tags', newTags)}
@@ -328,7 +330,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                 <input
                    type="number"
                    {...register('estimatedMinutes', { valueAsNumber: true })}
-                   className="input"
+                   className="input w-full"
                 />
              </div>
          </div>

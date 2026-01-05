@@ -25,7 +25,10 @@ export async function saveWorksheetAssignmentAction(
   kidIds: string[] = [] // Optional: auto-assign to kids?
 ) {
   try {
-    console.log('Saving worksheet assignment:', { title, worksheetDataKeys: Object.keys(worksheetData) });
+    console.log('=== WORKSHEET SAVE DEBUG ===');
+    console.log('Title:', title);
+    console.log('Worksheet Data Keys:', Object.keys(worksheetData));
+    console.log('Worksheet Data:', JSON.stringify(worksheetData).slice(0, 500));
     
     // Create an assignment item with the worksheet data
     const assignment = await createAssignment({
@@ -38,19 +41,31 @@ export async function saveWorksheetAssignmentAction(
       estimated_minutes: 20,
       tags: ['worksheet', 'ai-generated'],
       links: [],
-      is_template: true, // Changed to true so it appears in library
+      is_template: true,
       worksheet_data: worksheetData
     });
 
-    console.log('Assignment created:', assignment);
+    console.log('=== ASSIGNMENT CREATED ===');
+    console.log('Assignment ID:', assignment?.id);
 
     revalidatePath('/parent/assignments');
     revalidatePath('/parent/lessons');
     
     return { success: true, assignmentId: assignment.id };
   } catch (error) {
-    console.error('Failed to save worksheet assignment:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return { success: false, error: `Failed to save assignment: ${errorMessage}` };
+    console.error('=== WORKSHEET SAVE ERROR ===');
+    console.error('Error type:', typeof error);
+    console.error('Error:', error);
+    
+    // Extract detailed error info
+    let errorMessage = 'Unknown error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'object' && error !== null) {
+      errorMessage = JSON.stringify(error);
+    }
+    
+    return { success: false, error: errorMessage };
   }
 }
+

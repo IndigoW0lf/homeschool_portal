@@ -52,6 +52,8 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
   const router = useRouter();
   const searchParams = useSearchParams();
   const isFromLuna = searchParams.get('from') === 'luna';
+  const isFromQuickStart = searchParams.get('from') === 'quickstart';
+  const shouldPrefill = isFromLuna || isFromQuickStart;
   const resolver = zodResolver(lessonSchema) as unknown as Resolver<LessonFormData>;
   
   // State for fetched students
@@ -126,9 +128,9 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
     defaultValues,
   });
 
-  // Check for Luna pre-fill data on mount
+  // Check for Luna/QuickStart pre-fill data on mount
   useEffect(() => {
-    if (isFromLuna && typeof window !== 'undefined') {
+    if (shouldPrefill && typeof window !== 'undefined') {
       const prefillData = sessionStorage.getItem('luna-prefill');
       if (prefillData) {
         try {

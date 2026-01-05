@@ -147,7 +147,7 @@ export async function scheduleAssignment(
 }
 
 // Assignments (Items)
-export async function createAssignment(assignment: Omit<AssignmentItemRow, 'id' | 'created_at'>) {
+export async function createAssignment(assignment: Omit<AssignmentItemRow, 'id' | 'created_at' | 'user_id'>) {
   const supabase = await createServerClient();
   
   // Get the authenticated user for RLS

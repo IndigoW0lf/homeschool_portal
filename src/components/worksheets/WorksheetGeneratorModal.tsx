@@ -52,7 +52,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '' }: 
       setStep('success');
     } else {
       setStep('review');
-      alert('Failed to save. Please try again.');
+      alert(`Save failed: ${res.error || 'Unknown error'}`);
     }
   };
   

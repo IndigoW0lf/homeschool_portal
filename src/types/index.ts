@@ -340,6 +340,7 @@ export interface WorksheetData {
 // Database row for assignments
 export interface AssignmentItemRow {
   id: string;
+  user_id?: string; // Added for RLS - set by mutation, not required in Omit
   title: string;
   type: string | null;
   deliverable: string | null;
