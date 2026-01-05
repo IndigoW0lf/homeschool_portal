@@ -6,9 +6,14 @@ import { LessonRow, AssignmentItemRow, ResourceRow, ScheduleItemRow } from '@/ty
 // Lessons
 export async function createLesson(lesson: Omit<LessonRow, 'id' | 'created_at'>) {
   const supabase = await createServerClient();
+  
+  // Get the authenticated user for RLS
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
   const { data, error } = await supabase
     .from('lessons')
-    .insert(lesson)
+    .insert({ ...lesson, user_id: user.id })
     .select()
     .single();
 
@@ -43,6 +48,10 @@ export async function deleteLesson(id: string) {
 export async function cloneLesson(id: string) {
   const supabase = await createServerClient();
   
+  // Get the authenticated user for RLS
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
   // Fetch the original lesson
   const { data: original, error: fetchError } = await supabase
     .from('lessons')
@@ -52,7 +61,7 @@ export async function cloneLesson(id: string) {
   
   if (fetchError || !original) throw fetchError || new Error('Lesson not found');
   
-  // Create a copy with new title
+  // Create a copy with new title and user_id
   const { data, error } = await supabase
     .from('lessons')
     .insert({
@@ -62,6 +71,7 @@ export async function cloneLesson(id: string) {
       tags: original.tags,
       estimated_minutes: original.estimated_minutes,
       parent_notes: original.parent_notes,
+      user_id: user.id, // RLS requires this
     })
     .select()
     .single();
@@ -129,9 +139,14 @@ export async function scheduleAssignment(
 // Assignments (Items)
 export async function createAssignment(assignment: Omit<AssignmentItemRow, 'id' | 'created_at'>) {
   const supabase = await createServerClient();
+  
+  // Get the authenticated user for RLS
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  
   const { data, error } = await supabase
     .from('assignment_items')
-    .insert(assignment)
+    .insert({ ...assignment, user_id: user.id })
     .select()
     .single();
 
