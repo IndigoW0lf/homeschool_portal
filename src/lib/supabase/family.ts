@@ -251,10 +251,10 @@ export async function acceptFamilyInvite(inviteId: string): Promise<{ success: b
         return { success: false, error: memberError.message };
     }
 
-    // Mark invite as accepted
+    // Mark invite as accepted (update BOTH status and accepted_at)
     await supabase
         .from('family_invites')
-        .update({ accepted_at: new Date().toISOString() })
+        .update({ status: 'accepted', accepted_at: new Date().toISOString() })
         .eq('id', inviteId);
 
     return { success: true };
