@@ -193,6 +193,13 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
           createLabel="New Lesson"
           onView={handleViewLesson}
           onEdit={(id: string) => setEditingLessonId(id)}
+          onDelete={async (id: string) => {
+             if (confirm('Are you sure you want to delete this lesson template?')) {
+                await deleteLesson(id);
+                toast.success('Lesson deleted');
+                router.refresh();
+             }
+          }}
         />
         <RecentList
           title="Upcoming Assignments"
