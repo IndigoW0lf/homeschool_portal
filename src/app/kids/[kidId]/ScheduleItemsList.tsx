@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ScheduleItemCard } from '@/components/ScheduleItemCard';
 import { Modal } from '@/components/ui/Modal';
 import { Clock, BookOpen, Pencil, CheckSquare, FileText, Link as LinkIcon, Question, LinkSimple, Sparkle, Check } from '@phosphor-icons/react';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import { cn } from '@/lib/utils';
 import { isDone, setDone } from '@/lib/storage';
 import { addStars, isAwarded, markAwarded } from '@/lib/progressState';
@@ -132,9 +133,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
                     <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                       What You'll Learn
                     </h4>
-                    <p className="text-gray-700 dark:text-gray-300">
-                      {lessonDetails.description}
-                    </p>
+                    <MarkdownText content={lessonDetails.description} />
                   </div>
                 )}
 
@@ -251,6 +250,36 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
                             <span>{item.text}</span>
                           </div>
                         )
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Assignment Links */}
+                {selectedItem.details.links && selectedItem.details.links.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                      <LinkIcon size={20} weight="duotone" color="#caa2d8" />
+                      Resources & Links
+                    </h4>
+                    <div className="space-y-2">
+                      {selectedItem.details.links.map((link, i) => (
+                        <a
+                          key={i}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={handleLinkClick}
+                          className="flex items-center gap-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
+                        >
+                          <LinkSimple size={18} weight="duotone" className="text-[var(--ember-500)]" />
+                          <span className="text-gray-700 dark:text-gray-300 flex-1 group-hover:text-[var(--ember-600)]">
+                            {link.label || link.url}
+                          </span>
+                          <span className="text-xs text-gray-400 flex items-center gap-1">
+                            Go! <Check size={12} weight="bold" />
+                          </span>
+                        </a>
                       ))}
                     </div>
                   </div>

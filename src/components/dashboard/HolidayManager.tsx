@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { 
   Plus, PencilSimple, Trash, X, Check,
-  // Holiday Icons
   Sun, Snowflake, Tree, Gift, Heart, Star, Sparkle, Confetti,
   Umbrella, Flower, Moon, Campfire, Airplane, House, Balloon,
   Cake, Coffee, BookOpen, MusicNote, GameController, Bed, Alarm
 } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 // Curated list of holiday/break-appropriate icons
 const HOLIDAY_ICONS = [
@@ -57,6 +57,16 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showIconPicker, setShowIconPicker] = useState(false);
+  
+  // Create effective "today" for filtering
+  const todayStr = format(new Date(), 'yyyy-MM-dd');
+
+  // Filter out passed holidays (strictly future)
+  // Logic: effectiveEnd > today
+  const upcomingHolidays = holidays.filter(h => {
+     const effectiveEnd = h.endDate || h.startDate;
+     return effectiveEnd > todayStr;
+  });
   
   // Form state
   const formDefaults = {
@@ -319,12 +329,15 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
 
       {/* Holiday List */}
       <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-80 overflow-y-auto">
-        {holidays.length === 0 ? (
+        {upcomingHolidays.length === 0 ? (
           <div className="p-6 text-center text-gray-400 dark:text-gray-500">
-            No holidays added yet. Click &quot;Add Holiday&quot; to get started!
+            {holidays.length > 0 
+                ? "No upcoming holidays." 
+                : "No holidays added yet. Click \"Add Holiday\" to get started!"
+            }
           </div>
         ) : (
-          holidays.sort((a, b) => a.startDate.localeCompare(b.startDate)).map(holiday => (
+          upcomingHolidays.sort((a, b) => a.startDate.localeCompare(b.startDate)).map(holiday => (
             <div
               key={holiday.id}
               className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50"

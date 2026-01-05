@@ -355,8 +355,8 @@ export async function getScheduleItemsForStudent(
     .from('schedule_items')
     .select(`
       *,
-      lesson:lessons!schedule_items_lesson_id_fkey(id, title, type, estimated_minutes, instructions, parent_notes),
-      assignment:assignment_items(id, title, type, estimated_minutes, steps, deliverable, rubric)
+      lesson:lessons!schedule_items_lesson_id_fkey(id, title, type, estimated_minutes, instructions, parent_notes, links, description, key_questions, materials),
+      assignment:assignment_items(id, title, type, estimated_minutes, steps, deliverable, rubric, links)
     `)
     .eq('student_id', studentId)
     .order('date');
