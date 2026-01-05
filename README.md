@@ -1,181 +1,108 @@
-# Homeschool Portal
+# 🌙 Lunara Homeschool Portal
 
-A kid-friendly Homeschool Portal web app with a centralized dashboard and per-child pages. The portal is used daily by **Atlas** (age ~9) and **Stella** (age ~12), plus a parent.
+![Status](https://img.shields.io/badge/Status-Active-success)
+![AI Powered](https://img.shields.io/badge/AI-Powered_✨-purple)
+![Tech](https://img.shields.io/badge/Next.js_16-App_Router-black)
 
-## Features
+A magical, AI-enhanced homeschool management system designed to bring structure to chaos and fun to learning. Built for **Atlas** (age ~9) and **Stella** (age ~12).
 
-### Parent Dashboard (`/parent`)
-- **Weekly Overview** - Visual week calendar showing lessons & assignments per day
-- **Day Playlist Modal** - Click any day to view/manage that day's schedule
-- **Library Management** - Create, edit, clone, and delete lessons & assignments
-- **Item Detail Modal** - Click any lesson/assignment to view full details with Delete/Edit/Clone actions
-- **Schedule Items** - Assign lessons & assignments to specific dates and students
-- **Holidays & Breaks** - Manage holidays with icon picker (22 curated Phosphor icons)
+---
 
-### Kid Portal (`/kids/atlas`, `/kids/stella`)
-- **Today's Quests** - View today's assigned items with clickable detail modals
-- **Week Calendar** - Overview of the week's schedule
-- **Progress Tracking** - Mark items complete with star rewards
-- **Item Details** - Click any item to see instructions, steps, rubric, and encouragement
+## ✨ AI Features ("Luna")
 
-### Core Features
-- ✅ Supabase backend with real-time data
-- ✅ Magic link authentication for parents
-- ✅ Daily rotating quotes on dashboard
-- ✅ Week calendar with assignment indicators
-- ✅ Assignment cards with tags, links, steps, and rubrics
-- ✅ "Mark Done" toggle with star rewards
-- ✅ Clone lessons/assignments for reuse
-- ✅ Toast notifications throughout
-- ✅ Responsive design for tablet and desktop
-- ✅ Click-outside-to-close for all modals
-- ✅ Dark mode support (persists to localStorage)
-- ✅ Error boundaries with friendly error pages
-- ✅ Design system with semantic utility classes
+> **Luna** is your homeschool assistant, helping generate content and ideas on the fly.
 
-## Tech Stack
+*   **🪄 AI Worksheet Generator** - Create custom PDFs instantly for any topic/age (saved to library!)
+*   **⚡ Quick Start Templates** - 20+ one-click lesson starters (Morning Basket, Mental Math, Nature Walk, etc.)
+*   **🧠 Curriculum Ideas** - Get instant suggestions for activities, books, and videos based on topics
 
-- **Next.js 16** (App Router)
-- **React 19 + TypeScript**
-- **Tailwind CSS 4** (with @apply design system)
-- **Supabase** (PostgreSQL + Auth)
-- **Sonner** (Toast notifications)
-- **Phosphor Icons** (Duotone style, pastel color palette)
-- **Quicksand Font** (Google Fonts via Next.js optimization)
+## 🏰 Kid Portal
 
-## Design System
+A gamified dashboard designed to empower independent learning:
 
-The app uses a semantic design system in `src/app/design-system.css` with reusable classes:
+*   **👤 Custom Avatars** - Kids build their own pixel-art profile
+*   **🗺️ Quest System** - "Today's Quests" view with markdown instructions & clickable links
+*   **🌕 Moon Rewards** - Earn moons for completing assignments (Use moons to buy catalog items!)
+*   **🏆 Progress Tracking** - Visual streaks and completion history
 
-### Buttons
-| Class | Description |
-|-------|-------------|
-| `btn-primary` | Primary action button (ember color) |
-| `btn-secondary` | Secondary button (gray background) |
-| `btn-ghost` | Transparent button with hover |
-| `btn-danger` | Red delete/destructive button |
-| `btn-pill`, `btn-pill-active`, `btn-pill-inactive` | Pill-shaped filter buttons |
-| `btn-icon`, `btn-icon-sm` | Icon-only buttons |
+## 🛡️ Parent Dashboard
 
-### Cards & Layout
-| Class | Description |
-|-------|-------------|
-| `card` | Standard card with border and shadow |
-| `card-header` | Card header with bottom border |
-| `list-item`, `list-item-clickable` | List row items |
-| `modal-backdrop`, `modal-content` | Modal components |
+Control center for the homeschool day:
 
-### Typography
-| Class | Description |
-|-------|-------------|
-| `heading-xl/lg/md/sm` | Heading sizes with dark mode support |
-| `text-muted` | Secondary/muted text |
-| `text-heading` | Primary heading text color |
-| `section-label` | Small uppercase labels |
-| `link` | Styled anchor links |
+*   **📅 Weekly Planner** - Drag-and-drop style weekly overview
+*   **📚 Library** - Reusable Lesson and Assignment templates
+*   **⚡ Quick Scheduling** - Assign items to specific kids/days in bulk
+*   **🌴 Holiday Manager** - Block off dates with custom icons
 
-### Inputs
-| Class | Description |
-|-------|-------------|
-| `input`, `input-sm` | Text inputs with focus ring |
-| `textarea` | Multiline text input |
-| `select` | Dropdown select |
-| `input-label` | Form field labels |
+---
 
-### Badges
-| Class | Description |
-|-------|-------------|
-| `badge-blue/purple/green/ember` | Colored badge pills |
-| `tag` | Removable tag pill |
+## 🛠️ Tech Stack
 
-## Getting Started
+*   **Framework:** Next.js 16 (App Router)
+*   **Language:** React 19 + TypeScript
+*   **Styling:** Tailwind CSS 4 + Semantic Design System (`src/app/design-system.css`)
+*   **Backend:** Supabase (PostgreSQL + Auth + Realtime)
+*   **Icons:** Phosphor Icons (Duotone)
+*   **AI:** Google Gemini (via Custom Integration)
+*   **PDFs:** `jspdf` for client-side generation
 
-### Prerequisites
-
-- Node.js 18+ 
-- npm
-- Supabase project (for backend)
-
-### Installation
+## 📂 Project Structure
 
 ```bash
-npm install
-```
-
-### Environment Setup
-
-Create `.env.local` with your Supabase credentials:
-```
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-```
-
-### Development
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Production Build
-
-```bash
-npm run build
-npm start
-```
-
-## Database Schema
-
-Key tables in Supabase:
-
-| Table | Purpose |
-|-------|---------|
-| `kids` | Kid profiles (id, name, grade_band) |
-| `lessons` | Lesson library with instructions, tags, links |
-| `assignment_items` | Assignment library with steps, rubric, deliverable |
-| `schedule_items` | Maps lessons/assignments to dates and students |
-| `resources` | Evergreen resource links by category |
-| `holidays` | Holiday/break dates with icons |
-
-## Project Structure
-
-```
 homeschool-portal/
-├── supabase/
-│   └── migrations/    # Database migrations
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx                  # Landing/Dashboard
-│   │   ├── design-system.css         # Semantic utility classes
-│   │   ├── globals.css               # Global styles & CSS vars
-│   │   ├── error.tsx                 # Route error boundary
-│   │   ├── not-found.tsx             # 404 page
-│   │   ├── global-error.tsx          # App-wide error boundary
-│   │   ├── kids/[kidId]/             # Kid portal
-│   │   └── parent/                   # Parent dashboard
+│   │   ├── kids/[kidId]/         # 🎮 Gamified Kid Portal
+│   │   ├── parent/               # 🛡️ Parent Dashboard
+│   │   └── design-system.css     # 🎨 Semantic CSS Utility Classes
 │   ├── components/
-│   │   ├── dashboard/                # Dashboard components
-│   │   ├── assignments/              # Assignment form
-│   │   ├── lessons/                  # Lesson form
-│   │   └── ui/                       # Shared UI (EmptyState, HolidayIcon, etc.)
+│   │   ├── luan/                 # 🤖 AI Assistant Components
+│   │   ├── worksheets/           # 📄 PDF Generator Logic
+│   │   └── dashboard/            # 📊 Dashboard Widgets
 │   ├── lib/
-│   │   ├── supabase/                 # Supabase client & queries
-│   │   └── utils.ts                  # Utilities
-│   └── types/                        # TypeScript types
-└── public/
-    └── assets/                       # SVG titles, icons
+│   │   ├── ai/                   # 🧠 AI Logic & Prompts
+│   │   ├── actions/              # ⚡ Server Actions
+│   │   └── templates/            # 📋 Quick Start Data
+│   └── types/                    # 🦕 TypeScript Definitions
+├── supabase/
+│   └── migrations/               # 🐘 Database Schema
+└── public/                       # 🖼️ Static Assets
 ```
 
-## Recent Updates
+## 🎨 Design System
 
-- **Design System** - Created `design-system.css` with semantic @apply classes
-- **Error Handling** - Added friendly 404, error, and global error pages
-- **HolidayIcon Component** - Reusable Phosphor icon renderer for holidays
-- **EmptyState Component** - Reusable empty state for lists
-- **Dark Mode Fix** - Theme now persists correctly across browser refresh
-- **Phosphor Icons** - Migrated from Lucide to Phosphor duotone icons
+The app uses a consistent semantic design system. Key utilities include:
 
-## License
+| Component | Classes | Description |
+| :--- | :--- | :--- |
+| **Buttons** | `btn-primary`, `btn-ghost`, `btn-icon` | Standard interactive elements |
+| **Cards** | `card`, `card-header` | Content containers with unified shadowing |
+| **Typography** | `heading-lg`, `text-muted`, `link` | Consistent font scaling (Quicksand) |
+| **Tags** | `badge-blue`, `tag`, `btn-pill` | Status indicators and filters |
 
-Private - for homeschool family use
+## 🚀 Getting Started
+
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+2.  **Environment Setup:**
+    Create `.env.local` with your Supabase & AI keys:
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=...
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+    GOOGLE_GENERATIVE_AI_KEY=...
+    ```
+
+3.  **Run Development Server:**
+    ```bash
+    npm run dev
+    ```
+
+4.  **Database Updates:**
+    Apply migrations from `supabase/migrations` to keep your local DB in sync.
+
+---
+
+*Private project for family use. Built with ❤️.*
