@@ -254,6 +254,9 @@ export function LunaProvider({ children }: { children: ReactNode }) {
   const sendMessage = useCallback(async (message: string) => {
     if (!state.currentContext) return;
 
+    // Capture current messages BEFORE updating state
+    const previousMessages = state.messages;
+
     const userMessage: ChatMessage = {
       role: 'user',
       content: message,
@@ -269,11 +272,47 @@ export function LunaProvider({ children }: { children: ReactNode }) {
     }));
 
     try {
-      // Build conversation history for context
-      const history = state.messages.map(m => ({
-        role: m.role === 'user' ? 'user' : 'assistant',
-        content: m.role === 'user' ? m.content : JSON.stringify(m.response),
-      }));
+      // Build conversation history from previous messages
+      // Include the FULL conversation context so Luna remembers what was discussed
+      type HistoryMessage = { role: 'user' | 'assistant'; content: string };
+      const history: HistoryMessage[] = [];
+      
+      for (const m of previousMessages) {
+        if (m.role === 'user') {
+          history.push({
+            role: 'user',
+            content: m.content,
+          });
+        } else if (m.role === 'luna' && m.response) {
+          // Format Luna's response as readable text so the AI can understand context
+          const parts: string[] = [];
+          
+          // Add clarifying questions
+          if (m.response.clarifying_questions?.length) {
+            parts.push('I asked: ' + m.response.clarifying_questions.join('; '));
+          }
+          
+          // Add suggestions with their titles and content
+          if (m.response.suggestions?.length) {
+            m.response.suggestions.forEach(s => {
+              parts.push(`I suggested "${s.title}": ${s.why_this_might_help}`);
+              if (s.lesson_data) {
+                parts.push(`(Lesson plan for: ${s.lesson_data.title})`);
+              }
+              if (s.assignment_data) {
+                parts.push(`(Assignment: ${s.assignment_data.title})`);
+              }
+            });
+          }
+          
+          history.push({
+            role: 'assistant',
+            content: parts.join('\n') || 'No specific response.',
+          });
+        }
+      }
+
+      console.log('[Luna] Sending with history:', history.length, 'messages');
 
       const body = {
         context: state.currentContext.context,
@@ -316,7 +355,7 @@ export function LunaProvider({ children }: { children: ReactNode }) {
         error: err instanceof Error ? err.message : 'Something went wrong',
       }));
     }
-  }, [state.currentContext]);
+  }, [state.currentContext, state.messages]);
 
   return (
     <LunaContext.Provider
