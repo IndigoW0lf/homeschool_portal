@@ -30,10 +30,15 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
     const lessonCount = items.filter((i: any) => i.itemType === 'lesson').length;
     const assignmentCount = items.filter((i: any) => i.itemType === 'assignment').length;
     
+    // Count completed items
+    const completedCount = items.filter((i: any) => i.status === 'completed').length;
+    const totalCount = items.length;
+    const allComplete = totalCount > 0 && completedCount === totalCount;
+    
     // Get unique student IDs for this day
     const studentIds = [...new Set(items.map((i: any) => i.studentId).filter(Boolean))];
 
-    return { date: day, dateStr, lessonCount, assignmentCount, total: items.length, studentIds };
+    return { date: day, dateStr, lessonCount, assignmentCount, total: items.length, studentIds, completedCount, totalCount, allComplete };
   });
 
   return (
@@ -111,6 +116,19 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
                        {day.assignmentCount} Assignment{day.assignmentCount > 1 ? 's' : ''}
                     </div>
                  )}
+                 
+                 {/* Completion progress indicator */}
+                 {day.totalCount > 0 && (
+                    <div className={cn(
+                       "text-[10px] w-full text-center font-semibold mt-1 py-0.5 rounded",
+                       day.allComplete 
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" 
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                    )}>
+                       {day.allComplete ? '✓ ' : ''}{day.completedCount}/{day.totalCount} done
+                    </div>
+                 )}
+                 
                  {day.total === 0 && (
                     <div className="text-[10px] text-muted text-center mt-2">Empty</div>
                  )}

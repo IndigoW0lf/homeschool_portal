@@ -182,22 +182,42 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           </button>
         </div>
 
-        {/* Favorite Color Display */}
+        {/* Favorite Color Display - Large clickable swatch */}
         {formData.favoriteColor && (
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div 
-              className="w-12 h-12 rounded-full shadow-inner border-2 border-white dark:border-gray-600"
-              style={{ backgroundColor: formData.favoriteColor }}
-            />
-            <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                <Heart size={14} weight="fill" className="text-red-400" /> My Profile Color
-              </p>
-              <p className="font-medium text-gray-900 dark:text-white">
-                Change anytime in edit mode!
-              </p>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="group w-full p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-[var(--ember-300)] transition-all text-left"
+          >
+            <div className="flex items-center gap-4">
+              {/* Large Color Swatch with gradient border effect */}
+              <div className="relative">
+                <div 
+                  className="w-16 h-16 rounded-xl shadow-lg transition-transform group-hover:scale-105"
+                  style={{ 
+                    backgroundColor: formData.favoriteColor,
+                    boxShadow: `0 4px 20px ${formData.favoriteColor}40`
+                  }}
+                />
+                <Heart 
+                  size={20} 
+                  weight="fill" 
+                  className="absolute -top-1 -right-1 text-red-400 drop-shadow"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">
+                  My Profile Color
+                </p>
+                <p className="font-semibold text-gray-900 dark:text-white text-lg">
+                  {formData.favoriteColor.toUpperCase()}
+                </p>
+              </div>
+              <PencilSimple 
+                size={20} 
+                className="text-gray-400 group-hover:text-[var(--ember-500)] transition-colors" 
+              />
             </div>
-          </div>
+          </button>
         )}
 
         {/* Birthday Display */}
