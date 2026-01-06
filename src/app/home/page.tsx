@@ -33,17 +33,20 @@ export default async function FamilyHomePage() {
 
   const kids = await getKidsFromDB();
   const quote = getDailyQuote();
-  const today = new Date();
   const upcomingHolidays = await getUpcomingHolidaysFromDB(6);
   const profile = await getUserProfileFromDB();
   const displayName = profile?.display_name || 'Parent';
+  const userTimezone = profile?.timezone || 'America/Chicago';
 
-  const formattedDate = today.toLocaleDateString('en-US', {
+  // Use timezone-aware "today" to prevent UTC showing tomorrow for US users
+  const today = new Date();
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  });
+    timeZone: userTimezone,
+  }).format(today);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-amber-50/30 dark:from-gray-900 dark:via-purple-950/20 dark:to-gray-800">

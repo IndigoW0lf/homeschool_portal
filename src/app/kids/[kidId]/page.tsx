@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
-import { formatDateString } from '@/lib/dateUtils';
+import { formatDateString, getTodayInTimezone, getNowInTimezone } from '@/lib/dateUtils';
 import { ProgressCardWrapper, TodayCompletionSummary, ResourceSection } from '@/components';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
@@ -29,8 +29,11 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
     notFound();
   }
 
-  // Date Logic
-  const today = new Date();
+  // Use timezone-aware "today" to prevent UTC showing wrong date
+  // TODO: Fetch parent's timezone from family settings, for now default to CST
+  const timezone = 'America/Chicago';
+  const todayString = getTodayInTimezone(timezone);
+  const today = getNowInTimezone(timezone);
   let viewDate = today;
   
   if (date && typeof date === 'string') {
@@ -47,7 +50,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
   }
 
   const viewDateString = formatDateString(viewDate);
-  const isViewToday = isSameDay(viewDate, today);
+  const isViewToday = viewDateString === todayString;
 
   const resources = await getResourcesFromDB();
   
