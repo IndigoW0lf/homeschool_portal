@@ -25,19 +25,28 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
     return () => clearInterval(interval);
   }, [kidId, item.id]);
 
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
     if (purchased || stars < item.cost || isPurchasing) return;
     
     setIsPurchasing(true);
-    const success = purchaseItem(kidId, item.id, item.cost, item.unlocks || []);
     
-    if (success) {
-      setPurchased(true);
-      setStars(getStars(kidId));
-      onPurchase?.();
+    try {
+      const result = await purchaseItem(kidId, item.id, item.name, item.cost, item.unlocks || []);
+      
+      if (result.success) {
+        setPurchased(true);
+        setStars(prev => prev - item.cost);
+        onPurchase?.();
+      } else {
+        // Show error if purchase failed (e.g., already purchased on another device)
+        alert(result.error || 'Purchase failed');
+      }
+    } catch (err) {
+      console.error('Purchase error:', err);
+      alert('Something went wrong with the purchase');
+    } finally {
+      setIsPurchasing(false);
     }
-    
-    setIsPurchasing(false);
   };
 
   const canAfford = stars >= item.cost;

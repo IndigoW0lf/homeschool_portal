@@ -212,20 +212,82 @@ export function isPurchased(kidId: string, itemId: string): boolean {
   return purchases.includes(itemId);
 }
 
-export function purchaseItem(kidId: string, itemId: string, cost: number, itemUnlocks: string[]): boolean {
-  const currentStars = getStars(kidId);
-  if (currentStars < cost) return false;
-  if (isPurchased(kidId, itemId)) return false; // Already purchased
+/**
+ * Purchase an item - syncs to BOTH localStorage AND database
+ * Database is source of truth to prevent cache-clearing exploits
+ */
+export async function purchaseItem(
+  kidId: string, 
+  itemId: string, 
+  itemName: string,
+  cost: number, 
+  itemUnlocks: string[]
+): Promise<{ success: boolean; error?: string }> {
+  // Import supabase dynamically to avoid SSR issues
+  const { supabase } = await import('@/lib/supabase/browser');
   
-  // Deduct stars
-  addStars(kidId, -cost);
+  // 1. Check if already purchased in DB (source of truth)
+  const { data: existingPurchase } = await supabase
+    .from('shop_purchases')
+    .select('id')
+    .eq('kid_id', kidId)
+    .eq('item_id', itemId)
+    .single();
   
-  // Add to purchases
+  if (existingPurchase) {
+    return { success: false, error: 'Already purchased!' };
+  }
+  
+  // 2. Check current moons in DB (source of truth for balance)
+  const { data: kid } = await supabase
+    .from('kids')
+    .select('moons')
+    .eq('id', kidId)
+    .single();
+  
+  const currentMoons = kid?.moons || 0;
+  if (currentMoons < cost) {
+    return { success: false, error: 'Not enough moons!' };
+  }
+  
+  // 3. Deduct moons in DB
+  const newMoonBalance = currentMoons - cost;
+  const { error: moonError } = await supabase
+    .from('kids')
+    .update({ moons: newMoonBalance })
+    .eq('id', kidId);
+  
+  if (moonError) {
+    console.error('Failed to deduct moons:', moonError);
+    return { success: false, error: 'Failed to process purchase' };
+  }
+  
+  // 4. Record purchase in DB
+  const { error: purchaseError } = await supabase
+    .from('shop_purchases')
+    .insert({
+      kid_id: kidId,
+      item_id: itemId,
+      item_name: itemName,
+      cost,
+      unlocks_granted: itemUnlocks
+    });
+  
+  if (purchaseError) {
+    console.error('Failed to record purchase:', purchaseError);
+    // Refund the moons since purchase failed
+    await supabase
+      .from('kids')
+      .update({ moons: currentMoons })
+      .eq('id', kidId);
+    return { success: false, error: 'Failed to record purchase' };
+  }
+  
+  // 5. Update localStorage for instant UI (cache, not source of truth)
   const purchases = getPurchases(kidId);
   purchases.push(itemId);
   setPurchases(kidId, purchases);
   
-  // Add to unlocks
   const unlocks = getUnlocks(kidId);
   itemUnlocks.forEach(unlockId => {
     if (!unlocks.includes(unlockId)) {
@@ -234,11 +296,37 @@ export function purchaseItem(kidId: string, itemId: string, cost: number, itemUn
   });
   setUnlocks(kidId, unlocks);
   
-  return true;
+  // Also update localStorage stars for UI
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(`${STARS_PREFIX}::${kidId}`, String(newMoonBalance));
+  }
+  
+  console.log(`✅ Purchase synced to DB: ${itemId} for ${cost} moons`);
+  return { success: true };
+}
+
+/**
+ * Load purchases from database (call on page load to sync localStorage)
+ */
+export async function syncPurchasesFromDB(kidId: string): Promise<string[]> {
+  const { supabase } = await import('@/lib/supabase/browser');
+  
+  const { data: purchases } = await supabase
+    .from('shop_purchases')
+    .select('item_id')
+    .eq('kid_id', kidId);
+  
+  const purchaseIds = purchases?.map(p => p.item_id) || [];
+  
+  // Update localStorage to match DB
+  setPurchases(kidId, purchaseIds);
+  
+  return purchaseIds;
 }
 
 // Helper to get unlocks for a shop item
 export function getItemUnlocks(itemId: string, unlocks: string[]): string[] {
   return unlocks || [];
 }
+
 
