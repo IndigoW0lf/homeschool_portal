@@ -13,6 +13,7 @@ export const ThinkContextSchema = z.enum([
   'INTEREST_SPARK',
   'REFLECTION',
   'GENERAL',
+  'LESSON_WORKSHEET', // Generate worksheet from lesson
 ]);
 
 export type ThinkContext = z.infer<typeof ThinkContextSchema>;
@@ -99,7 +100,7 @@ export type LessonSuggestion = z.infer<typeof LessonSuggestionSchema>;
 
 /**
  * A single suggestion from Luna
- * May include optional form data for assignment or lesson creation
+ * May include optional form data for assignment, lesson, or worksheet creation
  */
 export const SuggestionSchema = z.object({
   title: z.string().describe('Brief, actionable title for this suggestion'),
@@ -108,6 +109,21 @@ export const SuggestionSchema = z.object({
   // Optional form pre-fill data
   assignment_data: AssignmentSuggestionSchema.optional().describe('Pre-fill data if this is an assignment suggestion'),
   lesson_data: LessonSuggestionSchema.optional().describe('Pre-fill data if this is a lesson suggestion'),
+  worksheet_data: z.object({
+    title: z.string(),
+    instructions: z.string(),
+    sections: z.array(z.object({
+      title: z.string().optional(),
+      items: z.array(z.object({
+        id: z.string(),
+        type: z.string(),
+        question: z.string(),
+        options: z.array(z.string()).optional(),
+        answer: z.string().optional(),
+        space_lines: z.number().optional(),
+      })),
+    })),
+  }).optional().describe('Worksheet data for printable worksheets'),
 });
 
 export type Suggestion = z.infer<typeof SuggestionSchema>;

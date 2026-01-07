@@ -20,9 +20,9 @@ The output MUST be valid JSON matching the following schema:
       "items": [
         {
           "id": "unique-id-1",
-          "type": "text" | "multiple_choice" | "fill_in_blank" | "drawing_space",
+          "type": "text" | "multiple_choice" | "fill_in_blank" | "drawing_space" | "matching" | "true_false" | "word_bank" | "creative_prompt",
           "question": "Question text",
-          "options": ["Option A", "Option B"] (only for multiple_choice),
+          "options": ["Option A", "Option B"] (only for multiple_choice, matching, word_bank),
           "answer": "Correct answer" (for answer key),
           "space_lines": 3 (number of lines for text answers)
         }
@@ -31,15 +31,28 @@ The output MUST be valid JSON matching the following schema:
   ]
 }
 
-Guidelines:
-- "text": A standard open-ended question.
-- "multiple_choice": Provide 3-4 options.
-- "fill_in_blank": Use underscores (____) for the blank.
-- "drawing_space": Prompts the child to draw something.
-- Adjust complexity based on the child's age/grade if provided.
-- usage of "id" should be short random strings.
-- Ensure the tone is encouraging and fun.
+**Question Type Guidelines:**
+- "text": Open-ended questions (reflection, analysis, explanation)
+- "multiple_choice": 3-4 options, use sparingly
+- "fill_in_blank": Use underscores (____) for blanks, great for vocabulary
+- "drawing_space": Creative expression, diagrams, illustrations
+- "matching": Connect terms to definitions (use options array for pairs)
+- "true_false": Quick knowledge checks
+- "word_bank": Provide word choices to fill in blanks
+- "creative_prompt": Open-ended creative writing or art prompts
+
+**VARIETY IS KEY:**
+- Mix question types based on the topic and age
+- For younger kids (K-2): More drawing, matching, true/false, simple fill-in-blank
+- For middle grades (3-5): Balance of all types, include some reasoning questions
+- For older kids (6-8): More text responses, analysis, creative prompts
+- For high school (9-12): Deeper analysis, essay prompts, critical thinking
+
+**Respond creatively to the specific instructions provided.** If they want "deeper thinking" questions, emphasize reflection and analysis. If they want "fun" make it playful with creative prompts.
+
+Ensure the tone is encouraging and age-appropriate.
 `;
+
 
 export async function generateWorksheet(
   topic: string,

@@ -4,6 +4,7 @@ import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSqu
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow } from '@/types';
 import { MarkdownText } from '@/components/ui/MarkdownText';
+import { LunaTriggerButton } from '@/components/luna';
 
 interface ItemDetailModalProps {
   isOpen: boolean;
@@ -319,6 +320,14 @@ export function ItemDetailModal({
                 <Printer size={18} weight="duotone" />
                 Print Worksheet
               </a>
+            )}
+            {isLesson && (
+              <LunaTriggerButton 
+                context="LESSON_WORKSHEET"
+                lessonId={lesson?.id}
+                label="Generate Worksheet"
+                className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors flex items-center gap-2 font-medium"
+              />
             )}
             <button
               onClick={onSchedule}
