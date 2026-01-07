@@ -126,6 +126,7 @@ export async function getKidSubjectCounts(kidId: string): Promise<Record<string,
     else if (key.includes('write')) key = 'writing';
     else if (key.includes('math') || key.includes('logic')) key = 'math';
     else if (key.includes('sci')) key = 'science';
+    else if (key.includes('life') || key.includes('skill')) key = 'life_skills';
     
     counts[key] = (counts[key] || 0) + Number(row.count);
   });

@@ -478,15 +478,6 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
            ) : (
              <>
                {/* Normal Playlist View */}
-               {/* Pinned Morning Routine (Mock) */}
-               <div className="flex items-start gap-4 p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 rounded-xl relative group">
-                  <div className="pt-1 text-amber-400"><CheckCircle size={20} /></div>
-                  <div className="flex-1">
-                     <h3 className="font-semibold text-gray-900 dark:text-white">Morning Routine</h3>
-                     <p className="text-sm text-gray-500">Breakfast, Teeth, MiAcademy</p>
-                  </div>
-                  <div className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-200 text-amber-800 rounded-full">Pinned</div>
-               </div>
     
                {/* Scheduled Items - Grouped by Student */}
                {studentSchedules.map(({ student, items: studentItems }) => (

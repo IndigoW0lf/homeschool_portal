@@ -25,6 +25,7 @@ export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
     { key: 'writing', label: 'Writing', color: 'bg-blue-400', icon: '✏️' },
     { key: 'math', label: 'Math & Logic', color: 'bg-purple-400', icon: '🧮' },
     { key: 'science', label: 'Science', color: 'bg-green-400', icon: '🌱' },
+    { key: 'life_skills', label: 'Life Skills', color: 'bg-pink-400', icon: '🏠' },
   ];
 
   return (
