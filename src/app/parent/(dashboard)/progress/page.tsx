@@ -2,12 +2,14 @@ import { createServerClient } from '@/lib/supabase/server';
 import { getKidsFromDB } from '@/lib/supabase/data';
 import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity } from '@/lib/supabase/progressData';
 import { getExternalCurriculumStats } from '@/app/actions/import';
+import { getWorksheetResponsesForKids } from '@/lib/supabase/worksheetData';
 import { ParentProgressStats } from '@/components/profile/ParentProgressStats';
 import { ImportButton } from '@/components/dashboard/ImportButton';
 import { SubjectDonut } from '@/components/dashboard/SubjectDonut';
 import { ExternalCurriculumList } from '@/components/dashboard/ExternalCurriculumList';
+import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetResponseViewer';
 import { redirect } from 'next/navigation';
-import { ChartLineUp, GraduationCap } from '@phosphor-icons/react/dist/ssr';
+import { ChartLineUp, GraduationCap, Notebook } from '@phosphor-icons/react/dist/ssr';
 
 export default async function ProgressPage() {
   const supabase = await createServerClient();
@@ -41,6 +43,9 @@ export default async function ProgressPage() {
 
   // Fetch external curriculum data (per-kid)
   const externalData = await getExternalCurriculumStats(kidIds);
+  
+  // Fetch worksheet responses for the viewer
+  const worksheetResponses = await getWorksheetResponsesForKids(kidIds);
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -158,6 +163,15 @@ export default async function ProgressPage() {
             <p className="text-gray-500">No students found. Add a kid in Settings to see stats!</p>
           </div>
         )}
+      </div>
+
+      {/* Worksheet Responses Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <Notebook size={24} weight="duotone" className="text-purple-500" />
+          Completed Worksheets
+        </h2>
+        <WorksheetResponseViewer responses={worksheetResponses} />
       </div>
     </div>
   );
