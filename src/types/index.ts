@@ -150,6 +150,7 @@ export interface Lesson {
   links: LessonLink[];
   attachments: LessonAttachment[];
   parentNotes?: string;
+  embedUrl?: string; // Optional URL for embedded content (YouTube, Wizer, etc.)
 }
 
 export interface CalendarEntry {
@@ -354,6 +355,7 @@ export interface AssignmentItemRow {
   is_template: boolean;
   created_at: string;
   worksheet_data: WorksheetData | null;
+  embed_url?: string | null; // Optional URL for embedded content
 }
 
 export interface DayPlanRow {
