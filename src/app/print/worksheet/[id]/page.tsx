@@ -2,7 +2,12 @@ import { createServerClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import { PrintPageClient } from '@/components/worksheets/PrintPageClient';
 
-export default async function PrintWorksheetPage({ params }: { params: { id: string } }) {
+interface PrintWorksheetPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function PrintWorksheetPage({ params }: PrintWorksheetPageProps) {
+  const { id } = await params;
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -13,7 +18,7 @@ export default async function PrintWorksheetPage({ params }: { params: { id: str
   const { data: assignment, error } = await supabase
     .from('assignment_items')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error || !assignment) {
@@ -34,3 +39,4 @@ export default async function PrintWorksheetPage({ params }: { params: { id: str
 
   return <PrintPageClient data={assignment.worksheet_data as any} />;
 }
+

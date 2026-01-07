@@ -6,6 +6,7 @@ export interface Kid {
   name: string;
   gradeBand: string;
   user_id?: string;
+  familyId?: string; // Reference to family for connections
   // Profile fields
   avatarUrl?: string;
   favoriteColor?: string;

@@ -4,7 +4,7 @@ import { getKidSubjectCounts } from '@/lib/supabase/progressData';
 import { KidProfileEditor } from '@/components/kids/KidProfileEditor';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { BadgeGallery } from '@/components/kids/BadgeGallery';
-import { Star } from '@phosphor-icons/react/dist/ssr';
+import { FamilyConnections } from '@/components/kids/FamilyConnections';
 import Link from 'next/link';
 
 interface ProfilePageProps {
@@ -77,6 +77,11 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
             </Link>
           </div>
         </div>
+
+        {/* Family Connections */}
+        {kid.familyId && (
+          <FamilyConnections kidId={kidId} familyId={kid.familyId} />
+        )}
 
         {/* Badge Gallery */}
         <BadgeGallery kidId={kidId} subjectCounts={subjectCounts} />

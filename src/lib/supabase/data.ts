@@ -62,6 +62,7 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     id: row.id,
     name: row.name,
     gradeBand: row.grade_band || '',
+    familyId: row.family_id || undefined,
     avatarUrl: row.avatar_url || undefined,
     favoriteColor: row.favorite_color || undefined,
     birthday: row.birthday || undefined,
