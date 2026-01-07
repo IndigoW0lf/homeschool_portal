@@ -149,3 +149,25 @@ export async function getWeeklyActivity(kidId: string): Promise<{ date: string; 
   
   return data || [];
 }
+
+// Get life skills category counts for progress tracking
+export async function getLifeSkillsCounts(kidId: string): Promise<Record<string, number>> {
+  const supabase = await createServerClient();
+  
+  const { data, error } = await supabase.rpc('get_life_skills_counts', {
+    p_kid_id: kidId
+  });
+  
+  if (error) {
+    console.error('Error fetching life skills counts:', error);
+    return {};
+  }
+  
+  // Normalize data into record
+  const counts: Record<string, number> = {};
+  (data || []).forEach((row: { category: string; count: number }) => {
+    counts[row.category] = Number(row.count);
+  });
+  
+  return counts;
+}

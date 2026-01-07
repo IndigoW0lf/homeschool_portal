@@ -17,7 +17,13 @@ import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
 
 const LESSON_TYPES = [
-  'Math', 'Science', 'History', 'Language Arts', 'Art', 'Music', 'PE', 'Life Skills', 'Coding'
+  // Academic
+  'Math', 'Science', 'History', 'Language Arts', 'Art', 'Music', 'PE', 'Coding',
+  // Life Skills
+  'Self & Mind', 'Thinking & Truth', 'Agency & Responsibility', 
+  'Relationships & Community', 'Body & Nervous System', 'Systems & Society',
+  // Other
+  'Life Skills'
 ];
 
 const lessonSchema = z.object({

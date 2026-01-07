@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { getKidsFromDB } from '@/lib/supabase/data';
-import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity } from '@/lib/supabase/progressData';
+import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity, getLifeSkillsCounts } from '@/lib/supabase/progressData';
 import { getExternalCurriculumStats } from '@/app/actions/import';
 import { getWorksheetResponsesForKids } from '@/lib/supabase/worksheetData';
 import { ParentProgressStats } from '@/components/profile/ParentProgressStats';
@@ -8,8 +8,9 @@ import { ImportButton } from '@/components/dashboard/ImportButton';
 import { SubjectDonut } from '@/components/dashboard/SubjectDonut';
 import { ExternalCurriculumList } from '@/components/dashboard/ExternalCurriculumList';
 import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetResponseViewer';
+import { LifeSkillsChart } from '@/components/dashboard/LifeSkillsChart';
 import { redirect } from 'next/navigation';
-import { ChartLineUp, GraduationCap, Notebook } from '@phosphor-icons/react/dist/ssr';
+import { ChartLineUp, GraduationCap, Notebook, Brain } from '@phosphor-icons/react/dist/ssr';
 
 export default async function ProgressPage() {
   const supabase = await createServerClient();
@@ -27,6 +28,7 @@ export default async function ProgressPage() {
     const progress = await getStudentProgress(kid.id);
     const subjectCounts = await getKidSubjectCounts(kid.id);
     const weeklyActivity = await getWeeklyActivity(kid.id);
+    const lifeSkillsCounts = await getLifeSkillsCounts(kid.id);
 
     return {
       kid,
@@ -37,6 +39,7 @@ export default async function ProgressPage() {
         streakEnabled: kid.streakEnabled ?? true,
         subjectCounts,
         weeklyActivity,
+        lifeSkillsCounts,
       }
     };
   }));
@@ -91,6 +94,23 @@ export default async function ProgressPage() {
                   </div>
                   <ParentProgressStats kidId={kid.id} kidName={kid.name} stats={stats} />
                 </div>
+
+                {/* Life Skills Section */}
+                {Object.keys(stats.lifeSkillsCounts).length > 0 && (
+                  <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Brain size={20} className="text-purple-500" />
+                      <span className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full font-medium">
+                        Life Skills Progress
+                      </span>
+                    </div>
+                    <LifeSkillsChart 
+                      completedItems={Object.entries(stats.lifeSkillsCounts).map(([type, count]) => 
+                        Array(count).fill({ type })
+                      ).flat()}
+                    />
+                  </div>
+                )}
 
                 {/* External Curriculum Section (if data exists) */}
                 {hasExternalData && (

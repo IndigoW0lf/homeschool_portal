@@ -14,6 +14,7 @@ interface Redemption {
   reward_id: string;
   status: string;
   redeemed_at: string;
+  source?: 'shop'; // To differentiate shop vs reward
   reward: {
     name: string;
     emoji: string;
@@ -54,12 +55,12 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
     }
   };
 
-  const handleAction = async (redemptionId: string, status: 'approved' | 'denied') => {
+  const handleAction = async (redemptionId: string, status: 'approved' | 'denied' | 'fulfilled', source?: 'shop') => {
     try {
       const res = await fetch('/api/rewards/redeem', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ redemptionId, status }),
+        body: JSON.stringify({ redemptionId, status, source }),
       });
 
       if (res.ok) {
@@ -70,7 +71,7 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
         setTimeout(() => setMessage(null), 3000);
       }
     } catch {
-      setMessage({ type: 'error', text: 'Failed to update redemption' });
+      setMessage({ type: 'error', text: 'Failed to update' });
     }
   };
 
@@ -134,20 +135,35 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <button
-                  onClick={() => handleAction(redemption.id, 'approved')}
-                  className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/30 transition-colors"
-                  title="Approve"
-                >
-                  <Check size={20} weight="bold" />
-                </button>
-                <button
-                  onClick={() => handleAction(redemption.id, 'denied')}
-                  className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800/30 transition-colors"
-                  title="Deny (refund moons)"
-                >
-                  <X size={20} weight="bold" />
-                </button>
+                {redemption.source === 'shop' ? (
+                  // Shop items: just mark as fulfilled
+                  <button
+                    onClick={() => handleAction(redemption.id, 'fulfilled', 'shop')}
+                    className="px-3 py-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/30 transition-colors font-medium text-sm flex items-center gap-1"
+                    title="Mark as fulfilled"
+                  >
+                    <Check size={16} weight="bold" />
+                    Fulfilled
+                  </button>
+                ) : (
+                  // Legacy rewards: approve/deny
+                  <>
+                    <button
+                      onClick={() => handleAction(redemption.id, 'approved')}
+                      className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/30 transition-colors"
+                      title="Approve"
+                    >
+                      <Check size={20} weight="bold" />
+                    </button>
+                    <button
+                      onClick={() => handleAction(redemption.id, 'denied')}
+                      className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800/30 transition-colors"
+                      title="Deny (refund moons)"
+                    >
+                      <X size={20} weight="bold" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))}
