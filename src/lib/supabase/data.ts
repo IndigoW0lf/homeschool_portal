@@ -357,7 +357,7 @@ export async function getScheduleItemsForStudent(
     .select(`
       *,
       lesson:lessons!schedule_items_lesson_id_fkey(id, title, type, estimated_minutes, instructions, parent_notes, links, description, key_questions, materials),
-      assignment:assignment_items(id, title, type, estimated_minutes, steps, deliverable, rubric, links)
+      assignment:assignment_items(id, title, type, estimated_minutes, steps, deliverable, rubric, links, worksheet_data)
     `)
     .eq('student_id', studentId)
     .order('date');
@@ -391,6 +391,9 @@ export async function getScheduleItemsForStudent(
     title: row.lesson?.title || row.assignment?.title || 'Untitled',
     type: row.lesson?.type || row.assignment?.type || 'Task',
     estimatedMinutes: row.lesson?.estimated_minutes || row.assignment?.estimated_minutes || 20,
+    // Interactive worksheet support
+    hasWorksheet: !!(row.assignment?.worksheet_data),
+    assignmentId: row.assignment?.id || null,
     // Full details for item modal
     details: row.lesson || row.assignment || null
   }));

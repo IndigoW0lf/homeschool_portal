@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { ScheduleItemCard } from '@/components/ScheduleItemCard';
 import { Modal } from '@/components/ui/Modal';
-import { Clock, BookOpen, Pencil, CheckSquare, FileText, Link as LinkIcon, Question, LinkSimple, Sparkle, Check } from '@phosphor-icons/react';
+import { Clock, BookOpen, Pencil, CheckSquare, FileText, Link as LinkIcon, Question, LinkSimple, Sparkle, Check, Notebook } from '@phosphor-icons/react';
+import Link from 'next/link';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { cn } from '@/lib/utils';
 import { isDone, setDone } from '@/lib/storage';
@@ -20,6 +21,8 @@ interface ScheduleItem {
   title: string;
   type: string;
   estimatedMinutes: number;
+  hasWorksheet?: boolean; // True if assignment has worksheet_data
+  assignmentId?: string; // The assignment ID for worksheet link
   details?: {
     id: string;
     title: string;
@@ -289,6 +292,20 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
                   </div>
                 )}
               </>
+            )}
+
+            {/* Interactive Worksheet Button */}
+            {!isLesson && selectedItem?.hasWorksheet && selectedItem?.assignmentId && (
+              <Link
+                href={`/kids/${kidId}/worksheet/${selectedItem.assignmentId}`}
+                className="block w-full p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-center hover:opacity-90 transition-opacity shadow-lg"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <Notebook size={24} weight="duotone" />
+                  Do Worksheet
+                </div>
+                <div className="text-sm opacity-80 mt-1">Complete it right here!</div>
+              </Link>
             )}
 
             {/* Encouragement message */}
