@@ -9,7 +9,6 @@ import { KidPinManager } from '@/components/profile/KidPinManager';
 import { KidManager } from '@/components/profile/KidManager';
 import { MoonManager } from '@/components/profile/MoonManager';
 import { RewardManager } from '@/components/profile/RewardManager';
-import { RedemptionManager } from '@/components/profile/RedemptionManager';
 import { JournalSettings } from '@/components/profile/JournalSettings';
 import { FamilyManager } from '@/components/profile/FamilyManager';
 
@@ -91,10 +90,6 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
           <div className="space-y-6">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
               <MoonManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-              <RedemptionManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
