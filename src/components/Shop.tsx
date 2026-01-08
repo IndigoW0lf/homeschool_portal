@@ -45,12 +45,8 @@ export function Shop({ kidId, items }: ShopProps) {
   const handleRewardPurchase = async (item: ShopItem) => {
     if (stars < item.cost) return;
     
-    // Deduct moons
-    addStars(kidId, -item.cost);
-    setStars(getStars(kidId));
-    
-    // Create redemption request
-    await fetch('/api/rewards/redeem', {
+    // Call API - backend will deduct moons and create redemption
+    const res = await fetch('/api/rewards/redeem', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -58,6 +54,20 @@ export function Shop({ kidId, items }: ShopProps) {
         rewardId: item.id,
       }),
     });
+    
+    const data = await res.json();
+    
+    if (res.ok && data.success) {
+      // Sync localStorage with new balance from API
+      if (typeof window !== 'undefined' && data.newMoonBalance !== undefined) {
+        localStorage.setItem(`homeschool_stars::${kidId}`, String(data.newMoonBalance));
+      }
+      // Update local state
+      setStars(data.newMoonBalance ?? stars - item.cost);
+    } else {
+      console.error('[Shop] Failed to redeem:', data.error);
+      // Could show error toast here
+    }
   };
 
   return (

@@ -4,6 +4,7 @@ import { createServerClient } from '@/lib/supabase/server';
 /**
  * POST /api/rewards/redeem
  * Creates a pending redemption when kid "buys" a reward
+ * ALSO deducts moons from the database
  */
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +23,54 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createServerClient();
     
-    // Create pending redemption
+    // 1. Get the reward details to know the cost
+    const { data: reward, error: rewardError } = await supabase
+      .from('kid_rewards')
+      .select('moon_cost, name')
+      .eq('id', rewardId)
+      .single();
+    
+    if (rewardError || !reward) {
+      console.error('[Redeem] Reward not found:', rewardError);
+      return NextResponse.json({ error: 'Reward not found' }, { status: 404 });
+    }
+    
+    // 2. Get current moons for the kid from student_progress
+    const { data: progress, error: progressError } = await supabase
+      .from('student_progress')
+      .select('total_stars')
+      .eq('kid_id', kidId)
+      .single();
+    
+    if (progressError) {
+      console.error('[Redeem] Progress not found:', progressError);
+      // If no progress record, assume 0 moons
+    }
+    
+    const currentMoons = progress?.total_stars || 0;
+    const cost = reward.moon_cost || 0;
+    
+    // 3. Check if kid has enough moons
+    if (currentMoons < cost) {
+      return NextResponse.json(
+        { error: 'Not enough moons', currentMoons, cost },
+        { status: 400 }
+      );
+    }
+    
+    // 4. Deduct moons from database (student_progress.total_stars)
+    const newMoonBalance = currentMoons - cost;
+    const { error: updateError } = await supabase
+      .from('student_progress')
+      .update({ total_stars: newMoonBalance, updated_at: new Date().toISOString() })
+      .eq('kid_id', kidId);
+    
+    if (updateError) {
+      console.error('[Redeem] Failed to deduct moons:', updateError);
+      return NextResponse.json({ error: 'Failed to deduct moons' }, { status: 500 });
+    }
+    
+    // 5. Create pending redemption
     const { data, error } = await supabase
       .from('reward_redemptions')
       .insert({
@@ -35,12 +83,20 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('[Redeem] Database error:', error);
+      // Refund the moons since redemption failed
+      await supabase
+        .from('student_progress')
+        .update({ total_stars: currentMoons })
+        .eq('kid_id', kidId);
       return NextResponse.json({ error: 'Failed to create redemption' }, { status: 500 });
     }
+
+    console.log(`[Redeem] Success: ${reward.name} for ${cost} moons. New balance: ${newMoonBalance}`);
 
     return NextResponse.json({
       success: true,
       redemption: data,
+      newMoonBalance,
       message: 'Redemption request sent! Ask your parent to approve it.',
     });
 
