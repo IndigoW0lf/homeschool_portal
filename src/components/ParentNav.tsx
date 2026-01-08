@@ -6,28 +6,40 @@ import { supabase } from '@/lib/supabase/browser';
 import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
+import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { 
   House, 
-  BookOpen, 
-  ClipboardText, 
+  PlusCircle,
   Lightbulb, 
   FolderOpen, 
   SignOut,
   Sparkle,
   UserCircle,
   Gear,
-  ChartLineUp
+  ChartLineUp,
+  Moon,
+  UsersThree
 } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
+import { AvatarState } from '@/types';
+
+interface KidSummary {
+  id: string;
+  name: string;
+  nickname?: string;
+  favorite_color?: string;
+  avatar_state?: AvatarState | null;
+  moons: number;
+}
 
 interface ParentNavProps {
   user: User;
+  kids?: KidSummary[];
 }
 
 const navItems = [
   { href: '/parent', label: 'Overview', icon: House },
-  { href: '/parent/lessons', label: 'Lessons', icon: BookOpen },
-  { href: '/parent/assignments', label: 'Assignments', icon: ClipboardText },
+  { href: '/parent/lessons', label: 'Create Activity', icon: PlusCircle },
   { href: '/parent/ideas', label: 'Ideas', icon: Lightbulb },
   { href: '/parent/resources', label: 'Resources', icon: FolderOpen },
   { href: '/parent/progress', label: 'Progress', icon: ChartLineUp },
@@ -35,7 +47,7 @@ const navItems = [
   { href: '/parent/settings', label: 'Settings', icon: Gear },
 ];
 
-export function ParentNav({ }: ParentNavProps) {
+export function ParentNav({ kids = [] }: ParentNavProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -56,28 +68,72 @@ export function ParentNav({ }: ParentNavProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-4">
-        {navItems.map(item => {
-          const isActive = pathname === item.href || 
-            (item.href !== '/parent' && pathname?.startsWith(item.href));
-          const Icon = item.icon;
-          
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all",
-                isActive 
-                  ? "bg-gray-700 text-white" 
-                  : "text-gray-400 hover:text-white hover:bg-gray-700/50"
-              )}
-            >
-              <Icon size={22} weight={isActive ? "fill" : "regular"} />
-              <span className="font-semibold">{item.label}</span>
-            </Link>
-          );
-        })}
+      <nav className="flex-1 py-4 overflow-y-auto">
+        {/* Main Nav Items */}
+        <div className="space-y-1">
+          {navItems.map(item => {
+            const isActive = pathname === item.href || 
+              (item.href !== '/parent' && pathname?.startsWith(item.href));
+            const Icon = item.icon;
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all",
+                  isActive 
+                    ? "bg-gray-700 text-white" 
+                    : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                )}
+              >
+                <Icon size={22} weight={isActive ? "fill" : "regular"} />
+                <span className="font-semibold">{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Kids Section */}
+        {kids.length > 0 && (
+          <div className="mt-6 pt-4 border-t border-gray-700">
+            <div className="flex items-center gap-2 px-4 mb-3 text-gray-500 text-xs font-semibold uppercase tracking-wider">
+              <UsersThree size={16} />
+              Kids
+            </div>
+            <div className="space-y-1">
+              {kids.map(kid => {
+                const isActive = pathname === `/parent/kids/${kid.id}`;
+                const displayName = kid.nickname || kid.name;
+                
+                return (
+                  <Link
+                    key={kid.id}
+                    href={`/parent/kids/${kid.id}`}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-all",
+                      isActive 
+                        ? "bg-gray-700 text-white" 
+                        : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                    )}
+                  >
+                    <AvatarPreview 
+                      avatarState={kid.avatar_state}
+                      size="xs"
+                      fallbackName={displayName}
+                      fallbackColor={kid.favorite_color}
+                    />
+                    <span className="flex-1 font-medium truncate">{displayName}</span>
+                    <div className="flex items-center gap-1 text-yellow-400 text-xs">
+                      <Moon size={12} weight="fill" />
+                      <span>{kid.moons}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Footer */}

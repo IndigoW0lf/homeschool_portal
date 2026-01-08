@@ -18,12 +18,25 @@ interface KidsNavProps {
   kidAvatarState?: AvatarState | null;
 }
 
+
 export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvatarState }: KidsNavProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Use nickname if available, otherwise formal name
   const displayName = kidNickname || kidName;
+  
+  // Detect if we need dark text for light background colors
+  const needsDarkText = (() => {
+    if (!kidFavoriteColor) return false;
+    // Parse hex color and calculate luminance
+    const hex = kidFavoriteColor.replace('#', '');
+    const r = parseInt(hex.slice(0, 2), 16) / 255;
+    const g = parseInt(hex.slice(2, 4), 16) / 255;
+    const b = parseInt(hex.slice(4, 6), 16) / 255;
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    return luminance > 0.6; // Light colors need dark text
+  })();
   
   // Use kid's favorite color for active indicators, fallback to tab's default color
   const getActiveColor = (tabColor: string) => kidFavoriteColor || tabColor;
@@ -190,7 +203,11 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
             fallbackName={displayName}
             fallbackColor={kidFavoriteColor}
           />
-          <span className="mt-2 text-xs font-medium text-gray-600 dark:text-gray-400 text-center">
+          <span className={`mt-2 text-xs font-medium text-center ${
+            needsDarkText 
+              ? 'text-gray-800 dark:text-gray-200' 
+              : 'text-gray-600 dark:text-gray-400'
+          }`}>
             {displayName}
           </span>
           {/* Moons Counter */}

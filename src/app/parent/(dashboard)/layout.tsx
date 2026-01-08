@@ -5,6 +5,7 @@ import { ParentNav } from '@/components/ParentNav';
 import { LunaProvider, LunaPanel } from '@/components/luna';
 import { ParentOnboardingWrapper } from '@/components/onboarding/ParentOnboardingWrapper';
 import { WelcomeSetupModal } from '@/components/onboarding/WelcomeSetupModal';
+import { AvatarState } from '@/types';
 
 export default async function ParentLayout({
   children,
@@ -29,21 +30,54 @@ export default async function ParentLayout({
 
   const hasSeenTutorial = profile?.has_seen_tutorial ?? false;
 
-  // Get user's family name for welcome modal
+  // Get user's family info
   const { data: familyMember } = await supabase
     .from('family_members')
-    .select('family:families(name)')
+    .select('family_id, family:families(name)')
     .eq('user_id', user.id)
     .limit(1)
     .maybeSingle();
   
   // eslint-disable-next-line @typescript-eslint/no-explicit-any  
   const familyName = (familyMember?.family as any)?.name || 'the family';
+  const familyId = familyMember?.family_id;
+
+  // Fetch kids for the sidebar
+  let kids: { id: string; name: string; nickname?: string; favorite_color?: string; avatar_state?: AvatarState | null }[] = [];
+  if (familyId) {
+    const { data: kidsData } = await supabase
+      .from('kids')
+      .select('id, name, nickname, favorite_color, avatar_state')
+      .eq('family_id', familyId)
+      .order('name');
+    kids = kidsData || [];
+  }
+
+  // Fetch moons for each kid
+  const kidIds = kids.map(k => k.id);
+  let moonsMap: Record<string, number> = {};
+  if (kidIds.length > 0) {
+    const { data: progressData } = await supabase
+      .from('student_progress')
+      .select('kid_id, total_stars')
+      .in('kid_id', kidIds);
+    
+    moonsMap = (progressData || []).reduce((acc, p) => {
+      acc[p.kid_id] = p.total_stars || 0;
+      return acc;
+    }, {} as Record<string, number>);
+  }
+
+  // Combine kids with their moons
+  const kidsWithMoons = kids.map(k => ({
+    ...k,
+    moons: moonsMap[k.id] || 0,
+  }));
 
   return (
     <LunaProvider>
       <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
-        <ParentNav user={user} />
+        <ParentNav user={user} kids={kidsWithMoons} />
         {/* Main content with left margin to account for sidebar */}
         <main className="ml-56 min-h-screen">
           {children}

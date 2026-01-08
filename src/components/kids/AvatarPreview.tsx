@@ -4,7 +4,7 @@ import { AvatarState } from '@/types';
 
 interface AvatarPreviewProps {
   avatarState?: AvatarState | null;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   fallbackName?: string;
   fallbackColor?: string;
   className?: string;
@@ -22,6 +22,7 @@ export function AvatarPreview({
   className = ''
 }: AvatarPreviewProps) {
   const sizeConfig = {
+    xs: { container: 'w-7 h-7', text: 'text-xs' },
     sm: { container: 'w-10 h-10', text: 'text-sm' },
     md: { container: 'w-14 h-14', text: 'text-lg' },
     lg: { container: 'w-20 h-20', text: 'text-2xl' },

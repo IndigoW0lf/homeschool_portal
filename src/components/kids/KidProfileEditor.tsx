@@ -182,42 +182,19 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           </button>
         </div>
 
-        {/* Favorite Color Display - Large clickable swatch */}
+        {/* Favorite Color Display - Simple label with colored bar */}
         {formData.favoriteColor && (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="group w-full p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-[var(--ember-300)] transition-all text-left"
-          >
-            <div className="flex items-center gap-4">
-              {/* Large Color Swatch with gradient border effect */}
-              <div className="relative">
-                <div 
-                  className="w-16 h-16 rounded-xl shadow-lg transition-transform group-hover:scale-105"
-                  style={{ 
-                    backgroundColor: formData.favoriteColor,
-                    boxShadow: `0 4px 20px ${formData.favoriteColor}40`
-                  }}
-                />
-                <Heart 
-                  size={20} 
-                  weight="fill" 
-                  className="absolute -top-1 -right-1 text-red-400 drop-shadow"
-                />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-0.5">
-                  My Profile Color
-                </p>
-                <p className="font-semibold text-gray-900 dark:text-white text-lg">
-                  {formData.favoriteColor.toUpperCase()}
-                </p>
-              </div>
-              <PencilSimple 
-                size={20} 
-                className="text-gray-400 group-hover:text-[var(--ember-500)] transition-colors" 
-              />
-            </div>
-          </button>
+          <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              My Profile Color
+            </p>
+            <div 
+              className="w-full h-3 rounded-full shadow-inner"
+              style={{ 
+                backgroundColor: formData.favoriteColor,
+              }}
+            />
+          </div>
         )}
 
         {/* Birthday Display */}
