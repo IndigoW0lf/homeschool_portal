@@ -112,45 +112,100 @@ export function calculateAge(birthday: string | undefined): number {
 
 /**
  * Fallback prompts if AI is unavailable
+ * Expanded to 8+ options per category for variety
  */
 export const FALLBACK_PROMPTS: Record<JournalPromptType, string[]> = {
   feelings: [
     "How are you feeling today?",
     "What made you happy this week?",
     "What's something that made you feel proud lately?",
+    "What was the best part of your day?",
+    "How do you feel when you accomplish something difficult?",
+    "What's something that makes you feel calm and relaxed?",
+    "What's something that surprised you recently?",
+    "When do you feel the most excited?",
   ],
   gratitude: [
     "What are three things you're thankful for today?",
     "Who is someone you're grateful to have in your life?",
     "What's something nice that happened recently?",
+    "What's a gift or item you're really thankful to have?",
+    "What's something about nature that makes you grateful?",
+    "What's something your family does that you appreciate?",
+    "What's a simple pleasure that makes you happy?",
+    "What's something you often take for granted that you're glad exists?",
   ],
   imagination: [
     "If you could have any animal as a pet, what would it be and why?",
     "What would you do if you were invisible for a day?",
     "If you could visit any place in the world, where would you go?",
+    "If you could have any superpower, what would it be?",
+    "What would you invent to help people?",
+    "If you could talk to any animal, which would you choose?",
+    "What would your dream treehouse look like?",
+    "If you could create a new holiday, what would it celebrate?",
+    "What would you do if you found a magic lamp with three wishes?",
+    "If you could be any character from a book or movie, who would it be?",
   ],
   opinions: [
     "What's the best book you've ever read?",
     "If you could make one rule for everyone to follow, what would it be?",
     "What's your favorite thing to learn about?",
+    "What's a game you really enjoy and why?",
+    "What do you think makes a good friend?",
+    "What's your favorite season and why?",
+    "What's the most interesting thing you've learned recently?",
+    "What's your opinion on homework - is it helpful or not?",
+    "What makes a really good movie or TV show?",
   ],
   memories: [
     "What's your favorite memory from this year?",
     "Tell me about a fun day you had with your family.",
     "What's something new you learned this week?",
+    "What's a time you helped someone and how did it make you feel?",
+    "What's your favorite birthday memory?",
+    "Tell me about a time you overcame something hard.",
+    "What's a funny moment you remember?",
+    "What's a special trip or adventure you've been on?",
+    "What's a moment when you felt really brave?",
   ],
   goals: [
     "What's something you'd like to get better at?",
     "What do you want to learn more about?",
     "What's a goal you have for this month?",
+    "What's something you want to try that you've never done before?",
+    "What kind of person do you want to be when you grow up?",
+    "What's a skill you'd love to master?",
+    "What's something you'd like to create or build?",
+    "What's a challenge you want to take on?",
+    "What's something nice you want to do for someone else?",
   ],
 };
 
 /**
- * Get a random fallback prompt
+ * Get a random fallback prompt, optionally avoiding recent ones
  */
-export function getRandomFallbackPrompt(enabledTypes: JournalPromptType[]): string {
-  const type = enabledTypes[Math.floor(Math.random() * enabledTypes.length)];
-  const prompts = FALLBACK_PROMPTS[type];
+export function getRandomFallbackPrompt(
+  enabledTypes: JournalPromptType[], 
+  skipPrompts: string[] = []
+): string {
+  // Collect all available prompts from enabled types
+  const allPrompts: string[] = [];
+  for (const type of enabledTypes) {
+    allPrompts.push(...FALLBACK_PROMPTS[type]);
+  }
+  
+  // Filter out prompts that are in skip list (case-insensitive, partial match)
+  const availablePrompts = allPrompts.filter(prompt => 
+    !skipPrompts.some(skip => 
+      prompt.toLowerCase().includes(skip.toLowerCase().substring(0, 30)) ||
+      skip.toLowerCase().includes(prompt.toLowerCase().substring(0, 30))
+    )
+  );
+  
+  // If we've exhausted all options, just return a random one anyway
+  const prompts = availablePrompts.length > 0 ? availablePrompts : allPrompts;
+  
   return prompts[Math.floor(Math.random() * prompts.length)];
 }
+

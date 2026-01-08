@@ -45,6 +45,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Fetch recent journal prompts from database to avoid repetition
+    const { data: recentEntries } = await supabase
+      .from('journal_entries')
+      .select('prompt')
+      .eq('kid_id', kidId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const recentDbPrompts = recentEntries?.map(e => e.prompt).filter(Boolean) || [];
+    
+    // Combine session skips with DB history
+    const allSkipPrompts = [...new Set([...skipPrompts, ...recentDbPrompts])];
+
     // Calculate age from birthday or estimate from grade band
     let age = calculateAge(kid.birthday);
     if (!kid.birthday && kid.grade_band) {
@@ -66,11 +79,11 @@ export async function POST(request: NextRequest) {
       
       const completion = await openai.chat.completions.create({
         model: AI_MODELS.default,
-        temperature: 0.9, // Higher for creativity
+        temperature: 0.95, // Even higher for more creativity
         max_tokens: 100,
         messages: [
           { role: 'system', content: getJournalSystemPrompt(age, enabledTypes) },
-          { role: 'user', content: getJournalUserPrompt(enabledTypes, skipPrompts) },
+          { role: 'user', content: getJournalUserPrompt(enabledTypes, allSkipPrompts) },
         ],
       });
 
@@ -83,8 +96,8 @@ export async function POST(request: NextRequest) {
       console.error('[Journal] AI generation failed, using fallback:', aiError);
     }
 
-    // Fallback to pre-defined prompts
-    const fallbackPrompt = getRandomFallbackPrompt(enabledTypes);
+    // Fallback to pre-defined prompts (with skip filtering)
+    const fallbackPrompt = getRandomFallbackPrompt(enabledTypes, allSkipPrompts);
     return NextResponse.json({ prompt: fallbackPrompt, source: 'fallback' });
 
   } catch (error) {
@@ -95,3 +108,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
