@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ShopItem } from '@/types';
-import { getStars, addStars } from '@/lib/progressState';
+import { supabase } from '@/lib/supabase/browser';
 import { ShopItemCard } from './ShopItemCard';
 import { RewardItemCard } from './RewardItemCard';
 
@@ -16,14 +16,28 @@ type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'home';
 export function Shop({ kidId, items }: ShopProps) {
   const [stars, setStars] = useState(0);
   const [filter, setFilter] = useState<FilterType>('all');
+  const [, setIsLoading] = useState(true);
 
+  // Sync moons from database on mount (source of truth)
   useEffect(() => {
-    const updateStars = () => {
-      setStars(getStars(kidId));
-    };
-    updateStars();
-    const interval = setInterval(updateStars, 1000);
-    return () => clearInterval(interval);
+    async function syncMoons() {
+      setIsLoading(true);
+      const { data } = await supabase
+        .from('student_progress')
+        .select('total_stars')
+        .eq('kid_id', kidId)
+        .single();
+      
+      const dbMoons = data?.total_stars || 0;
+      setStars(dbMoons);
+      
+      // Also update localStorage to match DB
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`homeschool_stars::${kidId}`, String(dbMoons));
+      }
+      setIsLoading(false);
+    }
+    syncMoons();
   }, [kidId]);
 
   // Count items by type
@@ -120,7 +134,15 @@ export function Shop({ kidId, items }: ShopProps) {
               key={item.id}
               item={item}
               kidId={kidId}
-              onPurchase={() => setStars(getStars(kidId))}
+              onPurchase={async () => {
+                // Re-sync moons from database after purchase
+                const { data } = await supabase
+                  .from('student_progress')
+                  .select('total_stars')
+                  .eq('kid_id', kidId)
+                  .single();
+                setStars(data?.total_stars || 0);
+              }}
             />
           )
         ))}

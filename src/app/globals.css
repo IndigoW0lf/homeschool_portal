@@ -33,9 +33,17 @@
   --fabric-rose: #D48A8A;
   --fabric-lilac: #9C8FB8;
 
-  /* Accent / Reward */
-  --ember-500: #E27D60;      /* progress, rewards */
-  --sky-400: #7FB3D5;        /* selection, highlights */
+  /* Accent / Aurora (teal-blue, aurora borealis theme) */
+  --ember-100: #E0F2F1;        /* lightest teal */
+  --ember-200: #B2DFDB;
+  --ember-300: #80CBC4;
+  --ember-400: #4DB6AC;        /* light teal */
+  --ember-500: #26A69A;        /* primary accent - muted teal */
+  --ember-600: #00897B;        /* hover state */
+  --ember-700: #00796B;        /* active/pressed */
+  --ember-800: #00695C;
+  --ember-900: #004D40;        /* darkest teal */
+  --sky-400: #7FB3D5;          /* selection, highlights */
 
   /* Shadows */
   --shadow-soft: rgba(0,0,0,0.12);
