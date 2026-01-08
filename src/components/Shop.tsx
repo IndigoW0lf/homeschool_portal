@@ -28,13 +28,7 @@ export function Shop({ kidId, items }: ShopProps) {
         .eq('kid_id', kidId)
         .single();
       
-      const dbMoons = data?.total_stars || 0;
-      setStars(dbMoons);
-      
-      // Also update localStorage to match DB
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(`homeschool_stars::${kidId}`, String(dbMoons));
-      }
+      setStars(data?.total_stars || 0);
       setIsLoading(false);
     }
     syncMoons();
@@ -72,11 +66,7 @@ export function Shop({ kidId, items }: ShopProps) {
     const data = await res.json();
     
     if (res.ok && data.success) {
-      // Sync localStorage with new balance from API
-      if (typeof window !== 'undefined' && data.newMoonBalance !== undefined) {
-        localStorage.setItem(`homeschool_stars::${kidId}`, String(data.newMoonBalance));
-      }
-      // Update local state
+      // Update local state with new balance from API
       setStars(data.newMoonBalance ?? stars - item.cost);
     } else {
       console.error('[Shop] Failed to redeem:', data.error);

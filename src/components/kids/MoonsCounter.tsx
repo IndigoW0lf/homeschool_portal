@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Moon } from '@phosphor-icons/react';
-import { getStars } from '@/lib/progressState';
+import { supabase } from '@/lib/supabase/browser';
 import Link from 'next/link';
 
 interface MoonsCounterProps {
@@ -13,25 +13,26 @@ interface MoonsCounterProps {
 
 /**
  * Displays the kid's current moon balance.
- * Polls localStorage to stay updated.
+ * Fetches from database (source of truth).
  */
 export function MoonsCounter({ kidId, size = 'sm', showLink = false }: MoonsCounterProps) {
   const [moons, setMoons] = useState(0);
-  const [isClient, setIsClient] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsClient(true);
+    async function fetchMoons() {
+      setIsLoading(true);
+      const { data } = await supabase
+        .from('student_progress')
+        .select('total_stars')
+        .eq('kid_id', kidId)
+        .single();
+      
+      setMoons(data?.total_stars || 0);
+      setIsLoading(false);
+    }
     
-    const updateMoons = () => {
-      setMoons(getStars(kidId));
-    };
-    
-    updateMoons();
-    
-    // Poll for changes (localStorage events don't fire in same tab)
-    const interval = setInterval(updateMoons, 1000);
-    
-    return () => clearInterval(interval);
+    fetchMoons();
   }, [kidId]);
 
   const content = (
@@ -57,7 +58,7 @@ export function MoonsCounter({ kidId, size = 'sm', showLink = false }: MoonsCoun
         font-bold text-yellow-600 dark:text-yellow-400
         ${size === 'sm' ? 'text-sm' : 'text-base'}
       `}>
-        {isClient ? moons : '—'}
+        {isLoading ? '—' : moons}
       </span>
     </div>
   );

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Moon, Confetti, CheckCircle, Medal } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
-import { getStars } from '@/lib/progressState';
+import { supabase } from '@/lib/supabase/browser';
 
 interface ProgressCardProps {
   kidId: string;
@@ -22,21 +22,25 @@ export function ProgressCard({
   todayTotal = 0,
   initialUnlocks = []
 }: ProgressCardProps) {
-  // Poll localStorage for live star count
+  // Fetch moons from database (source of truth)
   const [stars, setStars] = useState(initialStars);
   const unlocks = initialUnlocks;
   
   useEffect(() => {
-    const updateStars = () => {
-      const localStars = getStars(kidId);
-      // Use whichever is higher - server or local
-      setStars(Math.max(localStars, initialStars));
-    };
+    async function fetchMoons() {
+      const { data } = await supabase
+        .from('student_progress')
+        .select('total_stars')
+        .eq('kid_id', kidId)
+        .single();
+      
+      if (data?.total_stars !== undefined) {
+        setStars(data.total_stars);
+      }
+    }
     
-    updateStars();
-    const interval = setInterval(updateStars, 1000);
-    return () => clearInterval(interval);
-  }, [kidId, initialStars]);
+    fetchMoons();
+  }, [kidId]);
   
   const allDone = todayTotal > 0 && todayCompleted === todayTotal;
 
