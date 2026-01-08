@@ -6,19 +6,16 @@ import Image from 'next/image';
 import { addWeeks, subWeeks } from 'date-fns';
 import { WeekView } from './WeekView';
 import { DayModal } from './DayModal';
-import { RecentList } from './RecentList';
 import { ItemDetailModal } from './ItemDetailModal';
-import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { Modal } from '@/components/ui/Modal';
 import { AssignmentForm } from '@/components/assignments/AssignmentForm';
 import { LessonForm } from '@/components/lessons/LessonForm';
 import { LunaTriggerButton } from '@/components/luna';
-import { QuickStartPanel } from './QuickStartPanel';
+import { ContentLibrary } from './ContentLibrary';
 import { Lesson, AssignmentItemRow, ResourceRow, Kid } from '@/types';
 import { deleteLesson, deleteAssignment } from '@/lib/supabase/mutations';
 import { ScheduleModal } from './ScheduleModal';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 
 interface DashboardOverviewProps {
   lessons: Lesson[];
@@ -144,32 +141,6 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
         <p className="text-muted">
           Manage the learning playlist for the week
         </p>
-        
-        {/* Student Filter Pills */}
-        <div className="flex-center gap-3 mt-6">
-           <button
-              onClick={() => setFilterStudentId(null)}
-              className={cn(
-                 "btn-pill",
-                 filterStudentId === null ? "btn-pill-active" : "btn-pill-inactive"
-              )}
-           >
-              All Students
-           </button>
-           {students.map(s => (
-              <button
-                 key={s.id}
-                 onClick={() => setFilterStudentId(filterStudentId === s.id ? null : s.id)}
-                 className={cn(
-                    "btn-pill flex items-center gap-2",
-                    filterStudentId === s.id ? "btn-pill-active" : "btn-pill-inactive"
-                 )}
-              >
-                 <StudentAvatar name={s.name} className="w-6 h-6 text-[10px]" />
-                 {s.name}
-              </button>
-           ))}
-        </div>
       </div>
 
       {/* 2. Week View (The new core) */}
@@ -181,51 +152,17 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
          onNextWeek={handleNextWeek}
          schedule={filteredSchedule}
          students={students}
+         filterStudentId={filterStudentId}
+         onFilterChange={setFilterStudentId}
       />
 
-      {/* 3. Library Shortcuts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <RecentList
-          title="Your Lessons"
-          titleImage="/assets/titles/lessons.svg"
-          items={lessons.slice(0, 5).map(l => ({ id: l.id, title: l.title, subtitle: 'Lesson' }))}
-          type="lesson"
-          createLink="/parent/lessons"
-          createLabel="New Lesson"
-          onView={handleViewLesson}
-          onEdit={(id: string) => setEditingLessonId(id)}
-          onDelete={async (id: string) => {
-             if (confirm('Are you sure you want to delete this lesson template?')) {
-                await deleteLesson(id);
-                toast.success('Lesson deleted');
-                router.refresh();
-             }
-          }}
-        />
-        <RecentList
-          title="Upcoming Assignments"
-          titleImage="/assets/titles/assignments.svg"
-          items={assignments.slice(0, 5).map(a => ({ id: a.id, title: a.title, subtitle: a.type || 'Practice' }))}
-          type="assignment"
-          createLink="/parent/assignments"
-          createLabel="New Assignment"
-          onView={handleViewAssignment}
-          onEdit={(id: string) => setEditingAssignmentId(id)}
-        />
-        <RecentList
-          title="Active Resources"
-          titleImage="/assets/titles/resources.svg"
-          items={resources.slice(0, 5).map(r => ({ id: r.id, title: r.label, subtitle: r.category }))}
-          type="resource"
-          createLink="/parent/resources"
-          createLabel="Add Resource"
-        />
-      </div>
-
-      {/* 3.5 Quick Start Templates */}
-      <QuickStartPanel 
+      {/* 3. Unified Content Library */}
+      <ContentLibrary
+        lessons={lessons}
+        assignments={assignments}
         kids={students.map(s => ({ id: s.id, name: s.name }))}
-        compact={true}
+        onViewLesson={handleViewLesson}
+        onViewAssignment={handleViewAssignment}
       />
 
       {/* 4. The Day Modal */}

@@ -15,9 +15,11 @@ interface WeekViewProps {
   onNextWeek: () => void;
   schedule?: any[]; // TODO: Strict type
   students?: Kid[];
+  filterStudentId?: string | null;
+  onFilterChange?: (studentId: string | null) => void;
 }
 
-export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, onNextWeek, schedule = [], students = [] }: WeekViewProps) {
+export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, onNextWeek, schedule = [], students = [], filterStudentId, onFilterChange }: WeekViewProps) {
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday start
   const weekStartDate = format(weekStart, 'yyyy-MM-dd');
 
@@ -49,6 +51,39 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
           <CalendarBlank weight="duotone" color="#e7b58d" size={24} />
           {format(weekStart, 'MMMM yyyy')}
         </h2>
+        
+        {/* Student Filter Tabs - centered */}
+        {onFilterChange && students.length > 0 && (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onFilterChange(null)}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
+                filterStudentId === null
+                  ? "bg-[var(--ember-500)] text-white shadow-sm"
+                  : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+              )}
+            >
+              All
+            </button>
+            {students.map(s => (
+              <button
+                key={s.id}
+                onClick={() => onFilterChange(filterStudentId === s.id ? null : s.id)}
+                className={cn(
+                  "px-3 py-1.5 text-xs font-medium rounded-full transition-all flex items-center gap-1.5",
+                  filterStudentId === s.id
+                    ? "bg-[var(--ember-500)] text-white shadow-sm"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                )}
+              >
+                <StudentAvatar name={s.name} className="w-5 h-5 text-[8px]" />
+                {s.name}
+              </button>
+            ))}
+          </div>
+        )}
+        
         <div className="flex items-center gap-2">
           <LunaTriggerButton
             context="WEEK_THINK"
