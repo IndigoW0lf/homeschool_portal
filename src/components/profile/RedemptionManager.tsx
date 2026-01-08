@@ -37,16 +37,21 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
     try {
       // Fetch for all kids
       const allRedemptions: Redemption[] = [];
+      console.log('[RedemptionManager] Fetching for kids:', kids);
       for (const kid of kids) {
         const res = await fetch(`/api/rewards/redeem?kidId=${kid.id}`);
         if (res.ok) {
           const data = await res.json();
+          console.log(`[RedemptionManager] Kid ${kid.name}:`, data.redemptions);
           allRedemptions.push(...data.redemptions.map((r: Redemption) => ({ 
             ...r, 
             kidName: kid.name 
           })));
+        } else {
+          console.error(`[RedemptionManager] Failed for ${kid.name}:`, res.status);
         }
       }
+      console.log('[RedemptionManager] Total redemptions:', allRedemptions);
       setRedemptions(allRedemptions);
     } catch (error) {
       console.error('Failed to fetch redemptions:', error);
