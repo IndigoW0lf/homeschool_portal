@@ -25,7 +25,7 @@ export async function getUserFamily(): Promise<Family | null> {
     console.log('[getUserFamily] Direct family_members query:', memberData, memberError);
 
     if (!memberData || memberData.length === 0) {
-        console.log('[getUserFamily] No family_members found for user');
+        console.error('[getUserFamily] No family_members found for user. RLS may be hiding records.', { user: user.id, error: memberError });
         return null;
     }
 

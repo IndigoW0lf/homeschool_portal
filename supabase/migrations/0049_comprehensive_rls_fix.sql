@@ -37,7 +37,7 @@ RETURNS SETOF UUID AS $$
   FROM public.family_members 
   WHERE user_id = auth.uid();
 $$ LANGUAGE sql SECURITY DEFINER STABLE
-SET search_path = '';
+SET search_path = public, auth;
 
 CREATE OR REPLACE FUNCTION user_has_family_access(target_family_id UUID)
 RETURNS BOOLEAN AS $$
@@ -47,7 +47,7 @@ RETURNS BOOLEAN AS $$
     AND family_id = target_family_id
   );
 $$ LANGUAGE sql SECURITY DEFINER STABLE
-SET search_path = '';
+SET search_path = public, auth;
 
 CREATE OR REPLACE FUNCTION user_is_family_admin(target_family_id UUID)
 RETURNS BOOLEAN AS $$
@@ -58,7 +58,7 @@ RETURNS BOOLEAN AS $$
     AND role = 'admin'
   );
 $$ LANGUAGE sql SECURITY DEFINER STABLE
-SET search_path = '';
+SET search_path = public, auth;
 
 -- ============================================================================
 -- STEP 2: Fix family_members RLS (the root cause of most issues)

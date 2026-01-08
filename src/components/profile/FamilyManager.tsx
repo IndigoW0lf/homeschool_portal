@@ -65,7 +65,14 @@ export function FamilyManager() {
             const { data: { user } } = await supabase.auth.getUser();
             setCurrentUserId(user?.id || null);
 
+            console.log('Loading family data for user:', user?.id);
             const fam = await getUserFamily();
+            console.log('getUserFamily result:', fam);
+
+            if (!fam) {
+                 toast.error('Could not find family for your user. Please check console.');
+            }
+
             setFamily(fam);
             setFamilyName(fam?.name || 'My Family');
 
@@ -75,6 +82,7 @@ export function FamilyManager() {
                     getFamilyInvites(fam.id),
                     isUserFamilyAdmin(fam.id),
                 ]);
+                console.log('Members data:', membersData);
                 setMembers(membersData);
                 setInvites(invitesData);
                 setIsAdmin(adminCheck);
@@ -85,6 +93,7 @@ export function FamilyManager() {
             setMyInvites(myPending);
         } catch (err) {
             console.error('Error loading family data:', err);
+            toast.error('Error loading family data');
         } finally {
             setLoading(false);
         }
