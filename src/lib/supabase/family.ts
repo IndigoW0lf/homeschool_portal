@@ -10,21 +10,41 @@ import type { Family, FamilyMember, FamilyInvite, Profile } from '@/types';
  */
 export async function getUserFamily(): Promise<Family | null> {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    if (!user) {
+        console.log('[getUserFamily] No user logged in');
+        return null;
+    }
+    console.log('[getUserFamily] User:', user.id);
 
-    const { data, error } = await supabase
+    // First, directly check family_members for this user
+    const { data: memberData, error: memberError } = await supabase
         .from('family_members')
-        .select('family:families(*)')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single();
+        .select('*')
+        .eq('user_id', user.id);
+    
+    console.log('[getUserFamily] Direct family_members query:', memberData, memberError);
 
-    if (error || !data) {
-        console.error('Error fetching user family:', error);
+    if (!memberData || memberData.length === 0) {
+        console.log('[getUserFamily] No family_members found for user');
         return null;
     }
 
-    return data.family as unknown as Family;
+    // Now get the family details
+    const familyId = memberData[0].family_id;
+    const { data: familyData, error: familyError } = await supabase
+        .from('families')
+        .select('*')
+        .eq('id', familyId)
+        .single();
+
+    console.log('[getUserFamily] Family query:', familyData, familyError);
+
+    if (familyError || !familyData) {
+        console.error('Error fetching family:', familyError);
+        return null;
+    }
+
+    return familyData as unknown as Family;
 }
 
 /**
