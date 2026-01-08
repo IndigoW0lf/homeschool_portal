@@ -3,6 +3,7 @@ import { HolidayManager } from '@/components/dashboard/HolidayManager';
 import { WeeklyProgressChart } from '@/components/dashboard/WeeklyProgressChart';
 import { RedemptionManager } from '@/components/profile/RedemptionManager';
 import { getLessonsFromDB, getAssignmentItemsFromDB, getResourcesFromDB, getKidsFromDB, getScheduleItemsFromDB, getHolidaysFromDB } from '@/lib/supabase/data';
+import { startOfWeek, endOfWeek, format } from 'date-fns';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,17 @@ export default async function ParentDashboard() {
     getScheduleItemsFromDB(),
     getHolidaysFromDB()
   ]);
+
+  // Filter schedule items to only THIS week
+  const now = new Date();
+  const weekStart = startOfWeek(now, { weekStartsOn: 1 }); // Monday
+  const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+  const weekStartStr = format(weekStart, 'yyyy-MM-dd');
+  const weekEndStr = format(weekEnd, 'yyyy-MM-dd');
+  
+  const thisWeekSchedule = scheduleItems.filter(s => 
+    s.date >= weekStartStr && s.date <= weekEndStr
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -40,7 +52,7 @@ export default async function ParentDashboard() {
             📊 Weekly Progress
           </h3>
           <WeeklyProgressChart 
-            schedule={scheduleItems.map(s => ({
+            schedule={thisWeekSchedule.map(s => ({
               status: s.status || 'pending',
               studentId: s.studentId,
               itemType: s.itemType || 'lesson'
@@ -57,4 +69,3 @@ export default async function ParentDashboard() {
     </div>
   );
 }
-
