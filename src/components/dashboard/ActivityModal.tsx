@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, CaretDown, Sparkle, Clock, Users, CalendarBlank, Link as LinkIcon, Paperclip, Books, PencilSimple, Plus, Trash } from '@phosphor-icons/react';
+import { 
+  CaretDown, Sparkle, Clock, Users, CalendarBlank, 
+  Link as LinkIcon, Books, PencilSimple, Plus, Trash,
+  // Category icons
+  MathOperations, Flask, Scroll, BookOpen, Palette, MusicNote,
+  PersonSimpleRun, Code, Brain, Lightbulb, Lightning, Handshake, Heart, Globe
+} from '@phosphor-icons/react';
 import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -14,32 +20,22 @@ interface ActivityModalProps {
   kids: { id: string; name: string }[];
 }
 
-// Life skills + academic categories
+// Life skills + academic categories with Phosphor icons
 const CATEGORIES = [
-  { value: 'Math', group: 'Academic', emoji: '🔢' },
-  { value: 'Science', group: 'Academic', emoji: '🔬' },
-  { value: 'History', group: 'Academic', emoji: '📜' },
-  { value: 'Language Arts', group: 'Academic', emoji: '📚' },
-  { value: 'Art', group: 'Academic', emoji: '🎨' },
-  { value: 'Music', group: 'Academic', emoji: '🎵' },
-  { value: 'PE', group: 'Academic', emoji: '🏃' },
-  { value: 'Coding', group: 'Academic', emoji: '💻' },
-  { value: 'Self & Mind', group: 'Life Skills', emoji: '🧠' },
-  { value: 'Thinking & Truth', group: 'Life Skills', emoji: '💡' },
-  { value: 'Agency & Responsibility', group: 'Life Skills', emoji: '⚡' },
-  { value: 'Relationships & Community', group: 'Life Skills', emoji: '🤝' },
-  { value: 'Body & Nervous System', group: 'Life Skills', emoji: '❤️' },
-  { value: 'Systems & Society', group: 'Life Skills', emoji: '🌍' },
-];
-
-const TIME_OPTIONS = [
-  { value: 10, label: '10 min', short: '10m' },
-  { value: 15, label: '15 min', short: '15m' },
-  { value: 20, label: '20 min', short: '20m' },
-  { value: 30, label: '30 min', short: '30m' },
-  { value: 45, label: '45 min', short: '45m' },
-  { value: 60, label: '1 hour', short: '1h' },
-  { value: 90, label: '1.5 hours', short: '1.5h' },
+  { value: 'Math', group: 'Academic', icon: MathOperations },
+  { value: 'Science', group: 'Academic', icon: Flask },
+  { value: 'History', group: 'Academic', icon: Scroll },
+  { value: 'Language Arts', group: 'Academic', icon: BookOpen },
+  { value: 'Art', group: 'Academic', icon: Palette },
+  { value: 'Music', group: 'Academic', icon: MusicNote },
+  { value: 'PE', group: 'Academic', icon: PersonSimpleRun },
+  { value: 'Coding', group: 'Academic', icon: Code },
+  { value: 'Self & Mind', group: 'Life Skills', icon: Brain },
+  { value: 'Thinking & Truth', group: 'Life Skills', icon: Lightbulb },
+  { value: 'Agency & Responsibility', group: 'Life Skills', icon: Lightning },
+  { value: 'Relationships & Community', group: 'Life Skills', icon: Handshake },
+  { value: 'Body & Nervous System', group: 'Life Skills', icon: Heart },
+  { value: 'Systems & Society', group: 'Life Skills', icon: Globe },
 ];
 
 interface LinkItem {
@@ -156,6 +152,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
   };
 
   const selectedCategory = CATEGORIES.find(c => c.value === form.category);
+  const CategoryIcon = selectedCategory?.icon || BookOpen;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="">
@@ -225,20 +222,22 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                 onChange={e => updateForm({ category: e.target.value })}
                 className="w-full appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 pl-10 pr-8 text-sm font-medium focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent"
               >
-                <optgroup label="📚 Academic">
+                <optgroup label="Academic">
                   {CATEGORIES.filter(c => c.group === 'Academic').map(c => (
-                    <option key={c.value} value={c.value}>{c.emoji} {c.value}</option>
+                    <option key={c.value} value={c.value}>{c.value}</option>
                   ))}
                 </optgroup>
-                <optgroup label="🧠 Life Skills">
+                <optgroup label="Life Skills">
                   {CATEGORIES.filter(c => c.group === 'Life Skills').map(c => (
-                    <option key={c.value} value={c.value}>{c.emoji} {c.value}</option>
+                    <option key={c.value} value={c.value}>{c.value}</option>
                   ))}
                 </optgroup>
               </select>
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">
-                {selectedCategory?.emoji}
-              </span>
+              <CategoryIcon 
+                size={18} 
+                weight="duotone" 
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ember-500)]" 
+              />
               <CaretDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
             </div>
           </div>
