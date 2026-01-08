@@ -53,9 +53,12 @@ export default async function ParentDashboard() {
           </h3>
           <WeeklyProgressChart 
             schedule={thisWeekSchedule.map(s => ({
+              id: s.id,
               status: s.status || 'pending',
               studentId: s.studentId,
-              itemType: s.itemType || 'lesson'
+              itemType: s.itemType || 'lesson',
+              title: s.title || 'Untitled Activity',
+              date: s.date,
             }))}  
             students={kids.map(k => ({ id: k.id, name: k.name }))} 
           />

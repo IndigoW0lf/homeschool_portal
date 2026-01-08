@@ -1,18 +1,26 @@
 'use client';
 
-import { useMemo } from 'react';
-import { ChartBar, Check, Clock } from '@phosphor-icons/react';
+import { useMemo, useState } from 'react';
+import { ChartBar, Clock, CaretDown, Circle, CheckCircle } from '@phosphor-icons/react';
+import { cn } from '@/lib/utils';
+
+interface ScheduleItem {
+  id: string;
+  status: string;
+  studentId: string;
+  itemType: string;
+  title: string;
+  date: string;
+}
 
 interface WeeklyProgressChartProps {
-  schedule: Array<{
-    status: string;
-    studentId: string;
-    itemType: string;
-  }>;
+  schedule: ScheduleItem[];
   students: Array<{ id: string; name: string }>;
 }
 
 export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartProps) {
+  const [expandedStudent, setExpandedStudent] = useState<string | null>(null);
+  
   // Calculate stats per student
   const stats = useMemo(() => {
     const studentStats = students.map(student => {
@@ -20,6 +28,7 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
       const completed = studentItems.filter(s => s.status === 'completed').length;
       const total = studentItems.length;
       const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+      const incomplete = studentItems.filter(s => s.status !== 'completed');
       
       return {
         id: student.id,
@@ -27,6 +36,8 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
         completed,
         total,
         percentage,
+        incomplete,
+        items: studentItems,
       };
     });
 
@@ -94,27 +105,69 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
         </div>
       </div>
 
-      {/* Per-student breakdown */}
-      {students.length > 1 && (
-        <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-          {stats.students.map(student => (
-            <div key={student.id} className="flex items-center gap-3">
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 w-16 truncate">
+      {/* Per-student breakdown with expandable details */}
+      <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+        {stats.students.map(student => (
+          <div key={student.id} className="space-y-1">
+            {/* Progress bar row - clickable */}
+            <button
+              onClick={() => setExpandedStudent(expandedStudent === student.id ? null : student.id)}
+              className="w-full flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg p-1 -ml-1 transition-colors"
+            >
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 w-16 truncate text-left">
                 {student.name}
               </span>
               <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-green-500 rounded-full transition-all duration-500"
+                  className={cn(
+                    "h-full rounded-full transition-all duration-500",
+                    student.percentage === 100 ? "bg-green-500" : "bg-yellow-500"
+                  )}
                   style={{ width: `${student.percentage}%` }}
                 />
               </div>
-              <span className="text-xs text-muted w-12 text-right">
+              <span className={cn(
+                "text-xs w-10 text-right font-medium",
+                student.percentage === 100 ? "text-green-600 dark:text-green-400" : "text-yellow-600 dark:text-yellow-400"
+              )}>
                 {student.completed}/{student.total}
               </span>
-            </div>
-          ))}
-        </div>
-      )}
+              <CaretDown 
+                size={14} 
+                className={cn(
+                  "text-gray-400 transition-transform",
+                  expandedStudent === student.id && "rotate-180"
+                )} 
+              />
+            </button>
+            
+            {/* Expanded: Show all items */}
+            {expandedStudent === student.id && student.items.length > 0 && (
+              <div className="ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-1 py-1">
+                {student.items.map(item => (
+                  <div
+                    key={item.id}
+                    className={cn(
+                      "flex items-center gap-2 text-xs py-1 px-2 rounded",
+                      item.status === 'completed'
+                        ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
+                        : "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400"
+                    )}
+                  >
+                    {item.status === 'completed' ? (
+                      <CheckCircle size={14} weight="fill" className="text-green-500 flex-shrink-0" />
+                    ) : (
+                      <Circle size={14} weight="duotone" className="text-yellow-500 flex-shrink-0" />
+                    )}
+                    <span className="truncate flex-1">{item.title || 'Untitled'}</span>
+                    <span className="text-gray-400 text-[10px]">{item.date}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
