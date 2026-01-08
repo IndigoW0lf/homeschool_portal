@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { LessonForm } from '@/components/lessons/LessonForm';
+import { ActivityForm } from '@/components/activities/ActivityForm';
 
 export default function LessonsPage() {
   const router = useRouter();
@@ -22,19 +22,11 @@ export default function LessonsPage() {
         className="max-w-3xl mx-auto cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Plan Lesson
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
-            Schedule and organize lessons.
-          </p>
-        </div>
-
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-          <LessonForm />
+          <ActivityForm />
         </div>
       </div>
     </div>
   );
 }
+

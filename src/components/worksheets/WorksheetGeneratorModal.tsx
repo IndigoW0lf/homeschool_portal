@@ -10,9 +10,10 @@ interface WorksheetGeneratorModalProps {
   isOpen: boolean;
   onClose: () => void;
   contextTopic?: string; // Pre-fill from lesson context?
+  onAttach?: (worksheet: WorksheetData) => void; // If provided, attaches to parent instead of saving
 }
 
-export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '' }: WorksheetGeneratorModalProps) {
+export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', onAttach }: WorksheetGeneratorModalProps) {
   
   // Steps: 'input' -> 'generating' -> 'review' -> 'saving' -> 'success'
   const [step, setStep] = useState<'input' | 'generating' | 'review' | 'saving' | 'success'>('input');
@@ -43,6 +44,13 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '' }: 
   
   const handleSave = async () => {
     if (!generatedData) return;
+    
+    // If onAttach is provided, attach to parent form instead of saving separately
+    if (onAttach) {
+      onAttach(generatedData);
+      handleReset();
+      return;
+    }
     
     setStep('saving');
     const res = await saveWorksheetAssignmentAction(generatedData, `Worksheet: ${generatedData.title}`);
@@ -223,7 +231,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '' }: 
                             className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2"
                         >
                             {step === 'saving' ? <Spinner size={20} className="animate-spin" /> : <FloppyDisk size={20} weight="fill" />}
-                            Save Authorization
+                            {onAttach ? 'Attach to Activity' : 'Save to Library'}
                         </button>
                     </div>
                 )}
