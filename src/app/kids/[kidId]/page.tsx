@@ -127,20 +127,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
           </section>
         )}
 
-        {/* Progress Card */}
-        <section>
-          {isViewToday && (
-            <ProgressCardWrapper 
-              kidId={kidId}
-              initialStars={progressData?.totalStars || 0}
-              initialUnlocks={unlocks}
-              date={viewDateString}
-              itemIds={todayItems.map(item => item.id)}
-            />
-          )}
-        </section>
-
-        {/* Today's Quests */}
+        {/* Today's Quests - FIRST */}
         <section id={`date-${viewDateString}`}>
           <div className="mb-4">
             <Image 
@@ -185,6 +172,19 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
             )}
           </div>
         </section>
+
+        {/* Progress Card - AFTER Quests (compact bar with moons + shop) */}
+        {isViewToday && (
+          <section>
+            <ProgressCardWrapper 
+              kidId={kidId}
+              initialStars={progressData?.totalStars || 0}
+              initialUnlocks={unlocks}
+              date={viewDateString}
+              itemIds={todayItems.map(item => item.id)}
+            />
+          </section>
+        )}
 
         {/* Week Calendar */}
         <section>
