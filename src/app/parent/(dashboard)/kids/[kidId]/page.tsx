@@ -55,13 +55,13 @@ export default async function ParentKidProfilePage({ params }: Props) {
 
   const { data: scheduleItems } = await supabase
     .from('schedule_items')
-    .select('id, completed')
+    .select('id, status')
     .eq('kid_id', kidId)
     .gte('scheduled_date', startOfWeek.toISOString().split('T')[0])
     .lte('scheduled_date', endOfWeek.toISOString().split('T')[0]);
 
   const totalActivities = scheduleItems?.length || 0;
-  const completedActivities = scheduleItems?.filter(item => item.completed).length || 0;
+  const completedActivities = scheduleItems?.filter(item => item.status === 'completed').length || 0;
   const completionPercent = totalActivities > 0 ? Math.round((completedActivities / totalActivities) * 100) : 0;
 
   // Get pending rewards count
