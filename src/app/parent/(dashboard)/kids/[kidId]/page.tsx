@@ -56,9 +56,9 @@ export default async function ParentKidProfilePage({ params }: Props) {
   const { data: scheduleItems } = await supabase
     .from('schedule_items')
     .select('id, status')
-    .eq('kid_id', kidId)
-    .gte('scheduled_date', startOfWeek.toISOString().split('T')[0])
-    .lte('scheduled_date', endOfWeek.toISOString().split('T')[0]);
+    .eq('student_id', kidId)
+    .gte('date', startOfWeek.toISOString().split('T')[0])
+    .lte('date', endOfWeek.toISOString().split('T')[0]);
 
   const totalActivities = scheduleItems?.length || 0;
   const completedActivities = scheduleItems?.filter(item => item.status === 'completed').length || 0;
