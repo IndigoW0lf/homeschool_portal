@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { X, MagicWand, Printer, FloppyDisk, Spinner, CheckCircle } from '@phosphor-icons/react';
+import { X, MagicWand, Printer, FloppyDisk, Spinner, CheckCircle, PencilSimple } from '@phosphor-icons/react';
 import { generateWorksheetAction, saveWorksheetAssignmentAction } from '@/lib/actions/worksheet';
 import { WorksheetData } from '@/types';
 import { WorksheetViewer } from './WorksheetViewer';
+import { toast } from 'sonner';
 
 interface WorksheetGeneratorModalProps {
   isOpen: boolean;
@@ -16,8 +17,7 @@ interface WorksheetGeneratorModalProps {
 export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', onAttach }: WorksheetGeneratorModalProps) {
   
   // Steps: 'input' -> 'generating' -> 'review' -> 'saving' -> 'success'
-  const [step, setStep] = useState<'input' | 'generating' | 'review' | 'saving' | 'success'>('input');
-  
+  const [step, setStep] = useState<'input' | 'generating' | 'review' | 'refining' | 'saving' | 'success'>('input');
   
   const [topic, setTopic] = useState(contextTopic);
   const [instructions, setInstructions] = useState('');
@@ -25,6 +25,9 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
   
   const [generatedData, setGeneratedData] = useState<WorksheetData | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
+  
+  // Refinement state
+  const [refinementFeedback, setRefinementFeedback] = useState('');
   
   const handleGenerate = async () => {
     if (!topic) return;
@@ -36,9 +39,35 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
       setGeneratedData(res.data);
       setStep('review');
     } else {
-      // TODO: Handle error
       setStep('input');
-      alert('Failed to generate. Please try again.');
+      toast.error('Failed to generate worksheet. Please try again.');
+    }
+  };
+  
+  const handleRefine = async () => {
+    if (!generatedData || !refinementFeedback.trim()) return;
+    
+    setStep('refining');
+    try {
+      const res = await fetch('/api/refine-worksheet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          worksheetData: generatedData,
+          feedback: refinementFeedback,
+        }),
+      });
+      
+      if (!res.ok) throw new Error('Refinement failed');
+      
+      const { data } = await res.json();
+      setGeneratedData(data);
+      setRefinementFeedback('');
+      setStep('review');
+      toast.success('Worksheet refined!');
+    } catch {
+      setStep('review');
+      toast.error('Failed to refine. Please try again.');
     }
   };
   
@@ -154,10 +183,49 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                 ) : (
                   <>
                     <MagicWand size={24} weight="fill" />
-                    Generate Worksheet
+                    {generatedData ? 'Regenerate' : 'Generate Worksheet'}
                   </>
                 )}
               </button>
+              
+              {/* Refinement Section - shown when reviewing */}
+              {(step === 'review' || step === 'refining') && generatedData && (
+                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2 mb-3">
+                    <PencilSimple size={18} className="text-purple-500" />
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      Refine with AI
+                    </label>
+                  </div>
+                  <textarea 
+                    value={refinementFeedback}
+                    onChange={(e) => setRefinementFeedback(e.target.value)}
+                    placeholder="Describe changes, e.g. 'Remove the word external from question 2' or 'Add actual blanks to the fill-in-the-blank questions'"
+                    rows={3}
+                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+                  />
+                  <button 
+                    onClick={handleRefine}
+                    disabled={!refinementFeedback.trim() || step === 'refining'}
+                    className="w-full mt-3 py-3 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-xl font-semibold hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {step === 'refining' ? (
+                      <>
+                        <Spinner size={18} className="animate-spin" />
+                        Refining...
+                      </>
+                    ) : (
+                      <>
+                        <MagicWand size={18} />
+                        Apply Changes
+                      </>
+                    )}
+                  </button>
+                  <p className="text-xs text-gray-400 mt-2 text-center">
+                    Or click directly on questions to edit them
+                  </p>
+                </div>
+              )}
             </div>
             
             {step === 'success' && savedId && (
@@ -208,27 +276,28 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                 <div className="bg-white shadow-xl rounded-xl overflow-hidden mb-6">
                   {/* Worksheet Preview Header */}
                   <div className="bg-gray-50 border-b border-gray-100 p-2 flex justify-between items-center text-xs text-gray-400">
-                    <span>Preview Mode</span>
+                    <span className="flex items-center gap-1">
+                      <PencilSimple size={12} />
+                      Click any text to edit
+                    </span>
                     <span>A4 Size</span>
                   </div>
                   <div className="p-8 transform scale-90 origin-top">
-                     <WorksheetViewer data={generatedData} />
+                     <WorksheetViewer 
+                       data={generatedData} 
+                       editable={step === 'review' || step === 'refining'}
+                       onDataChange={setGeneratedData}
+                     />
                   </div>
                 </div>
                 
                 {/* Actions Footer (Floating) */}
-                {(step === 'review' || step === 'saving') && (
+                {(step === 'review' || step === 'saving' || step === 'refining') && (
                     <div className="sticky bottom-4 flex justify-end gap-3">
                         <button 
-                            onClick={handleGenerate} // Re-generate
-                            className="px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-xl font-bold shadow-lg hover:bg-gray-50 transition-all flex items-center gap-2"
-                        >
-                            Try Again
-                        </button>
-                        <button 
                             onClick={handleSave}
-                            disabled={step === 'saving'}
-                            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2"
+                            disabled={step === 'saving' || step === 'refining'}
+                            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                             {step === 'saving' ? <Spinner size={20} className="animate-spin" /> : <FloppyDisk size={20} weight="fill" />}
                             {onAttach ? 'Attach to Activity' : 'Save to Library'}
