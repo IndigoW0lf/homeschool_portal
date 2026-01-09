@@ -1,0 +1,1 @@
+export { KidProgressSection } from './KidProgressSection';
