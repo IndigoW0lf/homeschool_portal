@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Moon, Confetti, CheckCircle, ShoppingCart, Medal } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase/browser';
 
