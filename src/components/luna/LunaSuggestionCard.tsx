@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { BookmarkSimple, X, Check, BookOpen, Pencil } from '@phosphor-icons/react';
+import { BookmarkSimple, X, Check } from '@phosphor-icons/react';
 import { Suggestion } from '@/lib/ai/types';
 import { cn } from '@/lib/utils';
 import { VideoResourceList } from './VideoResourceCard';
@@ -23,70 +22,14 @@ interface LunaSuggestionCardProps {
 }
 
 /**
- * Suggestion card with Save/Ignore/Create actions
+ * Suggestion card with Save/Ignore actions
  * 
  * - Title, why_this_might_help, steps
- * - [Create Assignment/Lesson] → navigates to form with pre-filled data
  * - [Save to my ideas] → calls onSave (writes to ideas table)
  * - [Ignore] → removes from view (no DB write)
  */
 export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSuggestionCardProps) {
-  const router = useRouter();
   const [status, setStatus] = useState<'visible' | 'saving' | 'saved' | 'ignored'>('visible');
-
-  const hasAssignmentData = !!suggestion.assignment_data;
-  const hasLessonData = !!suggestion.lesson_data;
-
-  const handleCreateAssignment = () => {
-    console.log('[Luna] Create Assignment clicked', suggestion.assignment_data);
-    if (suggestion.assignment_data) {
-      // Store pre-fill data in sessionStorage
-      const prefillData = {
-        type: 'assignment',
-        data: {
-          title: suggestion.assignment_data.title,
-          type: suggestion.assignment_data.type,
-          deliverable: suggestion.assignment_data.deliverable,
-          rubric: Array.isArray(suggestion.assignment_data.rubric) 
-            ? suggestion.assignment_data.rubric.map(text => typeof text === 'string' ? { text } : text)
-            : [],
-          steps: Array.isArray(suggestion.assignment_data.steps)
-            ? suggestion.assignment_data.steps.map(text => typeof text === 'string' ? { text } : text)
-            : [],
-          tags: suggestion.assignment_data.tags || [],
-          estimatedMinutes: suggestion.assignment_data.estimatedMinutes || 30,
-          parentNotes: suggestion.assignment_data.parentNotes || '',
-        }
-      };
-      console.log('[Luna] Storing prefill data:', prefillData);
-      sessionStorage.setItem('luna-prefill', JSON.stringify(prefillData));
-      router.push('/parent/assignments?from=luna');
-    }
-  };
-
-  const handleCreateLesson = () => {
-    console.log('[Luna] Create Lesson clicked', suggestion.lesson_data);
-    if (suggestion.lesson_data) {
-      const prefillData = {
-        type: 'lesson',
-        data: {
-          title: suggestion.lesson_data.title,
-          type: suggestion.lesson_data.type,
-          keyQuestions: Array.isArray(suggestion.lesson_data.keyQuestions)
-            ? suggestion.lesson_data.keyQuestions.map(text => typeof text === 'string' ? { text } : text)
-            : [],
-          materials: suggestion.lesson_data.materials || '',
-          tags: suggestion.lesson_data.tags || [],
-          estimatedMinutes: suggestion.lesson_data.estimatedMinutes || 30,
-          parentNotes: suggestion.lesson_data.parentNotes || '',
-          description: suggestion.lesson_data.parentNotes || '', // Use parentNotes as description too
-        }
-      };
-      console.log('[Luna] Storing prefill data:', prefillData);
-      sessionStorage.setItem('luna-prefill', JSON.stringify(prefillData));
-      router.push('/parent/lessons?from=luna');
-    }
-  };
 
   const handleSave = async () => {
     setStatus('saving');
@@ -170,40 +113,6 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
       {suggestion.worksheets && suggestion.worksheets.length > 0 && (
         <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
           <WorksheetResourceList worksheets={suggestion.worksheets} />
-        </div>
-      )}
-
-      {/* Create Actions - shown when form data is available */}
-      {(hasAssignmentData || hasLessonData) && (
-        <div className="flex gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-          {hasAssignmentData && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleCreateAssignment();
-              }}
-              className="px-3 py-1.5 text-sm rounded-lg font-medium transition-all inline-flex items-center gap-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white shadow-sm cursor-pointer"
-            >
-              <Pencil size={16} weight="duotone" />
-              Create Assignment
-            </button>
-          )}
-          {hasLessonData && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleCreateLesson();
-              }}
-              className="px-3 py-1.5 text-sm rounded-lg font-medium transition-all inline-flex items-center gap-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white shadow-sm cursor-pointer"
-            >
-              <BookOpen size={16} weight="duotone" />
-              Create Lesson
-            </button>
-          )}
         </div>
       )}
 
