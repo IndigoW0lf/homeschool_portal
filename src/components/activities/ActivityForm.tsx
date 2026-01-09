@@ -14,7 +14,6 @@ import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
 import { Kid, WorksheetData } from '@/types';
-import { createLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
@@ -75,6 +74,8 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
   const [studentsLoading, setStudentsLoading] = useState(true);
   const [worksheetModalOpen, setWorksheetModalOpen] = useState(false);
   const [attachedWorksheets, setAttachedWorksheets] = useState<WorksheetData[]>([]);
+  const [autoGenerateWorksheet, setAutoGenerateWorksheet] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const hasFetchedRef = React.useRef(false);
   
   // Collapsible sections - expanded by default if content exists
@@ -202,55 +203,67 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
 
   const onSubmit = async (data: ActivityFormData) => {
     try {
-      // Create as lesson with combined data
-      const activityData = {
+      setIsSubmitting(true);
+      
+      // Use API endpoint for integrated worksheet + YouTube support
+      const payload = {
         title: data.title,
         type: data.type,
-        instructions: data.description,
         description: data.description,
-        key_questions: data.keyQuestions,
-        materials: data.materials,
-        links: data.links,
-        tags: data.tags,
+        instructions: data.description,
         estimated_minutes: data.estimatedMinutes,
-        parent_notes: data.parentNotes,
-        // Store practice content in jsonb
-        steps: data.steps,
-        rubric: data.rubric,
-        deliverable: data.deliverable,
-        worksheets: attachedWorksheets,
+        steps: data.steps?.map(s => s.text).filter(Boolean),
+        links: data.links,
+        assignTo: data.assignTo,
+        scheduleDate: data.date,
+        generateWorksheet: autoGenerateWorksheet || attachedWorksheets.length > 0,
+        // Additional data for lessons
+        keyQuestions: data.keyQuestions,
+        materials: data.materials,
+        parentNotes: data.parentNotes,
+        tags: data.tags,
       };
       
-      const newActivity = await createLesson(activityData);
-      const savedId = newActivity.id;
+      const res = await fetch('/api/lessons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      // Handle Scheduling
-      if (savedId && data.date && data.assignTo.length > 0) {
-        await assignItemToSchedule('lesson', savedId, data.date, data.assignTo);
-      }
-      
-      router.refresh();
-      
-      if (parentOnSubmit) {
-        parentOnSubmit(data);
-      } else {
-        if (savedId && data.date && data.assignTo.length > 0) {
-          toast.success('Activity Scheduled! 📅', {
-            description: `"${data.title}" added to calendar for ${data.date}.`,
-            duration: 4000
-          });
-          router.push('/parent');
+      if (res.ok) {
+        const result = await res.json();
+        router.refresh();
+        
+        if (parentOnSubmit) {
+          parentOnSubmit(data);
         } else {
-          toast.success('Activity Saved! 📚', {
-            description: 'You can schedule it later.'
-          });
+          const extras = [];
+          if (result.hasWorksheet) extras.push('worksheet generated');
+          if (result.videoCount > 0) extras.push(`${result.videoCount} videos found`);
+          
+          if (data.date && data.assignTo.length > 0) {
+            toast.success('Activity Scheduled! 📅', {
+              description: `"${data.title}" added to calendar.${extras.length ? ' Plus: ' + extras.join(', ') : ''}`,
+              duration: 5000
+            });
+            router.push('/parent');
+          } else {
+            toast.success('Activity Saved! 📚', {
+              description: extras.length ? `Plus: ${extras.join(', ')}` : 'You can schedule it later.'
+            });
+          }
         }
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to create');
       }
     } catch (err) {
       console.error(err);
       toast.error('Could not save activity.', {
-        description: 'Please check your connection and try again.'
+        description: err instanceof Error ? err.message : 'Please check your connection and try again.'
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -505,6 +518,25 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               <MagicWand size={16} /> Generate Worksheet
             </button>
           </div>
+
+          {/* Auto-generate checkbox */}
+          <label className="flex items-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl cursor-pointer border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+            <input
+              type="checkbox"
+              checked={autoGenerateWorksheet}
+              onChange={e => setAutoGenerateWorksheet(e.target.checked)}
+              className="w-5 h-5 rounded border-purple-300 text-purple-600 focus:ring-purple-500"
+            />
+            <div className="flex-1">
+              <span className="font-medium text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                <Sparkle size={18} weight="fill" className="text-purple-500" />
+                Auto-generate worksheet on save
+              </span>
+              <p className="text-xs text-purple-600/70 dark:text-purple-400/70 mt-0.5">
+                AI will create practice questions based on this activity
+              </p>
+            </div>
+          </label>
           
           {attachedWorksheets.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -524,7 +556,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               ))}
             </div>
           ) : (
-            <p className="text-sm text-muted">No worksheets attached. Click "Generate Worksheet" to create one!</p>
+            <p className="text-sm text-muted">Or click "Generate Worksheet" to customize one yourself!</p>
           )}
         </div>
 
@@ -582,9 +614,13 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
         <div className="flex justify-end pt-4">
           <button
             type="submit"
-            className="btn-primary px-8 py-3 shadow-lg shadow-[var(--ember-500)/20] hover:-translate-y-0.5"
+            disabled={isSubmitting}
+            className={cn(
+              "btn-primary px-8 py-3 shadow-lg shadow-[var(--ember-500)/20] hover:-translate-y-0.5",
+              isSubmitting && "opacity-50 cursor-not-allowed"
+            )}
           >
-            Save Activity
+            {isSubmitting ? 'Creating...' : 'Save Activity'}
           </button>
         </div>
       </form>

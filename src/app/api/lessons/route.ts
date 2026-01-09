@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
-import { createLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
+import { createLesson, createAssignment, assignItemToSchedule } from '@/lib/supabase/mutations';
 import { generateWorksheet } from '@/lib/ai/worksheet-generator';
 import { searchEducationalVideos } from '@/lib/resources/youtube';
-import { isYouTubeConfigured } from '@/lib/ai/resource-enricher';
 
 /**
  * POST /api/lessons
@@ -25,7 +24,6 @@ export async function POST(request: NextRequest) {
       description,
       instructions,
       estimated_minutes,
-      steps,
       links = [],
       assignTo,
       scheduleDate,
@@ -37,13 +35,18 @@ export async function POST(request: NextRequest) {
     let worksheetData = null;
 
     // 1. Search for relevant YouTube videos if API key is configured
-    if (isYouTubeConfigured()) {
+    const ytApiKey = process.env.YOUTUBE_API_KEY;
+    console.log('[API] YouTube API key present:', !!ytApiKey);
+    
+    if (ytApiKey) {
       try {
-        console.log('[API] Searching YouTube for:', title);
+        console.log('[API] Searching YouTube for:', title, '| Subject:', type);
         const videos = await searchEducationalVideos(title, {
           subject: type,
           maxResults: 2,
         });
+        
+        console.log('[API] YouTube search returned', videos.length, 'videos');
         
         // Add videos as links
         for (const video of videos) {
@@ -52,9 +55,12 @@ export async function POST(request: NextRequest) {
             url: video.url,
           });
         }
-        console.log('[API] Found', videos.length, 'videos to attach');
+        console.log('[API] Attached', videos.length, 'video links');
       } catch (ytError) {
-        console.error('[API] YouTube search failed (non-fatal):', ytError);
+        console.error('[API] YouTube search failed:', ytError);
+        if (ytError instanceof Error) {
+          console.error('[API] YouTube error message:', ytError.message);
+        }
         // Continue without videos - don't fail the request
       }
     } else {
@@ -72,7 +78,7 @@ export async function POST(request: NextRequest) {
         );
         console.log('[API] Worksheet generated successfully');
       } catch (wsError) {
-        console.error('[API] Worksheet generation failed (non-fatal):', wsError);
+        console.error('[API] Worksheet generation failed:', wsError);
         // Continue without worksheet - don't fail the request
       }
     }
@@ -92,7 +98,6 @@ export async function POST(request: NextRequest) {
     };
 
     const newLesson = await createLesson(lessonData);
-    let scheduleItemIds: string[] = [];
 
     // Schedule if date and kids provided
     if (newLesson.id && scheduleDate && assignTo && assignTo.length > 0) {
@@ -101,9 +106,6 @@ export async function POST(request: NextRequest) {
 
     // 3. If worksheet was generated, also create an assignment for it
     if (worksheetData) {
-      // Import the assignment creation
-      const { createAssignment } = await import('@/lib/supabase/mutations');
-      
       const worksheetAssignment = await createAssignment({
         title: `📝 ${worksheetData.title || title + ' Worksheet'}`,
         type: 'worksheet',
@@ -126,11 +128,14 @@ export async function POST(request: NextRequest) {
       console.log('[API] Worksheet assignment created:', worksheetAssignment.id);
     }
 
+    const videoCount = enrichedLinks.filter(l => l.url?.includes('youtube')).length;
+    console.log('[API] Final response - hasWorksheet:', !!worksheetData, '| videoCount:', videoCount);
+
     return NextResponse.json({ 
       success: true, 
       id: newLesson.id,
       hasWorksheet: !!worksheetData,
-      videoCount: enrichedLinks.filter(l => l.url?.includes('youtube')).length,
+      videoCount,
       message: 'Lesson created successfully'
     });
   } catch (error) {
