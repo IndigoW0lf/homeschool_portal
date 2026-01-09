@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { getKidsFromDB } from '@/lib/supabase/data';
-import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity, getLifeSkillsCounts } from '@/lib/supabase/progressData';
+import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity, getLifeSkillsCounts, getActivityLogStats } from '@/lib/supabase/progressData';
 import { getExternalCurriculumStats } from '@/app/actions/import';
 import { getWorksheetResponsesForKids } from '@/lib/supabase/worksheetData';
 import { ParentProgressStats } from '@/components/profile/ParentProgressStats';
@@ -31,6 +31,13 @@ export default async function ProgressPage() {
     const subjectCounts = await getKidSubjectCounts(kid.id);
     const weeklyActivity = await getWeeklyActivity(kid.id);
     const lifeSkillsCounts = await getLifeSkillsCounts(kid.id);
+    const activityLogStats = await getActivityLogStats(kid.id);
+    
+    // Merge activity log subject counts into subjectCounts
+    const mergedSubjectCounts = { ...subjectCounts };
+    for (const [key, count] of Object.entries(activityLogStats.subjectCounts)) {
+      mergedSubjectCounts[key] = (mergedSubjectCounts[key] || 0) + count;
+    }
 
     return {
       kid,
@@ -39,9 +46,10 @@ export default async function ProgressPage() {
         currentStreak: progress?.currentStreak || 0,
         bestStreak: progress?.bestStreak || 0,
         streakEnabled: kid.streakEnabled ?? true,
-        subjectCounts,
+        subjectCounts: mergedSubjectCounts,
         weeklyActivity,
         lifeSkillsCounts,
+        activityLogStats,
       }
     };
   }));

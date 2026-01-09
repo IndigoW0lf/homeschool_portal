@@ -1,6 +1,6 @@
 'use client';
 
-import { ChartBar, Trophy, Fire, BookOpen } from '@phosphor-icons/react';
+import { ChartBar, Trophy, Fire, BookOpen, Clock } from '@phosphor-icons/react';
 
 interface ParentProgressStatsProps {
   kidId: string;
@@ -12,11 +12,28 @@ interface ParentProgressStatsProps {
     streakEnabled?: boolean;
     subjectCounts: Record<string, number>;
     weeklyActivity: { date: string; count: number }[];
+    activityLogStats?: {
+      totalMinutes: number;
+      totalEntries: number;
+      subjectMinutes: Record<string, number>;
+      subjectCounts: Record<string, number>;
+    };
   };
 }
 
 export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
-  const { totalMoons, currentStreak, bestStreak, streakEnabled = true, subjectCounts, weeklyActivity } = stats;
+  const { totalMoons, currentStreak, bestStreak, streakEnabled = true, subjectCounts, weeklyActivity, activityLogStats } = stats;
+  
+  // Format hours nicely
+  const formatHours = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (hours === 0) return `${mins}m`;
+    if (mins === 0) return `${hours}h`;
+    return `${hours}h ${mins}m`;
+  };
+  
+  const totalLoggedHours = activityLogStats?.totalMinutes || 0;
 
   const maxActivity = Math.max(...weeklyActivity.map(d => d.count), 5); // Minimum scale of 5
 
@@ -51,7 +68,7 @@ export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
         )}
 
         {/* Total Moons */}
-        <div className="col-span-2 sm:col-span-2 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/50 flex items-center gap-4">
+        <div className="col-span-1 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/50 flex items-center gap-4">
           <div className="p-3 bg-indigo-100 dark:bg-indigo-800/30 rounded-full text-indigo-600 dark:text-indigo-400">
             <Trophy size={24} weight="fill" />
           </div>
@@ -60,6 +77,22 @@ export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
             <span className="text-2xl font-bold text-gray-900 dark:text-white">{totalMoons}</span>
           </div>
         </div>
+        
+        {/* Logged Hours */}
+        {totalLoggedHours > 0 && (
+          <div className="col-span-1 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-4 rounded-xl border border-emerald-100 dark:border-emerald-800/50 flex items-center gap-4">
+            <div className="p-3 bg-emerald-100 dark:bg-emerald-800/30 rounded-full text-emerald-600 dark:text-emerald-400">
+              <Clock size={24} weight="fill" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Logged Hours</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-bold text-gray-900 dark:text-white">{formatHours(totalLoggedHours)}</span>
+                <span className="text-xs text-gray-500">{activityLogStats?.totalEntries || 0} activities</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

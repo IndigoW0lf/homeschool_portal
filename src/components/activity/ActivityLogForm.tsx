@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Plus, Clock, Calendar, Book } from '@phosphor-icons/react';
-import { SUBJECTS } from '@/lib/supabase/activityLog';
+import { SUBJECTS } from '@/lib/activityLogConstants';
 
 interface Kid {
   id: string;

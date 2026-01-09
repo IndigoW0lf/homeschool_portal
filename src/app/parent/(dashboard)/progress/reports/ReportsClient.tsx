@@ -5,7 +5,7 @@ import { format, subDays, subMonths, startOfWeek, endOfWeek, startOfMonth, endOf
 import { CaretLeft, Printer, Calendar, Clock, GraduationCap, FunnelSimple, ArrowLeft } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { fetchActivityLogForKids } from '@/app/actions/activityLog';
-import { SUBJECTS } from '@/lib/supabase/activityLog';
+import { SUBJECTS } from '@/lib/activityLogConstants';
 
 interface Kid {
   id: string;

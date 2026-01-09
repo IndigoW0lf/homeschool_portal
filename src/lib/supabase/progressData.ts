@@ -171,3 +171,50 @@ export async function getLifeSkillsCounts(kidId: string): Promise<Record<string,
   
   return counts;
 }
+
+// Get activity log statistics for a kid
+export async function getActivityLogStats(kidId: string): Promise<{
+  totalMinutes: number;
+  totalEntries: number;
+  subjectMinutes: Record<string, number>;
+  subjectCounts: Record<string, number>;
+}> {
+  const supabase = await createServerClient();
+  
+  // Get all activity log entries for this kid
+  const { data, error } = await supabase
+    .from('activity_log')
+    .select('subject, duration_minutes')
+    .eq('kid_id', kidId);
+  
+  if (error) {
+    console.error('Error fetching activity log stats:', error);
+    return { totalMinutes: 0, totalEntries: 0, subjectMinutes: {}, subjectCounts: {} };
+  }
+  
+  const stats = {
+    totalMinutes: 0,
+    totalEntries: 0,
+    subjectMinutes: {} as Record<string, number>,
+    subjectCounts: {} as Record<string, number>
+  };
+  
+  (data || []).forEach((row) => {
+    stats.totalEntries += 1;
+    stats.totalMinutes += row.duration_minutes || 0;
+    
+    // Normalize subject key
+    let key = (row.subject || 'other').toLowerCase();
+    if (key.includes('read') || key === 'language arts') key = 'reading';
+    else if (key.includes('write')) key = 'writing';
+    else if (key.includes('math') || key.includes('logic')) key = 'math';
+    else if (key.includes('sci')) key = 'science';
+    else if (key.includes('life') || key.includes('skill') || key === 'pe') key = 'life_skills';
+    
+    stats.subjectMinutes[key] = (stats.subjectMinutes[key] || 0) + (row.duration_minutes || 0);
+    stats.subjectCounts[key] = (stats.subjectCounts[key] || 0) + 1;
+  });
+  
+  return stats;
+}
+

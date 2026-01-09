@@ -29,25 +29,8 @@ export interface ActivityLogInsert {
 }
 
 // Predefined subjects for the dropdown
-export const SUBJECTS = [
-  'Math',
-  'Reading',
-  'Writing',
-  'Language Arts',
-  'Science',
-  'Social Studies',
-  'History',
-  'Art',
-  'Music',
-  'PE',
-  'Life Skills',
-  'Foreign Language',
-  'Technology',
-  'Field Trip',
-  'Other'
-] as const;
-
-export type Subject = typeof SUBJECTS[number];
+// Re-exported from constants file for backwards compatibility
+export { SUBJECTS, type Subject } from '@/lib/activityLogConstants';
 
 /**
  * Get activity log entries for a kid, optionally filtered by date range
