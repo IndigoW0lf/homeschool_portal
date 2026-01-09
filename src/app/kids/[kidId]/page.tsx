@@ -39,7 +39,8 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
   
   if (date && typeof date === 'string') {
      try {
-        viewDate = parseISO(date);
+        // Parse at noon to avoid timezone issues (midnight UTC = previous day in CST)
+        viewDate = new Date(date + 'T12:00:00');
      // eslint-disable-next-line @typescript-eslint/no-unused-vars
      } catch (e) {
         // invalid date, fallback to today

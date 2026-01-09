@@ -84,18 +84,19 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
     if (!selectedItem) return;
     const scheduleItemId = selectedItem.id;
     const itemId = selectedItem.itemId || scheduleItemId;
+    const itemDate = selectedItem.date || date; // Use item's date, fallback to prop
     
     // Check if already done
-    if (isDone(kidId, date, itemId)) return;
+    if (isDone(kidId, itemDate, itemId)) return;
     
     // Mark as done - syncs to database for cross-device visibility!
-    await setDone(kidId, date, itemId, true, scheduleItemId);
+    await setDone(kidId, itemDate, itemId, true, scheduleItemId);
     setAutoCompleted(true);
     
     // Award star if not already awarded
-    if (!isAwarded(kidId, date, itemId)) {
+    if (!isAwarded(kidId, itemDate, itemId)) {
       addStars(kidId, 1);
-      markAwarded(kidId, date, itemId);
+      markAwarded(kidId, itemDate, itemId);
     }
   };
 
