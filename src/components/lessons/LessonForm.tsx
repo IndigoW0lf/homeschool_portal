@@ -11,7 +11,7 @@ import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
 import { Kid } from '@/types';
-import { createLesson, updateLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
+import { assignItemToSchedule } from '@/lib/supabase/mutations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
@@ -179,31 +179,61 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
 
   const onSubmit = async (data: LessonFormData) => {
      try {
-        // Save to new explicit JSONB columns (no more JSON embedding in instructions)
-        const lessonData = {
-           title: data.title,
-           type: data.type,
-           instructions: data.description || '', // Use description as main content
-           description: data.description,
-           key_questions: data.keyQuestions, // JSONB array of {text: string}
-           materials: data.materials,
-           links: data.links, // JSONB array of {label, url}
-           tags: data.tags,
-           estimated_minutes: data.estimatedMinutes,
-           parent_notes: data.parentNotes,
-        };
-        
         let savedId = initialData?.id;
 
         if (initialData?.id) {
+           // Update existing lesson directly
+           const lessonData = {
+              title: data.title,
+              type: data.type,
+              instructions: data.description || '',
+              description: data.description,
+              key_questions: data.keyQuestions,
+              materials: data.materials,
+              links: data.links,
+              tags: data.tags,
+              estimated_minutes: data.estimatedMinutes,
+              parent_notes: data.parentNotes,
+           };
            await updateLesson(initialData.id, lessonData);
         } else {
-           const newLesson = await createLesson(lessonData);
-           savedId = newLesson.id;
+           // Create new lesson via API (enables YouTube video + worksheet enrichment)
+           const res = await fetch('/api/lessons', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                 title: data.title,
+                 type: data.type,
+                 description: data.description,
+                 instructions: data.description, // Pass both for flexibility
+                 estimated_minutes: data.estimatedMinutes,
+                 links: data.links,
+                 assignTo: data.assignTo,
+                 scheduleDate: data.date,
+                 generateWorksheet: true, // Enable worksheet generation
+              }),
+           });
+           
+           if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.error || 'Failed to create lesson');
+           }
+           
+           const result = await res.json();
+           savedId = result.id;
+           
+           // Log enrichment results
+           if (result.videoCount > 0) {
+              console.log(`[LessonForm] Added ${result.videoCount} YouTube videos`);
+           }
+           if (result.hasWorksheet) {
+              console.log('[LessonForm] Worksheet generated and attached');
+           }
         }
 
-        // Handle Scheduling
-        if (savedId && data.date && data.assignTo.length > 0) {
+        // Note: Scheduling is now handled by the API for new lessons
+        // For updates, we still need to handle it here
+        if (initialData?.id && savedId && data.date && data.assignTo.length > 0) {
           await assignItemToSchedule('lesson', savedId, data.date, data.assignTo);
         }
         
