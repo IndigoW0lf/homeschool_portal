@@ -10,7 +10,9 @@ import { ExternalCurriculumList } from '@/components/dashboard/ExternalCurriculu
 import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetResponseViewer';
 import { LifeSkillsChart } from '@/components/dashboard/LifeSkillsChart';
 import { redirect } from 'next/navigation';
-import { ChartLineUp, GraduationCap, Notebook, Brain } from '@phosphor-icons/react/dist/ssr';
+import { ChartLineUp, GraduationCap, Notebook, Brain, Book } from '@phosphor-icons/react/dist/ssr';
+import { ActivityLogSection } from '@/components/activity';
+import { getActivityLogForKids } from '@/lib/supabase/activityLog';
 
 export default async function ProgressPage() {
   const supabase = await createServerClient();
@@ -49,6 +51,14 @@ export default async function ProgressPage() {
   
   // Fetch worksheet responses for the viewer
   const worksheetResponses = await getWorksheetResponsesForKids(kidIds);
+  
+  // Fetch activity log entries (last 30 days)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const activityLogEntries = await getActivityLogForKids(
+    kidIds,
+    thirtyDaysAgo.toISOString().split('T')[0]
+  );
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -183,6 +193,14 @@ export default async function ProgressPage() {
             <p className="text-gray-500">No students found. Add a kid in Settings to see stats!</p>
           </div>
         )}
+      </div>
+
+      {/* Activity Log Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <ActivityLogSection 
+          kids={kids.map(k => ({ id: k.id, name: k.name }))}
+          initialEntries={activityLogEntries}
+        />
       </div>
 
       {/* Worksheet Responses Section */}
