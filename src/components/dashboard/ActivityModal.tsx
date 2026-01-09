@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   CaretDown, Sparkle, Clock, Users, CalendarBlank, 
-  Link as LinkIcon, Books, PencilSimple, Plus, Trash,
+  Link as LinkIcon, Books, PencilSimple, Plus, Trash, Spinner, MagicWand,
   // Category icons
   MathOperations, Flask, Scroll, BookOpen, Palette, MusicNote,
   PersonSimpleRun, Code, Brain, Lightbulb, Lightning, Handshake, Heart, Globe
@@ -12,7 +12,6 @@ import {
 import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import { LunaTriggerButton } from '@/components/luna';
 
 interface ActivityModalProps {
   isOpen: boolean;
@@ -59,6 +58,7 @@ interface FormData {
 export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   
   const [form, setForm] = useState<FormData>({
     title: '',
@@ -75,6 +75,52 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
 
   const updateForm = (updates: Partial<FormData>) => {
     setForm(prev => ({ ...prev, ...updates }));
+  };
+
+  // AI Generation handler
+  const handleGenerate = async () => {
+    if (!form.title.trim()) {
+      toast.error('Please enter a title first');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const res = await fetch('/api/generate-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title,
+          category: form.category,
+          activityType: form.activityType,
+          description: form.description, // Pass any notes user already entered
+          kidNames: kids.filter(k => form.assignTo.includes(k.id)).map(k => k.name),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to generate');
+      }
+
+      const { data } = await res.json();
+      
+      // Populate form with generated content
+      updateForm({
+        description: data.description || form.description,
+        steps: data.steps || form.steps,
+        estimatedMinutes: data.estimatedMinutes || form.estimatedMinutes,
+        links: data.suggestedLinks?.length > 0 ? data.suggestedLinks : form.links,
+      });
+
+      toast.success('Activity generated!', {
+        description: 'Review and edit the content below.',
+      });
+    } catch (error) {
+      console.error('Generation error:', error);
+      toast.error('Failed to generate activity. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // Steps helpers
@@ -157,10 +203,9 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="">
       <div className="space-y-6">
-        {/* Header with Luna */}
+        {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create Activity</h2>
-          <LunaTriggerButton context="GENERAL" label="Ask Luna" iconOnly />
         </div>
 
         {/* Type Toggle - Prominent */}
@@ -199,16 +244,41 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
           </button>
         </div>
 
-        {/* Title */}
-        <div>
-          <input
-            type="text"
-            value={form.title}
-            onChange={e => updateForm({ title: e.target.value })}
-            placeholder="What are we learning today?"
-            className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[var(--ember-500)] focus:ring-0 py-2 px-0 placeholder:text-gray-400"
-            autoFocus
-          />
+        {/* Title + AI Generate Button */}
+        <div className="flex gap-2 items-end">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={form.title}
+              onChange={e => updateForm({ title: e.target.value })}
+              placeholder="What are we learning today?"
+              className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[var(--ember-500)] focus:ring-0 py-2 px-0 placeholder:text-gray-400"
+              autoFocus
+            />
+          </div>
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={isGenerating || !form.title.trim()}
+            className={cn(
+              "flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition-all",
+              "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg",
+              "hover:shadow-xl hover:scale-105",
+              "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            )}
+          >
+            {isGenerating ? (
+              <>
+                <Spinner size={18} className="animate-spin" />
+                <span>Generating...</span>
+              </>
+            ) : (
+              <>
+                <MagicWand size={18} weight="fill" />
+                <span>Generate with AI</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Category + Time Row */}

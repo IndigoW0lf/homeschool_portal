@@ -11,7 +11,7 @@ import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
 import { Kid } from '@/types';
-import { assignItemToSchedule } from '@/lib/supabase/mutations';
+import { updateLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
