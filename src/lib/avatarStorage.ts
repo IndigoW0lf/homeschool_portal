@@ -55,4 +55,24 @@ export async function saveAvatarToDatabase(kidId: string, state: AvatarState): P
   }
 }
 
-
+/**
+ * Hydrate avatar state from database to localStorage
+ * Call this on kid portal page load
+ */
+export async function hydrateAvatarState(kidId: string): Promise<AvatarState | null> {
+  if (typeof window === 'undefined') return null;
+  
+  const { data: kid } = await supabase
+    .from('kids')
+    .select('avatar_state')
+    .eq('id', kidId)
+    .single();
+  
+  if (kid?.avatar_state) {
+    const state = kid.avatar_state as AvatarState;
+    setAvatarState(kidId, state);
+    return state;
+  }
+  
+  return null;
+}

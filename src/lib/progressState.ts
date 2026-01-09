@@ -329,4 +329,122 @@ export function getItemUnlocks(itemId: string, unlocks: string[]): string[] {
   return unlocks || [];
 }
 
+// ============================================================
+// HYDRATION FUNCTIONS - Sync DB → localStorage on page load
+// ============================================================
 
+/**
+ * Hydrate stars/moons from database
+ */
+export async function hydrateStars(kidId: string): Promise<number> {
+  if (typeof window === 'undefined') return 0;
+  
+  const { supabase } = await import('@/lib/supabase/browser');
+  
+  // Check both student_progress and kids.moons (kids.moons is current source of truth)
+  const { data: kid } = await supabase
+    .from('kids')
+    .select('moons')
+    .eq('id', kidId)
+    .single();
+  
+  const moons = kid?.moons || 0;
+  
+  // Update localStorage to match DB
+  const key = `${STARS_PREFIX}::${kidId}`;
+  localStorage.setItem(key, String(moons));
+  
+  return moons;
+}
+
+/**
+ * Hydrate streak state from database
+ */
+export async function hydrateStreak(kidId: string): Promise<StreakState> {
+  if (typeof window === 'undefined') {
+    return { current: 0, best: 0, lastCompletedDate: null };
+  }
+  
+  const { supabase } = await import('@/lib/supabase/browser');
+  
+  const { data } = await supabase
+    .from('student_progress')
+    .select('current_streak, best_streak, last_completed_date')
+    .eq('kid_id', kidId)
+    .single();
+  
+  const streak: StreakState = {
+    current: data?.current_streak || 0,
+    best: data?.best_streak || 0,
+    lastCompletedDate: data?.last_completed_date || null
+  };
+  
+  // Update localStorage to match DB
+  setStreak(kidId, streak);
+  
+  return streak;
+}
+
+/**
+ * Hydrate unlocks from database
+ */
+export async function hydrateUnlocks(kidId: string): Promise<string[]> {
+  if (typeof window === 'undefined') return [];
+  
+  const { supabase } = await import('@/lib/supabase/browser');
+  
+  const { data } = await supabase
+    .from('student_unlocks')
+    .select('unlock_id')
+    .eq('kid_id', kidId);
+  
+  const unlockIds = data?.map(u => u.unlock_id) || [];
+  
+  // Update localStorage to match DB
+  setUnlocks(kidId, unlockIds);
+  
+  return unlockIds;
+}
+
+/**
+ * Hydrate awards ledger for a specific date from database
+ */
+export async function hydrateAwards(kidId: string, date: string): Promise<AwardLedger> {
+  if (typeof window === 'undefined') return {};
+  
+  const { supabase } = await import('@/lib/supabase/browser');
+  
+  const { data } = await supabase
+    .from('progress_awards')
+    .select('item_id')
+    .eq('kid_id', kidId)
+    .eq('date', date);
+  
+  const ledger: AwardLedger = {};
+  (data || []).forEach(award => {
+    ledger[award.item_id] = true;
+  });
+  
+  // Update localStorage to match DB
+  setAwardLedger(kidId, date, ledger);
+  
+  return ledger;
+}
+
+/**
+ * Hydrate ALL progress state for a kid from database
+ * Call this once on kid portal page load
+ */
+export async function hydrateAllProgressState(kidId: string, date: string): Promise<void> {
+  if (typeof window === 'undefined') return;
+  
+  await Promise.all([
+    hydrateStars(kidId),
+    hydrateStreak(kidId),
+    hydrateUnlocks(kidId),
+    hydrateAwards(kidId, date),
+    syncPurchasesFromDB(kidId)
+  ]);
+  
+  console.log(`✅ Hydrated all progress state for kid ${kidId}`);
+}

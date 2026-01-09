@@ -86,3 +86,25 @@ export function getDoneCount(kidId: string, date: string, lessonIds: string[]): 
   if (typeof window === 'undefined') return 0;
   return lessonIds.filter(lessonId => isDone(kidId, date, lessonId)).length;
 }
+
+/**
+ * Hydrate localStorage from database on page load.
+ * This ensures completion state persists across devices and browser sessions.
+ * Call this once when schedule items are loaded.
+ */
+export function hydrateDoneState(
+  kidId: string,
+  items: Array<{ date: string; itemId: string | null; status: string }>
+): void {
+  if (typeof window === 'undefined') return;
+  
+  for (const item of items) {
+    if (item.status === 'completed' && item.itemId) {
+      const key = getDoneKey(kidId, item.date, item.itemId);
+      // Only set if not already in localStorage (avoid unnecessary writes)
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, 'true');
+      }
+    }
+  }
+}

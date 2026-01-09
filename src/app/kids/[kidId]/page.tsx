@@ -10,7 +10,8 @@ import { ScheduleItemsList } from './ScheduleItemsList';
 import { JournalCard } from '@/components/kids/JournalCard';
 import { StreakDisplay } from '@/components/kids/StreakDisplay';
 import { CaretLeft, CaretRight, CalendarBlank, Scroll } from '@phosphor-icons/react/dist/ssr';
-import { addWeeks, subWeeks, isSameDay, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
+import { addWeeks, subWeeks, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
+import { KidStateHydrator } from '@/components/KidStateHydrator';
 
 interface KidPortalPageProps {
   params: Promise<{
@@ -84,6 +85,17 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
   return (
     <div className="min-h-screen">
+      {/* Hydrate localStorage from database on page load */}
+      <KidStateHydrator 
+        kidId={kidId} 
+        date={viewDateString}
+        scheduleItems={weekScheduleItems.map(item => ({
+          date: item.date,
+          itemId: item.itemId,
+          status: item.status
+        }))}
+      />
+      
       {/* Page Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
@@ -127,7 +139,20 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
           </section>
         )}
 
-        {/* Today's Quests - FIRST */}
+        {/* Progress Card - FIRST (compact centered stats) */}
+        {isViewToday && (
+          <section>
+            <ProgressCardWrapper 
+              kidId={kidId}
+              initialStars={progressData?.totalStars || 0}
+              initialUnlocks={unlocks}
+              date={viewDateString}
+              itemIds={todayItems.map(item => item.id)}
+            />
+          </section>
+        )}
+
+        {/* Today's Quests */}
         <section id={`date-${viewDateString}`}>
           <div className="mb-4">
             <Image 
@@ -172,19 +197,6 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
             )}
           </div>
         </section>
-
-        {/* Progress Card - AFTER Quests (compact bar with moons + shop) */}
-        {isViewToday && (
-          <section>
-            <ProgressCardWrapper 
-              kidId={kidId}
-              initialStars={progressData?.totalStars || 0}
-              initialUnlocks={unlocks}
-              date={viewDateString}
-              itemIds={todayItems.map(item => item.id)}
-            />
-          </section>
-        )}
 
         {/* Week Calendar */}
         <section>

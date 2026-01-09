@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ScheduleItemCard } from '@/components/ScheduleItemCard';
 import { Modal } from '@/components/ui/Modal';
 import { Clock, BookOpen, Pencil, CheckSquare, FileText, Link as LinkIcon, Question, LinkSimple, Sparkle, Check, Notebook } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { cn } from '@/lib/utils';
-import { isDone, setDone } from '@/lib/storage';
+import { isDone, setDone, hydrateDoneState } from '@/lib/storage';
 import { addStars, isAwarded, markAwarded } from '@/lib/progressState';
 
 interface ScheduleItem {
@@ -47,6 +47,15 @@ interface ScheduleItemsListProps {
 export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleItemsListProps) {
   const [selectedItem, setSelectedItem] = useState<ScheduleItem | null>(null);
   const [, setAutoCompleted] = useState(false);
+  
+  // Hydrate localStorage from DB on mount - ensures completion state persists across devices
+  useEffect(() => {
+    hydrateDoneState(kidId, items.map(item => ({
+      date: item.date,
+      itemId: item.itemId,
+      status: item.status
+    })));
+  }, [kidId, items]);
   
   // Sort items by date (earliest first) if showing dates
   const sortedItems = showDates 
