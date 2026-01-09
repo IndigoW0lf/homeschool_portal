@@ -413,6 +413,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
 
         {/* Footer */}
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+          {/* Debug: Show why button might be disabled */}
+          {!form.title.trim() && (
+            <span className="text-xs text-red-400 self-center">
+              Title required ({form.title.length} chars)
+            </span>
+          )}
           <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
             Cancel
           </button>
