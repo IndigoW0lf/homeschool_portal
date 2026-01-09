@@ -29,6 +29,39 @@ export function addStars(kidId: string, amount: number): void {
   const key = `${STARS_PREFIX}::${kidId}`;
   const current = getStars(kidId);
   localStorage.setItem(key, String(current + amount));
+  
+  // Also sync to database for persistence across devices
+  syncStarsToDatabase(kidId, amount);
+}
+
+// Async function to sync star award to database
+async function syncStarsToDatabase(kidId: string, amount: number): Promise<void> {
+  try {
+    const { supabase } = await import('@/lib/supabase/browser');
+    
+    // Get current total from database
+    const { data: progress } = await supabase
+      .from('student_progress')
+      .select('total_stars')
+      .eq('kid_id', kidId)
+      .single();
+    
+    const currentStars = progress?.total_stars || 0;
+    const newTotal = currentStars + amount;
+    
+    // Upsert the new total
+    await supabase
+      .from('student_progress')
+      .upsert({
+        kid_id: kidId,
+        total_stars: newTotal,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'kid_id' });
+    
+    console.log(`✅ Synced ${amount} stars to DB for ${kidId}. New total: ${newTotal}`);
+  } catch (error) {
+    console.error('Failed to sync stars to database:', error);
+  }
 }
 
 // Award Ledger (prevents double-awards)

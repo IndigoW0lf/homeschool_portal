@@ -102,7 +102,7 @@ export function JournalCard({
       if (res.ok) {
         const journalItemId = `journal-${date}`;
         if (!isAwarded(kidId, date, journalItemId)) {
-          addStars(kidId, 2);
+          addStars(kidId, 1);
           markAwarded(kidId, date, journalItemId);
         }
         setIsComplete(true);
@@ -180,7 +180,7 @@ export function JournalCard({
           </h3>
           <p className="text-sm text-purple-600 dark:text-purple-400 flex items-center gap-1">
             <Sparkle size={14} weight="fill" className="text-yellow-500" />
-            Earn 2 moons
+            Earn 1 moon
           </p>
         </div>
       </div>
