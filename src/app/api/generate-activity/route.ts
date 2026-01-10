@@ -114,6 +114,14 @@ ${description ? `User's Notes/Description: ${description}` : ''}
 
     const generated: GeneratedActivity = JSON.parse(content);
     
+    // Safety: Remove any links the AI might have hallucinated despite instructions
+    // We only want links from our trusted YouTube search
+    if ('suggestedLinks' in generated) {
+      console.log('[API/generate-activity] Removing hallucinated links from AI response');
+      // @ts-ignore
+      delete generated.suggestedLinks;
+    }
+    
     console.log('[API/generate-activity] AI generation complete:', {
       stepsCount: generated.steps?.length,
       questionsCount: generated.keyQuestions?.length,
@@ -134,9 +142,11 @@ ${description ? `User's Notes/Description: ${description}` : ''}
       if (enrichment.videoLinks.length > 0) {
         suggestedLinks = enrichment.videoLinks;
         videoCount = enrichment.videoLinks.length;
-        console.log('[API/generate-activity] Found', videoCount, 'YouTube videos');
+        console.log('[API/generate-activity] Found', videoCount, 'YouTube videos:', suggestedLinks.map(l => l.label));
       } else if (enrichment.videoError) {
-        console.log('[API/generate-activity] YouTube search failed:', enrichment.videoError);
+        console.log('[API/generate-activity] YouTube search failed/empty:', enrichment.videoError);
+      } else {
+        console.log('[API/generate-activity] YouTube search returned no results.');
       }
     }
 
