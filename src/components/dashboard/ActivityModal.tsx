@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 interface ActivityModalProps {
   isOpen: boolean;
   onClose: () => void;
-  kids: { id: string; name: string }[];
+  kids: { id: string; name: string; gradeBand?: string }[];
 }
 
 // Life skills + academic categories with Phosphor icons
@@ -90,6 +90,17 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
 
     setIsGenerating(true);
     try {
+      const selectedKids = kids.filter(k => form.assignTo.includes(k.id));
+      const kidNames = selectedKids.map(k => k.name);
+      
+      // Derive grade level context from selected kids
+      // e.g. "3rd Grade" or "3rd Grade, 5th Grade"
+      const gradeLevels = selectedKids
+        .map(k => k.gradeBand)
+        .filter((g): g is string => !!g); // Filter out undefined/null
+        
+      const derivedGradeLevel = [...new Set(gradeLevels)].join(', ');
+
       const res = await fetch('/api/generate-activity', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -98,7 +109,8 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
           category: form.category,
           activityType: form.activityType,
           description: form.description, // Pass any notes user already entered
-          kidNames: kids.filter(k => form.assignTo.includes(k.id)).map(k => k.name),
+          kidNames,
+          gradeLevel: derivedGradeLevel || undefined,
         }),
       });
 

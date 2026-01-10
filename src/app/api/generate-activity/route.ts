@@ -136,7 +136,11 @@ ${description ? `User's Notes/Description: ${description}` : ''}
       console.log('[API/generate-activity] Searching for YouTube videos...');
       const enrichment = await enrichActivity(
         { title, category, description: generated.description },
-        { searchYouTube: true, generateWorksheet: false }
+        { 
+          searchYouTube: true, 
+          generateWorksheet: false,
+          ageOrGrade: gradeLevel 
+        }
       );
       
       if (enrichment.videoLinks.length > 0) {

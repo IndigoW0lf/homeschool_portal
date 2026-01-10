@@ -160,7 +160,7 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
       <ContentLibrary
         lessons={lessons}
         assignments={assignments}
-        kids={students.map(s => ({ id: s.id, name: s.name }))}
+        kids={students.map(s => ({ id: s.id, name: s.name, gradeBand: s.gradeBand || undefined }))}
         onViewLesson={handleViewLesson}
         onViewAssignment={handleViewAssignment}
       />
