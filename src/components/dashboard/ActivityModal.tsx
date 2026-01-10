@@ -167,32 +167,43 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
 
     setIsSubmitting(true);
     try {
-      const endpoint = form.activityType === 'lesson' ? '/api/lessons' : '/api/assignments';
-      
+      // Use unified /api/activities endpoint
+      // It handles both lessons and assignments with proper AI enrichment
       const payload = {
         title: form.title,
-        type: form.category,
+        activityType: form.activityType,  // 'lesson' or 'assignment'
+        category: form.category,
         description: form.description,
-        instructions: form.description,
-        estimated_minutes: form.estimatedMinutes,
+        estimatedMinutes: form.estimatedMinutes,
         steps: form.steps.filter(s => s.trim()),
         keyQuestions: form.keyQuestions.filter(q => q.trim()),
         materials: form.materials,
+        deliverable: '',  // Not collected in modal
+        rubric: [],  // Not collected in modal
+        parentNotes: '',  // Not collected in modal
         tags: [form.category],
         links: form.links.filter(l => l.label && l.url),
         assignTo: form.assignTo,
         scheduleDate: form.scheduleDate,
         generateWorksheet: form.generateWorksheet,
+        searchYouTube: true,  // Enable YouTube video search
       };
       
-      const res = await fetch(endpoint, {
+      const res = await fetch('/api/activities', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
       if (res.ok) {
-        toast.success(`${form.activityType === 'lesson' ? 'Lesson' : 'Assignment'} created!`);
+        const result = await res.json();
+        const extras = [];
+        if (result.hasWorksheet) extras.push('worksheet generated');
+        if (result.videoCount > 0) extras.push(`${result.videoCount} videos found`);
+        
+        toast.success(`${form.activityType === 'lesson' ? 'Lesson' : 'Assignment'} created!`, {
+          description: extras.length > 0 ? extras.join(', ') : undefined,
+        });
         onClose();
         router.refresh();
       } else {

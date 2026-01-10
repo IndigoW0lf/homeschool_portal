@@ -205,26 +205,35 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
     try {
       setIsSubmitting(true);
       
-      // Use API endpoint for integrated worksheet + YouTube support
+      // Build ActivityInput for the unified API
+      // This uses the new /api/activities endpoint which handles:
+      // - YouTube video search
+      // - Worksheet generation
+      // - Proper scheduling
       const payload = {
         title: data.title,
-        type: data.type,
+        activityType: 'lesson' as const,  // ActivityForm creates lessons by default
+        category: data.type,
         description: data.description,
-        instructions: data.description,
-        estimated_minutes: data.estimatedMinutes,
-        steps: data.steps?.map(s => s.text).filter(Boolean),
+        estimatedMinutes: data.estimatedMinutes,
+        // Convert {text: string}[] to string[]
+        keyQuestions: data.keyQuestions?.map(q => q.text).filter(Boolean) || [],
+        steps: data.steps?.map(s => s.text).filter(Boolean) || [],
+        rubric: data.rubric?.map(r => r.text).filter(Boolean) || [],
+        materials: data.materials,
+        deliverable: data.deliverable,
+        parentNotes: data.parentNotes,
+        tags: data.tags,
         links: data.links,
         assignTo: data.assignTo,
         scheduleDate: data.date,
-        generateWorksheet: autoGenerateWorksheet || attachedWorksheets.length > 0,
-        // Additional data for lessons
-        keyQuestions: data.keyQuestions,
-        materials: data.materials,
-        parentNotes: data.parentNotes,
-        tags: data.tags,
+        // AI options
+        generateWorksheet: autoGenerateWorksheet,
+        attachedWorksheets: attachedWorksheets,
+        searchYouTube: true,  // Always search for videos
       };
       
-      const res = await fetch('/api/lessons', {
+      const res = await fetch('/api/activities', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

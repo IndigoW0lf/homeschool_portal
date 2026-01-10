@@ -1,6 +1,5 @@
 import { OpenAI } from 'openai';
 import { WorksheetData } from '@/types';
-import { createServerClient } from '@/lib/supabase/server';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
