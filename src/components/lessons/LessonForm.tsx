@@ -5,7 +5,7 @@ import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
-import { BookOpen, Clock, Link, Plus, X, EyeClosed, Question, Stack, Users } from '@phosphor-icons/react';
+import { BookOpen, Clock, Link, Plus, X, EyeClosed, Question, Stack, Users, MagicWand, Spinner } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
@@ -168,6 +168,58 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
   const tags = watch('tags');
   const assignedTo = watch('assignTo');
 
+  // AI Refinement state (only for edit mode)
+  const [refinementFeedback, setRefinementFeedback] = useState('');
+  const [isRefining, setIsRefining] = useState(false);
+
+  const handleRefine = async () => {
+    if (!refinementFeedback.trim()) return;
+    
+    setIsRefining(true);
+    try {
+      const currentData = {
+        title: watch('title'),
+        type: watch('type'),
+        description: watch('description'),
+        keyQuestions: watch('keyQuestions'),
+        materials: watch('materials'),
+        estimatedMinutes: watch('estimatedMinutes'),
+        parentNotes: watch('parentNotes'),
+        tags: watch('tags'),
+        links: watch('links'),
+      };
+
+      const res = await fetch('/api/refine-lesson', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lessonData: currentData,
+          feedback: refinementFeedback,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Refinement failed');
+
+      const { data } = await res.json();
+      
+      // Update form with refined data
+      reset({
+        ...currentData,
+        ...data,
+        assignTo: watch('assignTo'),
+        date: watch('date'),
+        isTemplate: watch('isTemplate'),
+      });
+
+      setRefinementFeedback('');
+      toast.success('Lesson refined! Review the changes below.');
+    } catch {
+      toast.error('Failed to refine. Please try again.');
+    } finally {
+      setIsRefining(false);
+    }
+  };
+
   const toggleStudent = (studentId: string) => {
     const current = assignedTo || [];
     if (current.includes(studentId)) {
@@ -287,6 +339,43 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
             </div>
          </div>
       </div>
+
+      {/* AI Refinement Section - shown when editing */}
+      {initialData?.id && (
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-xl border border-purple-200 dark:border-purple-800">
+          <div className="flex items-center gap-2 mb-3">
+            <MagicWand size={18} weight="fill" className="text-purple-500" />
+            <label className="text-sm font-semibold text-purple-700 dark:text-purple-300">
+              Refine with AI
+            </label>
+          </div>
+          <textarea 
+            value={refinementFeedback}
+            onChange={(e) => setRefinementFeedback(e.target.value)}
+            placeholder="Describe changes, e.g., 'Add a video about photosynthesis' or 'Include more hands-on activities' or 'Add 2 more discussion questions'"
+            rows={2}
+            className="w-full p-3 rounded-lg border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+          />
+          <button 
+            type="button"
+            onClick={handleRefine}
+            disabled={!refinementFeedback.trim() || isRefining}
+            className="mt-2 px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold text-sm hover:bg-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {isRefining ? (
+              <>
+                <Spinner size={16} className="animate-spin" />
+                Refining...
+              </>
+            ) : (
+              <>
+                <MagicWand size={16} />
+                Apply Changes
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* 1. CORE INFO */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">

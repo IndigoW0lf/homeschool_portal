@@ -49,6 +49,8 @@ interface FormData {
   description: string;
   estimatedMinutes: number;
   steps: string[];
+  keyQuestions: string[];
+  materials: string;
   links: LinkItem[];
   assignTo: string[];
   scheduleDate: string;
@@ -67,6 +69,8 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
     description: '',
     estimatedMinutes: 30,
     steps: [],
+    keyQuestions: [],
+    materials: '',
     links: [],
     assignTo: kids.map(k => k.id),
     scheduleDate: new Date().toISOString().split('T')[0],
@@ -108,6 +112,8 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
       updateForm({
         description: data.description || form.description,
         steps: data.steps || form.steps,
+        keyQuestions: data.keyQuestions || form.keyQuestions,
+        materials: data.materials || form.materials,
         estimatedMinutes: data.estimatedMinutes || form.estimatedMinutes,
         links: data.suggestedLinks?.length > 0 ? data.suggestedLinks : form.links,
       });
@@ -170,6 +176,9 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         instructions: form.description,
         estimated_minutes: form.estimatedMinutes,
         steps: form.steps.filter(s => s.trim()),
+        keyQuestions: form.keyQuestions.filter(q => q.trim()),
+        materials: form.materials,
+        tags: [form.category],
         links: form.links.filter(l => l.label && l.url),
         assignTo: form.assignTo,
         scheduleDate: form.scheduleDate,

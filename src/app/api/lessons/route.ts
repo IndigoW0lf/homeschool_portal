@@ -25,6 +25,11 @@ export async function POST(request: NextRequest) {
       instructions,
       estimated_minutes,
       links = [],
+      steps = [],
+      keyQuestions = [],
+      materials = '',
+      parentNotes = '',
+      tags = [],
       assignTo,
       scheduleDate,
       generateWorksheet: shouldGenerateWorksheet,
@@ -84,17 +89,29 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the lesson with enriched data
+    // Convert keyQuestions to the expected format if they're strings
+    const formattedKeyQuestions = keyQuestions.map((q: string | { text: string }) => 
+      typeof q === 'string' ? { text: q } : q
+    );
+    
+    // Convert steps to a readable format for parent_notes if they exist and parentNotes is empty
+    let finalParentNotes = parentNotes;
+    if (!finalParentNotes && steps.length > 0) {
+      const stepsText = steps.map((s: string, i: number) => `**Step ${i + 1}:** ${s}`).join('\n\n');
+      finalParentNotes = `## Lesson Steps\n\n${stepsText}`;
+    }
+    
     const lessonData = {
       title,
       type,
       description: description || instructions || '',
       instructions: instructions || description || '',
-      key_questions: [],
-      materials: '',
+      key_questions: formattedKeyQuestions,
+      materials: materials || '',
       links: enrichedLinks,
-      tags: [],
+      tags: tags || [],
       estimated_minutes: estimated_minutes || 30,
-      parent_notes: '',
+      parent_notes: finalParentNotes || '',
     };
 
     const newLesson = await createLesson(lessonData);
