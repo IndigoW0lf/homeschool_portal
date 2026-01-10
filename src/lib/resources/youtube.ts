@@ -97,6 +97,11 @@ interface YouTubeVideoDetails {
   statistics?: {
     viewCount?: string;
   };
+  status?: {
+    uploadStatus: string;
+    privacyStatus: string;
+    embeddable: boolean;
+  };
 }
 
 /**
@@ -164,11 +169,11 @@ export async function searchEducationalVideos(
     return [];
   }
 
-  // Step 2: Get video details (duration, view count)
+  // Step 2: Get video details (duration, view count, status)
   const videoIds = searchItems.map(item => item.id.videoId).join(',');
   
   const detailsParams = new URLSearchParams({
-    part: 'contentDetails,statistics',
+    part: 'contentDetails,statistics,status',
     id: videoIds,
     key: apiKey,
   });
@@ -176,8 +181,8 @@ export async function searchEducationalVideos(
   const detailsResponse = await fetch(`${YOUTUBE_API_BASE}/videos?${detailsParams}`);
   
   if (!detailsResponse.ok) {
-    console.error('[YouTube] Details fetch failed');
-    // Fall back to search results without duration filtering
+    console.error('[YouTube] Details fetch failed - aborting enrichment to avoid bad links');
+    return [];
   }
 
   const detailsData = await detailsResponse.json();
@@ -195,6 +200,17 @@ export async function searchEducationalVideos(
   for (const item of searchItems) {
     const videoId = item.id.videoId;
     const details = detailsMap.get(videoId);
+    
+    // STRICT CHECK: Video must exist in details endpoint to be valid
+    if (!details) {
+      continue;
+    }
+
+    // STRICT CHECK: Privacy and Embeddable status
+    if (details.status) {
+      if (details.status.privacyStatus !== 'public') continue;
+      if (details.status.embeddable === false) continue;
+    }
     
     // Parse duration and filter
     let durationMinutes = 0;
