@@ -1,10 +1,12 @@
 'use client';
 
-import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link, Printer } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link, Printer, MagicWand } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
-import { Lesson, AssignmentItemRow } from '@/types';
+import { Lesson, AssignmentItemRow, WorksheetData } from '@/types';
 import { MarkdownText } from '@/components/ui/MarkdownText';
-import { LunaTriggerButton } from '@/components/luna';
+import { WorksheetGeneratorModal } from '@/components/worksheets/WorksheetGeneratorModal';
+import { toast } from 'sonner';
 
 interface ItemDetailModalProps {
   isOpen: boolean;
@@ -13,7 +15,7 @@ interface ItemDetailModalProps {
   itemType: 'lesson' | 'assignment';
   onEdit: () => void;
   onDelete: () => void;
-  onSchedule: () => void;  // Changed from onClone
+  onSchedule: () => void;
 }
 
 export function ItemDetailModal({ 
@@ -25,29 +27,64 @@ export function ItemDetailModal({
   onDelete, 
   onSchedule 
 }: ItemDetailModalProps) {
+  const [worksheetModalOpen, setWorksheetModalOpen] = useState(false);
+  
   if (!isOpen || !item) return null;
 
   const isLesson = itemType === 'lesson';
   const lesson = isLesson ? (item as Lesson) : null;
   const assignment = !isLesson ? (item as AssignmentItemRow) : null;
 
-  // Parse lesson instructions if it's JSON
-  let lessonDetails = { description: '', keyQuestions: [] as string[], materials: '', links: [] as { label: string; url: string }[] };
-  if (lesson?.instructions) {
-    try {
-      const parsed = JSON.parse(lesson.instructions);
-      lessonDetails = { ...lessonDetails, ...parsed };
-    } catch {
-      // Plain text fallback
-      lessonDetails.description = lesson.instructions;
+  // Build lessonDetails from DIRECT lesson properties, with JSON parsing as fallback
+  let lessonDetails = { 
+    description: '', 
+    keyQuestions: [] as Array<string | { text: string }>, 
+    materials: '', 
+    links: [] as { label: string; url: string }[] 
+  };
+  
+  if (lesson) {
+    // Use direct properties first (the correct way)
+    lessonDetails.description = lesson.description || '';
+    lessonDetails.keyQuestions = lesson.keyQuestions || [];
+    lessonDetails.materials = lesson.materials || '';
+    lessonDetails.links = lesson.links || [];
+    
+    // If no description from direct field, try parsing instructions JSON (legacy fallback)
+    if (!lessonDetails.description && lesson.instructions) {
+      try {
+        const parsed = JSON.parse(lesson.instructions);
+        if (!lessonDetails.description && parsed.description) {
+          lessonDetails.description = parsed.description;
+        }
+        if (lessonDetails.keyQuestions.length === 0 && parsed.keyQuestions) {
+          lessonDetails.keyQuestions = parsed.keyQuestions;
+        }
+        if (!lessonDetails.materials && parsed.materials) {
+          lessonDetails.materials = parsed.materials;
+        }
+      } catch {
+        // Plain text instructions become description
+        if (!lessonDetails.description) {
+          lessonDetails.description = lesson.instructions;
+        }
+      }
     }
   }
+
+  const handleWorksheetAttach = (worksheet: WorksheetData) => {
+    toast.success('Worksheet created!', {
+      description: `"${worksheet.title || 'Worksheet'}" saved to your assignments.`
+    });
+    setWorksheetModalOpen(false);
+  };
 
   const handleDelete = () => {
     if (confirm(`Are you sure you want to delete "${item.title}"? This cannot be undone.`)) {
       onDelete();
     }
   };
+
 
   return (
     <div 
@@ -322,12 +359,13 @@ export function ItemDetailModal({
               </a>
             )}
             {isLesson && (
-              <LunaTriggerButton 
-                context="LESSON_WORKSHEET"
-                lessonId={lesson?.id}
-                label="Generate Worksheet"
+              <button
+                onClick={() => setWorksheetModalOpen(true)}
                 className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors flex items-center gap-2 font-medium"
-              />
+              >
+                <MagicWand size={18} weight="duotone" />
+                Generate Worksheet
+              </button>
             )}
             <button
               onClick={onSchedule}
@@ -346,6 +384,16 @@ export function ItemDetailModal({
           </div>
         </div>
       </div>
+
+      {/* Worksheet Generator Modal */}
+      {isLesson && lesson && (
+        <WorksheetGeneratorModal
+          isOpen={worksheetModalOpen}
+          onClose={() => setWorksheetModalOpen(false)}
+          contextTopic={`${lesson.title}: ${lessonDetails.description}`}
+          onAttach={handleWorksheetAttach}
+        />
+      )}
     </div>
   );
 }
