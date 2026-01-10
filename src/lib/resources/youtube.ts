@@ -202,6 +202,7 @@ export async function searchEducationalVideos(
 
   for (const item of searchItems) {
     const videoId = item.id.videoId;
+    if (!videoId) continue;
     const details = detailsMap.get(videoId);
     
     // STRICT CHECK: Video must exist in details endpoint to be valid

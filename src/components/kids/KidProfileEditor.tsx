@@ -113,6 +113,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
     hobbies: initialData.hobbies || '',
     favoriteColor: initialData.favoriteColor || '#ff6b6b',
     birthday: initialData.birthday || '',
+    gradeBand: initialData.gradeBand || '3-5',
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -135,6 +136,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           hobbies: formData.hobbies || null,
           favorite_color: formData.favoriteColor || null,
           birthday: formData.birthday || null,
+          grade_band: formData.gradeBand || null,
         })
         .eq('id', kidId);
 
@@ -163,6 +165,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       hobbies: initialData.hobbies || '',
       favoriteColor: initialData.favoriteColor || '#ff6b6b',
       birthday: initialData.birthday || '',
+      gradeBand: initialData.gradeBand || '3-5',
     });
     setIsEditing(false);
   };
@@ -209,6 +212,24 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
               </p>
               <p className="font-medium text-gray-900 dark:text-white">
                 {formatBirthday(formData.birthday as string)}
+              </p>
+            </div>
+          </div>
+
+        )}
+
+        {/* Grade Display */}
+        {formData.gradeBand && (
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
+              <GraduationCap size={24} weight="fill" className="text-white" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                📚 My Grade
+              </p>
+              <p className="font-medium text-gray-900 dark:text-white">
+                Grade {formData.gradeBand}
               </p>
             </div>
           </div>
@@ -318,6 +339,24 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           onChange={(e) => handleChange('birthday', e.target.value)}
           className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
         />
+      </div>
+
+      {/* Grade Selector */}
+      <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <GraduationCap size={20} className="text-blue-500" weight="fill" />
+          What grade are you in? 📚
+        </label>
+        <select
+          value={formData.gradeBand || '3-5'}
+          onChange={(e) => handleChange('gradeBand', e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+        >
+          <option value="K-2">K-2 (Ages 5-8)</option>
+          <option value="3-5">3-5 (Ages 8-11)</option>
+          <option value="6-8">6-8 (Ages 11-14)</option>
+          <option value="9-12">9-12 (Ages 14-18)</option>
+        </select>
       </div>
 
       {/* Profile Fields Form */}

@@ -6,6 +6,7 @@ import { format, parseISO } from 'date-fns';
 
 interface MoonManagerProps {
   kids: Array<{ id: string; name: string }>;
+  kidId?: string;
 }
 
 interface Transaction {
@@ -27,8 +28,8 @@ const SOURCE_LABELS: Record<string, string> = {
   purchase: '🛒 Shop purchase',
 };
 
-export function MoonManager({ kids }: MoonManagerProps) {
-  const [selectedKid, setSelectedKid] = useState(kids[0]?.id || '');
+export function MoonManager({ kids, kidId }: MoonManagerProps) {
+  const [selectedKid, setSelectedKid] = useState(kidId || kids[0]?.id || '');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [totalMoons, setTotalMoons] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,10 @@ export function MoonManager({ kids }: MoonManagerProps) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedKid]);
+
+  useEffect(() => {
+    if (kidId) setSelectedKid(kidId);
+  }, [kidId]);
 
   const fetchHistory = async () => {
     setIsLoading(true);
@@ -106,7 +111,7 @@ export function MoonManager({ kids }: MoonManagerProps) {
       </div>
 
       {/* Kid Selector */}
-      {kids.length > 1 && (
+      {!kidId && kids.length > 1 && (
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Select Kid

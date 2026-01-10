@@ -6,6 +6,7 @@ import { REWARD_TEMPLATES, REWARD_CATEGORIES, RewardTemplate } from '@/lib/rewar
 
 interface RewardManagerProps {
   kids: Array<{ id: string; name: string }>;
+  kidId?: string;
 }
 
 interface KidReward {
@@ -19,8 +20,8 @@ interface KidReward {
   is_active: boolean;
 }
 
-export function RewardManager({ kids }: RewardManagerProps) {
-  const [selectedKid, setSelectedKid] = useState(kids[0]?.id || '');
+export function RewardManager({ kids, kidId }: RewardManagerProps) {
+  const [selectedKid, setSelectedKid] = useState(kidId || kids[0]?.id || '');
   const [rewards, setRewards] = useState<KidReward[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
@@ -33,6 +34,10 @@ export function RewardManager({ kids }: RewardManagerProps) {
     if (selectedKid) fetchRewards();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedKid]);
+
+  useEffect(() => {
+    if (kidId) setSelectedKid(kidId);
+  }, [kidId]);
 
   const fetchRewards = async () => {
     setIsLoading(true);
@@ -118,7 +123,7 @@ export function RewardManager({ kids }: RewardManagerProps) {
       </div>
 
       {/* Kid Selector */}
-      {kids.length > 1 && (
+      {!kidId && kids.length > 1 && (
         <select
           value={selectedKid}
           onChange={(e) => setSelectedKid(e.target.value)}

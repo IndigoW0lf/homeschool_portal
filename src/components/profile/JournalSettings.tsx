@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 interface JournalSettingsProps {
   kids: Array<{ id: string; name: string }>;
+  kidId?: string;
 }
 
 const PROMPT_TYPES = [
@@ -25,14 +26,18 @@ interface KidJournalSettings {
   streakEnabled: boolean;
 }
 
-export function JournalSettings({ kids }: JournalSettingsProps) {
-  const [selectedKid, setSelectedKid] = useState(kids[0]?.id || '');
+export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
+  const [selectedKid, setSelectedKid] = useState(kidId || kids[0]?.id || '');
   const [settings, setSettings] = useState<KidJournalSettings>({
     journalEnabled: true,
     journalAllowSkip: true,
     journalPromptTypes: ['gratitude', 'reflection', 'creativity'],
     streakEnabled: true,
   });
+
+  useEffect(() => {
+    if (kidId) setSelectedKid(kidId);
+  }, [kidId]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -108,7 +113,7 @@ export function JournalSettings({ kids }: JournalSettingsProps) {
       </div>
 
       {/* Kid Selector */}
-      {kids.length > 1 && (
+      {!kidId && kids.length > 1 && (
         <select
           value={selectedKid}
           onChange={(e) => setSelectedKid(e.target.value)}
