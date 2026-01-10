@@ -33,8 +33,10 @@ interface CacheEntry {
 const searchCache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour cache
 
+const CACHE_VERSION = 'v2'; // Increment to invalidate old caches
+
 function getCacheKey(query: string, options: YouTubeSearchOptions): string {
-  return `${query}|${options.gradeLevel || ''}|${options.subject || ''}|${options.maxResults}`;
+  return `${CACHE_VERSION}|${query}|${options.gradeLevel || ''}|${options.subject || ''}|${options.maxResults}`;
 }
 
 function getFromCache(key: string): VideoResource[] | null {
@@ -148,6 +150,7 @@ export async function searchEducationalVideos(
     maxResults: String(Math.min(maxResults * 2, 10)), // Get extra to filter by duration
     safeSearch: 'strict',
     relevanceLanguage: 'en',
+    regionCode: 'US', // Ensure US-available content
     videoDuration: 'medium', // 4-20 minutes
     videoEmbeddable: 'true',
     key: apiKey,
