@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { createLesson, createAssignment, assignItemToSchedule } from '@/lib/supabase/mutations';
-import { generateWorksheet } from '@/lib/ai/worksheet-generator';
-import { searchEducationalVideos } from '@/lib/resources/youtube';
+import { enrichActivity } from '@/lib/ai/enrich-activity';
 
 /**
  * POST /api/lessons
- * Create a new lesson with optional auto-worksheet and YouTube enrichment
+ * 
+ * Create a new lesson with optional auto-worksheet and YouTube enrichment.
+ * 
+ * NOTE: This is a legacy route. New code should use /api/activities instead,
+ * which provides a unified interface for both lessons and assignments.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -35,61 +38,25 @@ export async function POST(request: NextRequest) {
       generateWorksheet: shouldGenerateWorksheet,
     } = body;
 
-    // Initialize links array with any provided links
-    let enrichedLinks = [...links];
-    let worksheetData = null;
+    console.log('[API/lessons] Creating lesson:', title);
 
-    // 1. Search for relevant YouTube videos if API key is configured
-    const ytApiKey = process.env.YOUTUBE_API_KEY;
-    console.log('[API] YouTube API key present:', !!ytApiKey);
-    
-    if (ytApiKey) {
-      try {
-        console.log('[API] Searching YouTube for:', title, '| Subject:', type);
-        const videos = await searchEducationalVideos(title, {
-          subject: type,
-          maxResults: 2,
-        });
-        
-        console.log('[API] YouTube search returned', videos.length, 'videos');
-        
-        // Add videos as links
-        for (const video of videos) {
-          enrichedLinks.push({
-            label: `📺 ${video.title}`,
-            url: video.url,
-          });
-        }
-        console.log('[API] Attached', videos.length, 'video links');
-      } catch (ytError) {
-        console.error('[API] YouTube search failed:', ytError);
-        if (ytError instanceof Error) {
-          console.error('[API] YouTube error message:', ytError.message);
-        }
-        // Continue without videos - don't fail the request
+    // Use centralized enrichment instead of inline logic
+    const enrichment = await enrichActivity(
+      { title, category: type, description: description || instructions },
+      { 
+        searchYouTube: true,
+        generateWorksheet: shouldGenerateWorksheet,
+        worksheetInstructions: description || instructions || '',
       }
-    } else {
-      console.log('[API] YouTube API not configured, skipping video search');
-    }
+    );
 
-    // 2. Generate worksheet if requested
-    if (shouldGenerateWorksheet) {
-      try {
-        console.log('[API] Generating worksheet for:', title);
-        worksheetData = await generateWorksheet(
-          title,
-          undefined, // age - could be inferred from kids later
-          description || instructions || ''
-        );
-        console.log('[API] Worksheet generated successfully');
-      } catch (wsError) {
-        console.error('[API] Worksheet generation failed:', wsError);
-        // Continue without worksheet - don't fail the request
-      }
-    }
+    // Combine provided links with enriched video links
+    const enrichedLinks = [
+      ...links,
+      ...enrichment.videoLinks,
+    ];
 
-    // Create the lesson with enriched data
-    // Convert keyQuestions to the expected format if they're strings
+    // Format keyQuestions to the expected format if they're strings
     const formattedKeyQuestions = keyQuestions.map((q: string | { text: string }) => 
       typeof q === 'string' ? { text: q } : q
     );
@@ -101,6 +68,7 @@ export async function POST(request: NextRequest) {
       finalParentNotes = `## Lesson Steps\n\n${stepsText}`;
     }
     
+    // Create the lesson with enriched data
     const lessonData = {
       title,
       type,
@@ -115,48 +83,54 @@ export async function POST(request: NextRequest) {
     };
 
     const newLesson = await createLesson(lessonData);
+    console.log('[API/lessons] Lesson created:', newLesson.id);
 
     // Schedule if date and kids provided
     if (newLesson.id && scheduleDate && assignTo && assignTo.length > 0) {
       await assignItemToSchedule('lesson', newLesson.id, scheduleDate, assignTo);
+      console.log('[API/lessons] Scheduled for', assignTo.length, 'kids');
     }
 
-    // 3. If worksheet was generated, also create an assignment for it
-    if (worksheetData) {
+    // If worksheet was generated, also create an assignment for it
+    let worksheetId: string | undefined;
+    if (enrichment.worksheet) {
       const worksheetAssignment = await createAssignment({
-        title: `📝 ${worksheetData.title || title + ' Worksheet'}`,
+        title: `📝 ${enrichment.worksheet.title || title + ' Worksheet'}`,
         type: 'worksheet',
-        deliverable: null,
+        deliverable: 'Completed worksheet',
         rubric: [],
         steps: [{ text: 'Complete the worksheet questions' }],
-        parent_notes: 'Auto-generated from lesson',
+        parent_notes: `Auto-generated from lesson: ${title}`,
         estimated_minutes: 15,
         tags: ['worksheet', 'ai-generated'],
         links: [],
         is_template: false,
-        worksheet_data: worksheetData,
+        worksheet_data: enrichment.worksheet,
       });
+
+      worksheetId = worksheetAssignment.id;
 
       // Schedule worksheet too if lesson was scheduled
       if (worksheetAssignment.id && scheduleDate && assignTo && assignTo.length > 0) {
         await assignItemToSchedule('assignment', worksheetAssignment.id, scheduleDate, assignTo);
       }
 
-      console.log('[API] Worksheet assignment created:', worksheetAssignment.id);
+      console.log('[API/lessons] Worksheet assignment created:', worksheetId);
     }
 
-    const videoCount = enrichedLinks.filter(l => l.url?.includes('youtube')).length;
-    console.log('[API] Final response - hasWorksheet:', !!worksheetData, '| videoCount:', videoCount);
+    const videoCount = enrichment.videoLinks.length;
+    console.log('[API/lessons] Complete - hasWorksheet:', !!enrichment.worksheet, '| videoCount:', videoCount);
 
     return NextResponse.json({ 
       success: true, 
       id: newLesson.id,
-      hasWorksheet: !!worksheetData,
+      hasWorksheet: !!enrichment.worksheet,
       videoCount,
+      worksheetId,
       message: 'Lesson created successfully'
     });
   } catch (error) {
-    console.error('[API] Error creating lesson:', error);
+    console.error('[API/lessons] Error creating lesson:', error);
     return NextResponse.json(
       { error: 'Failed to create lesson' },
       { status: 500 }

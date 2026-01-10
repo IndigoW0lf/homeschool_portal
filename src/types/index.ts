@@ -382,6 +382,54 @@ export interface ScheduleItemRow {
   resource_id: string | null;
 }
 
+/**
+ * Schedule item for display in UI components like DayModal.
+ * This extends ScheduleItemRow with denormalized data for easier rendering.
+ * 
+ * Includes both camelCase (new) and snake_case (legacy) properties
+ * for backwards compatibility with existing code.
+ */
+export interface ScheduleDisplayItem {
+  // Core schedule fields
+  id: string;
+  date: string;
+  studentId: string;
+  itemId: string;
+  itemType: 'lesson' | 'assignment';
+  status: 'pending' | 'in_progress' | 'completed';
+  sortOrder: number;
+  
+  // Denormalized display data
+  title: string;
+  type: string;  // Subject/category like "Math", "Science"
+  estimatedMinutes: number;
+  
+  // Legacy snake_case properties (for backwards compatibility)
+  // Some views receive raw DB data with these names
+  lesson_id?: string | null;
+  assignment_id?: string | null;
+  student_id?: string;
+  item_type?: 'lesson' | 'assignment' | 'resource' | 'custom';
+  item_id?: string | null;
+  estimated_minutes?: number;
+  
+  // Item details for preview (may be embedded or looked up)
+  details?: {
+    description?: string;
+    instructions?: string;
+    keyQuestions?: Array<string | { text: string }>;
+    key_questions?: Array<string | { text: string }>;
+    steps?: Array<string | { text: string }>;
+    rubric?: Array<string | { text: string }>;
+    materials?: string;
+    deliverable?: string;
+    links?: Array<{ label: string; url: string }>;
+    tags?: string[];
+    parentNotes?: string;
+    parent_notes?: string;
+  };
+}
+
 export interface ResourceRow {
   id: string;
   category: string;

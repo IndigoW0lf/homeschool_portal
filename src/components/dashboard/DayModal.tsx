@@ -8,22 +8,18 @@ import { X, CheckCircle, Circle, Plus, Copy, Sparkle, Trash, DotsSixVertical, Pe
 import { cn } from '@/lib/utils';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { toggleScheduleItemComplete, deleteScheduleItemAction, assignItemToSchedule } from '@/lib/supabase/mutations';
-import { Kid, Lesson, AssignmentItemRow } from '@/types';
+import { Kid, Lesson, AssignmentItemRow, ScheduleDisplayItem } from '@/types';
 
 interface DayModalProps {
   date: Date;
   isOpen: boolean;
   onClose: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schedule?: any[];
+  schedule?: ScheduleDisplayItem[];
   students?: Kid[];
   lessons?: Lesson[];
   assignments?: AssignmentItemRow[];
-  filterStudentId?: string | null; // Filter items by this student, null = show all (grouped)
+  filterStudentId?: string | null;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ScheduleItem = any;
 
 export function DayModal({ date, isOpen, onClose, schedule = [], students = [], lessons = [], assignments = [], filterStudentId = null }: DayModalProps) {
 
@@ -32,8 +28,8 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
   const [variationText, setVariationText] = useState('');
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [pickerType, setPickerType] = useState<'lesson' | 'assignment' | null>(null);
-  const [selectedKids, setSelectedKids] = useState<string[]>(students.map(s => s.id)); // Default to all 
-  const [viewingItem, setViewingItem] = useState<ScheduleItem | null>(null); // Item detail view 
+  const [selectedKids, setSelectedKids] = useState<string[]>(students.map(s => s.id));
+  const [viewingItem, setViewingItem] = useState<ScheduleDisplayItem | null>(null);
 
   // Reset selectedKids when students change
   const toggleKidSelection = (kidId: string) => {
@@ -47,14 +43,11 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
   if (!isOpen) return null;
 
   const dateStr = format(date, 'yyyy-MM-dd');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const allItems = schedule.filter((s: any) => s.date === dateStr);
+  const allItems = schedule.filter(s => s.date === dateStr);
   
   // Filter items by student if filter is set
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const items = filterStudentId 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ? allItems.filter((i: any) => i.studentId === filterStudentId)
+    ? allItems.filter(i => i.studentId === filterStudentId)
     : allItems;
 
   // Get filtered students list
@@ -64,13 +57,13 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
 
   // Group by student for grouped display
   const studentSchedules = displayStudents.map(student => {
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-     const myItems = items.filter((i: any) => i.studentId === student.id);
+     const myItems = items.filter(i => i.studentId === student.id);
      return {
         student,
         items: myItems
      };
   });
+
 
   const handleCloneWithVariation = (itemId: string) => {
     setActiveVariationId(itemId);
