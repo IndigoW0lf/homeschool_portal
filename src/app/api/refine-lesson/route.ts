@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { OpenAI } from 'openai';
+import { enrichActivity } from '@/lib/ai/enrich-activity';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -55,11 +56,12 @@ interface LessonData {
 interface RefineRequest {
   lessonData: LessonData;
   feedback: string;
+  searchYouTube?: boolean;  // Option to search for videos
 }
 
 /**
  * POST /api/refine-lesson
- * Refine an existing lesson based on user feedback
+ * Refine an existing lesson based on user feedback, with optional YouTube enrichment
  */
 export async function POST(request: NextRequest) {
   try {
@@ -71,7 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: RefineRequest = await request.json();
-    const { lessonData, feedback } = body;
+    const { lessonData, feedback, searchYouTube = true } = body;  // Default to true
 
     if (!lessonData || !feedback) {
       return NextResponse.json(
@@ -80,8 +82,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('[API] Refining lesson:', lessonData.title);
-    console.log('[API] User feedback:', feedback);
+    console.log('[API/refine-lesson] Refining lesson:', lessonData.title);
+    console.log('[API/refine-lesson] User feedback:', feedback);
 
     // Normalize keyQuestions to strings for the prompt
     const normalizedLesson = {
@@ -123,14 +125,47 @@ Please return the refined lesson as valid JSON.
       refined.keyQuestions = refined.keyQuestions.map((q: string) => ({ text: q }));
     }
     
-    console.log('[API] Lesson refined successfully');
+    console.log('[API/refine-lesson] AI refinement complete');
+
+    // Search for YouTube videos based on the refined lesson
+    let videoCount = 0;
+    if (searchYouTube) {
+      console.log('[API/refine-lesson] Searching for YouTube videos...');
+      const enrichment = await enrichActivity(
+        { 
+          title: refined.title, 
+          category: refined.type, 
+          description: refined.description 
+        },
+        { 
+          searchYouTube: true, 
+          generateWorksheet: false  // Don't generate worksheets during refine
+        }
+      );
+      
+      if (enrichment.videoLinks.length > 0) {
+        // Merge video links with any existing links
+        const existingLinks = refined.links || [];
+        const existingUrls = new Set(existingLinks.map((l: { url: string }) => l.url));
+        
+        // Only add videos that aren't already in the links
+        const newVideos = enrichment.videoLinks.filter(v => !existingUrls.has(v.url));
+        refined.links = [...existingLinks, ...newVideos];
+        videoCount = newVideos.length;
+        
+        console.log('[API/refine-lesson] Added', videoCount, 'YouTube videos');
+      }
+    }
+
+    console.log('[API/refine-lesson] Done');
 
     return NextResponse.json({
       success: true,
       data: refined,
+      videoCount,  // Tell the client how many videos were added
     });
   } catch (error) {
-    console.error('[API] Error refining lesson:', error);
+    console.error('[API/refine-lesson] Error refining lesson:', error);
     return NextResponse.json(
       { error: 'Failed to refine lesson' },
       { status: 500 }
