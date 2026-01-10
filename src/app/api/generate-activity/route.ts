@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { OpenAI } from 'openai';
+import { enrichActivity } from '@/lib/ai/enrich-activity';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -16,10 +17,7 @@ Generate a complete activity based on the provided title, category, and context.
   "steps": ["Step 1 text", "Step 2 text", ...],
   "keyQuestions": ["Discussion question 1", "Discussion question 2", ...],
   "materials": "Comma-separated list of materials needed",
-  "estimatedMinutes": number (15, 30, 45, or 60),
-  "suggestedLinks": [
-    { "label": "Resource name", "url": "https://example.com" }
-  ]
+  "estimatedMinutes": number (15, 30, 45, or 60)
 }
 
 **Guidelines:**
@@ -29,7 +27,6 @@ Generate a complete activity based on the provided title, category, and context.
 - Include 3-5 clear, actionable steps
 - Include 2-4 thought-provoking discussion questions
 - Keep materials simple and commonly available at home
-- Only include suggestedLinks if you know real, educational URLs (otherwise return empty array)
 
 **Grade Level Guidance:**
 - K-2: Simple vocabulary, hands-on activities, short duration (15-20 min)
@@ -38,15 +35,17 @@ Generate a complete activity based on the provided title, category, and context.
 - 9-12: Complex analysis, independent work, extended duration (45-60 min)
 
 Be creative, engaging, and practical for a homeschool setting.
+Do NOT include any links or URLs in your response - those will be added separately.
 `;
 
 interface GenerateRequest {
   title: string;
   category: string;
   activityType: 'lesson' | 'assignment';
-  description?: string; // User's initial description/notes to incorporate
+  description?: string;
   kidNames?: string[];
   gradeLevel?: string;
+  searchYouTube?: boolean;  // Whether to search for YouTube videos
 }
 
 interface GeneratedActivity {
@@ -55,12 +54,12 @@ interface GeneratedActivity {
   keyQuestions: string[];
   materials: string;
   estimatedMinutes: number;
-  suggestedLinks: { label: string; url: string }[];
 }
 
 /**
  * POST /api/generate-activity
- * Generate activity content using AI based on title and context
+ * Generate activity content using AI based on title and context,
+ * with optional YouTube video enrichment
  */
 export async function POST(request: NextRequest) {
   try {
@@ -79,6 +78,7 @@ export async function POST(request: NextRequest) {
       description,
       kidNames,
       gradeLevel,
+      searchYouTube = true,  // Default to true
     } = body;
 
     if (!title) {
@@ -95,7 +95,7 @@ ${kidNames?.length ? `Students: ${kidNames.join(', ')}` : ''}
 ${description ? `User's Notes/Description: ${description}` : ''}
 `.trim();
 
-    console.log('[API] Generating activity:', { title, category, activityType, gradeLevel });
+    console.log('[API/generate-activity] Generating activity:', { title, category, activityType, gradeLevel });
 
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
@@ -114,21 +114,46 @@ ${description ? `User's Notes/Description: ${description}` : ''}
 
     const generated: GeneratedActivity = JSON.parse(content);
     
-    console.log('[API] Activity generated successfully:', {
+    console.log('[API/generate-activity] AI generation complete:', {
       stepsCount: generated.steps?.length,
       questionsCount: generated.keyQuestions?.length,
       estimatedMinutes: generated.estimatedMinutes,
     });
 
+    // Enrich with YouTube videos
+    let suggestedLinks: { label: string; url: string }[] = [];
+    let videoCount = 0;
+    
+    if (searchYouTube) {
+      console.log('[API/generate-activity] Searching for YouTube videos...');
+      const enrichment = await enrichActivity(
+        { title, category, description: generated.description },
+        { searchYouTube: true, generateWorksheet: false }
+      );
+      
+      if (enrichment.videoLinks.length > 0) {
+        suggestedLinks = enrichment.videoLinks;
+        videoCount = enrichment.videoLinks.length;
+        console.log('[API/generate-activity] Found', videoCount, 'YouTube videos');
+      } else if (enrichment.videoError) {
+        console.log('[API/generate-activity] YouTube search failed:', enrichment.videoError);
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      data: generated,
+      data: {
+        ...generated,
+        suggestedLinks,
+      },
+      videoCount,
     });
   } catch (error) {
-    console.error('[API] Error generating activity:', error);
+    console.error('[API/generate-activity] Error generating activity:', error);
     return NextResponse.json(
       { error: 'Failed to generate activity' },
       { status: 500 }
     );
   }
 }
+
