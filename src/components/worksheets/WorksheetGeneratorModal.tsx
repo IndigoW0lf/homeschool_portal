@@ -104,8 +104,17 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white dark:bg-gray-900 w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95">
+    <div 
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
+      onClick={(e) => {
+        e.stopPropagation();  // Prevent clicks from bubbling to parent modals
+        onClose();
+      }}
+    >
+      <div 
+        className="bg-white dark:bg-gray-900 w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95"
+        onClick={(e) => e.stopPropagation()}  // Prevent clicks inside modal from closing it
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
