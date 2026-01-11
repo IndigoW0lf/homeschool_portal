@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lightning, Play, Clock, Shuffle, CaretDown, CaretUp, Sparkle, CheckCircle } from '@phosphor-icons/react';
+import { Lightning, Play, Clock, Shuffle, CaretDown, CaretUp, Sparkle, CheckCircle, CalendarBlank, Palette, Books, MagnifyingGlass, PersonSimpleRun } from '@phosphor-icons/react';
+import type { Icon } from '@phosphor-icons/react';
 import { QuickStartTemplate, QUICK_START_TEMPLATES, getRandomTemplate, DAILY_LINEUP_SUGGESTION } from '@/lib/templates/quick-start';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -15,13 +16,13 @@ interface QuickStartPanelProps {
 
 type CategoryFilter = 'all' | 'daily' | 'creative' | 'academic' | 'exploration' | 'movement';
 
-const CATEGORY_LABELS: Record<CategoryFilter, string> = {
-  all: '✨ All',
-  daily: '📅 Daily',
-  creative: '🎨 Creative',
-  academic: '📚 Academic',
-  exploration: '🔍 Exploration',
-  movement: '🏃 Movement',
+const CATEGORY_CONFIG: Record<CategoryFilter, { label: string; Icon: Icon }> = {
+  all: { label: 'All', Icon: Sparkle },
+  daily: { label: 'Daily', Icon: CalendarBlank },
+  creative: { label: 'Creative', Icon: Palette },
+  academic: { label: 'Academic', Icon: Books },
+  exploration: { label: 'Exploration', Icon: MagnifyingGlass },
+  movement: { label: 'Movement', Icon: PersonSimpleRun },
 };
 
 export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStartPanelProps) {
@@ -166,20 +167,24 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
 
       {/* Category filter */}
       <div className="flex gap-1 p-2 overflow-x-auto border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-        {(Object.keys(CATEGORY_LABELS) as CategoryFilter[]).map(cat => (
-          <button
-            key={cat}
-            onClick={() => setCategory(cat)}
-            className={cn(
-              "px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-colors",
-              category === cat
-                ? "bg-purple-500 text-white"
-                : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-            )}
-          >
-            {CATEGORY_LABELS[cat]}
-          </button>
-        ))}
+        {(Object.keys(CATEGORY_CONFIG) as CategoryFilter[]).map(cat => {
+          const config = CATEGORY_CONFIG[cat];
+          return (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={cn(
+                "px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-colors flex items-center gap-1",
+                category === cat
+                  ? "bg-purple-500 text-white"
+                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+              )}
+            >
+              <config.Icon size={12} weight="bold" />
+              {config.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Templates grid */}
