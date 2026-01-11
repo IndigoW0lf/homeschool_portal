@@ -106,7 +106,7 @@ export function BadgeUnlockModal({ badgeId, onClose }: BadgeUnlockModalProps) {
         <div className="inline-block px-3 py-1 rounded-full bg-purple-800/50 text-purple-300 text-xs font-medium mb-6">
           {badge.category === 'milestone' && '🏆 Milestone Achievement'}
           {badge.category === 'subject' && '📚 Subject Mastery'}
-          {badge.category === 'identity' && '🌟 Identity Badge'}
+          {badge.category === 'special' && '🌟 Special Achievement'}
         </div>
         
         {/* Continue button */}

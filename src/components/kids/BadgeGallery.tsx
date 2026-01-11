@@ -1,63 +1,121 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Lock } from '@phosphor-icons/react';
-import { Badge, ALL_BADGES, MILESTONE_BADGES, READING_BADGES, WRITING_BADGES, MATH_BADGES, SCIENCE_BADGES, IDENTITY_BADGES } from '@/lib/badges';
+import { Lock, Medal, Star } from '@phosphor-icons/react';
+import { 
+  Badge, 
+  ALL_BADGES, 
+  MILESTONE_BADGES, 
+  SUBJECT_BADGE_GROUPS,
+  SPECIAL_BADGES,
+  getEarnedMilestoneBadges,
+  getEarnedSubjectBadges,
+  getEarnedStreakBadges,
+  getEarnedJournalBadges,
+  getBadgeById
+} from '@/lib/badges';
 import { getStars, getUnlocks } from '@/lib/progressState';
 import { BadgeUnlockModal } from './BadgeUnlockModal';
 
 interface BadgeGalleryProps {
   kidId: string;
+  subjectCounts?: Record<string, number>;
+  currentStreak?: number;
+  bestStreak?: number;
+  journalCount?: number;
+  featuredBadgeId?: string | null;
+  onSetFeatured?: (badgeId: string) => void;
 }
 
 interface BadgeCardProps {
   badge: Badge;
   isEarned: boolean;
+  progress?: { current: number; target: number };
+  isFeatured?: boolean;
+  onSetFeatured?: () => void;
 }
 
-function BadgeCard({ badge, isEarned }: BadgeCardProps) {
+function BadgeCard({ badge, isEarned, progress, isFeatured, onSetFeatured }: BadgeCardProps) {
+  const [showTooltip, setShowTooltip] = useState(false);
   const Icon = badge.icon;
   
   return (
     <div 
-      className={`
-        relative p-3 rounded-xl border-2 transition-all text-center
-        ${isEarned 
-          ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm' 
-          : 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 opacity-60'
-        }
-      `}
-      title={isEarned ? badge.description : `Locked: ${badge.description}`}
+      className="relative"
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
     >
-      {/* Lock overlay for unearned badges */}
-      {!isEarned && (
-        <div className="absolute top-1 right-1">
-          <Lock size={12} weight="fill" className="text-gray-400" />
+      <div 
+        className={`
+          relative p-3 rounded-xl border-2 transition-all text-center cursor-pointer
+          ${isEarned 
+            ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md' 
+            : 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 opacity-60'
+          }
+          ${isFeatured ? 'ring-2 ring-yellow-400 ring-offset-2 dark:ring-offset-gray-900' : ''}
+        `}
+        onClick={() => isEarned && onSetFeatured?.()}
+      >
+        {/* Lock overlay for unearned badges */}
+        {!isEarned && (
+          <div className="absolute top-1 right-1">
+            <Lock size={12} weight="fill" className="text-gray-400" />
+          </div>
+        )}
+        
+        {/* Featured star */}
+        {isFeatured && (
+          <div className="absolute -top-1 -right-1">
+            <Star size={16} weight="fill" className="text-yellow-400" />
+          </div>
+        )}
+        
+        {/* Badge Icon */}
+        <div className={`
+          w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-2
+          ${isEarned 
+            ? 'bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30' 
+            : 'bg-gray-200 dark:bg-gray-700'
+          }
+        `}>
+          <Icon 
+            size={24} 
+            weight={isEarned ? 'fill' : 'regular'} 
+            className={isEarned ? badge.color : 'text-gray-400 dark:text-gray-500'} 
+          />
         </div>
-      )}
-      
-      {/* Badge Icon */}
-      <div className={`
-        w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-2
-        ${isEarned 
-          ? 'bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30' 
-          : 'bg-gray-200 dark:bg-gray-700'
-        }
-      `}>
-        <Icon 
-          size={24} 
-          weight={isEarned ? 'fill' : 'regular'} 
-          className={isEarned ? badge.color : 'text-gray-400 dark:text-gray-500'} 
-        />
+        
+        {/* Badge Name */}
+        <p className={`
+          text-xs font-medium truncate
+          ${isEarned ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}
+        `}>
+          {badge.name}
+        </p>
       </div>
       
-      {/* Badge Name */}
-      <p className={`
-        text-xs font-medium truncate
-        ${isEarned ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}
-      `}>
-        {badge.name}
-      </p>
+      {/* Tooltip */}
+      {showTooltip && (
+        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-gray-900 dark:bg-gray-700 rounded-lg shadow-lg text-center">
+          <p className="text-white text-sm font-semibold mb-1">{badge.name}</p>
+          <p className="text-gray-300 text-xs mb-2">{badge.description}</p>
+          {progress && !isEarned && (
+            <div>
+              <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden mb-1">
+                <div 
+                  className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                  style={{ width: `${Math.min(100, (progress.current / progress.target) * 100)}%` }}
+                />
+              </div>
+              <p className="text-gray-400 text-xs">{progress.current} / {progress.target}</p>
+            </div>
+          )}
+          {isEarned && onSetFeatured && (
+            <p className="text-yellow-400 text-xs mt-1">Click to set as featured</p>
+          )}
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45" />
+        </div>
+      )}
     </div>
   );
 }
@@ -66,28 +124,54 @@ interface BadgeSectionProps {
   title: string;
   badges: Badge[];
   earnedIds: string[];
+  subjectCounts?: Record<string, number>;
+  subjectKey?: string;
+  featuredBadgeId?: string | null;
+  onSetFeatured?: (badgeId: string) => void;
 }
 
-
-function BadgeSection({ title, badges, earnedIds }: BadgeSectionProps) {
+function BadgeSection({ title, badges, earnedIds, subjectCounts, subjectKey, featuredBadgeId, onSetFeatured }: BadgeSectionProps) {
   return (
     <div className="mb-6">
       <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
         {title}
       </h4>
-      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
-        {badges.map(badge => (
-          <BadgeCard 
-            key={badge.id} 
-            badge={badge} 
-            isEarned={earnedIds.includes(badge.id)} 
-          />
-        ))}
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2">
+        {badges.map(badge => {
+          const isEarned = earnedIds.includes(badge.id);
+          let progress: { current: number; target: number } | undefined;
+          
+          // Calculate progress for subject badges
+          if (badge.criteria?.type === 'subject' && badge.criteria.subject && badge.criteria.threshold && subjectCounts) {
+            const current = subjectCounts[badge.criteria.subject] || 0;
+            progress = { current, target: badge.criteria.threshold };
+          }
+          
+          return (
+            <BadgeCard 
+              key={badge.id} 
+              badge={badge} 
+              isEarned={isEarned}
+              progress={progress}
+              isFeatured={featuredBadgeId === badge.id}
+              onSetFeatured={onSetFeatured ? () => onSetFeatured(badge.id) : undefined}
+            />
+          );
+        })}
       </div>
     </div>
   );
 }
-export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & { subjectCounts?: Record<string, number> }) {
+
+export function BadgeGallery({ 
+  kidId, 
+  subjectCounts = {}, 
+  currentStreak = 0, 
+  bestStreak = 0, 
+  journalCount = 0,
+  featuredBadgeId,
+  onSetFeatured
+}: BadgeGalleryProps) {
   const [earnedBadgeIds, setEarnedBadgeIds] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [celebrateBadge, setCelebrateBadge] = useState<string | null>(null);
@@ -101,39 +185,20 @@ export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & 
       const unlocks = getUnlocks(kidId);
       const moons = getStars(kidId);
       
-      // Start with earned list
-      const earned = [...unlocks];
+      // Calculate earned badges using helper functions
+      const hasCompletedFirst = moons > 0 || unlocks.length > 0;
+      const milestoneBadges = getEarnedMilestoneBadges(moons, hasCompletedFirst);
+      const subjectBadges = getEarnedSubjectBadges(subjectCounts);
+      const streakBadges = getEarnedStreakBadges(currentStreak, bestStreak);
+      const journalBadges = getEarnedJournalBadges(journalCount);
       
-      // 1. Milestone Badges (Moons)
-      if (moons >= 10) earned.push('star-collector');
-      if (moons >= 50) earned.push('moonlit');
-      if (moons >= 100) earned.push('lunar-legend');
-      if (moons > 0 || unlocks.length > 0) earned.push('first-sprout');
-
-      // 2. Subject Badges (Counts)
-      // Reading
-      if ((subjectCounts['reading'] || 0) >= 25) earned.push('reading-25');
-      if ((subjectCounts['reading'] || 0) >= 50) earned.push('reading-50');
-      if ((subjectCounts['reading'] || 0) >= 75) earned.push('reading-75');
-      if ((subjectCounts['reading'] || 0) >= 100) earned.push('reading-100');
-
-      // Writing
-      if ((subjectCounts['writing'] || 0) >= 25) earned.push('writing-25');
-      if ((subjectCounts['writing'] || 0) >= 50) earned.push('writing-50');
-      if ((subjectCounts['writing'] || 0) >= 75) earned.push('writing-75');
-      if ((subjectCounts['writing'] || 0) >= 100) earned.push('writing-100');
-
-      // Math
-      if ((subjectCounts['math'] || 0) >= 25) earned.push('math-25');
-      if ((subjectCounts['math'] || 0) >= 50) earned.push('math-50');
-      if ((subjectCounts['math'] || 0) >= 75) earned.push('math-75');
-      if ((subjectCounts['math'] || 0) >= 100) earned.push('math-100');
-
-      // Science
-      if ((subjectCounts['science'] || 0) >= 25) earned.push('science-25');
-      if ((subjectCounts['science'] || 0) >= 50) earned.push('science-50');
-      if ((subjectCounts['science'] || 0) >= 75) earned.push('science-75');
-      if ((subjectCounts['science'] || 0) >= 100) earned.push('science-100');
+      const earned = [
+        ...unlocks,
+        ...milestoneBadges,
+        ...subjectBadges,
+        ...streakBadges,
+        ...journalBadges
+      ];
       
       const uniqueEarned = [...new Set(earned)];
       
@@ -161,7 +226,7 @@ export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & 
     const interval = setInterval(updateBadges, 2000);
     
     return () => clearInterval(interval);
-  }, [kidId, subjectCounts]);
+  }, [kidId, subjectCounts, currentStreak, bestStreak, journalCount, isClient]);
 
   const earnedCount = earnedBadgeIds.length;
   const totalCount = ALL_BADGES.length;
@@ -170,49 +235,45 @@ export function BadgeGallery({ kidId, subjectCounts = {} }: BadgeGalleryProps & 
     <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-          🏅 My Badges
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <Medal size={20} weight="duotone" className="text-amber-500" />
+          My Badges
         </h3>
         <span className="text-sm text-gray-500 dark:text-gray-400">
           {isClient ? earnedCount : 0} / {totalCount} collected
         </span>
       </div>
 
-      {/* Badge Sections */}
+      {/* Milestone Badges */}
       <BadgeSection 
         title="Milestones" 
         badges={MILESTONE_BADGES} 
-        earnedIds={earnedBadgeIds} 
+        earnedIds={earnedBadgeIds}
+        featuredBadgeId={featuredBadgeId}
+        onSetFeatured={onSetFeatured}
       />
       
-      <BadgeSection 
-        title="Reading" 
-        badges={READING_BADGES} 
-        earnedIds={earnedBadgeIds} 
-      />
+      {/* Subject Badges - dynamically rendered */}
+      {SUBJECT_BADGE_GROUPS.map(group => (
+        <BadgeSection 
+          key={group.key}
+          title={group.name} 
+          badges={group.badges} 
+          earnedIds={earnedBadgeIds}
+          subjectCounts={subjectCounts}
+          subjectKey={group.key}
+          featuredBadgeId={featuredBadgeId}
+          onSetFeatured={onSetFeatured}
+        />
+      ))}
       
+      {/* Special Badges */}
       <BadgeSection 
-        title="Writing" 
-        badges={WRITING_BADGES} 
-        earnedIds={earnedBadgeIds} 
-      />
-      
-      <BadgeSection 
-        title="Math & Logic" 
-        badges={MATH_BADGES} 
-        earnedIds={earnedBadgeIds} 
-      />
-      
-      <BadgeSection 
-        title="Science" 
-        badges={SCIENCE_BADGES} 
-        earnedIds={earnedBadgeIds} 
-      />
-      
-      <BadgeSection 
-        title="Collection" 
-        badges={IDENTITY_BADGES} 
-        earnedIds={earnedBadgeIds} 
+        title="Special Achievements" 
+        badges={SPECIAL_BADGES} 
+        earnedIds={earnedBadgeIds}
+        featuredBadgeId={featuredBadgeId}
+        onSetFeatured={onSetFeatured}     
       />
       
       {/* Badge unlock celebration modal */}
