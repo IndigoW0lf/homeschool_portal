@@ -53,6 +53,7 @@ export interface ChildContext {
   id: string;
   name: string;
   gradeBand: string | null;
+  grades?: string[];    // Array of grades
   interests: string[];  // From parent-stated notes, not inferred
 }
 
@@ -65,6 +66,7 @@ export interface FamilyContext {
     id: string;
     name: string;
     gradeBand: string | null;
+    grades?: string[];
     age?: number | null;  // Calculated from birthdate if available
     interests?: string[];
     learningStyle?: string | null;
@@ -190,7 +192,7 @@ export async function loadChildContext(
   // RLS enforces family ownership
   const { data, error } = await supabase
     .from('kids')
-    .select('id, name, grade_band')
+    .select('id, name, grade_band, grades')
     .eq('id', childId)
     .single();
   
@@ -205,6 +207,7 @@ export async function loadChildContext(
     id: data.id,
     name: data.name,
     gradeBand: data.grade_band,
+    grades: data.grades || [],
     interests: [], // Parent provides in message, not inferred
   };
 }
@@ -219,7 +222,7 @@ export async function loadFamilyContext(): Promise<FamilyContext | null> {
   // RLS automatically filters to only this family's kids
   const { data: kidsData, error } = await supabase
     .from('kids')
-    .select('id, name, grade_band, birthdate, bio')
+    .select('id, name, grade_band, grades, birthdate, bio')
     .order('name');
   
   if (error) {
@@ -249,6 +252,7 @@ export async function loadFamilyContext(): Promise<FamilyContext | null> {
       id: kid.id,
       name: kid.name,
       gradeBand: kid.grade_band,
+      grades: kid.grades || [],
       age,
       // Could parse interests from bio if they're listed there
       interests: [],
@@ -282,8 +286,9 @@ export function formatContextForPrompt(
   if (data.family && data.family.kids.length > 0) {
     lines.push('[Your Family]');
     data.family.kids.forEach(kid => {
-      const ageStr = kid.age ? `${kid.age} years old` : kid.gradeBand || 'age unknown';
-      lines.push(`- ${kid.name}: ${ageStr}`);
+      const gradeStr = kid.grades && kid.grades.length > 0 ? `Grades ${kid.grades.join(', ')}` : (kid.gradeBand || 'grade unknown');
+      const ageStr = kid.age ? `${kid.age} years old` : gradeStr;
+      lines.push(`- ${kid.name}: ${ageStr} (${gradeStr})`);
     });
     lines.push(''); // Empty line for separation
   }
@@ -319,7 +324,8 @@ export function formatContextForPrompt(
     case 'INTEREST_SPARK':
       if (data.child) {
         lines.push(`[Child: ${data.child.name}]`);
-        if (data.child.gradeBand) lines.push(`Grade: ${data.child.gradeBand}`);
+        const gradeStr = data.child.grades && data.child.grades.length > 0 ? data.child.grades.join(', ') : data.child.gradeBand;
+        if (gradeStr) lines.push(`Grade: ${gradeStr}`);
         if (data.child.interests.length > 0) {
           lines.push(`Known interests: ${data.child.interests.join(', ')}`);
         }

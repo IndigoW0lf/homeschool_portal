@@ -26,7 +26,11 @@ export function KidSwitcher({ kids }: KidSwitcherProps) {
           `}
         >
           <h3 className="text-xl font-bold">{kid.name}</h3>
-          <p className="text-sm opacity-80">Grade {kid.gradeBand}</p>
+          <p className="text-sm opacity-80">
+            {kid.grades && kid.grades.length > 0 
+              ? `Grades ${kid.grades.join(', ')}` 
+              : `Grade ${kid.gradeBand}`}
+          </p>
         </Link>
       ))}
     </div>

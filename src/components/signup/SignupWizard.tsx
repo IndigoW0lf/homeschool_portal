@@ -25,6 +25,7 @@ export interface SignupData {
   // Kid info
   kidName: string;
   gradeBand: string;
+  grades: string[];
   kidAvatarUrl: string;
   kidPin: string; // 4-digit PIN for kid access
   // Meta
@@ -37,6 +38,7 @@ const initialData: SignupData = {
   displayName: '',
   kidName: '',
   gradeBand: '3-5',
+  grades: [],
   kidAvatarUrl: '',
   kidPin: '',
   termsAccepted: false,

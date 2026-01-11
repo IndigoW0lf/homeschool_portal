@@ -71,6 +71,7 @@ export function KidManager({ kids }: KidManagerProps) {
           id: kidId,
           name: newKidName.trim(),
           grade_band: newKidGrade,
+          grades: [newKidGrade], // Initialize with selected band for now
           pin_hash: pinHash,
           user_id: user.id,
         });
@@ -196,7 +197,9 @@ export function KidManager({ kids }: KidManagerProps) {
                 {kid.name}
               </h4>
               <div className="flex items-center gap-3 text-sm text-gray-500">
-                {kid.gradeBand ? (
+                {kid.grades && kid.grades.length > 0 ? (
+                   <span className="flex items-center gap-1"><GraduationCap size={14} /> Grades {kid.grades.join(', ')}</span>
+                ) : kid.gradeBand ? (
                    <span className="flex items-center gap-1"><GraduationCap size={14} /> Grade {kid.gradeBand}</span>
                 ) : (
                    <span>No grade set</span>

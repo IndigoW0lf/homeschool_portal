@@ -11,7 +11,7 @@ import { QuickStartPanel } from './QuickStartPanel';
 interface ContentLibraryProps {
   lessons: Lesson[];
   assignments: AssignmentItemRow[];
-  kids: { id: string; name: string; gradeBand?: string }[];
+  kids: { id: string; name: string; gradeBand?: string; grades?: string[] }[];
   onViewLesson?: (id: string) => void;
   onViewAssignment?: (id: string) => void;
 }

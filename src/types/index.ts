@@ -5,6 +5,7 @@ export interface Kid {
   id: string;
   name: string;
   gradeBand: string;
+  grades?: string[]; // Array of grades (e.g. ['1', '2'])
   user_id?: string;
   familyId?: string; // Reference to family for connections
   // Profile fields
@@ -238,6 +239,7 @@ export interface KidRow {
   id: string;
   name: string;
   grade_band: string | null;
+  grades: string[] | null;
   user_id: string | null;
   pin_hash: string | null;
   avatar_url: string | null;
