@@ -117,16 +117,28 @@ export async function getKidSubjectCounts(kidId: string): Promise<Record<string,
     return {};
   }
   
-  // Normalize data into record
+  // Normalize data into record with expanded categories
   const counts: Record<string, number> = {};
   (data || []).forEach((row: { subject: string; count: number }) => {
-    // Map fuzzy matches to standard keys
-    let key = row.subject;
-    if (key.includes('read')) key = 'reading';
-    else if (key.includes('write')) key = 'writing';
+    // Map all subjects to display categories
+    let key = row.subject.toLowerCase();
+    
+    // Reading category (includes Language Arts)
+    if (key.includes('read') || key === 'language arts') key = 'reading';
+    // Writing category
+    else if (key.includes('writ')) key = 'writing';
+    // Math category
     else if (key.includes('math') || key.includes('logic')) key = 'math';
+    // Science category
     else if (key.includes('sci')) key = 'science';
-    else if (key.includes('life') || key.includes('skill')) key = 'life_skills';
+    // Social Studies category (includes History, Geography)
+    else if (key === 'social studies' || key.includes('history') || key.includes('geography')) key = 'social_studies';
+    // Arts category (Art + Music)
+    else if (key === 'art' || key === 'music') key = 'arts';
+    // Life Skills category (includes PE)
+    else if (key.includes('life') || key.includes('skill') || key === 'pe') key = 'life_skills';
+    // Electives catch-all (Foreign Language, Technology, Field Trip, Other)
+    else key = 'electives';
     
     counts[key] = (counts[key] || 0) + Number(row.count);
   });
@@ -203,13 +215,25 @@ export async function getActivityLogStats(kidId: string): Promise<{
     stats.totalEntries += 1;
     stats.totalMinutes += row.duration_minutes || 0;
     
-    // Normalize subject key
+    // Normalize subject key to display categories
     let key = (row.subject || 'other').toLowerCase();
+    
+    // Reading category (includes Language Arts)
     if (key.includes('read') || key === 'language arts') key = 'reading';
-    else if (key.includes('write')) key = 'writing';
+    // Writing category
+    else if (key.includes('writ')) key = 'writing';
+    // Math category
     else if (key.includes('math') || key.includes('logic')) key = 'math';
+    // Science category
     else if (key.includes('sci')) key = 'science';
+    // Social Studies category (includes History, Geography)
+    else if (key === 'social studies' || key.includes('history') || key.includes('geography')) key = 'social_studies';
+    // Arts category (Art + Music)
+    else if (key === 'art' || key === 'music') key = 'arts';
+    // Life Skills category (includes PE)
     else if (key.includes('life') || key.includes('skill') || key === 'pe') key = 'life_skills';
+    // Electives catch-all
+    else key = 'electives';
     
     stats.subjectMinutes[key] = (stats.subjectMinutes[key] || 0) + (row.duration_minutes || 0);
     stats.subjectCounts[key] = (stats.subjectCounts[key] || 0) + 1;

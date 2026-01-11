@@ -42,7 +42,10 @@ export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
     { key: 'writing', label: 'Writing', color: 'bg-blue-400', icon: '✏️' },
     { key: 'math', label: 'Math & Logic', color: 'bg-purple-400', icon: '🧮' },
     { key: 'science', label: 'Science', color: 'bg-green-400', icon: '🌱' },
+    { key: 'social_studies', label: 'Social Studies', color: 'bg-orange-400', icon: '🌍' },
+    { key: 'arts', label: 'Arts', color: 'bg-rose-400', icon: '🎨' },
     { key: 'life_skills', label: 'Life Skills', color: 'bg-pink-400', icon: '🏠' },
+    { key: 'electives', label: 'Electives', color: 'bg-teal-400', icon: '✨' },
   ];
 
   return (
