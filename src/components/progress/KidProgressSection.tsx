@@ -77,8 +77,8 @@ export function KidProgressSection({
 
       {/* Collapsible content */}
       <div className={cn(
-        "transition-all duration-300 overflow-hidden",
-        isExpanded ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
+        "transition-all duration-300",
+        isExpanded ? "opacity-100" : "max-h-0 overflow-hidden opacity-0"
       )}>
         <div className="p-4 space-y-4">
           {children}
