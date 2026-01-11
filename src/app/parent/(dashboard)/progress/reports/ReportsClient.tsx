@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { format, subDays, subMonths, startOfWeek, endOfWeek, startOfMonth, endOfMonth, parseISO } from 'date-fns';
-import { CaretLeft, Printer, Calendar, Clock, GraduationCap, FunnelSimple, ArrowLeft } from '@phosphor-icons/react';
+import { CaretLeft, Printer, Calendar, Clock, GraduationCap, FunnelSimple, ArrowLeft, BookOpen, Upload, Desktop } from '@phosphor-icons/react';
 import Link from 'next/link';
-import { fetchActivityLogForKids } from '@/app/actions/activityLog';
+import { fetchUnifiedActivities, type UnifiedActivityEntry } from '@/app/actions/activityLog';
 import { SUBJECTS } from '@/lib/activityLogConstants';
 
 interface Kid {
@@ -12,16 +12,13 @@ interface Kid {
   name: string;
 }
 
-interface ActivityLogEntry {
-  id: string;
-  kidId: string;
-  date: string;
-  subject: string;
-  title: string;
-  description: string | null;
-  durationMinutes: number | null;
-  source: string;
-}
+type ActivitySource = 'all' | 'manual' | 'imported' | 'in-app';
+
+const SOURCE_LABELS: Record<string, { label: string; color: string; icon: typeof BookOpen }> = {
+  'manual': { label: 'Logged', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400', icon: BookOpen },
+  'imported': { label: 'Imported', color: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400', icon: Upload },
+  'in-app': { label: 'In-App', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400', icon: Desktop },
+};
 
 type DatePreset = 'week' | 'month' | '3months' | 'year' | 'custom';
 
@@ -30,13 +27,14 @@ interface ReportsClientProps {
 }
 
 export function ReportsClient({ kids }: ReportsClientProps) {
-  const [entries, setEntries] = useState<ActivityLogEntry[]>([]);
+  const [entries, setEntries] = useState<UnifiedActivityEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [datePreset, setDatePreset] = useState<DatePreset>('month');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedKid, setSelectedKid] = useState<string>('all');
   const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [selectedSource, setSelectedSource] = useState<ActivitySource>('all');
   
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -80,7 +78,7 @@ export function ReportsClient({ kids }: ReportsClientProps) {
     async function loadEntries() {
       setLoading(true);
       const kidIds = selectedKid === 'all' ? kids.map(k => k.id) : [selectedKid];
-      const data = await fetchActivityLogForKids(kidIds, startDate, endDate);
+      const data = await fetchUnifiedActivities(kidIds, startDate, endDate);
       setEntries(data);
       setLoading(false);
     }
@@ -88,10 +86,12 @@ export function ReportsClient({ kids }: ReportsClientProps) {
     loadEntries();
   }, [startDate, endDate, selectedKid, kids]);
 
-  // Filter entries by subject
-  const filteredEntries = selectedSubject === 'all' 
-    ? entries 
-    : entries.filter(e => e.subject === selectedSubject);
+  // Filter entries by subject and source
+  const filteredEntries = entries.filter(e => {
+    if (selectedSubject !== 'all' && e.subject !== selectedSubject) return false;
+    if (selectedSource !== 'all' && e.source !== selectedSource) return false;
+    return true;
+  });
 
   // Calculate summary stats
   const summary = {
@@ -240,6 +240,21 @@ export function ReportsClient({ kids }: ReportsClientProps) {
               ))}
             </select>
           </div>
+
+          {/* Source Filter */}
+          <div>
+            <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Source</label>
+            <select
+              value={selectedSource}
+              onChange={(e) => setSelectedSource(e.target.value as ActivitySource)}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+            >
+              <option value="all">All Sources</option>
+              <option value="manual">Logged (Manual)</option>
+              <option value="imported">Imported (CSV)</option>
+              <option value="in-app">In-App Activities</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -306,17 +321,18 @@ export function ReportsClient({ kids }: ReportsClientProps) {
                 )}
                 <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Subject</th>
                 <th className="px-4 py-3 text-left font-medium text-gray-700 dark:text-gray-300">Activity</th>
-                <th className="px-4 py-3 text-right font-medium text-gray-700 dark:text-gray-300">Duration</th>
+                <th className="px-4 py-3 text-center font-medium text-gray-700 dark:text-gray-300">Source</th>
+                <th className="px-4 py-3 text-right font-medium text-gray-700 dark:text-gray-300">Duration/Grade</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-gray-500">Loading...</td>
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500">Loading...</td>
                 </tr>
               ) : filteredEntries.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-8 text-center text-gray-500">No activities found for this period</td>
+                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500">No activities found for this period</td>
                 </tr>
               ) : (
                 filteredEntries
@@ -336,8 +352,13 @@ export function ReportsClient({ kids }: ReportsClientProps) {
                           <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{entry.description}</div>
                         )}
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${SOURCE_LABELS[entry.source]?.color || 'bg-gray-100 text-gray-600'}`}>
+                          {SOURCE_LABELS[entry.source]?.label || entry.source}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 text-right text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                        {entry.durationMinutes ? formatDuration(entry.durationMinutes) : '-'}
+                        {entry.durationMinutes ? formatDuration(entry.durationMinutes) : entry.grade != null ? `${entry.grade}%` : '-'}
                       </td>
                     </tr>
                   ))
