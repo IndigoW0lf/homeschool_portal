@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
 import { formatDateString, getTodayInTimezone, getNowInTimezone } from '@/lib/dateUtils';
-import { ProgressCardWrapper, TodayCompletionSummary, ResourceSection } from '@/components';
+import { ProgressCardWrapper, ResourceSection } from '@/components';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { JournalCard } from '@/components/kids/JournalCard';
@@ -168,11 +168,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
             )}
           </div>
           
-          <TodayCompletionSummary
-            kidId={kidId}
-            date={viewDateString}
-            itemIds={todayItems.map(item => item.id)}
-          />
+
 
           <div className="space-y-4">
             {todayItems.length > 0 ? (

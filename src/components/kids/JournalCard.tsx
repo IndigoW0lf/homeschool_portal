@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { NotePencil, ArrowsClockwise, FastForward, Check, Sparkle } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { markAwarded, isAwarded } from '@/lib/progressState';
+import { awardStars } from '@/lib/supabase/mutations';
 
 interface JournalCardProps {
   kidId: string;

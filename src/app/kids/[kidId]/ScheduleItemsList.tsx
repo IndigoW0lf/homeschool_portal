@@ -9,6 +9,7 @@ import { MarkdownText } from '@/components/ui/MarkdownText';
 import { cn } from '@/lib/utils';
 import { isDone, setDone, hydrateDoneState } from '@/lib/storage';
 import { isAwarded, markAwarded } from '@/lib/progressState';
+import { awardStars } from '@/lib/supabase/mutations';
 
 interface ScheduleItem {
   id: string;
