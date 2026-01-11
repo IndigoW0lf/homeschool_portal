@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/browser';
 import { useRouter } from 'next/navigation';
 import { Kid } from '@/types';
+import { INDIVIDUAL_GRADES } from '@/lib/constants';
 
 interface KidProfileEditorProps {
   kidId: string;
@@ -20,6 +21,7 @@ interface ProfileField {
   placeholder: string;
   multiline?: boolean;
 }
+
 
 const PROFILE_FIELDS: ProfileField[] = [
   {
@@ -114,12 +116,23 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
     favoriteColor: initialData.favoriteColor || '#ff6b6b',
     birthday: initialData.birthday || '',
     gradeBand: initialData.gradeBand || '3-5',
+    grades: initialData.grades || [],
   });
   const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (key: keyof Kid, value: string) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
+
+  const toggleGrade = (grade: string) => {
+    const currentGrades = formData.grades || [];
+    const newGrades = currentGrades.includes(grade)
+      ? currentGrades.filter(g => g !== grade)
+      : [...currentGrades, grade];
+    setFormData(prev => ({ ...prev, grades: newGrades }));
+  };
+
+
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -137,6 +150,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           favorite_color: formData.favoriteColor || null,
           birthday: formData.birthday || null,
           grade_band: formData.gradeBand || null,
+          grades: formData.grades || [],
         })
         .eq('id', kidId);
 
@@ -166,6 +180,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       favoriteColor: initialData.favoriteColor || '#ff6b6b',
       birthday: initialData.birthday || '',
       gradeBand: initialData.gradeBand || '3-5',
+      grades: initialData.grades || [],
     });
     setIsEditing(false);
   };
@@ -219,7 +234,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
         )}
 
         {/* Grade Display */}
-        {formData.gradeBand && (
+        {(formData.grades?.length || formData.gradeBand) && (
           <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
               <GraduationCap size={24} weight="fill" className="text-white" />
@@ -229,7 +244,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
                 📚 My Grade
               </p>
               <p className="font-medium text-gray-900 dark:text-white">
-                Grade {formData.gradeBand}
+                Grade {formData.grades && formData.grades.length > 0 ? formData.grades.join(', ') : formData.gradeBand}
               </p>
             </div>
           </div>
@@ -345,18 +360,27 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
         <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           <GraduationCap size={20} className="text-blue-500" weight="fill" />
-          What grade are you in? 📚
+          What grade are you in? 📚 <span className="text-xs font-normal text-gray-400">(Multi-select!)</span>
         </label>
-        <select
-          value={formData.gradeBand || '3-5'}
-          onChange={(e) => handleChange('gradeBand', e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
-        >
-          <option value="K-2">K-2 (Ages 5-8)</option>
-          <option value="3-5">3-5 (Ages 8-11)</option>
-          <option value="6-8">6-8 (Ages 11-14)</option>
-          <option value="9-12">9-12 (Ages 14-18)</option>
-        </select>
+        <div className="grid grid-cols-5 gap-2">
+           {INDIVIDUAL_GRADES.map((grade) => {
+             const isSelected = formData.grades?.includes(grade);
+             return (
+               <button
+                 key={grade}
+                 onClick={() => toggleGrade(grade)}
+                 className={`
+                   px-2 py-2 rounded-lg text-sm font-medium border transition-all
+                   ${isSelected 
+                     ? "border-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20 text-[var(--ember-600)] dark:text-[var(--ember-400)] shadow-sm"
+                     : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-800"}
+                 `}
+               >
+                 {grade}
+               </button>
+             );
+           })}
+        </div>
       </div>
 
       {/* Profile Fields Form */}

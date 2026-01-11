@@ -15,12 +15,8 @@ interface AddKidStepProps {
   userId: string | null;
 }
 
-const GRADE_BANDS = [
-  { value: 'K-2', label: 'K-2 (Ages 5-8)' },
-  { value: '3-5', label: '3-5 (Ages 8-11)' },
-  { value: '6-8', label: '6-8 (Ages 11-14)' },
-  { value: '9-12', label: '9-12 (Ages 14-18)' },
-];
+import { INDIVIDUAL_GRADES } from '@/lib/constants';
+
 
 // Cute avatar options using DiceBear
 // Styles: lorelei (illustrated), adventurer-neutral (cartoon), thumbs (hand emoji), fun-emoji (cute emojis)
@@ -63,7 +59,11 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
 
   // PIN must be exactly 4 digits
   const isPinValid = /^\d{4}$/.test(data.kidPin);
-  const canContinue = data.kidName && data.gradeBand && isPinValid;
+  
+  // Need at least one grade selected
+  const hasGrades = data.grades && data.grades.length > 0;
+  // Legacy support or new support
+  const canContinue = data.kidName && (hasGrades || data.gradeBand) && isPinValid;
 
   const handlePinChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return; // Only digits
@@ -85,6 +85,15 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
     }
   };
 
+  const toggleGrade = (grade: string) => {
+    const currentGrades = data.grades || [];
+    const newGrades = currentGrades.includes(grade)
+      ? currentGrades.filter(g => g !== grade)
+      : [...currentGrades, grade];
+    updateData({ grades: newGrades });
+  };
+  
+
   const handleAddKid = async () => {
     if (!canContinue || !userId) return;
 
@@ -104,7 +113,9 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
         .insert({
           id: kidId,
           name: data.kidName,
-          grade_band: data.gradeBand,
+          // Store both for backward compat until migration full
+          grade_band: data.gradeBand || (data.grades?.[0] ? `${data.grades[0]}+` : null), 
+          grades: data.grades || [],
           user_id: userId,
           pin_hash: pinHash,
         });
@@ -159,27 +170,30 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
           />
         </div>
 
-        {/* Grade Band */}
+        {/* Grade Multi-Select */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Grade level *
+            Grade level(s) * <span className="text-xs font-normal text-gray-500">(Select all that apply)</span>
           </label>
-          <div className="grid grid-cols-2 gap-2">
-            {GRADE_BANDS.map((band) => (
-              <button
-                key={band.value}
-                type="button"
-                onClick={() => updateData({ gradeBand: band.value })}
-                className={cn(
-                  "px-3 py-2 rounded-lg text-sm font-medium border transition-all",
-                  data.gradeBand === band.value
-                    ? "border-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20 text-[var(--ember-600)] dark:text-[var(--ember-400)]"
-                    : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
-                )}
-              >
-                {band.label}
-              </button>
-            ))}
+          <div className="grid grid-cols-5 gap-2">
+            {INDIVIDUAL_GRADES.map((grade) => {
+               const isSelected = data.grades?.includes(grade);
+               return (
+                  <button
+                    key={grade}
+                    type="button"
+                    onClick={() => toggleGrade(grade)}
+                    className={cn(
+                      "px-2 py-2 rounded-lg text-sm font-medium border transition-all",
+                      isSelected
+                        ? "border-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20 text-[var(--ember-600)] dark:text-[var(--ember-400)] shadow-sm"
+                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-800"
+                    )}
+                  >
+                    {grade}
+                  </button>
+               );
+            })}
           </div>
         </div>
 
