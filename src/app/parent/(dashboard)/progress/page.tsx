@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { getKidsFromDB } from '@/lib/supabase/data';
-import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity, getLifeSkillsCounts, getActivityLogStats } from '@/lib/supabase/progressData';
+import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity, getLifeSkillsCounts, getActivityLogStats, getUnifiedActivities } from '@/lib/supabase/progressData';
 import { getExternalCurriculumStats } from '@/app/actions/import';
 import { getWorksheetResponsesForKids } from '@/lib/supabase/worksheetData';
 import { ParentProgressStats } from '@/components/profile/ParentProgressStats';
@@ -11,9 +11,7 @@ import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetRespons
 import { LifeSkillsChart } from '@/components/dashboard/LifeSkillsChart';
 import { redirect } from 'next/navigation';
 import { ChartLineUp, GraduationCap, Notebook, Brain, Book } from '@phosphor-icons/react/dist/ssr';
-import { KidActivityLog } from '@/components/activity';
-import { KidProgressSection } from '@/components/progress';
-import { getActivityLog } from '@/lib/supabase/activityLog';
+import { KidProgressSection, UnifiedActivityList } from '@/components/progress';
 
 export default async function ProgressPage() {
   const supabase = await createServerClient();
@@ -37,7 +35,8 @@ export default async function ProgressPage() {
     const weeklyActivity = await getWeeklyActivity(kid.id);
     const lifeSkillsCounts = await getLifeSkillsCounts(kid.id);
     const activityLogStats = await getActivityLogStats(kid.id);
-    const activityLogEntries = await getActivityLog(kid.id, startDate);
+    // Fetch unified activities from all 3 sources
+    const unifiedActivities = await getUnifiedActivities(kid.id, startDate);
     
     // Merge activity log subject counts into subjectCounts
     const mergedSubjectCounts = { ...subjectCounts };
@@ -57,7 +56,7 @@ export default async function ProgressPage() {
         lifeSkillsCounts,
         activityLogStats,
       },
-      activityLogEntries
+      unifiedActivities
     };
   }));
 
@@ -84,7 +83,7 @@ export default async function ProgressPage() {
       </div>
 
       {/* Per-Kid Expandable Sections */}
-      {kidStats.map(({ kid, stats, activityLogEntries }, index) => {
+      {kidStats.map(({ kid, stats, unifiedActivities }, index) => {
         const kidExternal = externalData.byKid[kid.id];
         const hasExternalData = kidExternal && kidExternal.stats.totalItems > 0;
         const kidWorksheets = worksheetResponses.filter(w => w.kidId === kid.id);
@@ -124,12 +123,20 @@ export default async function ProgressPage() {
               </div>
             )}
 
-            {/* Activity Log Section (per-kid) */}
+            {/* Unified Activity Log Section - shows ALL activity sources */}
             <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
-              <KidActivityLog 
-                kidId={kid.id}
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                  <Book size={18} weight="duotone" className="text-[var(--ember-500)]" />
+                  Recent Activity
+                  <span className="text-xs text-gray-400">({unifiedActivities.length} items)</span>
+                </h4>
+              </div>
+              <UnifiedActivityList 
+                activities={unifiedActivities}
                 kidName={kid.name}
-                initialEntries={activityLogEntries}
+                kidId={kid.id}
+                maxInitial={10}
               />
             </div>
 

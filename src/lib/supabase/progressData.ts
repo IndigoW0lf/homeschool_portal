@@ -244,3 +244,135 @@ export async function getActivityLogStats(kidId: string): Promise<{
   return stats;
 }
 
+// Unified activity entry type
+export interface UnifiedActivity {
+  id: string;
+  date: string;
+  title: string;
+  subject: string;
+  source: 'lunara_quest' | 'miacademy' | 'manual';
+  sourceLabel: string;
+  type?: string; // lesson, assignment, etc.
+  score?: number | null; // for graded items
+  durationMinutes?: number | null;
+}
+
+// Get unified activities from all 3 sources for a kid
+export async function getUnifiedActivities(
+  kidId: string, 
+  startDate: string,
+  endDate?: string
+): Promise<UnifiedActivity[]> {
+  const supabase = await createServerClient();
+  const activities: UnifiedActivity[] = [];
+  
+  // 1. Fetch completed schedule_items (Lunara Quest)
+  const scheduleQuery = supabase
+    .from('schedule_items')
+    .select(`
+      id, date, status, completed_at,
+      lessons:lesson_id(id, title, type),
+      assignments:assignment_id(id, title, type)
+    `)
+    .eq('student_id', kidId)
+    .eq('status', 'completed')
+    .gte('date', startDate)
+    .order('date', { ascending: false });
+  
+  if (endDate) scheduleQuery.lte('date', endDate);
+  
+  const { data: scheduleItems, error: scheduleErr } = await scheduleQuery;
+  
+  if (!scheduleErr && scheduleItems) {
+    for (const item of scheduleItems) {
+      // Supabase returns single joined records as objects, but TS thinks they're arrays
+      const lesson = (item.lessons && !Array.isArray(item.lessons)) 
+        ? item.lessons as unknown as { id: string; title: string; type: string }
+        : null;
+      const assignment = (item.assignments && !Array.isArray(item.assignments))
+        ? item.assignments as unknown as { id: string; title: string; type: string }
+        : null;
+      
+      if (lesson) {
+        activities.push({
+          id: `schedule-${item.id}`,
+          date: item.date,
+          title: lesson.title,
+          subject: lesson.type || 'Other',
+          source: 'lunara_quest',
+          sourceLabel: 'Lunara Quest',
+          type: 'lesson'
+        });
+      }
+      
+      if (assignment) {
+        activities.push({
+          id: `schedule-${item.id}-assign`,
+          date: item.date,
+          title: assignment.title,
+          subject: assignment.type || 'Other',
+          source: 'lunara_quest',
+          sourceLabel: 'Lunara Quest',
+          type: 'assignment'
+        });
+      }
+    }
+  }
+  
+  // 2. Fetch external_curriculum (MiAcademy imports)
+  const extQuery = supabase
+    .from('external_curriculum')
+    .select('id, date, task_name, subject, source, score')
+    .eq('kid_id', kidId)
+    .gte('date', startDate)
+    .order('date', { ascending: false });
+  
+  if (endDate) extQuery.lte('date', endDate);
+  
+  const { data: extItems, error: extErr } = await extQuery;
+  
+  if (!extErr && extItems) {
+    for (const item of extItems) {
+      activities.push({
+        id: `ext-${item.id}`,
+        date: item.date,
+        title: item.task_name,
+        subject: item.subject || 'Other',
+        source: 'miacademy',
+        sourceLabel: item.source || 'MiAcademy',
+        score: item.score
+      });
+    }
+  }
+  
+  // 3. Fetch activity_log (manual entries)
+  const logQuery = supabase
+    .from('activity_log')
+    .select('id, date, title, subject, duration_minutes')
+    .eq('kid_id', kidId)
+    .gte('date', startDate)
+    .order('date', { ascending: false });
+  
+  if (endDate) logQuery.lte('date', endDate);
+  
+  const { data: logItems, error: logErr } = await logQuery;
+  
+  if (!logErr && logItems) {
+    for (const item of logItems) {
+      activities.push({
+        id: `log-${item.id}`,
+        date: item.date,
+        title: item.title,
+        subject: item.subject || 'Other',
+        source: 'manual',
+        sourceLabel: 'Manual',
+        durationMinutes: item.duration_minutes
+      });
+    }
+  }
+  
+  // Sort all by date descending
+  activities.sort((a, b) => b.date.localeCompare(a.date));
+  
+  return activities;
+}

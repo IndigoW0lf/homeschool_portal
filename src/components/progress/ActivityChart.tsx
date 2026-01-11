@@ -220,8 +220,9 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                       style={{ height: week.count > 0 ? `${Math.max(heightPercent, 8)}%` : '4px' }}
                     />
                   </div>
+                  {/* Show labels for every 3rd week or first/last */}
                   <span className="text-xs text-gray-500 truncate w-full text-center">
-                    {idx === 0 || idx === weeklyData.length - 1 ? weekLabel : ''}
+                    {idx === 0 || idx === weeklyData.length - 1 || idx % 3 === 0 ? weekLabel : ''}
                   </span>
                 </div>
               );
