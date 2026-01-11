@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { isDone, setDone } from '@/lib/storage';
-import { addStars, isAwarded, markAwarded } from '@/lib/progressState';
+import { awardStars } from '@/lib/supabase/mutations';
+import { isAwarded, markAwarded } from '@/lib/progressState';
 
 interface MiAcademyCardProps {
   kidId: string;
@@ -19,15 +20,21 @@ export function MiAcademyCard({ kidId, date, url, onDoneChange }: MiAcademyCardP
     setDoneState(isDone(kidId, date, itemId));
   }, [kidId, date]);
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     const newState = !done;
     setDone(kidId, date, itemId, newState);
     setDoneState(newState);
 
     // Award star if marking done for first time
-    if (newState && !isAwarded(kidId, date, itemId)) {
-      addStars(kidId, 1);
-      markAwarded(kidId, date, itemId);
+    if (newState) {
+       try {
+          const res = await awardStars(kidId, date, itemId, 1);
+          if (res.success || res.alreadyAwarded) {
+             markAwarded(kidId, date, itemId);
+          }
+       } catch (e) {
+          console.error('Failed to award stars:', e);
+       }
     }
 
     onDoneChange?.(newState);
@@ -55,15 +62,22 @@ export function MiAcademyCard({ kidId, date, url, onDoneChange }: MiAcademyCardP
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => {
+            onClick={async () => {
               // Auto-mark as done when clicking the link
               if (!done) {
                 setDone(kidId, date, itemId, true);
                 setDoneState(true);
-                if (!isAwarded(kidId, date, itemId)) {
-                  addStars(kidId, 1);
-                  markAwarded(kidId, date, itemId);
+                
+                // Award stars securely
+                try {
+                   const res = await awardStars(kidId, date, itemId, 1);
+                   if (res.success || res.alreadyAwarded) {
+                      markAwarded(kidId, date, itemId);
+                   }
+                } catch (e) {
+                   console.error('Failed to award stars:', e);
                 }
+
                 onDoneChange?.(true);
               }
             }}

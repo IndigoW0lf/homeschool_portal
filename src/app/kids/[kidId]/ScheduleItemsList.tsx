@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { cn } from '@/lib/utils';
 import { isDone, setDone, hydrateDoneState } from '@/lib/storage';
-import { addStars, isAwarded, markAwarded } from '@/lib/progressState';
+import { isAwarded, markAwarded } from '@/lib/progressState';
 
 interface ScheduleItem {
   id: string;
@@ -94,9 +94,14 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
     setAutoCompleted(true);
     
     // Award star if not already awarded
-    if (!isAwarded(kidId, itemDate, itemId)) {
-      addStars(kidId, 1);
-      markAwarded(kidId, itemDate, itemId);
+    // Use server action for robustness
+    try {
+       const res = await awardStars(kidId, itemDate, itemId, 1);
+       if (res.success || res.alreadyAwarded) {
+          markAwarded(kidId, itemDate, itemId);
+       }
+    } catch (e) {
+       console.error('Failed to award star:', e);
     }
   };
 

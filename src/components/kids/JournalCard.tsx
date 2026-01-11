@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { NotePencil, ArrowsClockwise, FastForward, Check, Sparkle } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
-import { addStars, markAwarded, isAwarded } from '@/lib/progressState';
+import { markAwarded, isAwarded } from '@/lib/progressState';
 
 interface JournalCardProps {
   kidId: string;
@@ -101,9 +101,11 @@ export function JournalCard({
 
       if (res.ok) {
         const journalItemId = `journal-${date}`;
-        if (!isAwarded(kidId, date, journalItemId)) {
-          addStars(kidId, 1);
-          markAwarded(kidId, date, journalItemId);
+        // Use server action to award stars securely
+        const awardRes = await awardStars(kidId, date, journalItemId, 1);
+        
+        if (awardRes.success || awardRes.alreadyAwarded) {
+           markAwarded(kidId, date, journalItemId);
         }
         setIsComplete(true);
       }
