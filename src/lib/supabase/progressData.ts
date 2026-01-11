@@ -146,16 +146,18 @@ export async function getKidSubjectCounts(kidId: string): Promise<Record<string,
   return counts;
 }
 
-// Get weekly activity for stats
-export async function getWeeklyActivity(kidId: string): Promise<{ date: string; count: number }[]> {
+// Get weekly activity for stats (supports range: 7, 30, 90 days)
+export async function getWeeklyActivity(kidId: string, days: number = 7): Promise<{ date: string; count: number }[]> {
   const supabase = await createServerClient();
   
-  const { data, error } = await supabase.rpc('get_weekly_activity', {
-    p_kid_id: kidId
+  // Use the new range RPC if available, fallback to old one
+  const { data, error } = await supabase.rpc('get_activity_by_range', {
+    p_kid_id: kidId,
+    p_days: days
   });
   
   if (error) {
-    console.error('Error fetching weekly activity:', error);
+    console.error('Error fetching activity by range:', error);
     return [];
   }
   

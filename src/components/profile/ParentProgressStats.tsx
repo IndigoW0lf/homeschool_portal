@@ -1,6 +1,7 @@
 'use client';
 
-import { ChartBar, Trophy, Fire, BookOpen, Clock } from '@phosphor-icons/react';
+import { Trophy, Fire, BookOpen, Clock } from '@phosphor-icons/react';
+import { ActivityChart } from '@/components/progress';
 
 interface ParentProgressStatsProps {
   kidId: string;
@@ -21,8 +22,9 @@ interface ParentProgressStatsProps {
   };
 }
 
-export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
+export function ParentProgressStats({ kidId, stats }: ParentProgressStatsProps) {
   const { totalMoons, currentStreak, bestStreak, streakEnabled = true, subjectCounts, weeklyActivity, activityLogStats } = stats;
+
   
   // Format hours nicely
   const formatHours = (minutes: number) => {
@@ -99,49 +101,8 @@ export function ParentProgressStats({ stats }: ParentProgressStatsProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Weekly Activity Chart */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-          <div className="flex items-center gap-2 mb-6">
-            <ChartBar size={20} className="text-gray-400" />
-            <h4 className="font-semibold text-gray-900 dark:text-white">Activity (Last 7 Days)</h4>
-          </div>
-          
-          <div className="flex items-end justify-between h-40 gap-2">
-            {weeklyActivity.length > 0 && weeklyActivity.some(d => !isNaN(new Date(d.date).getTime())) ? (
-              weeklyActivity.map((day) => {
-                const heightPercent = (day.count / maxActivity) * 100;
-                const dateObj = new Date(day.date);
-                const isValidDate = !isNaN(dateObj.getTime());
-                const dayLabel = isValidDate 
-                  ? dateObj.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' })
-                  : '—';
-                
-                return (
-                  <div key={day.date || Math.random()} className="flex flex-col items-center gap-2 flex-1 group">
-                    <div className="relative w-full flex justify-center items-end h-full">
-                      {/* Tooltip */}
-                      <div className="absolute -top-8 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
-                        {day.count} items
-                      </div>
-                      {/* Bar */}
-                      <div 
-                        className="w-full max-w-[30px] bg-indigo-500 dark:bg-indigo-400 rounded-t-sm hover:opacity-80 transition-all"
-                        style={{ height: `${Math.max(heightPercent, 4)}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-gray-500 font-medium">{dayLabel}</span>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                <span className="text-3xl mb-2">🌙</span>
-                <p className="text-sm">Your adventure begins here...</p>
-                <p className="text-xs mt-1 opacity-60">Complete activities to see your journey!</p>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Activity Chart with Time Range Toggle */}
+        <ActivityChart kidId={kidId} initialData={weeklyActivity} />
 
         {/* Subject Breakdown */}
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
