@@ -3,7 +3,7 @@ import { getKidsFromDB } from '@/lib/supabase/data';
 import { getUnifiedActivities } from '@/lib/supabase/progressData';
 import { redirect } from 'next/navigation';
 import { format, parseISO, subDays } from 'date-fns';
-import { PrintButton, FilterControls } from './PrintButton';
+import { PrintButton } from './PrintButton';
 import { unstable_noStore as noStore } from 'next/cache';
 
 // Force dynamic rendering - don't cache this page
@@ -130,13 +130,6 @@ export default async function PrintActivityLogPage({
       </head>
       <body>
         <PrintButton />
-        
-        <FilterControls 
-          kids={kids.map(k => ({ id: k.id, name: k.name }))}
-          initialKid={params.kid}
-          initialDays={days}
-          initialSource={sourceFilter}
-        />
 
         <div className="header">
           <h1>

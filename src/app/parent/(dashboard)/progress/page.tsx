@@ -11,7 +11,7 @@ import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetRespons
 import { LifeSkillsChart } from '@/components/dashboard/LifeSkillsChart';
 import { redirect } from 'next/navigation';
 import { ChartLineUp, GraduationCap, Notebook, Brain, Book, PencilSimple } from '@phosphor-icons/react/dist/ssr';
-import { KidProgressSection, UnifiedActivityList } from '@/components/progress';
+import { KidProgressSection, UnifiedActivityList, PrintLogGenerator } from '@/components/progress';
 import { ActivityLogWrapper } from '@/components/activity';
 
 export default async function ProgressPage() {
@@ -81,13 +81,7 @@ export default async function ProgressPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <a 
-            href="/parent/progress-print"
-            target="_blank"
-            className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[var(--ember-500)] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center gap-1.5"
-          >
-            🖨️ Print Log
-          </a>
+          <PrintLogGenerator kids={kids.map(k => ({ id: k.id, name: k.name }))} />
           <ImportButton kids={kids.map(k => ({ id: k.id, name: k.name }))} />
         </div>
       </div>
