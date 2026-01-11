@@ -1,6 +1,17 @@
 'use client';
 
-import { BookOpen } from '@phosphor-icons/react';
+import { 
+  BookOpen, 
+  Books, 
+  PencilSimple, 
+  Calculator, 
+  Atom, 
+  Globe, 
+  Palette, 
+  House, 
+  Sparkle 
+} from '@phosphor-icons/react';
+import type { Icon } from '@phosphor-icons/react';
 import { ActivityChart } from '@/components/progress';
 
 interface ParentProgressStatsProps {
@@ -26,15 +37,15 @@ export function ParentProgressStats({ kidId, stats }: ParentProgressStatsProps) 
   const { subjectCounts, weeklyActivity } = stats;
 
   // 8 subject categories split into 2 columns
-  const subjects = [
-    { key: 'reading', label: 'Reading', color: 'bg-amber-400', icon: '📚' },
-    { key: 'writing', label: 'Writing', color: 'bg-blue-400', icon: '✏️' },
-    { key: 'math', label: 'Math & Logic', color: 'bg-purple-400', icon: '🧮' },
-    { key: 'science', label: 'Science', color: 'bg-green-400', icon: '🌱' },
-    { key: 'social_studies', label: 'Social Studies', color: 'bg-orange-400', icon: '🌍' },
-    { key: 'arts', label: 'Arts', color: 'bg-rose-400', icon: '🎨' },
-    { key: 'life_skills', label: 'Life Skills', color: 'bg-pink-400', icon: '🏠' },
-    { key: 'electives', label: 'Electives', color: 'bg-teal-400', icon: '✨' },
+  const subjects: { key: string; label: string; color: string; Icon: Icon }[] = [
+    { key: 'reading', label: 'Reading', color: 'bg-amber-400', Icon: Books },
+    { key: 'writing', label: 'Writing', color: 'bg-blue-400', Icon: PencilSimple },
+    { key: 'math', label: 'Math & Logic', color: 'bg-purple-400', Icon: Calculator },
+    { key: 'science', label: 'Science', color: 'bg-green-400', Icon: Atom },
+    { key: 'social_studies', label: 'Social Studies', color: 'bg-orange-400', Icon: Globe },
+    { key: 'arts', label: 'Arts', color: 'bg-rose-400', Icon: Palette },
+    { key: 'life_skills', label: 'Life Skills', color: 'bg-pink-400', Icon: House },
+    { key: 'electives', label: 'Electives', color: 'bg-teal-400', Icon: Sparkle },
   ];
 
   // Split into left and right columns
@@ -50,7 +61,7 @@ export function ParentProgressStats({ kidId, stats }: ParentProgressStatsProps) 
       <div className="space-y-1">
         <div className="flex justify-between text-xs">
           <span className="font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-            <span>{subject.icon}</span> {subject.label}
+            <subject.Icon size={14} weight="duotone" className="opacity-80" /> {subject.label}
           </span>
           <span className="text-gray-400">{count}/{nextMilestone}</span>
         </div>
@@ -66,29 +77,23 @@ export function ParentProgressStats({ kidId, stats }: ParentProgressStatsProps) 
 
   return (
     <div className="space-y-4">
-      {/* Activity Chart - Full Width */}
-      <ActivityChart kidId={kidId} initialData={weeklyActivity} />
-
-      {/* Subject Mastery - 2 Column Layout */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <BookOpen size={18} className="text-gray-400" />
-          <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Subject Mastery</h4>
-        </div>
-        
+      {/* Subject Mastery */}
+      <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 text-gray-800 dark:text-white">
+          <BookOpen size={16} weight="duotone" /> Subject Mastery
+        </h3>
         <div className="grid grid-cols-2 gap-x-6 gap-y-3">
           <div className="space-y-3">
-            {leftSubjects.map(subject => (
-              <SubjectItem key={subject.key} subject={subject} />
-            ))}
+            {leftSubjects.map(s => <SubjectItem key={s.key} subject={s} />)}
           </div>
           <div className="space-y-3">
-            {rightSubjects.map(subject => (
-              <SubjectItem key={subject.key} subject={subject} />
-            ))}
+            {rightSubjects.map(s => <SubjectItem key={s.key} subject={s} />)}
           </div>
         </div>
       </div>
+
+      {/* Activity Chart */}
+      <ActivityChart initialData={weeklyActivity} kidId={kidId} />
     </div>
   );
 }

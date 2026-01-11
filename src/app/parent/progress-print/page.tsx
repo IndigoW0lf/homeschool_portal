@@ -5,6 +5,9 @@ import { redirect } from 'next/navigation';
 import { format, parseISO, subDays } from 'date-fns';
 import { PrintButton, FilterControls } from './PrintButton';
 
+// Force dynamic rendering - don't cache this page
+export const dynamic = 'force-dynamic';
+
 // Format minutes as Xh Ym
 function formatTime(minutes: number): string {
   if (minutes < 60) return `${minutes}m`;
@@ -26,14 +29,23 @@ export default async function PrintActivityLogPage({
   }
 
   const kids = await getKidsFromDB();
+  
+  // Debug: log all searchParams
+  console.log('[PrintPage] searchParams:', JSON.stringify(searchParams));
+  
   const days = parseInt(searchParams.days || '30', 10);
   const startDate = format(subDays(new Date(), days), 'yyyy-MM-dd');
   const sourceFilter = searchParams.source as 'lunara_quest' | 'miacademy' | 'manual' | undefined;
+  const kidFilter = searchParams.kid;
+  
+  console.log('[PrintPage] Parsed filters - days:', days, 'startDate:', startDate, 'source:', sourceFilter, 'kid:', kidFilter);
   
   // Filter to specific kid if requested
-  const targetKids = searchParams.kid 
-    ? kids.filter(k => k.id === searchParams.kid)
+  const targetKids = kidFilter 
+    ? kids.filter(k => k.id === kidFilter)
     : kids;
+    
+  console.log('[PrintPage] targetKids count:', targetKids.length, 'of', kids.length);
 
   // Fetch activities for each kid
   const kidActivities = await Promise.all(
