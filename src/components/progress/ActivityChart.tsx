@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChartBar } from '@phosphor-icons/react';
+import { ChartBar, CalendarBlank } from '@phosphor-icons/react';
 import { supabase } from '@/lib/supabase/browser';
+import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval, eachWeekOfInterval, isWithinInterval } from 'date-fns';
 
 interface ActivityChartProps {
   kidId: string;
@@ -10,38 +11,82 @@ interface ActivityChartProps {
 }
 
 const TIME_RANGES = [
-  { label: '1W', days: 7 },
-  { label: '1M', days: 30 },
-  { label: '3M', days: 90 },
+  { label: '1W', days: 7, description: 'Last 7 Days' },
+  { label: '1M', days: 30, description: 'Last Month' },
+  { label: '3M', days: 90, description: 'Last 3 Months' },
 ] as const;
+
+// Convert sparse data to filled date range
+function fillDateRange(data: { date: string; count: number }[], days: number): { date: string; count: number }[] {
+  const today = new Date();
+  const startDate = subDays(today, days);
+  const dateMap = new Map(data.map(d => [d.date, d.count]));
+  
+  const allDays = eachDayOfInterval({ start: startDate, end: today });
+  return allDays.map(day => {
+    const dateStr = format(day, 'yyyy-MM-dd');
+    return { date: dateStr, count: dateMap.get(dateStr) || 0 };
+  });
+}
+
+// Aggregate data into weekly buckets
+function aggregateByWeek(data: { date: string; count: number }[]): { weekStart: string; weekEnd: string; count: number; days: number }[] {
+  if (data.length === 0) return [];
+  
+  const firstDate = new Date(data[0].date);
+  const lastDate = new Date(data[data.length - 1].date);
+  
+  const weeks = eachWeekOfInterval({ start: firstDate, end: lastDate }, { weekStartsOn: 1 });
+  
+  return weeks.map(weekStart => {
+    const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
+    const weekData = data.filter(d => {
+      const date = new Date(d.date);
+      return isWithinInterval(date, { start: weekStart, end: weekEnd });
+    });
+    
+    return {
+      weekStart: format(weekStart, 'yyyy-MM-dd'),
+      weekEnd: format(weekEnd, 'yyyy-MM-dd'),
+      count: weekData.reduce((sum, d) => sum + d.count, 0),
+      days: weekData.filter(d => d.count > 0).length
+    };
+  });
+}
 
 export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
   const [selectedRange, setSelectedRange] = useState<7 | 30 | 90>(7);
-  const [activityData, setActivityData] = useState(initialData);
+  const [rawData, setRawData] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
 
   // Fetch new data when range changes
   useEffect(() => {
     if (selectedRange === 7) {
-      // Use initial data for 7 days (already server-fetched)
-      setActivityData(initialData);
+      setRawData(initialData);
       return;
     }
 
     async function fetchActivityData() {
       setIsLoading(true);
       try {
+        // Try new RPC first, fallback to old one
         const { data, error } = await supabase.rpc('get_activity_by_range', {
           p_kid_id: kidId,
           p_days: selectedRange
         });
         
         if (error) {
-          console.error('Error fetching activity:', error);
+          console.error('Error fetching activity (RPC may not exist yet):', error);
+          // Fallback to old RPC
+          const { data: oldData } = await supabase.rpc('get_weekly_activity', {
+            p_kid_id: kidId
+          });
+          setRawData(oldData || []);
           return;
         }
         
-        setActivityData(data || []);
+        console.log('Activity data received:', data); // Debug
+        setRawData(data || []);
       } finally {
         setIsLoading(false);
       }
@@ -50,36 +95,30 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
     fetchActivityData();
   }, [kidId, selectedRange, initialData]);
 
-  const maxActivity = Math.max(...activityData.map(d => d.count), 5);
-  const rangeLabel = TIME_RANGES.find(r => r.days === selectedRange)?.label || '1W';
+  // Process data based on range
+  const filledData = fillDateRange(rawData, selectedRange);
+  const weeklyData = selectedRange > 7 ? aggregateByWeek(filledData) : [];
+  
+  // Use weekly for 1M/3M, daily for 1W
+  const displayData = selectedRange === 7 ? filledData : weeklyData;
+  const totalActivities = filledData.reduce((sum, d) => sum + d.count, 0);
+  const activeDays = filledData.filter(d => d.count > 0).length;
+  
+  const rangeInfo = TIME_RANGES.find(r => r.days === selectedRange);
 
-  // For longer ranges, show weekly summaries or just dates
-  const formatLabel = (dateStr: string) => {
-    const dateObj = new Date(dateStr);
-    if (isNaN(dateObj.getTime())) return '—';
-    
-    if (selectedRange === 7) {
-      return dateObj.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'UTC' });
-    } else if (selectedRange === 30) {
-      return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-    } else {
-      return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
-    }
-  };
-
-  // Limit visible bars for longer ranges
-  const visibleData = selectedRange <= 7 
-    ? activityData 
-    : activityData.slice(-Math.min(activityData.length, 30)); // Show max 30 bars
+  // Calculate max for scaling
+  const maxCount = selectedRange === 7 
+    ? Math.max(...filledData.map(d => d.count), 1)
+    : Math.max(...weeklyData.map(w => w.count), 1);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
       {/* Header with Toggle */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <ChartBar size={20} className="text-gray-400" />
           <h4 className="font-semibold text-gray-900 dark:text-white">
-            Activity ({rangeLabel === '1W' ? 'Last 7 Days' : rangeLabel === '1M' ? 'Last Month' : 'Last 3 Months'})
+            Activity ({rangeInfo?.description})
           </h4>
         </div>
         
@@ -100,56 +139,96 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
           ))}
         </div>
       </div>
+
+      {/* Stats Summary */}
+      <div className="flex gap-4 mb-4">
+        <div className="flex items-center gap-2 text-sm">
+          <CalendarBlank size={16} className="text-indigo-500" />
+          <span className="text-gray-500">{activeDays} active days</span>
+        </div>
+        <div className="text-sm text-gray-500">
+          <span className="font-semibold text-gray-900 dark:text-white">{totalActivities}</span> total items
+        </div>
+      </div>
       
       {/* Chart */}
-      <div className="flex items-end justify-between h-40 gap-1 overflow-x-auto">
+      <div className="h-32">
         {isLoading ? (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
             <span className="text-sm">Loading...</span>
           </div>
-        ) : visibleData.length > 0 && visibleData.some(d => !isNaN(new Date(d.date).getTime())) ? (
-          visibleData.map((day) => {
-            const heightPercent = (day.count / maxActivity) * 100;
-            const label = formatLabel(day.date);
-            
-            return (
-              <div key={day.date || Math.random()} className="flex flex-col items-center gap-2 flex-1 min-w-[12px] group">
-                <div className="relative w-full flex justify-center items-end h-full">
-                  {/* Tooltip */}
-                  <div className="absolute -top-8 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
-                    {day.count} items • {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}
-                  </div>
-                  {/* Bar */}
-                  <div 
-                    className="w-full max-w-[24px] bg-indigo-500 dark:bg-indigo-400 rounded-t-sm hover:opacity-80 transition-all"
-                    style={{ height: `${Math.max(heightPercent, 4)}%` }}
-                  />
-                </div>
-                {/* Show labels only for 1W, hide for longer ranges */}
-                {selectedRange === 7 && (
-                  <span className="text-xs text-gray-500 font-medium">{label}</span>
-                )}
-              </div>
-            );
-          })
-        ) : (
+        ) : totalActivities === 0 ? (
           <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
             <span className="text-3xl mb-2">🌙</span>
             <p className="text-sm">No activity in this period</p>
-            <p className="text-xs mt-1 opacity-60">Try selecting a different time range</p>
+          </div>
+        ) : selectedRange === 7 ? (
+          // Daily bars for 1W
+          <div className="flex items-end justify-between h-full gap-1">
+            {filledData.map((day) => {
+              const heightPercent = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
+              const dateObj = new Date(day.date + 'T12:00:00'); // Avoid timezone issues
+              const dayLabel = format(dateObj, 'EEE');
+              const isToday = format(new Date(), 'yyyy-MM-dd') === day.date;
+              
+              return (
+                <div key={day.date} className="flex flex-col items-center gap-1 flex-1 group">
+                  <div className="relative w-full flex justify-center items-end h-24">
+                    {/* Tooltip */}
+                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
+                      {day.count} items
+                    </div>
+                    {/* Bar */}
+                    <div 
+                      className={`w-full max-w-[28px] rounded-t transition-all ${
+                        day.count > 0 
+                          ? 'bg-indigo-500 dark:bg-indigo-400' 
+                          : 'bg-gray-200 dark:bg-gray-700'
+                      } ${isToday ? 'ring-2 ring-indigo-300' : ''}`}
+                      style={{ height: day.count > 0 ? `${Math.max(heightPercent, 8)}%` : '4px' }}
+                    />
+                  </div>
+                  <span className={`text-xs font-medium ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500'}`}>
+                    {dayLabel}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          // Weekly bars for 1M/3M
+          <div className="flex items-end justify-between h-full gap-1 overflow-x-auto">
+            {weeklyData.map((week, idx) => {
+              const heightPercent = maxCount > 0 ? (week.count / maxCount) * 100 : 0;
+              const weekStart = new Date(week.weekStart + 'T12:00:00');
+              const weekLabel = format(weekStart, 'MMM d');
+              
+              return (
+                <div key={week.weekStart} className="flex flex-col items-center gap-1 flex-1 min-w-[32px] max-w-[48px] group">
+                  <div className="relative w-full flex justify-center items-end h-20">
+                    {/* Tooltip */}
+                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
+                      {week.count} items • {week.days} days active
+                    </div>
+                    {/* Bar */}
+                    <div 
+                      className={`w-full rounded-t transition-all ${
+                        week.count > 0 
+                          ? 'bg-indigo-500 dark:bg-indigo-400' 
+                          : 'bg-gray-200 dark:bg-gray-700'
+                      }`}
+                      style={{ height: week.count > 0 ? `${Math.max(heightPercent, 8)}%` : '4px' }}
+                    />
+                  </div>
+                  <span className="text-xs text-gray-500 truncate w-full text-center">
+                    {idx === 0 || idx === weeklyData.length - 1 ? weekLabel : ''}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
-      
-      {/* Summary for longer ranges */}
-      {selectedRange > 7 && visibleData.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between text-sm">
-          <span className="text-gray-500">Total activities:</span>
-          <span className="font-semibold text-gray-900 dark:text-white">
-            {visibleData.reduce((sum, d) => sum + d.count, 0)}
-          </span>
-        </div>
-      )}
     </div>
   );
 }
