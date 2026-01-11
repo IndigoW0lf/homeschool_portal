@@ -273,7 +273,7 @@ export async function getUnifiedActivities(
       id, date, status, completed_at, item_type, title_override,
       lessons:lesson_id(id, title, type, estimated_minutes),
       assignments:assignment_id(id, title, type, estimated_minutes),
-      resources:resource_id(id, title, category)
+      resources:resource_id(id, label, category)
     `)
     .eq('student_id', kidId)
     .eq('status', 'completed')
@@ -284,7 +284,9 @@ export async function getUnifiedActivities(
   
   const { data: scheduleItems, error: scheduleErr } = await scheduleQuery;
   
-  console.log('Schedule items fetched:', scheduleItems?.length, scheduleErr); // Debug
+  // Log for debugging (appears in server logs)
+  console.log('[getUnifiedActivities] kidId:', kidId, 'startDate:', startDate);
+  console.log('[getUnifiedActivities] Schedule items:', scheduleItems?.length || 0, 'error:', scheduleErr?.message);
   
   if (!scheduleErr && scheduleItems) {
     for (const item of scheduleItems) {
@@ -296,7 +298,7 @@ export async function getUnifiedActivities(
         ? item.assignments as unknown as { id: string; title: string; type: string; estimated_minutes?: number }
         : null;
       const resource = (item.resources && !Array.isArray(item.resources))
-        ? item.resources as unknown as { id: string; title: string; category: string }
+        ? item.resources as unknown as { id: string; label: string; category: string }
         : null;
       
       // Determine title and subject based on what's populated
@@ -316,7 +318,7 @@ export async function getUnifiedActivities(
         type = 'assignment';
         durationMinutes = assignment.estimated_minutes;
       } else if (resource) {
-        title = item.title_override || resource.title;
+        title = item.title_override || resource.label;
         subject = resource.category || 'Other';
         type = 'resource';
       }
