@@ -4,9 +4,11 @@ import { getUnifiedActivities } from '@/lib/supabase/progressData';
 import { redirect } from 'next/navigation';
 import { format, parseISO, subDays } from 'date-fns';
 import { PrintButton, FilterControls } from './PrintButton';
+import { unstable_noStore as noStore } from 'next/cache';
 
 // Force dynamic rendering - don't cache this page
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // Format minutes as Xh Ym
 function formatTime(minutes: number): string {
@@ -21,6 +23,9 @@ export default async function PrintActivityLogPage({
 }: {
   searchParams: Promise<{ kid?: string; days?: string; source?: string }>
 }) {
+  // Opt-out of all caching
+  noStore();
+  
   // Await searchParams (required in Next.js 15)
   const params = await searchParams;
   
