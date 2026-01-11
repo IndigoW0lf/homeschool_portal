@@ -270,9 +270,10 @@ export async function getUnifiedActivities(
   const scheduleQuery = supabase
     .from('schedule_items')
     .select(`
-      id, date, status, completed_at,
-      lessons:lesson_id(id, title, type),
-      assignments:assignment_id(id, title, type)
+      id, date, status, completed_at, item_type, title_override,
+      lessons:lesson_id(id, title, type, estimated_minutes),
+      assignments:assignment_id(id, title, type, estimated_minutes),
+      resources:resource_id(id, title, category)
     `)
     .eq('student_id', kidId)
     .eq('status', 'completed')
@@ -283,37 +284,54 @@ export async function getUnifiedActivities(
   
   const { data: scheduleItems, error: scheduleErr } = await scheduleQuery;
   
+  console.log('Schedule items fetched:', scheduleItems?.length, scheduleErr); // Debug
+  
   if (!scheduleErr && scheduleItems) {
     for (const item of scheduleItems) {
       // Supabase returns single joined records as objects, but TS thinks they're arrays
       const lesson = (item.lessons && !Array.isArray(item.lessons)) 
-        ? item.lessons as unknown as { id: string; title: string; type: string }
+        ? item.lessons as unknown as { id: string; title: string; type: string; estimated_minutes?: number }
         : null;
       const assignment = (item.assignments && !Array.isArray(item.assignments))
-        ? item.assignments as unknown as { id: string; title: string; type: string }
+        ? item.assignments as unknown as { id: string; title: string; type: string; estimated_minutes?: number }
+        : null;
+      const resource = (item.resources && !Array.isArray(item.resources))
+        ? item.resources as unknown as { id: string; title: string; category: string }
         : null;
       
+      // Determine title and subject based on what's populated
+      let title = item.title_override || 'Untitled Activity';
+      let subject = 'Other';
+      let type = item.item_type || 'activity';
+      let durationMinutes: number | undefined;
+      
       if (lesson) {
+        title = item.title_override || lesson.title;
+        subject = lesson.type || 'Other';
+        type = 'lesson';
+        durationMinutes = lesson.estimated_minutes;
+      } else if (assignment) {
+        title = item.title_override || assignment.title;
+        subject = assignment.type || 'Other';
+        type = 'assignment';
+        durationMinutes = assignment.estimated_minutes;
+      } else if (resource) {
+        title = item.title_override || resource.title;
+        subject = resource.category || 'Other';
+        type = 'resource';
+      }
+      
+      // Only add if we have a title
+      if (title && title !== 'Untitled Activity') {
         activities.push({
           id: `schedule-${item.id}`,
           date: item.date,
-          title: lesson.title,
-          subject: lesson.type || 'Other',
+          title,
+          subject,
           source: 'lunara_quest',
           sourceLabel: 'Lunara Quest',
-          type: 'lesson'
-        });
-      }
-      
-      if (assignment) {
-        activities.push({
-          id: `schedule-${item.id}-assign`,
-          date: item.date,
-          title: assignment.title,
-          subject: assignment.type || 'Other',
-          source: 'lunara_quest',
-          sourceLabel: 'Lunara Quest',
-          type: 'assignment'
+          type,
+          durationMinutes
         });
       }
     }
