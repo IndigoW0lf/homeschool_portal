@@ -33,6 +33,8 @@ export interface Kid {
   journalPromptTypes?: string[];
   // Gamification settings
   streakEnabled?: boolean;
+  // Featured badge
+  featuredBadgeId?: string;
 }
 
 export interface Profile {

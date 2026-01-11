@@ -5,6 +5,7 @@ import { KidProfileEditor } from '@/components/kids/KidProfileEditor';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { BadgeGallery } from '@/components/kids/BadgeGallery';
 import { FamilyConnections } from '@/components/kids/FamilyConnections';
+import { AvatarUploadWrapper } from '@/components/kids/AvatarUploadWrapper';
 import Link from 'next/link';
 
 interface ProfilePageProps {
@@ -28,13 +29,21 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            {/* Avatar Preview */}
-            <AvatarPreview 
-              avatarState={kid.avatarState}
-              size="lg"
-              fallbackName={kid.nickname || kid.name}
-              fallbackColor={kid.favoriteColor}
-            />
+            {/* Avatar Preview - shows custom photo or built avatar */}
+            {kid.avatarUrl ? (
+              <img 
+                src={kid.avatarUrl} 
+                alt={kid.name}
+                className="w-20 h-20 rounded-full object-cover border-4 border-purple-200 dark:border-purple-800"
+              />
+            ) : (
+              <AvatarPreview 
+                avatarState={kid.avatarState}
+                size="lg"
+                fallbackName={kid.nickname || kid.name}
+                fallbackColor={kid.favoriteColor}
+              />
+            )}
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 My Profile
@@ -51,30 +60,36 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         <KidProfileEditor kidId={kidId} initialData={kid} />
         
-        {/* Link to Avatar Builder */}
-        <div className="p-6 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-200 dark:border-purple-800">
-          <div className="flex items-center gap-4">
-            {/* Mini avatar preview */}
-            <AvatarPreview 
-              avatarState={kid.avatarState}
-              size="md"
-              fallbackName={kid.nickname || kid.name}
-              fallbackColor={kid.favoriteColor}
-            />
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">
-                ✨ Customize Your Avatar
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Dress up your character with cool outfits and accessories!
-              </p>
+        {/* Avatar Options - Photo Upload and Avatar Builder side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Upload Custom Photo */}
+          <AvatarUploadWrapper kidId={kidId} currentAvatarUrl={kid.avatarUrl} />
+          
+          {/* Link to Avatar Builder */}
+          <div className="p-6 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-200 dark:border-purple-800">
+            <div className="flex flex-col items-center text-center gap-4">
+              {/* Mini avatar preview */}
+              <AvatarPreview 
+                avatarState={kid.avatarState}
+                size="lg"
+                fallbackName={kid.nickname || kid.name}
+                fallbackColor={kid.favoriteColor}
+              />
+              <div>
+                <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">
+                  ✨ Build Your Avatar
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Dress up your character!
+                </p>
+                <Link 
+                  href={`/kids/${kidId}/avatar`}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors"
+                >
+                  Customize →
+                </Link>
+              </div>
             </div>
-            <Link 
-              href={`/kids/${kidId}/avatar`}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors"
-            >
-              Go →
-            </Link>
           </div>
         </div>
 
