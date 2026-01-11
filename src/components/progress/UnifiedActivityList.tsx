@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Book, Star, Clock, GraduationCap, Sparkle, PencilSimple, CaretDown, CaretUp, Calendar, BookOpenText, ArrowSquareOut } from '@phosphor-icons/react';
+import { Book, Star, Clock, GraduationCap, Sparkle, PencilSimple, CaretLeft, CaretRight, Calendar, BookOpenText, ArrowSquareOut } from '@phosphor-icons/react';
 import { format, parseISO } from 'date-fns';
 import type { UnifiedActivity } from '@/lib/supabase/progressData';
 import Link from 'next/link';
@@ -10,7 +10,7 @@ interface UnifiedActivityListProps {
   activities: UnifiedActivity[];
   kidName: string;
   kidId: string;
-  maxInitial?: number;
+  itemsPerPage?: number;
   isPrintView?: boolean;
 }
 
@@ -47,12 +47,15 @@ function extractItemId(activityId: string): string | null {
 export function UnifiedActivityList({ 
   activities, 
   kidId,
-  maxInitial = 10,
+  itemsPerPage = 10,
   isPrintView = false
 }: UnifiedActivityListProps) {
-  const [showAll, setShowAll] = useState(isPrintView);
+  const [currentPage, setCurrentPage] = useState(1);
   
-  const displayActivities = showAll ? activities : activities.slice(0, maxInitial);
+  const totalPages = Math.ceil(activities.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const displayActivities = isPrintView ? activities : activities.slice(startIdx, endIdx);
   
   // Group by date
   const groupedByDate = displayActivities.reduce((acc, activity) => {
@@ -166,24 +169,62 @@ export function UnifiedActivityList({
         );
       })}
       
-      {/* Show More/Less */}
-      {!isPrintView && activities.length > maxInitial && (
-        <button
-          onClick={() => setShowAll(!showAll)}
-          className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 flex items-center justify-center gap-1 transition-colors"
-        >
-          {showAll ? (
-            <>
-              <CaretUp size={16} />
-              Show Less
-            </>
-          ) : (
-            <>
-              <CaretDown size={16} />
-              Show All ({activities.length} items)
-            </>
-          )}
-        </button>
+      {/* Pagination */}
+      {!isPrintView && totalPages > 1 && (
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
+          <span className="text-xs text-gray-500">
+            Showing {startIdx + 1}-{Math.min(endIdx, activities.length)} of {activities.length}
+          </span>
+          
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <CaretLeft size={16} />
+            </button>
+            
+            {/* Page numbers */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(page => {
+                // Show first, last, current, and adjacent pages
+                return page === 1 || 
+                       page === totalPages || 
+                       Math.abs(page - currentPage) <= 1;
+              })
+              .map((page, idx, arr) => {
+                // Add ellipsis if there's a gap
+                const showEllipsisBefore = idx > 0 && page - arr[idx - 1] > 1;
+                
+                return (
+                  <span key={page} className="flex items-center">
+                    {showEllipsisBefore && (
+                      <span className="px-1 text-gray-400">…</span>
+                    )}
+                    <button
+                      onClick={() => setCurrentPage(page)}
+                      className={`min-w-[28px] h-7 px-2 rounded text-sm font-medium transition-colors ${
+                        page === currentPage
+                          ? 'bg-indigo-500 text-white'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  </span>
+                );
+              })}
+            
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              <CaretRight size={16} />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -149,7 +149,7 @@ export default async function ProgressPage() {
                 activities={unifiedActivities}
                 kidName={kid.name}
                 kidId={kid.id}
-                maxInitial={10}
+                itemsPerPage={10}
               />
             </div>
 
