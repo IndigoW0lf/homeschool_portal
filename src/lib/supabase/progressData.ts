@@ -354,8 +354,13 @@ export async function getUnifiedActivities(
   
   const { data: extItems, error: extErr } = await extQuery;
   
+  console.log('[getUnifiedActivities] External curriculum:', extItems?.length || 0, 'error:', extErr?.message);
+  
   if (!extErr && extItems) {
     for (const item of extItems) {
+      // Skip items with no date
+      if (!item.date) continue;
+      
       activities.push({
         id: `ext-${item.id}`,
         date: item.date,
