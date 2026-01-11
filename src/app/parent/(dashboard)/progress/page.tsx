@@ -10,8 +10,9 @@ import { ExternalCurriculumList } from '@/components/dashboard/ExternalCurriculu
 import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetResponseViewer';
 import { LifeSkillsChart } from '@/components/dashboard/LifeSkillsChart';
 import { redirect } from 'next/navigation';
-import { ChartLineUp, GraduationCap, Notebook, Brain, Book } from '@phosphor-icons/react/dist/ssr';
+import { ChartLineUp, GraduationCap, Notebook, Brain, Book, PencilSimple } from '@phosphor-icons/react/dist/ssr';
 import { KidProgressSection, UnifiedActivityList } from '@/components/progress';
+import { ActivityLogWrapper } from '@/components/activity';
 
 export default async function ProgressPage() {
   const supabase = await createServerClient();
@@ -95,16 +96,12 @@ export default async function ProgressPage() {
             kidName={kid.name}
             favoriteColor={kid.favoriteColor}
             defaultExpanded={index === 0}
+            totalMoons={stats.totalMoons}
+            currentStreak={stats.currentStreak}
+            streakEnabled={stats.streakEnabled}
           >
-            {/* Lunara Quest Section */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full font-medium">
-                  Lunara Quest
-                </span>
-              </div>
-              <ParentProgressStats kidId={kid.id} kidName={kid.name} stats={stats} />
-            </div>
+            {/* Activity Chart + Subject Mastery */}
+            <ParentProgressStats kidId={kid.id} kidName={kid.name} stats={stats} />
 
             {/* Life Skills Section */}
             {Object.keys(stats.lifeSkillsCounts).length > 0 && (
@@ -123,15 +120,22 @@ export default async function ProgressPage() {
               </div>
             )}
 
-            {/* Unified Activity Log Section - shows ALL activity sources */}
-            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                  <Book size={18} weight="duotone" className="text-[var(--ember-500)]" />
-                  Recent Activity
-                  <span className="text-xs text-gray-400">({unifiedActivities.length} items)</span>
+            {/* Manual Activity Log + Unified Activity List */}
+            <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 text-sm">
+                  <Book size={16} weight="duotone" className="text-[var(--ember-500)]" />
+                  Activity Log
                 </h4>
+                <span className="text-xs text-gray-400">{unifiedActivities.length} items</span>
               </div>
+              
+              {/* Manual Activity Form */}
+              <div className="mb-4">
+                <ActivityLogWrapper kidId={kid.id} kidName={kid.name} />
+              </div>
+              
+              {/* Unified Activity List */}
               <UnifiedActivityList 
                 activities={unifiedActivities}
                 kidName={kid.name}
