@@ -19,8 +19,11 @@ function formatTime(minutes: number): string {
 export default async function PrintActivityLogPage({
   searchParams
 }: {
-  searchParams: { kid?: string; days?: string; source?: string }
+  searchParams: Promise<{ kid?: string; days?: string; source?: string }>
 }) {
+  // Await searchParams (required in Next.js 15)
+  const params = await searchParams;
+  
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -30,13 +33,13 @@ export default async function PrintActivityLogPage({
 
   const kids = await getKidsFromDB();
   
-  // Debug: log all searchParams
-  console.log('[PrintPage] searchParams:', JSON.stringify(searchParams));
+  // Debug: log all params
+  console.log('[PrintPage] params:', JSON.stringify(params));
   
-  const days = parseInt(searchParams.days || '30', 10);
+  const days = parseInt(params.days || '30', 10);
   const startDate = format(subDays(new Date(), days), 'yyyy-MM-dd');
-  const sourceFilter = searchParams.source as 'lunara_quest' | 'miacademy' | 'manual' | undefined;
-  const kidFilter = searchParams.kid;
+  const sourceFilter = params.source as 'lunara_quest' | 'miacademy' | 'manual' | undefined;
+  const kidFilter = params.kid;
   
   console.log('[PrintPage] Parsed filters - days:', days, 'startDate:', startDate, 'source:', sourceFilter, 'kid:', kidFilter);
   
@@ -125,7 +128,7 @@ export default async function PrintActivityLogPage({
         
         <FilterControls 
           kids={kids.map(k => ({ id: k.id, name: k.name }))}
-          initialKid={searchParams.kid}
+          initialKid={params.kid}
           initialDays={days}
           initialSource={sourceFilter}
         />
