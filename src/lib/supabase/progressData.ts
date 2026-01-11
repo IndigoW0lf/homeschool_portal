@@ -254,7 +254,9 @@ export interface UnifiedActivity {
   sourceLabel: string;
   type?: string; // lesson, assignment, etc.
   score?: number | null; // for graded items
-  durationMinutes?: number | null;
+  durationMinutes?: number | null; // estimated duration
+  actualMinutes?: number | null; // actual time logged by parent
+  scheduleItemId?: string; // for Lunara Quest items - used to update time
 }
 
 // Get unified activities from all 3 sources for a kid
@@ -270,7 +272,7 @@ export async function getUnifiedActivities(
   const scheduleQuery = supabase
     .from('schedule_items')
     .select(`
-      id, date, status, completed_at, item_type, title_override,
+      id, date, status, completed_at, item_type, title_override, actual_minutes,
       lessons:lesson_id(id, title, type, estimated_minutes),
       assignments:assignment_id(id, title, type, estimated_minutes),
       resources:resource_id(id, label, category)
@@ -337,7 +339,9 @@ export async function getUnifiedActivities(
         source: 'lunara_quest',
         sourceLabel: 'Lunara Quest',
         type,
-        durationMinutes
+        durationMinutes,
+        actualMinutes: (item as { actual_minutes?: number }).actual_minutes || null,
+        scheduleItemId: item.id
       });
     }
   }
