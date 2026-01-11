@@ -1,3 +1,5 @@
+'use client';
+
 import { Lesson } from '@/types';
 import { DoneToggle } from './DoneToggle';
 import { cn } from '@/lib/utils';
