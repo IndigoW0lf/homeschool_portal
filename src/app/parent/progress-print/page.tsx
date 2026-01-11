@@ -119,7 +119,10 @@ export default async function PrintActivityLogPage({
         />
 
         <div className="header">
-          <h1>📚 Homeschool Activity Log</h1>
+          <h1>
+            <svg style={{display: 'inline', verticalAlign: 'middle', marginRight: 8}} width="24" height="24" viewBox="0 0 256 256" fill="#6b21a8"><path d="M232,64H160a40,40,0,0,0-32,16A40,40,0,0,0,96,64H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V72A8,8,0,0,0,232,64ZM96,192H32V80H96a24,24,0,0,1,24,24V200A40,40,0,0,0,96,192Zm128,0H160a40,40,0,0,0-24,8V104a24,24,0,0,1,24-24h64Z"/></svg>
+            Homeschool Activity Log
+          </h1>
           <div className="meta">
             Generated: {format(new Date(), 'EEEE, MMMM d, yyyy')} • 
             Period: {format(subDays(new Date(), days), 'MMM d')} - {format(new Date(), 'MMM d, yyyy')} ({days} days) • 
@@ -134,14 +137,20 @@ export default async function PrintActivityLogPage({
 
           return (
             <div key={kid.id}>
-              <h2>🌙 {kid.name}</h2>
+              <h2>
+                <svg style={{display: 'inline', verticalAlign: 'middle', marginRight: 6}} width="18" height="18" viewBox="0 0 256 256" fill="#6b21a8"><path d="M128,16A112.13,112.13,0,0,0,16,128c0,60.81,49.33,112,112,112a112,112,0,0,0,0-224Zm0,192a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,208Z"/></svg>
+                {kid.name}
+              </h2>
               
               {activities.length === 0 ? (
                 <p className="empty">No activities recorded in this period.</p>
               ) : (
                 <>
                   {/* Subject Summary */}
-                  <h3>📊 Subject Summary</h3>
+                  <h3>
+                    <svg style={{display: 'inline', verticalAlign: 'middle', marginRight: 6}} width="14" height="14" viewBox="0 0 256 256" fill="#4f46e5"><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></svg>
+                    Subject Summary
+                  </h3>
                   <table className="summary-table">
                     <thead>
                       <tr>
@@ -167,7 +176,10 @@ export default async function PrintActivityLogPage({
                   </table>
                   
                   {/* Activity Detail */}
-                  <h3>📝 Activity Detail</h3>
+                  <h3>
+                    <svg style={{display: 'inline', verticalAlign: 'middle', marginRight: 6}} width="14" height="14" viewBox="0 0 256 256" fill="#4f46e5"><path d="M200,32H163.74a47.92,47.92,0,0,0-71.48,0H56A16,16,0,0,0,40,48V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm-72,0a32,32,0,0,1,32,32H96A32,32,0,0,1,128,32Zm72,184H56V48H82.75A47.9,47.9,0,0,0,80,64v8a8,8,0,0,0,8,8h80a8,8,0,0,0,8-8V64a47.9,47.9,0,0,0-2.75-16H200Z"/></svg>
+                    Activity Detail
+                  </h3>
                   <table>
                     <thead>
                       <tr>

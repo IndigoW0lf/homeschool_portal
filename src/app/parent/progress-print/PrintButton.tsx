@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Printer, Books, ChartBar, Notebook, Moon, Sparkle, GraduationCap, PencilSimple } from '@phosphor-icons/react';
 
 export function FilterControls({ 
   kids,
@@ -14,9 +14,9 @@ export function FilterControls({
   currentDays: number;
   currentSource?: string;
 }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   
+  // Use window.location to trigger a full page reload (required for server components)
   const updateParams = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) {
@@ -24,7 +24,7 @@ export function FilterControls({
     } else {
       params.delete(key);
     }
-    router.push(`?${params.toString()}`);
+    window.location.href = `?${params.toString()}`;
   };
 
   return (
@@ -35,14 +35,15 @@ export function FilterControls({
       padding: 16,
       background: '#f9fafb',
       borderRadius: 8,
-      flexWrap: 'wrap'
+      flexWrap: 'wrap',
+      alignItems: 'flex-end'
     }}>
       <div>
-        <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4 }}>Student</label>
+        <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: '#374151' }}>Student</label>
         <select
           value={currentKid || ''}
           onChange={(e) => updateParams('kid', e.target.value)}
-          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
+          style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db', minWidth: 140 }}
         >
           <option value="">All Students</option>
           {kids.map(kid => (
@@ -52,11 +53,11 @@ export function FilterControls({
       </div>
       
       <div>
-        <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4 }}>Time Period</label>
+        <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: '#374151' }}>Time Period</label>
         <select
           value={currentDays}
           onChange={(e) => updateParams('days', e.target.value)}
-          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
+          style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db', minWidth: 160 }}
         >
           <option value="7">Last 7 Days</option>
           <option value="30">Last 30 Days</option>
@@ -67,11 +68,11 @@ export function FilterControls({
       </div>
       
       <div>
-        <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4 }}>Source</label>
+        <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: '#374151' }}>Source</label>
         <select
           value={currentSource || ''}
           onChange={(e) => updateParams('source', e.target.value)}
-          style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #d1d5db' }}
+          style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db', minWidth: 140 }}
         >
           <option value="">All Sources</option>
           <option value="lunara_quest">Lunara Quest</option>
@@ -98,10 +99,25 @@ export function PrintButton() {
         border: 'none',
         borderRadius: 8,
         cursor: 'pointer',
-        fontWeight: 500
+        fontWeight: 500,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8
       }}
     >
-      🖨️ Print Log
+      <Printer size={18} weight="bold" />
+      Print Log
     </button>
   );
 }
+
+// Icons for use in the page
+export const Icons = {
+  Books,
+  ChartBar,
+  Notebook,
+  Moon,
+  Sparkle,
+  GraduationCap,
+  PencilSimple
+};
