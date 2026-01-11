@@ -204,6 +204,7 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
                   onSubmit={() => {
                      setEditingAssignmentId(null);
                   }}
+                  students={students}
                />
             </div>
          )}

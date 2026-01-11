@@ -1,15 +1,18 @@
 'use client';
 
+import { useEffect, useState, useRef } from 'react';
 import { useForm, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { BookOpen, Globe, Layout, Television, PushPin, CalendarBlank, Key, Trash } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { TagInput } from '@/components/ui/TagInput';
-import { TAGS, STUDENTS } from '@/lib/mock-data';
+import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { createResource, updateResource, deleteResource } from '@/lib/supabase/mutations';
 import { useRouter } from 'next/navigation';
+import { Kid } from '@/types';
+import { supabase } from '@/lib/supabase/browser';
 
 export const CATEGORIES = ['Reading', 'Logic & Math', 'Writing', 'Projects', 'Science', 'History', 'Life Skills', 'Art', 'Daily'] as const;
 export const RESOURCE_TYPES = ['Video', 'Website', 'Book', 'App', 'Other'] as const;
@@ -46,11 +49,56 @@ interface ResourceFormProps {
   onSubmit?: (data: ResourceFormData) => void;
   onCancel?: () => void;
   onDelete?: () => void;
+  students?: Kid[];
 }
 
-export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, onDelete }: ResourceFormProps = {}) {
+export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, onDelete, students: propStudents = [] }: ResourceFormProps = {}) {
   const router = useRouter();
   const resolver = zodResolver(resourceSchema) as unknown as Resolver<ResourceFormData>;
+
+  // State for fetched students
+  const [fetchedStudents, setFetchedStudents] = useState<Kid[]>([]);
+  const [studentsLoading, setStudentsLoading] = useState(propStudents.length === 0);
+  const hasFetchedRef = useRef(false);
+
+  // Fetch students from database if not passed as prop
+  useEffect(() => {
+    if (propStudents.length > 0) {
+      setFetchedStudents(propStudents);
+      setStudentsLoading(false);
+      return;
+    }
+
+    if (hasFetchedRef.current) return;
+    hasFetchedRef.current = true;
+
+    async function fetchKids() {
+      try {
+        const { data, error } = await supabase
+          .from('kids')
+          .select('id, name, grade_band')
+          .order('name');
+
+        if (error) throw error;
+
+        const mappedKids: Kid[] = (data || []).map(k => ({
+          id: k.id,
+          name: k.name,
+          gradeBand: k.grade_band || '3-5',
+        }));
+
+        setFetchedStudents(mappedKids);
+      } catch (err) {
+        console.error('Failed to fetch kids:', err);
+      } finally {
+        setStudentsLoading(false);
+      }
+    }
+
+    fetchKids();
+  }, []);
+
+  const effectiveStudents = fetchedStudents;
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ResourceFormData>({
     resolver,
@@ -269,8 +317,13 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
 
             <div>
                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assign To</label>
-               <div className="grid grid-cols-5 gap-2">
-                  {STUDENTS.map(student => (
+               <div className="flex gap-2 flex-wrap">
+                  {studentsLoading ? (
+                    <div className="text-sm text-muted">Loading...</div>
+                  ) : effectiveStudents.length === 0 ? (
+                    <div className="text-sm text-muted">No kids yet</div>
+                  ) : (
+                    effectiveStudents.map(student => (
                      <div 
                         key={student.id} 
                         onClick={() => toggleStudent(student.id)}
@@ -281,7 +334,8 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
                      >
                         <StudentAvatar name={student.name} className="w-10 h-10" />
                      </div>
-                  ))}
+                  ))
+                 )}
                </div>
             </div>
 
