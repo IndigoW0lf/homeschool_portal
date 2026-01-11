@@ -300,7 +300,7 @@ export async function getUnifiedActivities(
         : null;
       
       // Determine title and subject based on what's populated
-      let title = item.title_override || 'Untitled Activity';
+      let title = item.title_override || '';
       let subject = 'Other';
       let type = item.item_type || 'activity';
       let durationMinutes: number | undefined;
@@ -321,19 +321,22 @@ export async function getUnifiedActivities(
         type = 'resource';
       }
       
-      // Only add if we have a title
-      if (title && title !== 'Untitled Activity') {
-        activities.push({
-          id: `schedule-${item.id}`,
-          date: item.date,
-          title,
-          subject,
-          source: 'lunara_quest',
-          sourceLabel: 'Lunara Quest',
-          type,
-          durationMinutes
-        });
+      // Fallback title if nothing found
+      if (!title) {
+        title = `${type.charAt(0).toUpperCase() + type.slice(1)} (${item.date})`;
       }
+      
+      // Always include schedule_items (they were counted by the RPC)
+      activities.push({
+        id: `schedule-${item.id}`,
+        date: item.date,
+        title,
+        subject,
+        source: 'lunara_quest',
+        sourceLabel: 'Lunara Quest',
+        type,
+        durationMinutes
+      });
     }
   }
   

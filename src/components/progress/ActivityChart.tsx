@@ -180,7 +180,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                     </div>
                     {/* Bar */}
                     <div 
-                      className={`w-full max-w-[28px] rounded-t transition-all ${
+                      className={`w-full max-w-[40px] rounded-t transition-all ${
                         day.count > 0 
                           ? 'bg-indigo-500 dark:bg-indigo-400' 
                           : 'bg-gray-200 dark:bg-gray-700'
