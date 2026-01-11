@@ -1,30 +1,39 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { Printer, Books, ChartBar, Notebook, Moon, Sparkle, GraduationCap, PencilSimple } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { Printer, Funnel } from '@phosphor-icons/react';
 
 export function FilterControls({ 
   kids,
-  currentKid,
-  currentDays,
-  currentSource
+  initialKid,
+  initialDays,
+  initialSource
 }: {
   kids: { id: string; name: string }[];
-  currentKid?: string;
-  currentDays: number;
-  currentSource?: string;
+  initialKid?: string;
+  initialDays: number;
+  initialSource?: string;
 }) {
-  const searchParams = useSearchParams();
+  const [kid, setKid] = useState(initialKid || '');
+  const [days, setDays] = useState(initialDays.toString());
+  const [source, setSource] = useState(initialSource || '');
   
-  // Use window.location to trigger a full page reload (required for server components)
-  const updateParams = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    window.location.href = `?${params.toString()}`;
+  const handleApply = () => {
+    const params = new URLSearchParams();
+    if (kid) params.set('kid', kid);
+    if (days !== '30') params.set('days', days);
+    if (source) params.set('source', source);
+    
+    const queryString = params.toString();
+    window.location.href = queryString ? `?${queryString}` : window.location.pathname;
+  };
+
+  const selectStyle = {
+    padding: '8px 12px',
+    borderRadius: 6,
+    border: '1px solid #d1d5db',
+    minWidth: 150,
+    backgroundColor: 'white'
   };
 
   return (
@@ -41,13 +50,13 @@ export function FilterControls({
       <div>
         <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: '#374151' }}>Student</label>
         <select
-          value={currentKid || ''}
-          onChange={(e) => updateParams('kid', e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db', minWidth: 140 }}
+          value={kid}
+          onChange={(e) => setKid(e.target.value)}
+          style={selectStyle}
         >
           <option value="">All Students</option>
-          {kids.map(kid => (
-            <option key={kid.id} value={kid.id}>{kid.name}</option>
+          {kids.map(k => (
+            <option key={k.id} value={k.id}>{k.name}</option>
           ))}
         </select>
       </div>
@@ -55,9 +64,9 @@ export function FilterControls({
       <div>
         <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: '#374151' }}>Time Period</label>
         <select
-          value={currentDays}
-          onChange={(e) => updateParams('days', e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db', minWidth: 160 }}
+          value={days}
+          onChange={(e) => setDays(e.target.value)}
+          style={selectStyle}
         >
           <option value="7">Last 7 Days</option>
           <option value="30">Last 30 Days</option>
@@ -70,9 +79,9 @@ export function FilterControls({
       <div>
         <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 4, color: '#374151' }}>Source</label>
         <select
-          value={currentSource || ''}
-          onChange={(e) => updateParams('source', e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #d1d5db', minWidth: 140 }}
+          value={source}
+          onChange={(e) => setSource(e.target.value)}
+          style={selectStyle}
         >
           <option value="">All Sources</option>
           <option value="lunara_quest">Lunara Quest</option>
@@ -80,6 +89,26 @@ export function FilterControls({
           <option value="manual">Manual Entries</option>
         </select>
       </div>
+      
+      <button
+        onClick={handleApply}
+        style={{
+          padding: '8px 20px',
+          background: '#4f46e5',
+          color: 'white',
+          border: 'none',
+          borderRadius: 6,
+          cursor: 'pointer',
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          height: 38
+        }}
+      >
+        <Funnel size={16} weight="bold" />
+        Apply Filters
+      </button>
     </div>
   );
 }
@@ -110,14 +139,3 @@ export function PrintButton() {
     </button>
   );
 }
-
-// Icons for use in the page
-export const Icons = {
-  Books,
-  ChartBar,
-  Notebook,
-  Moon,
-  Sparkle,
-  GraduationCap,
-  PencilSimple
-};

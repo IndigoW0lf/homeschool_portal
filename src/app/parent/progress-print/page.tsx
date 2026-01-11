@@ -113,9 +113,9 @@ export default async function PrintActivityLogPage({
         
         <FilterControls 
           kids={kids.map(k => ({ id: k.id, name: k.name }))}
-          currentKid={searchParams.kid}
-          currentDays={days}
-          currentSource={sourceFilter}
+          initialKid={searchParams.kid}
+          initialDays={days}
+          initialSource={sourceFilter}
         />
 
         <div className="header">
