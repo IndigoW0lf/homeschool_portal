@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link, Printer, MagicWand } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow, WorksheetData } from '@/types';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { WorksheetGeneratorModal } from '@/components/worksheets/WorksheetGeneratorModal';
+import { saveWorksheetAssignmentAction } from '@/lib/actions/worksheet';
+import { attachWorksheetToLessonAction } from '@/lib/actions/lesson';
 import { toast } from 'sonner';
 
 interface ItemDetailModalProps {
@@ -27,6 +30,7 @@ export function ItemDetailModal({
   onDelete, 
   onSchedule 
 }: ItemDetailModalProps) {
+  const router = useRouter();
   const [worksheetModalOpen, setWorksheetModalOpen] = useState(false);
   
   if (!isOpen || !item) return null;
@@ -72,11 +76,44 @@ export function ItemDetailModal({
     }
   }
 
-  const handleWorksheetAttach = (worksheet: WorksheetData) => {
-    toast.success('Worksheet created!', {
-      description: `"${worksheet.title || 'Worksheet'}" saved to your assignments.`
-    });
-    setWorksheetModalOpen(false);
+  const handleWorksheetAttach = async (worksheet: WorksheetData) => {
+    try {
+      // 1. Save the worksheet as an assignment
+      const saveRes = await saveWorksheetAssignmentAction(
+        worksheet, 
+        `Worksheet: ${worksheet.title}`
+      );
+
+      if (!saveRes.success || !saveRes.assignmentId) {
+        toast.error('Failed to save worksheet assignment');
+        return;
+      }
+
+      // 2. Attach it to the lesson (if viewing a lesson)
+      if (isLesson && lesson) {
+        const attachRes = await attachWorksheetToLessonAction(
+          lesson.id,
+          saveRes.assignmentId,
+          worksheet.title
+        );
+
+        if (!attachRes.success) {
+          toast.error('Saved assignment but failed to attach to lesson');
+          // Don't return, still generic success since assignment exists
+        }
+      }
+
+      toast.success('Worksheet created & attached!', {
+        description: `"${worksheet.title}" has been saved and linked to this lesson.`
+      });
+      setWorksheetModalOpen(false);
+      
+      // Refresh to show new link
+      router.refresh(); 
+    } catch (error) {
+      toast.error('An error occurred while saving the worksheet');
+      console.error(error);
+    }
   };
 
   const handleDelete = () => {
