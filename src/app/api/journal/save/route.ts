@@ -33,8 +33,6 @@ export async function POST(request: NextRequest) {
       tags = await detectJournalTags(response);
     }
 
-
-    
     // Auth Check:
     // 1. Is it a Kid Session?
     const kidSession = await getKidSession();
