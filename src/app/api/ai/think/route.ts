@@ -160,10 +160,34 @@ export async function POST(request: NextRequest) {
     let enrichedResponse = parsedResponse;
     if (isYouTubeConfigured()) {
       try {
+        // Extract grade level from context for better search results
+        let gradeLevel: string | undefined;
+        
+        // Try finding child in family context using the request's childProfileId
+        if (childProfileId && loadedContext.raw.family?.kids) {
+          const kid = loadedContext.raw.family.kids.find(k => k.id === childProfileId);
+          if (kid) {
+            if (kid.grades && kid.grades.length > 0) {
+              gradeLevel = kid.grades.join(' ');
+            } else if (kid.gradeBand) {
+              gradeLevel = kid.gradeBand;
+            }
+          }
+        }
+
+        // Fallback: If we have direct child context (INTEREST_SPARK mode)
+        if (!gradeLevel && loadedContext.raw.child) {
+          const c = loadedContext.raw.child;
+          if (c.grades && c.grades.length > 0) gradeLevel = c.grades.join(' ');
+          else if (c.gradeBand) gradeLevel = c.gradeBand;
+        }
+
+        console.log('[AI Think] Enriching with grade level:', gradeLevel || 'unknown');
+
         enrichedResponse = await enrichWithResources(parsedResponse, {
           includeVideos: true,
           includeWorksheets: false, // Enable when Tavily is configured
-          // TODO: Extract grade level from child profile context
+          gradeLevel, 
         });
         console.log('[AI Think] Resources enriched:', {
           suggestionsWithVideos: enrichedResponse.suggestions.filter(
