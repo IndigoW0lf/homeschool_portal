@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server';
+import { getKidSession } from '@/lib/kid-session';
 import { detectJournalTags } from '@/lib/ai/journal-tags';
 
 /**
@@ -32,7 +33,20 @@ export async function POST(request: NextRequest) {
       tags = await detectJournalTags(response);
     }
 
-    const supabase = await createServerClient();
+
+    
+    // Auth Check:
+    // 1. Is it a Kid Session?
+    const kidSession = await getKidSession();
+    let supabase;
+    
+    if (kidSession && kidSession.kidId === kidId) {
+      // Authorized Kid -> Use Service Role to write their own journal
+      supabase = await createServiceRoleClient();
+    } else {
+      // Parent/Standard User -> Use RLS
+      supabase = await createServerClient();
+    }
     
     // Upsert journal entry (one per kid per date)
     const { data, error } = await supabase

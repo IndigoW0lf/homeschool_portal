@@ -26,6 +26,70 @@ export async function getUserProfileFromDB(): Promise<Profile | null> {
 
 // Kids - filtered by family membership (all family members can see kids)
 export async function getKidsFromDB(): Promise<Kid[]> {
+  // Check for kid session first
+  const { getKidSession } = await import('@/lib/kid-session');
+  const kidSession = await getKidSession();
+  
+  if (kidSession) {
+    // If logged in as a kid, use Service Role to fetch ONLY their own profile
+    const { createServiceRoleClient } = await import('./server');
+    const supabase = await createServiceRoleClient();
+    
+    // 1. Get current kid's family_id
+    const { data: currentKid, error: kidError } = await supabase
+      .from('kids')
+      .select('family_id')
+      .eq('id', kidSession.kidId)
+      .single();
+
+    if (kidError || !currentKid?.family_id) {
+      console.error('Error fetching kid family:', kidError);
+      return [];
+    }
+
+    // 2. Fetch ALL kids in that family
+    const { data, error } = await supabase
+      .from('kids')
+      .select('*')
+      .eq('family_id', currentKid.family_id)
+      .order('id');
+      
+    if (error) {
+       console.error('Error fetching sibling kids:', error);
+       return [];
+    }
+    
+    // Fall through to mapping below
+    // Note: We need to assign `data` to a variable we can map over later, 
+    // or return the mapped data directly here. 
+    // Since the mapping logic is identical, let's just use the 'data' variable for the common path?
+    // But we are inside an if block.
+    
+    return (data || []).map(row => ({
+      id: row.id,
+      name: row.name,
+      gradeBand: row.grade_band || '',
+      grades: row.grades || [],
+      familyId: row.family_id || undefined,
+      avatarUrl: row.avatar_url || undefined,
+      favoriteColor: row.favorite_color || undefined,
+      birthday: row.birthday || undefined,
+      bio: row.bio || undefined,
+      favoriteShows: row.favorite_shows || undefined,
+      favoriteMusic: row.favorite_music || undefined,
+      favoriteFoods: row.favorite_foods || undefined,
+      favoriteSubjects: row.favorite_subjects || undefined,
+      hobbies: row.hobbies || undefined,
+      nickname: row.nickname || undefined,
+      avatarState: row.avatar_state || undefined,
+      journalEnabled: row.journal_enabled ?? true,
+      journalAllowSkip: row.journal_allow_skip ?? true,
+      journalPromptTypes: row.journal_prompt_types || undefined,
+      streakEnabled: row.streak_enabled ?? true,
+    }));
+  }
+
+  // Otherwise, standard Parent/User flow
   const supabase = await createServerClient();
   
   // Get current user
@@ -260,16 +324,41 @@ export async function getWeekEntriesFromDB(date: Date = new Date()): Promise<Cal
 
 // Resources - filtered by authenticated user
 export async function getResourcesFromDB(): Promise<Resources> {
-  const supabase = await createServerClient();
+  // Check for kid session first
+  const { getKidSession } = await import('@/lib/kid-session');
+  const { createServerClient, createServiceRoleClient } = await import('./server');
   
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { reading: [], logic: [], writing: [], projects: [] };
+  const kidSession = await getKidSession();
+  let supabase;
+  let targetUserId: string | null = null;
+  
+  if (kidSession) {
+    // Kid Session: Need to find the parent's ID to fetch THEIR resources
+    supabase = await createServiceRoleClient();
+    
+    // 1. Get kid's parent (user_id)
+    const { data: kid } = await supabase
+      .from('kids')
+      .select('user_id')
+      .eq('id', kidSession.kidId)
+      .single();
+      
+    if (kid) {
+      targetUserId = kid.user_id;
+    }
+  } else {
+    // Parent Session: Use standard client
+    supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) targetUserId = user.id;
+  }
+  
+  if (!targetUserId) return { reading: [], logic: [], writing: [], projects: [] };
   
   const { data, error } = await supabase
     .from('resources')
     .select('*')
-    .or(`user_id.eq.${user.id},user_id.is.null`) // Include legacy data
+    .or(`user_id.eq.${targetUserId},user_id.is.null`) // Include legacy data
     .order('sort_order');
 
   if (error) {
@@ -351,7 +440,22 @@ export async function getScheduleItemsForStudent(
   startDate?: string, 
   endDate?: string
 ) {
-  const supabase = await createServerClient();
+  // Check for kid session first
+  const { getKidSession } = await import('@/lib/kid-session');
+  // Dynamic import server utils to avoid circular dependencies if any (safe practice here)
+  const { createServerClient, createServiceRoleClient } = await import('./server');
+  
+  const kidSession = await getKidSession();
+  
+  let supabase;
+  
+  if (kidSession && kidSession.kidId === studentId) {
+    // Authorized kid viewing their own schedule -> Use Service Role
+    supabase = await createServiceRoleClient();
+  } else {
+    // Normal parent/user access -> Use Standard Client (RLS)
+    supabase = await createServerClient();
+  }
   
   let query = supabase
     .from('schedule_items')

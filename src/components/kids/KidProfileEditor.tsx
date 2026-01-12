@@ -137,24 +137,23 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from('kids')
-        .update({
-          nickname: formData.nickname || null,
-          bio: formData.bio || null,
-          favorite_shows: formData.favoriteShows || null,
-          favorite_music: formData.favoriteMusic || null,
-          favorite_foods: formData.favoriteFoods || null,
-          favorite_subjects: formData.favoriteSubjects || null,
-          hobbies: formData.hobbies || null,
-          favorite_color: formData.favoriteColor || null,
-          birthday: formData.birthday || null,
-          grade_band: formData.gradeBand || null,
-          grades: formData.grades || [],
-        })
-        .eq('id', kidId);
+      // Use Server Action to handle auth (works for both Parent and Kid Session)
+      const { updateKidProfileAction } = await import('@/lib/actions/kid');
+      const result = await updateKidProfileAction(kidId, {
+        nickname: formData.nickname || undefined,
+        bio: formData.bio || undefined,
+        favoriteShows: formData.favoriteShows || undefined,
+        favoriteMusic: formData.favoriteMusic || undefined,
+        favoriteFoods: formData.favoriteFoods || undefined,
+        favoriteSubjects: formData.favoriteSubjects || undefined,
+        hobbies: formData.hobbies || undefined,
+        favoriteColor: formData.favoriteColor || undefined,
+        birthday: formData.birthday || undefined,
+        gradeBand: formData.gradeBand || undefined,
+        grades: formData.grades || undefined,
+      });
 
-      if (error) throw error;
+      if (!result.success) throw new Error(result.error);
 
       toast.success('Profile saved! ⭐');
       setIsEditing(false);

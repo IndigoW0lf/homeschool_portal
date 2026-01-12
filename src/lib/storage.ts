@@ -41,14 +41,10 @@ export async function setDone(
   // 2. Sync to database if we have the schedule_item ID
   if (scheduleItemId) {
     try {
-      const status = done ? 'completed' : 'pending';
-      const completed_at = done ? new Date().toISOString() : null;
+      const { setScheduleItemDoneAction } = await import('@/lib/actions/schedule');
+      await setScheduleItemDoneAction(scheduleItemId, done);
       
-      await supabase
-        .from('schedule_items')
-        .update({ status, completed_at })
-        .eq('id', scheduleItemId);
-        
+      const status = done ? 'completed' : 'pending';
       console.log(`✅ Synced completion to DB: ${scheduleItemId} -> ${status}`);
     } catch (err) {
       console.error('Failed to sync completion to database:', err);

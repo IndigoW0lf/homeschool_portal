@@ -31,7 +31,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Get kid data for age and prompt preferences
-    const supabase = await createServerClient();
+    const { getKidSession } = await import('@/lib/kid-session');
+    const { createServerClient, createServiceRoleClient } = await import('@/lib/supabase/server');
+
+    const kidSession = await getKidSession();
+    let supabase;
+    
+    if (kidSession && kidSession.kidId === kidId) {
+      supabase = await createServiceRoleClient();
+    } else {
+      supabase = await createServerClient();
+    }
     const { data: kid, error } = await supabase
       .from('kids')
       .select('birthday, grade_band, journal_prompt_types')
