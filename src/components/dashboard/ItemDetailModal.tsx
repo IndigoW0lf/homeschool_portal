@@ -222,13 +222,13 @@ export function ItemDetailModal({
               )}
 
               {/* Links */}
-              {(lesson.links?.length > 0 || lessonDetails.links?.length > 0) && (
+              {(lessonDetails.links?.length > 0) && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                     Resources
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {[...(lesson.links || []), ...(lessonDetails.links || [])].map((link, i) => (
+                    {lessonDetails.links.map((link, i) => (
                       <a
                         key={i}
                         href={link.url}
