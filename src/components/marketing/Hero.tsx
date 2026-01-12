@@ -3,13 +3,13 @@ import { ArrowRight, Play } from '@phosphor-icons/react/dist/ssr';
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900 pt-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[var(--brand-deep)] pt-20">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a2e] via-gray-900 to-[#16213e]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand-deep)] via-gray-900 to-[var(--brand-dark)]" />
       
       {/* Animated orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#9c8fb8]/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#E27D60]/20 rounded-full blur-3xl animate-pulse delay-1000" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--brand-lilac)]/20 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[var(--brand-coral)]/20 rounded-full blur-3xl animate-pulse delay-1000" />
       
       {/* Stars */}
       <div className="absolute inset-0 overflow-hidden">
@@ -30,7 +30,7 @@ export function Hero() {
       <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 mb-8">
-          <span className="text-[#E27D60]">✨</span>
+          <span className="text-[var(--brand-coral)]">✨</span>
           <span className="text-sm text-gray-300">Made for homeschool families</span>
         </div>
 
@@ -38,7 +38,7 @@ export function Hero() {
         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
           Your Magical
           <br />
-          <span className="bg-gradient-to-r from-[#9c8fb8] via-[#c4a7e7] to-[#E27D60] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[var(--brand-lilac)] via-[#c4a7e7] to-[var(--brand-coral)] bg-clip-text text-transparent">
             Homeschool Companion
           </span>
         </h1>
@@ -53,7 +53,7 @@ export function Hero() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/signup"
-            className="group px-8 py-4 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-2xl font-semibold text-lg hover:opacity-90 transition-all hover:scale-105 flex items-center gap-2"
+            className="group px-8 py-4 bg-gradient-to-r from-[var(--brand-lilac)] to-[var(--brand-coral)] text-white rounded-2xl font-semibold text-lg hover:opacity-90 transition-all hover:scale-105 flex items-center gap-2"
           >
             Get Started Free
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

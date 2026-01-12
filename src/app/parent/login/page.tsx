@@ -141,12 +141,18 @@ export default function ParentLoginPage() {
 
   if (isMagicLinkSent) {
     return (
-      <div className="min-h-screen bg-[var(--paper-50)] flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 max-w-md w-full text-center">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+      <div className="min-h-screen bg-galaxy-gradient flex items-center justify-center p-4">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--brand-lilac)]/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[var(--brand-coral)]/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
+
+        <div className="glass-panel rounded-xl p-8 shadow-2xl max-w-md w-full text-center relative z-10">
+          <h1 className="text-2xl font-bold text-white mb-4">
             Check your email
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
+          <p className="text-gray-300 mb-6">
             We&apos;ve sent a magic link to <strong>{email}</strong>.
             <br />
             Click the link in the email to sign in.
@@ -156,7 +162,7 @@ export default function ParentLoginPage() {
               setIsMagicLinkSent(false);
               setMessage(null);
             }}
-            className="text-[var(--ember-500)] hover:underline"
+            className="text-[var(--brand-coral)] hover:text-[var(--brand-rose)] transition-colors hover:underline"
           >
             Back to login
           </button>
@@ -166,23 +172,34 @@ export default function ParentLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--paper-50)] flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-          Parent Login
-        </h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">
-          Sign in to manage lessons and assignments
-        </p>
+    <div className="min-h-screen bg-galaxy-gradient flex items-center justify-center p-4 relative">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--brand-lilac)]/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[var(--brand-coral)]/10 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute top-10 left-10 w-1 h-1 bg-white rounded-full opacity-50" />
+          <div className="absolute bottom-20 right-10 w-2 h-2 bg-white rounded-full opacity-30" />
+          <div className="absolute top-1/2 left-10 w-1.5 h-1.5 bg-white rounded-full opacity-40" />
+      </div>
+
+      <div className="glass-panel rounded-2xl p-8 shadow-2xl max-w-md w-full relative z-10 border-t border-white/20">
+        <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">
+            Parent Portal
+            </h1>
+            <p className="text-gray-400">
+            Sign in to manage your homeschool
+            </p>
+        </div>
 
         {/* Auth Method Toggle */}
-        <div className="flex p-1 bg-gray-100 dark:bg-gray-700 rounded-lg mb-6">
+        <div className="flex p-1 bg-black/20 rounded-lg mb-6 backdrop-blur-sm">
           <button
             onClick={() => { setAuthMethod('magic_link'); setMessage(null); }}
             className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
               authMethod === 'magic_link'
-                ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                ? 'bg-[var(--brand-lilac)] text-white shadow-md'
+                : 'text-gray-400 hover:text-white'
             }`}
           >
             Magic Link
@@ -191,8 +208,8 @@ export default function ParentLoginPage() {
             onClick={() => { setAuthMethod('password'); setMessage(null); }}
             className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
               authMethod === 'password'
-                ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                ? 'bg-[var(--brand-lilac)] text-white shadow-md'
+                : 'text-gray-400 hover:text-white'
             }`}
           >
             Password
@@ -201,21 +218,21 @@ export default function ParentLoginPage() {
 
         {message && (
           <div
-            className={`mb-4 p-3 rounded-lg border ${
+            className={`mb-4 p-3 rounded-lg border backdrop-blur-sm ${
               message.type === 'success'
-                ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
-                : 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
+                ? 'bg-green-500/10 border-green-500/30 text-green-200'
+                : 'bg-red-500/10 border-red-500/30 text-red-200'
             }`}
           >
-            <p className="text-sm">{message.text}</p>
+            <p className="text-sm text-center">{message.text}</p>
           </div>
         )}
 
-        <form onSubmit={authMethod === 'magic_link' ? handleMagicLink : handlePasswordLogin} className="space-y-4">
+        <form onSubmit={authMethod === 'magic_link' ? handleMagicLink : handlePasswordLogin} className="space-y-5">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm font-medium text-gray-300 mb-1.5"
             >
               Email
             </label>
@@ -225,7 +242,7 @@ export default function ParentLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 border border-white/10 rounded-xl bg-black/20 text-white placeholder-gray-500 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent outline-none transition-all"
               placeholder="parent@example.com"
             />
           </div>
@@ -234,7 +251,7 @@ export default function ParentLoginPage() {
             <div className="animate-in fade-in slide-in-from-top-2 duration-200">
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-gray-300 mb-1.5"
               >
                 Password
               </label>
@@ -244,32 +261,32 @@ export default function ParentLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-3 border border-white/10 rounded-xl bg-black/20 text-white placeholder-gray-500 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent outline-none transition-all"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={handleForgotPassword}
                 disabled={isResettingPassword}
-                className="mt-2 text-sm text-[var(--ember-500)] hover:underline"
+                className="mt-2 text-sm text-[var(--brand-coral)] hover:text-[var(--brand-rose)] transition-colors hover:underline"
               >
                 {isResettingPassword ? 'Sending...' : 'Forgot password?'}
               </button>
             </div>
           )}
           {/* Turnstile CAPTCHA */}
-          <div className="py-2">
+          <div className="py-2 flex justify-center">
             <Turnstile
               onVerify={handleTurnstileVerify}
               onExpire={handleTurnstileExpire}
-              theme="auto"
+              theme="dark"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading || !email || (authMethod === 'password' && !password) || !isVerified}
-            className="w-full py-2 px-4 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="w-full py-3.5 px-4 bg-gradient-to-r from-[var(--brand-lilac)] to-[var(--brand-coral)] text-white rounded-xl font-semibold shadow-lg shadow-purple-900/20 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
           >
             {isLoading
               ? 'Processing...'

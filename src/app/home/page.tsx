@@ -69,7 +69,7 @@ export default async function FamilyHomePage() {
               <DarkModeToggle />
               <Link 
                 href="/parent"
-                className="px-4 py-2.5 bg-gradient-to-r from-[#9c8fb8] via-[#E27D60] to-[#D48A8A] text-white rounded-xl hover:opacity-90 transition-all font-bold text-base uppercase tracking-wide shadow-lg"
+                className="px-4 py-2.5 bg-gradient-to-r from-[var(--brand-lilac)] via-[var(--brand-coral)] to-[var(--brand-rose)] text-white rounded-xl hover:opacity-90 transition-all font-bold text-base uppercase tracking-wide shadow-lg"
                 aria-label="Parent Dashboard"
               >
                 {displayName}

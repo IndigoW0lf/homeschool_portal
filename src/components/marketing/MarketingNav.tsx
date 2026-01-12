@@ -7,7 +7,7 @@ export function MarketingNav() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-[#9c8fb8] to-[#E27D60] group-hover:scale-105 transition-transform">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-[var(--brand-lilac)] to-[var(--brand-coral)] group-hover:scale-105 transition-transform">
             <Sparkle size={24} weight="fill" className="text-white" />
           </div>
           <span className="text-xl font-bold text-white">Lunara Quest</span>
@@ -36,7 +36,7 @@ export function MarketingNav() {
           </Link>
           <Link
             href="/signup"
-            className="px-5 py-2.5 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+            className="px-5 py-2.5 bg-gradient-to-r from-[var(--brand-lilac)] to-[var(--brand-coral)] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
           >
             Get Started
           </Link>

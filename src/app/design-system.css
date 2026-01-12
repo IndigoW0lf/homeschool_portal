@@ -290,3 +290,33 @@
   color: var(--kid-accent, var(--ember-500));
 }
 
+
+/* -----------------------------------------------------------------------------
+   BRAND THEME UTILITIES
+   ----------------------------------------------------------------------------- */
+
+/* Gradients */
+.bg-brand-gradient {
+  background: linear-gradient(135deg, var(--brand-lilac), var(--brand-coral));
+}
+
+.text-brand-gradient {
+  background: linear-gradient(to right, var(--brand-lilac), #c4a7e7, var(--brand-coral));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+.bg-galaxy-gradient {
+  background: linear-gradient(to bottom right, var(--brand-deep), #2a2a4a, var(--brand-dark));
+}
+
+/* Glassmorphism */
+.glass-panel {
+  @apply bg-white/10 backdrop-blur-md border border-white/10;
+}
+
+.glass-panel-dark {
+  @apply bg-black/20 backdrop-blur-md border border-white/5;
+}

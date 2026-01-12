@@ -52,7 +52,7 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-galaxy-gradient flex items-center justify-center p-4">
       {/* Stars background effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-10 left-10 w-2 h-2 bg-white rounded-full animate-pulse" />
@@ -64,23 +64,23 @@ export default function StudentLoginPage() {
 
       <div className="w-full max-w-md">
         {/* Card */}
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 relative">
+        <div className="glass-panel rounded-3xl p-8 relative shadow-2xl">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-lilac)] to-[var(--brand-coral)] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Student size={32} weight="duotone" className="text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+            <h1 className="text-2xl font-bold text-white mb-1">
               Welcome Back!
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
+            <p className="text-gray-300 text-sm">
               Enter your info to start learning
             </p>
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg text-sm text-center">
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-200 rounded-lg text-sm text-center">
               {error}
             </div>
           )}
@@ -89,7 +89,7 @@ export default function StudentLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* First Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 First Name
               </label>
               <input
@@ -97,7 +97,7 @@ export default function StudentLoginPage() {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Enter your first name"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent transition-all text-white placeholder-gray-500"
                 required
                 autoComplete="given-name"
               />
@@ -105,18 +105,18 @@ export default function StudentLoginPage() {
 
             {/* Last Initial */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Last Name Initial
               </label>
               <select
                 value={lastInitial}
                 onChange={(e) => setLastInitial(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-gray-900 dark:text-white"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent transition-all text-white appearance-none cursor-pointer"
                 required
               >
-                <option value="">Select...</option>
+                <option value="" className="bg-gray-800">Select...</option>
                 {LAST_INITIALS.map((letter) => (
-                  <option key={letter} value={letter}>
+                  <option key={letter} value={letter} className="bg-gray-800">
                     {letter}
                   </option>
                 ))}
@@ -125,7 +125,7 @@ export default function StudentLoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -134,14 +134,14 @@ export default function StudentLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12 text-gray-900 dark:text-white"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent transition-all pr-12 text-white placeholder-gray-500"
                   required
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
                 >
                   {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
                 </button>
@@ -150,16 +150,16 @@ export default function StudentLoginPage() {
 
             {/* Remember Me */}
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <label className="flex items-center gap-2 text-sm text-gray-300">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 text-purple-500 rounded focus:ring-purple-500"
+                  className="w-4 h-4 text-[var(--brand-coral)] rounded focus:ring-[var(--brand-coral)] bg-black/20 border-white/10"
                 />
                 Remember me
               </label>
-              <p className="text-xs text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-400">
                 Forgot password? Ask a parent!
               </p>
             </div>
@@ -168,7 +168,7 @@ export default function StudentLoginPage() {
             <button
               type="submit"
               disabled={isLoading || !firstName || !lastInitial || !password}
-              className="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-gradient-to-r from-[var(--brand-lilac)] to-[var(--brand-coral)] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -183,15 +183,15 @@ export default function StudentLoginPage() {
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+            <div className="flex-1 h-px bg-white/10" />
             <span className="text-xs text-gray-400">Or continue with</span>
-            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+            <div className="flex-1 h-px bg-white/10" />
           </div>
 
           {/* Parent Login Link */}
           <Link
             href="/parent/login"
-            className="w-full py-3 border-2 border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 font-medium rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 border-2 border-white/10 text-gray-300 font-medium rounded-xl hover:bg-white/5 transition-all flex items-center justify-center gap-2"
           >
             <Users size={20} />
             Parent Account
@@ -199,7 +199,7 @@ export default function StudentLoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-purple-300/60 text-xs mt-6">
+        <p className="text-center text-[var(--brand-lilac)] text-xs mt-6 opacity-60">
           Lunara Quest • Learning is an adventure ✨
         </p>
       </div>
