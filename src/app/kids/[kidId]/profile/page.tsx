@@ -7,6 +7,7 @@ import { BadgeGallery } from '@/components/kids/BadgeGallery';
 import { FamilyConnections } from '@/components/kids/FamilyConnections';
 import { AvatarUploadWrapper } from '@/components/kids/AvatarUploadWrapper';
 import Link from 'next/link';
+import { getKidSession } from '@/lib/kid-session';
 
 interface ProfilePageProps {
   params: Promise<{
@@ -18,6 +19,7 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
   const { kidId } = await params;
   const kid = await getKidByIdFromDB(kidId);
   const subjectCounts = await getKidSubjectCounts(kidId);
+  const session = await getKidSession();
   
   if (!kid) {
     notFound();
@@ -95,7 +97,11 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
 
         {/* Family Connections */}
         {kid.familyId && (
-          <FamilyConnections kidId={kidId} familyId={kid.familyId} />
+          <FamilyConnections 
+            kidId={kidId} 
+            familyId={kid.familyId} 
+            isKidSession={!!session}
+          />
         )}
 
         {/* Badge Gallery */}

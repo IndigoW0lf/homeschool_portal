@@ -35,6 +35,10 @@ export interface Kid {
   streakEnabled?: boolean;
   // Featured badge
   featuredBadgeId?: string;
+  // Kid login fields
+  lastName?: string;
+  passwordHash?: string; // Never sent to client, only used server-side
+  lastLoginAt?: string;
 }
 
 export interface Profile {

@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { House, GameController, UserCircle, Moon, Palette, List, X, Star, NotePencil } from '@phosphor-icons/react';
+import { usePathname, useRouter } from 'next/navigation';
+import { House, GameController, UserCircle, Moon, Palette, List, X, Star, NotePencil, SignOut } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
@@ -18,9 +18,9 @@ interface KidsNavProps {
   kidAvatarState?: AvatarState | null;
 }
 
-
 export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvatarState }: KidsNavProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // Use nickname if available, otherwise formal name
@@ -40,6 +40,16 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
   
   // Use kid's favorite color for active indicators, fallback to tab's default color
   const getActiveColor = (tabColor: string) => kidFavoriteColor || tabColor;
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/kid-auth/logout', { method: 'POST' });
+      router.push('/student');
+      router.refresh();
+    } catch (e) {
+      console.error('Logout failed', e);
+    }
+  };
 
   const tabs = [
     { 
@@ -169,6 +179,15 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
                   </Link>
                 );
               })}
+              
+              {/* Mobile Logout */}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 text-red-500"
+              >
+                <SignOut size={24} weight="duotone" />
+                <span className="font-medium">Sign Out</span>
+              </button>
             </div>
           </nav>
         )}
@@ -217,7 +236,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-4">
+        <nav className="flex-1 py-4 flex flex-col justify-between">
           <div className="flex flex-col items-center gap-2">
             {tabs.map(tab => {
               const Icon = tab.icon;
@@ -252,6 +271,17 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
                 </Link>
               );
             })}
+          </div>
+
+          {/* Desktop Logout - Bottom of Nav area, above Toggle */}
+          <div className="flex flex-col items-center mt-auto mb-2">
+             <button
+               onClick={handleLogout}
+               className="group flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all hover:bg-red-50 dark:hover:bg-red-900/10 text-gray-400 hover:text-red-500"
+               title="Sign Out"
+             >
+               <SignOut size={24} weight="duotone" />
+             </button>
           </div>
         </nav>
 

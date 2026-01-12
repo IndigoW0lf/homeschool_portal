@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { X, User, Lock, BookOpen, Star } from '@phosphor-icons/react';
 import { Kid } from '@/types';
 import { KidProfileEditor } from '@/components/kids/KidProfileEditor';
-import { KidPinManager } from '@/components/profile/KidPinManager';
+import { KidAccessManager } from '@/components/profile/KidAccessManager';
 import { JournalSettings } from '@/components/profile/JournalSettings';
 import { MoonManager } from '@/components/profile/MoonManager';
 import { RewardManager } from '@/components/profile/RewardManager';
@@ -23,7 +23,7 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
 
   const tabs = [
     { id: 'profile' as const, label: 'Profile', icon: User },
-    { id: 'access' as const, label: 'Access & PIN', icon: Lock },
+    { id: 'access' as const, label: 'Student Login', icon: Lock },
     { id: 'journal' as const, label: 'Journal', icon: BookOpen },
     { id: 'rewards' as const, label: 'Rewards & Shop', icon: Star },
   ];
@@ -85,16 +85,13 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
                   <User size={24} weight="fill" className="text-[var(--ember-500)]" />
                   <h3 className="text-lg font-semibold">Edit Profile</h3>
                 </div>
-                {/* Note: KidProfileEditor handles its own saving. 
-                    We assume kid object has enough data, or Editor handles fetching? 
-                    Actually Editor requires initialData. We pass 'kid'. */}
                 <KidProfileEditor kidId={kid.id} initialData={kid} />
               </div>
             )}
 
             {activeTab === 'access' && (
               <div className="space-y-6 max-w-lg">
-                <KidPinManager kids={[kid]} kidId={kid.id} />
+                <KidAccessManager kid={kid} />
               </div>
             )}
 

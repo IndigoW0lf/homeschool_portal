@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Users, User, Crown, Heart } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
+import { Users, Crown, Heart } from '@phosphor-icons/react';
 import { AvatarPreview } from './AvatarPreview';
 import { supabase } from '@/lib/supabase/browser';
 
@@ -24,9 +25,11 @@ interface Parent {
 interface FamilyConnectionsProps {
   kidId: string;
   familyId: string;
+  isKidSession?: boolean;
 }
 
-export function FamilyConnections({ kidId, familyId }: FamilyConnectionsProps) {
+export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConnectionsProps) {
+  const router = useRouter();
   const [siblings, setSiblings] = useState<Sibling[]>([]);
   const [parents, setParents] = useState<Parent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,6 +88,15 @@ export function FamilyConnections({ kidId, familyId }: FamilyConnectionsProps) {
     
     loadFamily();
   }, [kidId, familyId]);
+
+  const handleSiblingClick = (e: React.MouseEvent, siblingId: string) => {
+    if (isKidSession) {
+      e.preventDefault();
+      // If in kid session, we can't just switch. 
+      // Redirect to student login to switch users.
+      router.push('/student');
+    }
+  };
 
   if (loading) {
     return (
@@ -164,6 +176,7 @@ export function FamilyConnections({ kidId, familyId }: FamilyConnectionsProps) {
                 <Link
                   key={sibling.id}
                   href={`/kids/${sibling.id}/profile`}
+                  onClick={(e) => handleSiblingClick(e, sibling.id)}
                   className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 border border-blue-100 dark:border-blue-800/50 hover:shadow-md hover:scale-105 transition-all"
                 >
                   <AvatarPreview
@@ -176,7 +189,7 @@ export function FamilyConnections({ kidId, familyId }: FamilyConnectionsProps) {
                     {sibling.nickname || sibling.name}
                   </span>
                   <span className="text-[10px] text-gray-500 dark:text-gray-400">
-                    View Profile →
+                    {isKidSession ? 'Switch User 🔒' : 'View Profile →'}
                   </span>
                 </Link>
               ))}

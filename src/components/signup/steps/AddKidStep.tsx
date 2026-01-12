@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { SignupData } from '../SignupWizard';
 import { supabase } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
-import { ArrowLeft, Check, Lock } from '@phosphor-icons/react';
+import { ArrowLeft, Check, Lock, Eye, EyeSlash } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
+import bcrypt from 'bcryptjs';
 
 interface AddKidStepProps {
   data: SignupData;
@@ -17,9 +18,7 @@ interface AddKidStepProps {
 
 import { INDIVIDUAL_GRADES } from '@/lib/constants';
 
-
 // Cute avatar options using DiceBear
-// Styles: lorelei (illustrated), adventurer-neutral (cartoon), thumbs (hand emoji), fun-emoji (cute emojis)
 const AVATAR_OPTIONS = [
   { style: 'lorelei', seed: 'Luna' },
   { style: 'lorelei', seed: 'Sunshine' },
@@ -39,51 +38,20 @@ function getAvatarUrl(style: string, seed: string) {
   return `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
 }
 
-// Simple hash function for PINs (matches server-side)
-function simpleHash(pin: string): string {
-  let hash = 0;
-  const salt = 'lunara_pin_salt_2024';
-  const salted = salt + pin + salt;
-  for (let i = 0; i < salted.length; i++) {
-    const char = salted.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return hash.toString(16);
-}
-
 export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidStepProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const pinInputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  // PIN must be exactly 4 digits
-  const isPinValid = /^\d{4}$/.test(data.kidPin);
   
+  // Local state for password form
+  const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   // Need at least one grade selected
   const hasGrades = data.grades && data.grades.length > 0;
-  // Legacy support or new support
-  const canContinue = data.kidName && (hasGrades || data.gradeBand) && isPinValid;
-
-  const handlePinChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // Only digits
-    
-    const currentPin = data.kidPin.split('');
-    currentPin[index] = value.slice(-1);
-    const newPin = currentPin.join('').slice(0, 4);
-    updateData({ kidPin: newPin });
-
-    // Auto-advance
-    if (value && index < 3) {
-      pinInputRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handlePinKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !data.kidPin[index] && index > 0) {
-      pinInputRefs.current[index - 1]?.focus();
-    }
-  };
+  
+  // Validation
+  const canContinue = data.kidName && lastName && password.length >= 4 && (hasGrades || data.gradeBand);
 
   const toggleGrade = (grade: string) => {
     const currentGrades = data.grades || [];
@@ -93,7 +61,6 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
     updateData({ grades: newGrades });
   };
   
-
   const handleAddKid = async () => {
     if (!canContinue || !userId) return;
 
@@ -101,23 +68,24 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
     setError(null);
 
     try {
-      // Hash the PIN before storing
-      const pinHash = simpleHash(data.kidPin);
+      // Hash password using bcrypt
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(password, salt);
       
       // Generate a unique ID for the kid
       const kidId = crypto.randomUUID();
 
-      // Create kid in database with PIN
+      // Create kid in database with password
       const { error: kidError } = await supabase
         .from('kids')
         .insert({
           id: kidId,
           name: data.kidName,
-          // Store both for backward compat until migration full
+          last_name: lastName,
           grade_band: data.gradeBand || (data.grades?.[0] ? `${data.grades[0]}+` : null), 
           grades: data.grades || [],
           user_id: userId,
-          pin_hash: pinHash,
+          password_hash: passwordHash,
         });
 
       if (kidError) throw kidError;
@@ -126,12 +94,9 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
       onNext();
     } catch (err: unknown) {
       console.error('Failed to add kid:', err);
-      // Handle various error types including Supabase errors
       let message = 'Failed to add kid';
       if (err instanceof Error) {
         message = err.message;
-      } else if (typeof err === 'object' && err !== null && 'message' in err) {
-        message = String((err as { message: unknown }).message);
       }
       setError(message);
       toast.error(message);
@@ -148,26 +113,43 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
           Add your first kiddo
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          You can add more kids later from your dashboard
+          Set up their profile so they can login safely.
         </p>
       </div>
 
       {/* Form */}
       <div className="space-y-4">
         {/* Kid Name */}
-        <div>
-          <label htmlFor="kidName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Child's name *
-          </label>
-          <input
-            id="kidName"
-            type="text"
-            value={data.kidName}
-            onChange={(e) => updateData({ kidName: e.target.value })}
-            placeholder="What's their name?"
-            required
-            className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="kidName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              First Name *
+            </label>
+            <input
+              id="kidName"
+              type="text"
+              value={data.kidName}
+              onChange={(e) => updateData({ kidName: e.target.value })}
+              placeholder="First Name"
+              required
+              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Last Name *
+            </label>
+            <input
+              id="lastName"
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last Name"
+              required
+              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+            />
+            <p className="text-[10px] text-gray-500 mt-1">Needed for login (Initial only)</p>
+          </div>
         </div>
 
         {/* Grade Multi-Select */}
@@ -197,30 +179,31 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
           </div>
         </div>
 
-        {/* PIN Entry */}
+        {/* Password Entry */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <Lock size={16} className="inline mr-1" />
-            Secret PIN (4 digits) *
+            Create Password *
           </label>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            Your child will use this to access their portal. You can reset it anytime.
-          </p>
-          <div className="flex justify-center gap-3">
-            {[0, 1, 2, 3].map((index) => (
-              <input
-                key={index}
-                ref={el => { pinInputRefs.current[index] = el; }}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={data.kidPin[index] || ''}
-                onChange={(e) => handlePinChange(index, e.target.value)}
-                onKeyDown={(e) => handlePinKeyDown(index, e)}
-                className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[var(--lavender-500)] focus:ring-2 focus:ring-[var(--lavender-500)]/20 outline-none transition-all"
-              />
-            ))}
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Create a password (min 4 chars)"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12 text-gray-900 dark:text-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+            </button>
           </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            They'll use their <strong>First Name</strong>, <strong>Last Initial</strong>, and this <strong>Password</strong> to log in.
+          </p>
         </div>
 
         {/* Avatar Selection (optional) */}
