@@ -190,7 +190,7 @@ export default function StudentLoginPage() {
 
           {/* Parent Login Link */}
           <Link
-            href="/login"
+            href="/parent/login"
             className="w-full py-3 border-2 border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400 font-medium rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all flex items-center justify-center gap-2"
           >
             <Users size={20} />
