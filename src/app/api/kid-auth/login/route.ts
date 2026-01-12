@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import { createKidSession, KID_SESSION_MAX_AGE } from '@/lib/kid-session';
 import bcrypt from 'bcryptjs';
 
@@ -12,7 +12,12 @@ import bcrypt from 'bcryptjs';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastInitial, password, rememberMe } = body;
+    let { firstName, lastInitial, password, rememberMe } = body;
+    
+    // Trim inputs to handle iOS/mobile autocomplete adding spaces
+    firstName = firstName?.trim();
+    lastInitial = lastInitial?.trim();
+    password = password?.trim();
 
     if (!firstName || !lastInitial || !password) {
       return NextResponse.json(
@@ -21,7 +26,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createServerClient();
+    // Use Service Role client to bypass RLS (since kid isn't logged in yet)
+    const supabase = await createServiceRoleClient();
 
     // Look up kids matching name and last initial
     const { data: kids, error } = await supabase

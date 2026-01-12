@@ -31,4 +31,36 @@ export async function createServerClient() {
   });
 }
 
+/**
+ * Create a Supabase client with SERVICE_ROLE key to bypass RLS.
+ * USE WITH CAUTION! Only for admin tasks like auth/verification.
+ */
+export async function createServiceRoleClient() {
+  const cookieStore = await cookies();
+  
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!key) {
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set');
+  }
+
+  return createClientSSR(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          );
+        } catch {
+          // Ignore
+        }
+      },
+    },
+  });
+}
+
 
