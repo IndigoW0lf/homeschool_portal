@@ -26,7 +26,16 @@ interface KidPortalWeekCalendarProps {
   className?: string;
 }
 
-// Subscribe to storage changes ... (unchanged)
+// Subscribe to storage changes
+function subscribe(callback: () => void) {
+  window.addEventListener('storage', callback);
+  // Poll for changes since storage events don't fire in same tab
+  const interval = setInterval(callback, 500);
+  return () => {
+    window.removeEventListener('storage', callback);
+    clearInterval(interval);
+  };
+}
 
 export function KidPortalWeekCalendar({ 
   entries, 
@@ -37,7 +46,6 @@ export function KidPortalWeekCalendar({
   currentWeekUrl,
   className
 }: KidPortalWeekCalendarProps) {
-  // ... existing grouping/date logic ...
   // Group entries by date
   const entriesByDate = entries.reduce((acc, item) => {
     if (!acc[item.date]) {
