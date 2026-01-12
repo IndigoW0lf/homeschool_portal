@@ -137,3 +137,49 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+/**
+ * PATCH /api/lessons
+ * 
+ * Update an existing lesson by ID.
+ */
+export async function PATCH(request: NextRequest) {
+  try {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { id, ...lessonData } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 });
+    }
+
+    console.log('[API/lessons] Updating lesson:', id);
+
+    const { data, error } = await supabase
+      .from('lessons')
+      .update(lessonData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[API/lessons] Update error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    console.log('[API/lessons] Lesson updated successfully');
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    console.error('[API/lessons] Error updating lesson:', error);
+    return NextResponse.json(
+      { error: 'Failed to update lesson' },
+      { status: 500 }
+    );
+  }
+}

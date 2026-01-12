@@ -11,7 +11,7 @@ import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
 import { Kid } from '@/types';
-import { updateLesson, assignItemToSchedule } from '@/lib/supabase/mutations';
+import { assignItemToSchedule } from '@/lib/supabase/mutations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
@@ -234,8 +234,9 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
         let savedId = initialData?.id;
 
         if (initialData?.id) {
-           // Update existing lesson directly
+           // Update existing lesson via API
            const lessonData = {
+              id: initialData.id,
               title: data.title,
               type: data.type,
               instructions: data.description || '',
@@ -247,7 +248,17 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
               estimated_minutes: data.estimatedMinutes,
               parent_notes: data.parentNotes,
            };
-           await updateLesson(initialData.id, lessonData);
+           
+           const res = await fetch('/api/lessons', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(lessonData),
+           });
+           
+           if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.error || 'Failed to update lesson');
+           }
         } else {
            // Create new lesson via API (enables YouTube video + worksheet enrichment)
            const res = await fetch('/api/lessons', {
