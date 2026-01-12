@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { cn } from '@/lib/utils';
 import { isDone, setDone, hydrateDoneState } from '@/lib/storage';
-import { isAwarded, markAwarded } from '@/lib/progressState';
+import { markAwarded } from '@/lib/progressState';
 import { awardStars } from '@/lib/supabase/mutations';
 
 interface ScheduleItem {
@@ -43,9 +43,10 @@ interface ScheduleItemsListProps {
   kidId: string;
   date: string;  // Default date for items without date
   showDates?: boolean;  // Show date on each item (for upcoming items)
+  readOnly?: boolean;
 }
 
-export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleItemsListProps) {
+export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: ScheduleItemsListProps) {
   const [selectedItem, setSelectedItem] = useState<ScheduleItem | null>(null);
   const [, setAutoCompleted] = useState(false);
   
@@ -115,7 +116,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates }: ScheduleIte
           kidId={kidId}
           date={item.date || date}
           showDate={showDates}
-          readOnly={showDates}
+          readOnly={readOnly || showDates}
           onClick={() => setSelectedItem(item)}
         />
       ))}

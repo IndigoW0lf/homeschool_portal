@@ -9,8 +9,8 @@ import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { JournalCard } from '@/components/kids/JournalCard';
 import { StreakDisplay } from '@/components/kids/StreakDisplay';
-import { CaretLeft, CaretRight, CalendarBlank, Scroll } from '@phosphor-icons/react/dist/ssr';
-import { addWeeks, subWeeks, format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
+import { CaretLeft, CaretRight, CalendarBlank, Scroll, CheckCircle } from '@phosphor-icons/react/dist/ssr';
+import { addWeeks, subWeeks, format, startOfWeek, endOfWeek } from 'date-fns';
 import { KidStateHydrator } from '@/components/KidStateHydrator';
 
 interface KidPortalPageProps {
@@ -79,10 +79,9 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
   
   // Check if viewing current week
   const currentWeekStart = startOfWeek(today, { weekStartsOn: 1 });
-  const isCurrentWeek = format(weekStart, 'yyyy-MM-dd') === format(currentWeekStart, 'yyyy-MM-dd');
-  const weekLabel = isCurrentWeek 
-    ? 'This Week' 
-    : `${format(weekStart, 'MMM d')} - ${format(weekEnd, 'MMM d')}`;
+  
+  // Determine if viewing a past date (before today)
+  const isPast = viewDate < new Date(today.setHours(0,0,0,0));
 
   return (
     <div className="min-h-screen">
@@ -112,20 +111,8 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
               />
               <p className="text-gray-500 dark:text-gray-400 opacity-80">{formattedDate}</p>
             </div>
-
-            {/* Date Navigation */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-full p-1">
-               <Link href={`/kids/${kidId}?date=${prevWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
-                  <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
-               </Link>
-               <div className="px-4 text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2 cursor-pointer" title="Jump to Today">
-                  <CalendarBlank size={20} weight="duotone" color="#caa2d8" />
-                  {!isCurrentWeek ? <Link href={`/kids/${kidId}`} className="hover:text-[var(--ember-500)]">{weekLabel}</Link> : <span>{weekLabel}</span>}
-               </div>
-               <Link href={`/kids/${kidId}?date=${nextWeek}`} className="p-2 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
-                  <CaretRight size={24} weight="duotone" color="#b6e1d8" />
-               </Link>
-            </div>
+            
+            {/* Header Navigation Removed - Integrated into Calendar */}
           </div>
         </div>
       </div>
@@ -133,42 +120,62 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         
-        {/* Streak Display - only show if enabled for this kid */}
+        {/* Week Calendar - Moved to TOP */}
+        <section>
+          <KidPortalWeekCalendar 
+             entries={weekScheduleItems} 
+             kidId={kidId} 
+             viewDate={viewDate}
+             prevWeekUrl={`/kids/${kidId}?date=${prevWeek}`}
+             nextWeekUrl={`/kids/${kidId}?date=${nextWeek}`}
+             currentWeekUrl={`/kids/${kidId}`}
+          />
+        </section>
+
+        {/* Streak Display - only show if enabled for this kid AND today */}
         {isViewToday && kid.streakEnabled !== false && (
           <section>
             <StreakDisplay kidId={kidId} />
           </section>
         )}
 
-        {/* Progress Card - FIRST (compact centered stats) */}
-        {isViewToday && (
-          <section>
-            <ProgressCardWrapper 
-              kidId={kidId}
-              initialStars={progressData?.totalStars || 0}
-              initialUnlocks={unlocks}
-              date={viewDateString}
-              itemIds={todayItems.map(item => item.id)}
-            />
-          </section>
-        )}
+        {/* Progress Card - Stats (Show even if past, to see what was done) */}
+        <section>
+          <ProgressCardWrapper 
+            kidId={kidId}
+            initialStars={progressData?.totalStars || 0}
+            initialUnlocks={unlocks}
+            date={viewDateString}
+            itemIds={todayItems.map(item => item.id)}
+          />
+        </section>
 
-        {/* Today's Quests */}
+        {/* Quest Section */}
         <section id={`date-${viewDateString}`}>
           <div className="mb-4">
-            <Image 
-              src="/assets/titles/todays_quest.svg" 
-              alt="Today's Quest" 
-              width={180} 
-              height={40}
-              className="h-8 w-auto svg-title"
-            />
-            {!isViewToday && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formattedDate}</p>
+            {isPast ? (
+                <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+                    <CheckCircle size={32} weight="duotone" className="text-green-500" />
+                    <div>
+                        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Completed on {viewDate.toLocaleDateString('en-US', { weekday: 'long' })}</h2>
+                        <p className="text-sm opacity-80">{formattedDate}</p>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <Image 
+                    src="/assets/titles/todays_quest.svg" 
+                    alt="Today's Quest" 
+                    width={180} 
+                    height={40}
+                    className="h-8 w-auto svg-title"
+                    />
+                    {!isViewToday && (
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formattedDate}</p>
+                    )}
+                </>
             )}
           </div>
-          
-
 
           <div className="space-y-4">
             {todayItems.length > 0 ? (
@@ -176,14 +183,15 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                 items={todayItems}
                 kidId={kidId}
                 date={viewDateString}
+                readOnly={isPast}
               />
             ) : (
               <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center text-gray-500 dark:text-gray-400">
-                No assignments scheduled for today! 🎉
+                {isPast ? "No assignments recorded on this day." : "No assignments scheduled for today! 🎉"}
               </div>
             )}
             
-            {/* Daily Journal */}
+            {/* Daily Journal - Only Today */}
             {isViewToday && (
               <JournalCard
                 kidId={kidId}
@@ -195,13 +203,8 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
           </div>
         </section>
 
-        {/* Week Calendar */}
-        <section>
-          <KidPortalWeekCalendar entries={weekScheduleItems} kidId={kidId} viewDate={viewDate} />
-        </section>
-
-        {/* Upcoming Items */}
-        {upcomingItems.length > 0 && (
+        {/* Upcoming Items - HIDE if Past */}
+        {!isPast && upcomingItems.length > 0 && (
           <section>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
               <Scroll size={24} weight="duotone" className="text-[var(--ember-400)]" />
@@ -224,7 +227,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
             width={140} 
             height={40}
             className="h-7 w-auto mb-4 svg-title"
-          />
+            />
           <ResourceSection resources={resources} />
         </section>
       </div>

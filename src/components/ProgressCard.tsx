@@ -88,9 +88,9 @@ export function ProgressCard({
         {/* Shop Button */}
         <Link
           href={`/kids/${kidId}/shop`}
-          className="flex flex-col items-center gap-1 px-4 py-3 bg-gradient-to-br from-teal-100 to-emerald-100 hover:from-teal-200 hover:to-emerald-200 dark:from-teal-900/30 dark:to-emerald-900/30 border border-teal-300 dark:border-teal-700 rounded-xl transition-all"
+          className="flex flex-col items-center gap-1 px-6 py-3 bg-gradient-to-br from-teal-100 to-emerald-100 hover:from-teal-200 hover:to-emerald-200 dark:from-teal-900/30 dark:to-emerald-900/30 border border-teal-300 dark:border-teal-700 rounded-xl transition-all"
         >
-          <ShoppingCart size={24} weight="duotone" className="text-teal-600 dark:text-teal-400" />
+          <ShoppingCart size={28} weight="duotone" className="text-teal-600 dark:text-teal-400" />
           <span className="text-xs font-medium text-teal-700 dark:text-teal-300">Shop</span>
         </Link>
       </div>
