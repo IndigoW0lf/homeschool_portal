@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { BookmarkSimple, X, Check } from '@phosphor-icons/react';
+import { toast } from 'sonner';
 import { Suggestion } from '@/lib/ai/types';
 import { cn } from '@/lib/utils';
 import { VideoResourceList } from './VideoResourceCard';
@@ -39,7 +40,7 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: suggestion.title,
-          content: suggestion.why_this_might_help,
+          content: suggestion.why_this_might_help || 'No description provided',
           user_message: userMessage,
           suggestion_data: suggestion,
         }),
@@ -51,7 +52,10 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
         await onSave(suggestion);
       }
       setStatus('saved');
-    } catch {
+      toast.success('Idea saved!');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to save idea');
       setStatus('visible');
     }
   };

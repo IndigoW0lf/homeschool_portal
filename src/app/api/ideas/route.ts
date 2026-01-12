@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     const { title, content, user_message, suggestion_data } = body;
 
     if (!title || !content) {
+      console.error('Save Idea Failed: Missing title or content', { title, contentLength: content?.length });
       return NextResponse.json(
         { error: 'Title and content are required' },
         { status: 400 }
