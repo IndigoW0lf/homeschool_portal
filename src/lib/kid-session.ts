@@ -43,6 +43,8 @@ export async function getKidSession(): Promise<KidSession | null> {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get(KID_SESSION_COOKIE);
     
+    // console.log('[getKidSession] Cookie present:', !!sessionCookie?.value);
+
     if (!sessionCookie?.value) {
       return null;
     }

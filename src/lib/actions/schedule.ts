@@ -52,7 +52,7 @@ export async function setScheduleItemDoneAction(
          .update({ status, completed_at })
          .eq('id', scheduleItemId)
          .eq('student_id', kidSession.kidId) // CRITICAL SECURITY CHECK
-         .select('id', { count: 'exact' });
+         .select('id');
          
        if (error) throw error;
        

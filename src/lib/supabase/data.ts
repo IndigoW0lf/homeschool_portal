@@ -38,13 +38,19 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     // 1. Get current kid's family_id
     const { data: currentKid, error: kidError } = await supabase
       .from('kids')
-      .select('family_id')
+      .select('family_id, id, name, grade_band, grades, avatar_url, favorite_color, birthday, bio, favorite_shows, favorite_music, favorite_foods, favorite_subjects, hobbies, nickname, avatar_state, journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled')
       .eq('id', kidSession.kidId)
       .single();
 
-    if (kidError || !currentKid?.family_id) {
-      console.error('Error fetching kid family:', kidError);
-      return [];
+    if (kidError) {
+       console.error('[getKidsFromDB] Error fetching current kid:', kidError);
+       return [];
+    }
+
+    if (!currentKid?.family_id) {
+       // Fallback: Kid has no family_id (legacy?), just return them
+       console.log('[getKidsFromDB] Kid has no family_id, returning single record');
+       return [mapKidRow(currentKid)];
     }
 
     // 2. Fetch ALL kids in that family
@@ -55,38 +61,12 @@ export async function getKidsFromDB(): Promise<Kid[]> {
       .order('id');
       
     if (error) {
-       console.error('Error fetching sibling kids:', error);
-       return [];
+       console.error('[getKidsFromDB] Error fetching sibling kids:', error);
+       // Fallback: return just the current kid
+       return [mapKidRow(currentKid)];
     }
     
-    // Fall through to mapping below
-    // Note: We need to assign `data` to a variable we can map over later, 
-    // or return the mapped data directly here. 
-    // Since the mapping logic is identical, let's just use the 'data' variable for the common path?
-    // But we are inside an if block.
-    
-    return (data || []).map(row => ({
-      id: row.id,
-      name: row.name,
-      gradeBand: row.grade_band || '',
-      grades: row.grades || [],
-      familyId: row.family_id || undefined,
-      avatarUrl: row.avatar_url || undefined,
-      favoriteColor: row.favorite_color || undefined,
-      birthday: row.birthday || undefined,
-      bio: row.bio || undefined,
-      favoriteShows: row.favorite_shows || undefined,
-      favoriteMusic: row.favorite_music || undefined,
-      favoriteFoods: row.favorite_foods || undefined,
-      favoriteSubjects: row.favorite_subjects || undefined,
-      hobbies: row.hobbies || undefined,
-      nickname: row.nickname || undefined,
-      avatarState: row.avatar_state || undefined,
-      journalEnabled: row.journal_enabled ?? true,
-      journalAllowSkip: row.journal_allow_skip ?? true,
-      journalPromptTypes: row.journal_prompt_types || undefined,
-      streakEnabled: row.streak_enabled ?? true,
-    }));
+    return (data || []).map(mapKidRow);
   }
 
   // Otherwise, standard Parent/User flow
@@ -122,7 +102,13 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     return [];
   }
 
-  return (data || []).map(row => ({
+  return (data || []).map(mapKidRow);
+}
+
+// Helper to map DB row to Kid type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapKidRow(row: any): Kid {
+  return {
     id: row.id,
     name: row.name,
     gradeBand: row.grade_band || '',
@@ -143,7 +129,7 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     journalAllowSkip: row.journal_allow_skip ?? true,
     journalPromptTypes: row.journal_prompt_types || undefined,
     streakEnabled: row.streak_enabled ?? true,
-  }));
+  };
 }
 
 export async function getKidByIdFromDB(id: string): Promise<Kid | undefined> {
