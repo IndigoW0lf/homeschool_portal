@@ -43,7 +43,9 @@ export default function StudentLoginPage() {
       }
 
       toast.success(`Welcome back, ${data.name}! 🌟`);
-      router.push(data.redirectTo);
+      // Use window.location.href to force a full page load.
+      // This ensures Safari properly sets the session cookie before navigating.
+      window.location.href = data.redirectTo;
     } catch (err) {
       setError('Something went wrong. Please try again.');
     } finally {
