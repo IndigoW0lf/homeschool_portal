@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Moon } from '@phosphor-icons/react';
-import { supabase } from '@/lib/supabase/browser';
 import Link from 'next/link';
 
 interface MoonsCounterProps {
@@ -13,7 +12,7 @@ interface MoonsCounterProps {
 
 /**
  * Displays the kid's current moon balance.
- * Fetches from database (source of truth).
+ * Fetches via API to handle kid sessions (which bypass RLS).
  */
 export function MoonsCounter({ kidId, size = 'sm', showLink = false }: MoonsCounterProps) {
   const [moons, setMoons] = useState(0);
@@ -22,13 +21,15 @@ export function MoonsCounter({ kidId, size = 'sm', showLink = false }: MoonsCoun
   useEffect(() => {
     async function fetchMoons() {
       setIsLoading(true);
-      const { data } = await supabase
-        .from('student_progress')
-        .select('total_stars')
-        .eq('kid_id', kidId)
-        .single();
-      
-      setMoons(data?.total_stars || 0);
+      try {
+        const res = await fetch(`/api/kids/${kidId}/moons`);
+        if (res.ok) {
+          const data = await res.json();
+          setMoons(data.moons || 0);
+        }
+      } catch (error) {
+        console.error('[MoonsCounter] Failed to fetch moons:', error);
+      }
       setIsLoading(false);
     }
     

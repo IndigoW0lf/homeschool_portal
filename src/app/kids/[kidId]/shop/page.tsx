@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB } from '@/lib/supabase/data';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServiceRoleClient, createServerClient } from '@/lib/supabase/server';
+import { getKidSession } from '@/lib/kid-session';
 import { Shop } from '@/components/Shop';
 import { Moon } from '@phosphor-icons/react/dist/ssr';
 import { ShopItem } from '@/types';
@@ -19,8 +20,19 @@ export default async function ShopPage({ params }: ShopPageProps) {
     notFound();
   }
 
+  // Check if this is a kid session - use Service Role to bypass RLS
+  const kidSession = await getKidSession();
+  let supabase;
+  
+  if (kidSession && kidSession.kidId === kidId) {
+    // Kid viewing their own shop → Use Service Role (bypass RLS)
+    supabase = await createServiceRoleClient();
+  } else {
+    // Parent/other user → Use standard client (RLS)
+    supabase = await createServerClient();
+  }
+
   // Get real-world rewards from database (parent-created only)
-  const supabase = await createServerClient();
   const { data: kidRewards } = await supabase
     .from('kid_rewards')
     .select('*')
@@ -68,5 +80,6 @@ export default async function ShopPage({ params }: ShopPageProps) {
     </div>
   );
 }
+
 
 

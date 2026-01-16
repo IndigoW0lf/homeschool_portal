@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server';
+import { getKidSession } from '@/lib/kid-session';
 
 /**
  * POST /api/rewards/redeem
@@ -21,7 +22,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createServerClient();
+    // Check for kid session - use Service Role to bypass RLS
+    const kidSession = await getKidSession();
+    let supabase;
+    
+    if (kidSession && kidSession.kidId === kidId) {
+      // Kid buying for themselves → Use Service Role (bypass RLS)
+      supabase = await createServiceRoleClient();
+    } else {
+      // Parent/other user → Use standard client (RLS)
+      supabase = await createServerClient();
+      
+      // If not a kid session, verify parent is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    }
     
     // 1. Get the reward details to know the cost
     const { data: reward, error: rewardError } = await supabase
@@ -108,7 +125,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * GET /api/rewards/redeem?kidId=xxx
- * Gets pending redemptions for a kid (for parent dashboard)
+ * Gets pending redemptions for a kid (for parent dashboard or kid viewing their own)
  * Combines both reward_redemptions AND shop_purchases
  */
 export async function GET(request: NextRequest) {
@@ -119,8 +136,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'kidId is required' }, { status: 400 });
     }
 
+    // Check for kid session - use Service Role to bypass RLS
+    const kidSession = await getKidSession();
+    let supabase;
+    
+    if (kidSession && kidSession.kidId === kidId) {
+      // Kid viewing their own redemptions → Use Service Role
+      supabase = await createServiceRoleClient();
+    } else {
+      // Parent/other user → Use standard client (RLS)
+      supabase = await createServerClient();
+    }
+
     console.log('[Redeem API] Fetching for kidId:', kidId);
-    const supabase = await createServerClient();
     
     // Fetch from reward_redemptions (old system)
     const { data: rewardRedemptions, error: rewardError } = await supabase

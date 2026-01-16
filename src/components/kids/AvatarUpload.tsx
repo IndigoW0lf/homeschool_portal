@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Camera, Upload, X, Check, Spinner } from '@phosphor-icons/react';
-import { supabase } from '@/lib/supabase/browser';
+import { Camera, X, Check, Spinner } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface AvatarUploadProps {
@@ -97,42 +96,24 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
       // Compress image
       const compressedBlob = await compressImage(selectedFile);
       
-      // Delete old avatar if exists
-      if (currentAvatarUrl) {
-        const oldPath = currentAvatarUrl.split('/').pop();
-        if (oldPath) {
-          await supabase.storage.from('kid-avatars').remove([`${kidId}/${oldPath}`]);
-        }
+      // Create form data for upload
+      const formData = new FormData();
+      formData.append('file', compressedBlob, 'avatar.jpg');
+      
+      // Upload via API (handles RLS bypass for kid sessions)
+      const res = await fetch(`/api/kids/${kidId}/avatar`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Upload failed');
       }
       
-      // Upload new avatar with timestamp to bust cache
-      const fileName = `avatar_${Date.now()}.jpg`;
-      const filePath = `${kidId}/${fileName}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('kid-avatars')
-        .upload(filePath, compressedBlob, {
-          contentType: 'image/jpeg',
-          upsert: true
-        });
-      
-      if (uploadError) throw uploadError;
-      
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('kid-avatars')
-        .getPublicUrl(filePath);
-      
-      // Update kid record
-      const { error: updateError } = await supabase
-        .from('kids')
-        .update({ avatar_url: publicUrl })
-        .eq('id', kidId);
-      
-      if (updateError) throw updateError;
-      
       toast.success('Avatar updated!');
-      onUploadComplete(publicUrl);
+      onUploadComplete(data.avatarUrl);
       
       // Clean up
       setPreviewUrl(null);

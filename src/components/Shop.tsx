@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { ShopItem } from '@/types';
-import { supabase } from '@/lib/supabase/browser';
 import { ShopItemCard } from './ShopItemCard';
 import { RewardItemCard } from './RewardItemCard';
 
@@ -18,17 +17,19 @@ export function Shop({ kidId, items }: ShopProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [, setIsLoading] = useState(true);
 
-  // Sync moons from database on mount (source of truth)
+  // Fetch moons via API (handles kid sessions properly)
   useEffect(() => {
     async function syncMoons() {
       setIsLoading(true);
-      const { data } = await supabase
-        .from('student_progress')
-        .select('total_stars')
-        .eq('kid_id', kidId)
-        .single();
-      
-      setStars(data?.total_stars || 0);
+      try {
+        const res = await fetch(`/api/kids/${kidId}/moons`);
+        if (res.ok) {
+          const data = await res.json();
+          setStars(data.moons || 0);
+        }
+      } catch (error) {
+        console.error('[Shop] Failed to fetch moons:', error);
+      }
       setIsLoading(false);
     }
     syncMoons();
@@ -125,13 +126,16 @@ export function Shop({ kidId, items }: ShopProps) {
               item={item}
               kidId={kidId}
               onPurchase={async () => {
-                // Re-sync moons from database after purchase
-                const { data } = await supabase
-                  .from('student_progress')
-                  .select('total_stars')
-                  .eq('kid_id', kidId)
-                  .single();
-                setStars(data?.total_stars || 0);
+                // Re-sync moons via API after purchase
+                try {
+                  const res = await fetch(`/api/kids/${kidId}/moons`);
+                  if (res.ok) {
+                    const data = await res.json();
+                    setStars(data.moons || 0);
+                  }
+                } catch (error) {
+                  console.error('[Shop] Failed to refresh moons:', error);
+                }
               }}
             />
           )
@@ -148,5 +152,6 @@ export function Shop({ kidId, items }: ShopProps) {
     </div>
   );
 }
+
 
 

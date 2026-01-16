@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Moon, Confetti, CheckCircle, ShoppingCart, Medal } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/lib/supabase/browser';
 
 interface ProgressCardProps {
   kidId: string;
@@ -22,20 +20,22 @@ export function ProgressCard({
   todayTotal = 0,
   initialUnlocks = []
 }: ProgressCardProps) {
-  // Fetch moons from database (source of truth)
+  // Fetch moons via API (handles kid sessions properly)
   const [stars, setStars] = useState(initialStars);
   const unlocks = initialUnlocks;
   
   useEffect(() => {
     async function fetchMoons() {
-      const { data } = await supabase
-        .from('student_progress')
-        .select('total_stars')
-        .eq('kid_id', kidId)
-        .single();
-      
-      if (data?.total_stars !== undefined) {
-        setStars(data.total_stars);
+      try {
+        const res = await fetch(`/api/kids/${kidId}/moons`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.moons !== undefined) {
+            setStars(data.moons);
+          }
+        }
+      } catch (error) {
+        console.error('[ProgressCard] Failed to fetch moons:', error);
       }
     }
     
