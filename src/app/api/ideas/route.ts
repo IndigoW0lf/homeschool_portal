@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, content, user_message, suggestion_data } = body;
+    const { title, content, user_message, suggestion_data, steps, why_this_might_help } = body;
 
     if (!title || !content) {
       console.error('Save Idea Failed: Missing title or content', { title, contentLength: content?.length });
@@ -26,6 +26,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Merge standalone fields into suggestion_data if they exist
+    const finalSuggestionData = {
+      ...(suggestion_data || {}),
+      ...(steps ? { steps } : {}),
+      ...(why_this_might_help ? { why_this_might_help } : {}),
+    };
+
     const { data, error } = await supabase
       .from('saved_ideas')
       .insert({
@@ -34,7 +41,7 @@ export async function POST(request: NextRequest) {
         content,
         user_message,
         source_type: 'luna',
-        suggestion_data,
+        suggestion_data: finalSuggestionData,
       })
       .select()
       .single();
@@ -42,7 +49,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Error saving idea:', error);
       return NextResponse.json(
-        { error: 'Failed to save idea' },
+        { error: 'Failed to save idea', details: error },
         { status: 500 }
       );
     }
@@ -51,7 +58,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Ideas API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
