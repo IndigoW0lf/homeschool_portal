@@ -8,6 +8,7 @@ import { DesignCanvas } from './studio/DesignCanvas';
 import designTemplatesData from '../../content/design-templates.json';
 import { getAvatarState, setAvatarState, getDefaultAvatarState, saveAvatarToDatabase } from '@/lib/avatarStorage';
 import { toast } from 'sonner';
+import { getDiceBearAvatarUrl, getBaseAvatarOptions } from '@/lib/dicebear';
 
 interface AvatarBuilderProps {
   kidId: string;
@@ -33,6 +34,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
   const [isSaving, setIsSaving] = useState(false);
   
   const templates = designTemplatesData as DesignTemplatesManifest;
+  const baseOptions = getBaseAvatarOptions();
 
   // ... (useEffect remains same) ...
   useEffect(() => {
@@ -101,7 +103,12 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
        return undefined; // Handled separately
     }
 
-    const list = category === 'base' ? assets.bases : category === 'outfit' ? assets.outfits : assets.accessories;
+    // For base, we don't use assets - we use DiceBear
+    if (category === 'base') {
+      return undefined; // DiceBear handled separately
+    }
+
+    const list = category === 'outfit' ? assets.outfits : assets.accessories;
     return list.find(a => a.id === id);
   };
   
@@ -140,14 +147,21 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
             className="relative w-48 h-48 rounded-lg flex items-center justify-center mb-2"
             style={{ backgroundColor: 'var(--paper-100)' }}
           >
-            {/* Base */}
-            {getCurrentAsset('base') && (
-              <img
-                src={getCurrentAsset('base')?.src}
-                alt="Avatar base"
-                className="absolute inset-0 w-full h-full object-contain"
-              />
-            )}
+            {/* Base - DiceBear Avatar */}
+            {state.base && (() => {
+              const baseOption = baseOptions.find(b => b.id === state.base);
+              if (baseOption) {
+                const avatarUrl = getDiceBearAvatarUrl({ seed: baseOption.seed, size: 192 });
+                return (
+                  <img
+                    src={avatarUrl}
+                    alt="Avatar base"
+                    className="absolute inset-0 w-full h-full object-contain"
+                  />
+                );
+              }
+              return null;
+            })()}
             
             {/* Outfit (Standard or Custom) */}
             {state.outfit && (
@@ -236,65 +250,96 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
             Select {activeTab === 'base' ? 'Base' : activeTab === 'outfit' ? 'Outfit' : 'Accessory'}
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {(activeTab === 'base' ? assets.bases : activeTab === 'outfit' ? [...customDesigns, ...assets.outfits] : assets.accessories).map(asset => {
-              // Distinguish between standard Asset and Custom Design
-              const isCustom = 'design_data' in asset;
-              const assetId = asset.id;
-              
-              const isSelected = 
-                (activeTab === 'base' && state.base === assetId) ||
-                (activeTab === 'outfit' && (isCustom ? state.outfit === `custom:${assetId}` : state.outfit === assetId)) ||
-                (activeTab === 'accessory' && state.accessory === assetId);
-              
-              return (
-                <button
-                  key={assetId}
-                  onClick={() => handleAssetSelect(asset)}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    isSelected
-                      ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                  }`}
-                >
-                  <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
-                    {isCustom ? (
-                      (() => {
-                        const template = getTemplateForDesign(asset as ItemDesignRow);
-                        return template ? (
-                          <div className="absolute inset-0 transform scale-75 origin-center">
-                            <DesignCanvas
-                              template={template}
-                              regions={(asset as ItemDesignRow).design_data.regions}
-                              activeRegion={null}
-                              tool="fill"
-                              currentColor="#000"
-                              brushSize={1}
-                              readonly={true}
-                              transparent={true}
-                            />
-                          </div>
-                        ) : null;
-                      })()
-                    ) : (
+            {activeTab === 'base' ? (
+              // DiceBear base avatars
+              baseOptions.map(baseOption => {
+                const isSelected = state.base === baseOption.id;
+                const avatarUrl = getDiceBearAvatarUrl({ seed: baseOption.seed, size: 96 });
+                
+                return (
+                  <button
+                    key={baseOption.id}
+                    onClick={() => setState(prev => ({ ...prev, base: baseOption.id }))}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      isSelected
+                        ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                  >
+                    <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
                       <img
-                        src={(asset as AvatarAsset).src}
-                        alt={(asset as AvatarAsset).label}
+                        src={avatarUrl}
+                        alt={baseOption.label}
                         className="max-w-full max-h-full object-contain"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
                       />
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                      {baseOption.label}
+                    </p>
+                  </button>
+                );
+              })
+            ) : (
+              // Outfits and Accessories
+              (activeTab === 'outfit' ? [...customDesigns, ...assets.outfits] : assets.accessories).map(asset => {
+                // Distinguish between standard Asset and Custom Design
+                const isCustom = 'design_data' in asset;
+                const assetId = asset.id;
+                
+                const isSelected = 
+                  (activeTab === 'outfit' && (isCustom ? state.outfit === `custom:${assetId}` : state.outfit === assetId)) ||
+                  (activeTab === 'accessory' && state.accessory === assetId);
+                
+                return (
+                  <button
+                    key={assetId}
+                    onClick={() => handleAssetSelect(asset)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      isSelected
+                        ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                  >
+                    <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
+                      {isCustom ? (
+                        (() => {
+                          const template = getTemplateForDesign(asset as ItemDesignRow);
+                          return template ? (
+                            <div className="absolute inset-0 transform scale-75 origin-center">
+                              <DesignCanvas
+                                template={template}
+                                regions={(asset as ItemDesignRow).design_data.regions}
+                                activeRegion={null}
+                                tool="fill"
+                                currentColor="#000"
+                                brushSize={1}
+                                readonly={true}
+                                transparent={true}
+                              />
+                            </div>
+                          ) : null;
+                        })()
+                      ) : (
+                        <img
+                          src={(asset as AvatarAsset).src}
+                          alt={(asset as AvatarAsset).label}
+                          className="max-w-full max-h-full object-contain"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                      {(asset as any).label || (asset as any).name}
+                    </p>
+                    {isCustom && (
+                      <span className="text-xs text-[var(--ember-500)] block text-center">Custom</span>
                     )}
-                  </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
-                    {(asset as any).label || (asset as any).name}
-                  </p>
-                  {isCustom && (
-                    <span className="text-xs text-[var(--ember-500)] block text-center">Custom</span>
-                  )}
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
 

@@ -31,7 +31,7 @@ export function setAvatarState(kidId: string, state: AvatarState): void {
 
 export function getDefaultAvatarState(): AvatarState {
   return {
-    base: 'base-01',
+    base: 'base-kid-01', // DiceBear avatar
     outfit: 'shirt-01',
     colors: {
       shirt: '--fabric-blue',
