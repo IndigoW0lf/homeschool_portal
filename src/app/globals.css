@@ -37,22 +37,26 @@
   --brand-deep: #1a1a2e;       /* Deep space blue */
   --brand-dark: #16213e;       /* Darker space blue */
   --brand-lilac: #9c8fb8;      /* Primary brand purple */
-  --brand-coral: #E27D60;      /* Primary brand accent/ember */
+  --brand-coral: #E27D60;      /* Primary brand accent/ember - KEEPING for legacy, but introducing ROSE override */
   --brand-rose: #D48A8A;       /* Secondary accent */
   --brand-gold: #E1B866;       /* Stars/Highlight */
+  
+  /* Magical Theme Gradients */
+  --magical-gradient-start: #240b36; 
+  --magical-gradient-end: #c31432;
 
-  /* Accent / Aurora (teal-blue, aurora borealis theme) */
-  --ember-100: #E0F2F1;        /* lightest teal */
-  --ember-200: #B2DFDB;
-  --ember-300: #80CBC4;
-  --ember-400: #4DB6AC;        /* light teal */
-  --ember-500: #26A69A;        /* primary accent - muted teal */
-  --ember-600: #00897B;        /* hover state */
-  --ember-700: #00796B;        /* active/pressed */
-  --ember-800: #00695C;
-  --ember-900: #004D40;        /* darkest teal */
+  /* Accent / Aurora (teal-blue, aurora borealis theme) - LIGHTER TEAL UPDATE */
+  --ember-100: #E0F7FA;        /* lightest Cyan */
+  --ember-200: #B2EBF2;
+  --ember-300: #80DEEA;
+  --ember-400: #4DD0E1;        /* bright cyan */
+  --ember-500: #26C6DA;        /* primary accent - vibrant cyan/teal */
+  --ember-600: #00ACC1;        /* hover state */
+  --ember-700: #0097A7;        /* active/pressed */
+  --ember-800: #00838F;
+  --ember-900: #006064;        /* darkest teal */
   --sky-400: #7FB3D5;          /* selection, highlights */
-
+  
   /* Shadows */
   --shadow-soft: rgba(0,0,0,0.12);
 }
@@ -65,8 +69,8 @@ html.dark,
   --foreground: #ededed;
   --ink-900: #E5E5E5;
   --ink-700: #B5B5B5;
-  --paper-50: #1A1A1A;
-  --paper-100: #2D2D2D;
+  --paper-50: #13111C;       /* Very dark purple-black */
+  --paper-100: #1F1D2B;      /* Dark purple-gray */
   --stone-300: #6B7073;
   --leaf-700: #6F8F73;
   --leaf-500: #8FAF93;
@@ -77,6 +81,24 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-quicksand), 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* MAGICAL BACKGROUND UTILITY */
+.bg-magical {
+  background: radial-gradient(circle at 50% 0%, #2a2a4a 0%, #1a1a2e 100%);
+  background-attachment: fixed;
+  color: white; /* Default to white text on magical background */
+}
+
+/* MAGICAL BUTTON GRADIENT */
+.bg-gradient-magic {
+  background: linear-gradient(90deg, #D48A8A 0%, #E27D60 100%);
+}
+
+.text-gradient-magic {
+  background: linear-gradient(90deg, #D48A8A 0%, #E27D60 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .avatar-shadow {

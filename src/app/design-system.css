@@ -9,7 +9,7 @@
    ----------------------------------------------------------------------------- */
 
 .btn-primary {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-[var(--ember-500)] text-white hover:opacity-90 shadow-md;
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-gradient-magic text-white hover:opacity-90 shadow-lg shadow-rose-500/20;
 }
 
 .btn-secondary {

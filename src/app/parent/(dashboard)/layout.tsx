@@ -76,7 +76,7 @@ export default async function ParentLayout({
 
   return (
     <LunaProvider>
-      <div className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
+      <div className="min-h-screen bg-magical">
         <ParentNav user={user} kids={kidsWithMoons} />
         {/* Main content with left margin to account for sidebar */}
         <main className="ml-56 min-h-screen">

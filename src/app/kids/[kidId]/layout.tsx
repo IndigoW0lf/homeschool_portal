@@ -46,7 +46,7 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
 
   return (
     <div 
-      className="min-h-screen bg-gray-50 dark:bg-gray-900"
+      className="min-h-screen bg-magical"
       style={kid.favoriteColor ? { '--kid-accent': kid.favoriteColor } as React.CSSProperties : undefined}
     >
       <KidsNav 
