@@ -1,24 +1,5 @@
 {
-  "bases": [
-    {
-      "id": "base-01",
-      "label": "Base 1",
-      "src": "/assets/avatars/bases/base-01.svg",
-      "category": "base"
-    },
-    {
-      "id": "base-02",
-      "label": "Base 2",
-      "src": "/assets/avatars/bases/base-02.svg",
-      "category": "base"
-    },
-    {
-      "id": "base-03",
-      "label": "Base 3",
-      "src": "/assets/avatars/bases/base-03.svg",
-      "category": "base"
-    }
-  ],
+  "bases": [],
   "outfits": [
     {
       "id": "shirt-01",

@@ -11,8 +11,10 @@ import {
   DESIGN_COLOR_PALETTE,
   BRUSH_SIZES,
 } from '@/types/design-studio';
-import { DesignCanvas } from './DesignCanvas';
+import { DesignCanvas, DesignCanvasRef } from './DesignCanvas';
+import { useRef } from 'react';
 import { ColorPalette } from './ColorPalette';
+import { BlockyAvatar3D } from '../BlockyAvatar3D';
 import { PaintBucket, Pencil, Eraser, ArrowLeft, FloppyDisk, Eye, Lock, TShirt } from '@phosphor-icons/react';
 import { ItemDesignRow } from '@/types/design-studio';
 
@@ -40,6 +42,9 @@ export function DesignStudio({
     cat.templates.filter(t => t.unlocked)
   );
   
+  // Ref for canvas to export texture
+  const designCanvasRef = useRef<DesignCanvasRef>(null);
+  
   const [view, setView] = useState<ViewMode>('create');
   const [selectedTemplate, setSelectedTemplate] = useState<DesignTemplate | null>(
     starterTemplates[0] || null
@@ -55,6 +60,25 @@ export function DesignStudio({
   const [designName, setDesignName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [previewTexture, setPreviewTexture] = useState<string | null>(null);
+
+  // Update preview texture when regions change or when preview is opened
+  useEffect(() => {
+    if (showPreview && designCanvasRef.current) {
+      const updateTexture = async () => {
+        try {
+          const dataUrl = await designCanvasRef.current?.toDataURL();
+          if (dataUrl) setPreviewTexture(dataUrl);
+        } catch (e) {
+          console.error("Failed to generate preview texture:", e);
+        }
+      };
+      
+      // Debounce slightly to avoid rapid updates
+      const timer = setTimeout(updateTexture, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [showPreview, regions]); // Re-run when regions (colors) change
 
   // Initialize regions when template changes OR when loading a wardrobe item
   useEffect(() => {
@@ -65,22 +89,40 @@ export function DesignStudio({
     // This logic needs to be careful not to overwrite work in progress if user just switches template?
     // For simplicity: switching template resets canvas.
     
+    const templateRegionIds = selectedTemplate.regions || selectedTemplate.parts?.map(p => p.name) || [];
     const isNewTemplate = !regions || Object.keys(regions).length === 0 || 
-                         !Object.keys(regions).some(k => selectedTemplate.regions.includes(k));
+                         !Object.keys(regions).some(k => templateRegionIds.includes(k));
 
     if (existingDesigns && !currentDesignId) {
        setRegions(existingDesigns);
     } else if (isNewTemplate) {
       // Initialize empty regions for new design
       const initialRegions: Record<string, DesignRegion> = {};
-      selectedTemplate.regions.forEach(regionId => {
-        initialRegions[regionId] = {
-          id: regionId,
-          label: regionId.replace(/-/g, ' '),
-          fillColor: '#E5E5E5', // Default gray
-          strokes: [],
-        };
-      });
+      
+      // Handle standard parts (if available)
+      if (selectedTemplate.parts) {
+        selectedTemplate.parts.forEach(part => {
+          initialRegions[part.name] = {
+            id: part.name,
+            label: part.label,
+            fillColor: '#E5E5E5',
+            strokes: [],
+          };
+        });
+      }
+
+      // Handle raw regions (skin templates)
+      if ((selectedTemplate as any).regions) {
+        (selectedTemplate as any).regions.forEach((regionId: string) => {
+          initialRegions[regionId] = {
+            id: regionId,
+            label: regionId.replace(/-/g, ' '),
+            fillColor: '#E5E5E5',
+            strokes: [],
+          };
+        });
+      }
+
       setRegions(initialRegions);
     }
   }, [selectedTemplate, existingDesigns, currentDesignId]); // removed regions dependency to avoid loops
@@ -118,6 +160,8 @@ export function DesignStudio({
     });
   }, [activeRegion]);
 
+
+
   const handleSave = async () => {
     if (!selectedTemplate) return;
     if (!designName.trim()) {
@@ -127,6 +171,16 @@ export function DesignStudio({
     
     setIsSaving(true);
     try {
+      // Capture texture image from canvas
+      let textureImage: string | undefined;
+      if (designCanvasRef.current) {
+        try {
+          textureImage = await designCanvasRef.current.toDataURL();
+        } catch (e) {
+          console.error("Failed to generate texture:", e);
+        }
+      }
+
       const response = await fetch(`/api/kids/${kidId}/designs`, {
         method: currentDesignId ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,6 +189,7 @@ export function DesignStudio({
           templateId: selectedTemplate.id,
           name: designName.trim(),
           regions,
+          textureImage, // Send base64 image to API
         }),
       });
       
@@ -389,9 +444,36 @@ export function DesignStudio({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Canvas Area */}
-            <div className="md:col-span-2">
+            <div className="md:col-span-2 relative">
+              {showPreview && (
+                <div className="absolute inset-0 z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                  <div className="text-center">
+                    <div className="mb-4 transform scale-150">
+                      <div className="w-full h-full relative">
+                        <BlockyAvatar3D 
+                          textureUrl={previewTexture}
+                          className="w-full h-full"
+                          autoRotate={true}
+                        />
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-500 max-w-xs mx-auto">
+                      Previewing your design on the avatar. 
+                      <br/>Some details like specific patterns only show in the flat view.
+                    </p>
+                    <button 
+                      onClick={() => setShowPreview(false)}
+                      className="mt-4 text-sm text-[var(--ember-500)] hover:underline"
+                    >
+                      Close Preview
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {selectedTemplate ? (
                 <DesignCanvas
+                  ref={designCanvasRef}
                   template={selectedTemplate}
                   regions={regions}
                   activeRegion={activeRegion}

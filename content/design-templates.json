@@ -97,6 +97,41 @@
       ]
     },
     {
+      "id": "skins-tops",
+      "label": "Skin Tops",
+      "icon": "👕",
+      "templates": [
+        {
+          "id": "template-skin-shirt",
+          "label": "Basic Shirt",
+          "src": "/assets/avatars/templates/skin-shirt.svg",
+          "regions": [
+            "shirt-front", "shirt-back", "shirt-side-left", "shirt-side-right", 
+            "sleeve-left-front", "sleeve-left-back", "sleeve-left-outer", "sleeve-left-inner",
+            "sleeve-right-front", "sleeve-right-back", "sleeve-right-outer", "sleeve-right-inner"
+          ],
+          "unlocked": true
+        }
+      ]
+    },
+    {
+      "id": "skins-bottoms",
+      "label": "Skin Pants",
+      "icon": "👖",
+      "templates": [
+        {
+          "id": "template-skin-pants",
+          "label": "Basic Pants",
+          "src": "/assets/avatars/templates/skin-pants.svg",
+          "regions": [
+            "pants-front-left", "pants-back-left", "pants-side-left", "pants-inner-left",
+            "pants-front-right", "pants-back-right", "pants-side-right", "pants-inner-right"
+          ],
+          "unlocked": true
+        }
+      ]
+    },
+    {
       "id": "accessories",
       "label": "Accessories",
       "icon": "🎀",

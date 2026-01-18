@@ -24,7 +24,11 @@ export interface DesignTemplate {
   category: 'tops' | 'bottoms' | 'shoes' | 'accessories';
   label: string;
   src: string;                    // Path to blank SVG template
-  regions: string[];              // Region IDs within the SVG
+  parts?: {                       // Standard parts (legacy/wardrobe)
+    name: string;
+    label: string;
+  }[];
+  regions?: string[];             // Raw region IDs (new skin system)
   unlocked: boolean;              // Always unlocked (starter) or needs purchase
   unlockCost?: number;            // Moon cost if not unlocked
   unlockType?: 'shop' | 'reward' | 'holiday';
@@ -51,6 +55,7 @@ export interface ItemDesign {
   name: string;                            // Kid's custom name for design
   regions: Record<string, DesignRegion>;   // Region state with fills/strokes
   isEquipped: boolean;                     // Currently worn on avatar
+  textureUrl?: string;                     // URL to generated texture image
   createdAt: string;
   updatedAt: string;
 }
@@ -65,6 +70,7 @@ export interface ItemDesignRow {
     regions: Record<string, DesignRegion>;
   };
   is_equipped: boolean;
+  texture_url?: string;
   created_at: string;
   updated_at: string;
 }

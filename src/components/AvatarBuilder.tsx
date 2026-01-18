@@ -8,7 +8,8 @@ import { DesignCanvas } from './studio/DesignCanvas';
 import designTemplatesData from '../../content/design-templates.json';
 import { getAvatarState, setAvatarState, getDefaultAvatarState, saveAvatarToDatabase } from '@/lib/avatarStorage';
 import { toast } from 'sonner';
-import { getDiceBearAvatarUrl, getBaseAvatarOptions } from '@/lib/dicebear';
+import { BlockyAvatar } from './BlockyAvatar';
+import { BlockyAvatar3D } from './BlockyAvatar3D';
 
 interface AvatarBuilderProps {
   kidId: string;
@@ -16,6 +17,15 @@ interface AvatarBuilderProps {
   initialAvatarState?: AvatarState | null;
   customDesigns?: ItemDesignRow[];
 }
+
+const SKIN_TONES = [
+  { id: 'skin-01', color: '#ffdbac', label: 'Light' },
+  { id: 'skin-02', color: '#f1c27d', label: 'Medium Light' },
+  { id: 'skin-03', color: '#e0ac69', label: 'Medium' },
+  { id: 'skin-04', color: '#c68642', label: 'Medium Dark' },
+  { id: 'skin-05', color: '#8d5524', label: 'Dark' },
+  { id: 'skin-06', color: '#3a2211', label: 'Deep' },
+];
 
 const COLOR_PALETTE = [
   { value: '--fabric-blue', label: 'Blue', color: '#5E7FB8' },
@@ -30,11 +40,10 @@ const COLOR_PALETTE = [
 
 export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns = [] }: AvatarBuilderProps) {
   const [state, setState] = useState<AvatarState>(getDefaultAvatarState());
-  const [activeTab, setActiveTab] = useState<'base' | 'outfit' | 'accessory'>('outfit');
+  const [activeTab, setActiveTab] = useState<'skin' | 'outfit' | 'accessory'>('outfit');
   const [isSaving, setIsSaving] = useState(false);
   
   const templates = designTemplatesData as DesignTemplatesManifest;
-  const baseOptions = getBaseAvatarOptions();
 
   // ... (useEffect remains same) ...
   useEffect(() => {
@@ -94,18 +103,16 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
     }
   };
 
-  const getCurrentAsset = (category: 'base' | 'outfit' | 'accessory'): AvatarAsset | undefined => {
-    const id = category === 'base' ? state.base : category === 'outfit' ? state.outfit : state.accessory;
+  const getCurrentAsset = (category: 'skin' | 'outfit' | 'accessory'): AvatarAsset | undefined => {
+    // Skin is handled via separate state/palette, not assets list
+    if (category === 'skin') return undefined;
+
+    const id = category === 'outfit' ? state.outfit : state.accessory;
     if (!id) return undefined;
     
     // Check if custom design
     if (category === 'outfit' && id.startsWith('custom:')) {
        return undefined; // Handled separately
-    }
-
-    // For base, we don't use assets - we use DiceBear
-    if (category === 'base') {
-      return undefined; // DiceBear handled separately
     }
 
     const list = category === 'outfit' ? assets.outfits : assets.accessories;
@@ -147,64 +154,45 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
             className="relative w-48 h-48 rounded-lg flex items-center justify-center mb-2"
             style={{ backgroundColor: 'var(--paper-100)' }}
           >
-            {/* Base - DiceBear Avatar */}
-            {state.base && (() => {
-              const baseOption = baseOptions.find(b => b.id === state.base);
-              if (baseOption) {
-                const avatarUrl = getDiceBearAvatarUrl({ seed: baseOption.seed, size: 192 });
-                return (
-                  <img
-                    src={avatarUrl}
-                    alt="Avatar base"
-                    className="absolute inset-0 w-full h-full object-contain"
+            {/* Custom 3D Avatar or Standard 2D Avatar */}
+            {state.outfit && state.outfit.startsWith('custom:') ? (
+              <div className="absolute inset-0 w-full h-full">
+                <BlockyAvatar3D 
+                  textureUrl={getCustomDesign()?.texture_url} 
+                  className="w-full h-full"
+                />
+              </div>
+            ) : (
+              <>
+                {/* 2D Base */}
+                <div className="absolute inset-x-0 bottom-4 flex justify-center h-[90%]">
+                  <BlockyAvatar 
+                    className="h-full w-auto" 
+                    size={180}
+                    skinColors={{ 
+                      skin: state.colors?.skin || '#ffdbac'
+                    }}
                   />
-                );
-              }
-              return null;
-            })()}
-            
-            {/* Outfit (Standard or Custom) */}
-            {state.outfit && (
-              state.outfit.startsWith('custom:') ? (
-                (() => {
-                  const design = getCustomDesign();
-                  const template = design ? getTemplateForDesign(design) : null;
-                  if (design && template) {
-                    return (
-                      <div className="absolute inset-0 w-full h-full z-10">
-                        <DesignCanvas
-                          template={template}
-                          regions={design.design_data.regions}
-                          activeRegion={null}
-                          tool="fill"
-                          currentColor="#000"
-                          brushSize={1}
-                          readonly={true}
-                          transparent={true}
-                        />
-                      </div>
-                    );
-                  }
-                  return null;
-                })()
-              ) : (
-                getCurrentAsset('outfit') && (
+                </div>
+                
+                {/* 2D Outfit Overlay */}
+                {state.outfit && getCurrentAsset('outfit') && (
                   <img
                     src={getCurrentAsset('outfit')?.src}
                     alt="Avatar outfit"
                     className="absolute inset-0 w-full h-full object-contain z-10"
                   />
-                )
-              )
-            )}
-
-            {/* Accessory */}
-            {state.accessory && getCurrentAsset('accessory') && (
-              <img
-                src={getCurrentAsset('accessory')?.src}
-                alt="Avatar accessory"
-                className="absolute inset-0 w-full h-full object-contain z-20"
-              />
+                )}
+                
+                {/* 2D Accessory Overlay */}
+                {state.accessory && getCurrentAsset('accessory') && (
+                  <img
+                    src={getCurrentAsset('accessory')?.src}
+                    alt="Avatar accessory"
+                    className="absolute inset-0 w-full h-full object-contain z-20"
+                  />
+                )}
+              </>
             )}
           </div>
           <div className="avatar-shadow"></div>
@@ -213,14 +201,14 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
         {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
           <button
-            onClick={() => setActiveTab('base')}
+            onClick={() => setActiveTab('skin')}
             className={`px-4 py-2 font-medium transition-colors ${
-              activeTab === 'base'
+              activeTab === 'skin'
                 ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
-            Base
+            Skin
           </button>
           <button
             onClick={() => setActiveTab('outfit')}
@@ -247,19 +235,21 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
         {/* Asset Selection */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-            Select {activeTab === 'base' ? 'Base' : activeTab === 'outfit' ? 'Outfit' : 'Accessory'}
+            Select {activeTab === 'skin' ? 'Skin Tone' : activeTab === 'outfit' ? 'Outfit' : 'Accessory'}
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {activeTab === 'base' ? (
-              // DiceBear base avatars
-              baseOptions.map(baseOption => {
-                const isSelected = state.base === baseOption.id;
-                const avatarUrl = getDiceBearAvatarUrl({ seed: baseOption.seed, size: 96 });
+            {activeTab === 'skin' ? (
+              // Skin Tone Selection
+              SKIN_TONES.map(tone => {
+                const isSelected = state.colors?.skin === tone.color || (!state.colors?.skin && tone.id === 'skin-01');
                 
                 return (
                   <button
-                    key={baseOption.id}
-                    onClick={() => setState(prev => ({ ...prev, base: baseOption.id }))}
+                    key={tone.id}
+                    onClick={() => setState(prev => ({
+                      ...prev,
+                      colors: { ...prev.colors, skin: tone.color }
+                    }))}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       isSelected
                         ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
@@ -267,14 +257,13 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
                     }`}
                   >
                     <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
-                      <img
-                        src={avatarUrl}
-                        alt={baseOption.label}
-                        className="max-w-full max-h-full object-contain"
+                      <div 
+                        className="w-16 h-16 rounded-full border-4 border-white shadow-sm"
+                        style={{ backgroundColor: tone.color }}
                       />
                     </div>
                     <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
-                      {baseOption.label}
+                      {tone.label}
                     </p>
                   </button>
                 );

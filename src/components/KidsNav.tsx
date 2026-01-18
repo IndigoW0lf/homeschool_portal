@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { House, GameController, UserCircle, Moon, Palette, List, X, Star, NotePencil, SignOut } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
-import { AvatarPreview } from '@/components/kids/AvatarPreview';
+import { BlockyAvatar } from '@/components/BlockyAvatar';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
 import { useState } from 'react';
 import { AvatarState } from '@/types';
@@ -216,11 +216,13 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
           >
             ←
           </Link>
-          <AvatarPreview 
-            avatarState={kidAvatarState}
-            size="sm"
-            fallbackName={displayName}
-            fallbackColor={kidFavoriteColor}
+          <BlockyAvatar 
+            className="w-20 h-20 mb-2"
+            size={80}
+            skinColors={{
+              skin: kidAvatarState?.colors?.skin,
+              // We'll add support for full avatar state rendering (outfits) soon
+            }}
           />
           <span className={`mt-2 text-xs font-medium text-center ${
             needsDarkText 

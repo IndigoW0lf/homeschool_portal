@@ -1,7 +1,11 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { DesignTemplate, DesignRegion, StrokeData } from '@/types/design-studio';
+
+export interface DesignCanvasRef {
+  toDataURL: () => Promise<string>;
+}
 
 interface DesignCanvasProps {
   template: DesignTemplate;
@@ -17,7 +21,7 @@ interface DesignCanvasProps {
   transparent?: boolean;
 }
 
-export function DesignCanvas({
+export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
   template,
   regions,
   tool,
@@ -28,28 +32,86 @@ export function DesignCanvas({
   onStrokeComplete = () => {},
   readonly = false,
   transparent = false,
-}: DesignCanvasProps) {
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentStroke, setCurrentStroke] = useState<{ x: number; y: number }[]>([]);
   const [svgContent, setSvgContent] = useState<string>('');
 
+  useImperativeHandle(ref, () => ({
+    toDataURL: () => {
+      // Create a temporary canvas to combine SVG and Drawing layers
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = 400; // Match standard size
+      tempCanvas.height = 400;
+      const ctx = tempCanvas.getContext('2d');
+      if (!ctx) return Promise.resolve('');
+
+      // Draw background if not transparent
+      if (!transparent) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      }
+
+      // Draw SVG (Regions)
+      // This is tricky because we have SVG string. We can try submitting the SVG to the canvas context?
+      // Or cleaner: since we need a texture for Unity, we just need the composite image.
+      // Standard way: draw the DOM image of the SVG.
+      
+      return new Promise<string>((resolve) => {
+        const img = new Image();
+        // Use the current SVG content which has the fills applied
+        const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, 400, 400); // Scale to fit
+          URL.revokeObjectURL(url);
+          
+          // Draw the strokes (Drawing Layer) on top
+          if (canvasRef.current) {
+            ctx.drawImage(canvasRef.current, 0, 0, 400, 400);
+          }
+          
+          resolve(tempCanvas.toDataURL('image/png'));
+        };
+        img.src = url;
+      });
+    }
+  }));
+
+  // But accessing ref function synchronously might be expected to return string
+  // If we need async, we should change interface. 
+  // DesignCanvasRef.toDataURL needs to return Promise<string> actually for the image load.
+  // Let's adjust interface.
+
   // Load and process SVG template
   useEffect(() => {
     const loadSvg = async () => {
       try {
         const response = await fetch(template.src);
-        let svg = await response.text();
+        let svgText = await response.text();
         
         // Apply region fill colors from state
         Object.entries(regions).forEach(([regionId, region]) => {
-          // Replace fill color for each region
-          const fillRegex = new RegExp(`(id="${regionId}"[^>]*fill=")([^"]*)(")`, 'g');
-          svg = svg.replace(fillRegex, `$1${region.fillColor}$3`);
+          // Robust regex to find the element by ID and update/add fill attribute
+          // Handles both existing fill attributes and elements without fill
+          const idRegex = new RegExp(`id="${regionId}"[^>]*>`, 'g');
+          svgText = svgText.replace(idRegex, (match) => {
+            if (match.includes('fill=')) {
+              return match.replace(/fill="[^"]*"/, `fill="${region.fillColor}"`);
+            } else {
+              // Handle self-closing tags
+              if (match.endsWith('/>')) {
+                return match.replace(/\/>$/, ` fill="${region.fillColor}" />`);
+              }
+              return match.replace(/>$/, ` fill="${region.fillColor}">`);
+            }
+          });
         });
         
-        setSvgContent(svg);
+        setSvgContent(svgText);
       } catch (error) {
         console.error('Failed to load SVG template:', error);
       }
@@ -183,7 +245,7 @@ export function DesignCanvas({
     const target = e.target as SVGElement;
     const regionId = target.id;
     
-    if (regionId && template.regions.includes(regionId)) {
+    if (regionId && (template.regions?.includes(regionId) || template.parts?.some(p => p.name === regionId))) {
       if (tool === 'fill') {
         onRegionFill(regionId, currentColor);
       }
@@ -231,4 +293,5 @@ export function DesignCanvas({
       )}
     </div>
   );
-}
+});
+DesignCanvas.displayName = 'DesignCanvas';

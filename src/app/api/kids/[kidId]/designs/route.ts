@@ -37,10 +37,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   
   try {
     const body = await request.json();
-    const { templateId, name, regions } = body as {
+    const { templateId, name, regions, textureImage } = body as {
       templateId: string;
       name: string;
       regions: Record<string, DesignRegion>;
+      textureImage?: string; // Base64 data URL
     };
     
     if (!templateId || !name || !regions) {
@@ -51,6 +52,32 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
     
     const supabase = await createServiceRoleClient();
+    let texture_url = null;
+
+    // Handle texture upload if provided
+    if (textureImage) {
+      try {
+        const base64Data = textureImage.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+        const fileName = `${kidId}/${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('kid-skins')
+          .upload(fileName, buffer, {
+            contentType: 'image/png',
+            upsert: true
+          });
+
+        if (uploadError) {
+          console.error('[Designs API] Texture upload failed:', uploadError);
+        } else {
+          const { data } = supabase.storage.from('kid-skins').getPublicUrl(fileName);
+          texture_url = data.publicUrl;
+        }
+      } catch (e) {
+        console.error('[Designs API] Error processing texture:', e);
+      }
+    }
     
     const { data: design, error } = await supabase
       .from('kid_designs')
@@ -60,6 +87,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         name: name.trim(),
         design_data: { regions },
         is_equipped: false,
+        texture_url: texture_url
       })
       .select()
       .single();
@@ -82,12 +110,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   
   try {
     const body = await request.json();
-    const { id, templateId, name, regions, isEquipped } = body as {
+    const { id, templateId, name, regions, isEquipped, textureImage } = body as {
       id: string;
       templateId?: string;
       name?: string;
       regions?: Record<string, DesignRegion>;
       isEquipped?: boolean;
+      textureImage?: string;
     };
     
     if (!id) {
@@ -104,6 +133,31 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (name) updateData.name = name.trim();
     if (regions) updateData.design_data = { regions };
     if (typeof isEquipped === 'boolean') updateData.is_equipped = isEquipped;
+
+    // Handle texture upload if provided
+    if (textureImage) {
+      try {
+        const base64Data = textureImage.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+        const fileName = `${kidId}/${id}-${Date.now()}.png`; // Use ID in filename for updates
+
+        const { error: uploadError } = await supabase.storage
+          .from('kid-skins')
+          .upload(fileName, buffer, {
+            contentType: 'image/png',
+            upsert: true
+          });
+
+        if (uploadError) {
+           console.error('[Designs API] Texture upload failed:', uploadError);
+        } else {
+           const { data } = supabase.storage.from('kid-skins').getPublicUrl(fileName);
+           updateData.texture_url = data.publicUrl;
+        }
+      } catch (e) {
+        console.error('[Designs API] Error processing texture:', e);
+      }
+    }
     
     const { data: design, error } = await supabase
       .from('kid_designs')
