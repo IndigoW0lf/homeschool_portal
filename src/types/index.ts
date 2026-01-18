@@ -39,6 +39,8 @@ export interface Kid {
   lastName?: string;
   passwordHash?: string; // Never sent to client, only used server-side
   lastLoginAt?: string;
+  // Featured badges (up to 3 badge IDs to showcase on portal)
+  featuredBadges?: string[];
 }
 
 export interface Profile {
@@ -270,6 +272,8 @@ export interface KidRow {
   journal_enabled: boolean | null;
   journal_allow_skip: boolean | null;
   journal_prompt_types: string[] | null;
+  // Featured badges
+  featured_badges: string[] | null;
 }
 
 // Journal entry

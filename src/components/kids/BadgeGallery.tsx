@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Lock, Medal, Star } from '@phosphor-icons/react';
+import { Lock, Medal, Sparkle } from '@phosphor-icons/react';
 import { 
   Badge, 
   ALL_BADGES, 
@@ -16,6 +16,7 @@ import {
 } from '@/lib/badges';
 import { getStars, getUnlocks } from '@/lib/progressState';
 import { BadgeUnlockModal } from './BadgeUnlockModal';
+import { toast } from 'sonner';
 
 interface BadgeGalleryProps {
   kidId: string;
@@ -23,8 +24,6 @@ interface BadgeGalleryProps {
   currentStreak?: number;
   bestStreak?: number;
   journalCount?: number;
-  featuredBadgeId?: string | null;
-  onSetFeatured?: (badgeId: string) => void;
 }
 
 interface BadgeCardProps {
@@ -32,10 +31,10 @@ interface BadgeCardProps {
   isEarned: boolean;
   progress?: { current: number; target: number };
   isFeatured?: boolean;
-  onSetFeatured?: () => void;
+  onToggleFeatured?: () => void;
 }
 
-function BadgeCard({ badge, isEarned, progress, isFeatured, onSetFeatured }: BadgeCardProps) {
+function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: BadgeCardProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const Icon = badge.icon;
   
@@ -52,9 +51,9 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onSetFeatured }: Bad
             ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md' 
             : 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 opacity-60'
           }
-          ${isFeatured ? 'ring-2 ring-yellow-400 ring-offset-2 dark:ring-offset-gray-900' : ''}
+          ${isFeatured ? 'ring-2 ring-purple-400 ring-offset-2 dark:ring-offset-gray-900' : ''}
         `}
-        onClick={() => isEarned && onSetFeatured?.()}
+        onClick={() => isEarned && onToggleFeatured?.()}
       >
         {/* Lock overlay for unearned badges */}
         {!isEarned && (
@@ -66,7 +65,7 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onSetFeatured }: Bad
         {/* Featured star */}
         {isFeatured && (
           <div className="absolute -top-1 -right-1">
-            <Star size={16} weight="fill" className="text-yellow-400" />
+            <Sparkle size={16} weight="fill" className="text-purple-400" />
           </div>
         )}
         
@@ -110,8 +109,10 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onSetFeatured }: Bad
               <p className="text-gray-400 text-xs">{progress.current} / {progress.target}</p>
             </div>
           )}
-          {isEarned && onSetFeatured && (
-            <p className="text-yellow-400 text-xs mt-1">Click to set as featured</p>
+          {isEarned && onToggleFeatured && (
+            <p className="text-purple-400 text-xs mt-1">
+              {isFeatured ? 'Click to remove from featured' : 'Click to add to featured'}
+            </p>
           )}
           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45" />
         </div>
@@ -124,13 +125,13 @@ interface BadgeSectionProps {
   title: string;
   badges: Badge[];
   earnedIds: string[];
+  featuredBadgeIds: string[];
+  onToggleFeatured: (badgeId: string) => void;
   subjectCounts?: Record<string, number>;
   subjectKey?: string;
-  featuredBadgeId?: string | null;
-  onSetFeatured?: (badgeId: string) => void;
 }
 
-function BadgeSection({ title, badges, earnedIds, subjectCounts, subjectKey, featuredBadgeId, onSetFeatured }: BadgeSectionProps) {
+function BadgeSection({ title, badges, earnedIds, featuredBadgeIds, onToggleFeatured, subjectCounts }: BadgeSectionProps) {
   return (
     <div className="mb-6">
       <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
@@ -153,8 +154,8 @@ function BadgeSection({ title, badges, earnedIds, subjectCounts, subjectKey, fea
               badge={badge} 
               isEarned={isEarned}
               progress={progress}
-              isFeatured={featuredBadgeId === badge.id}
-              onSetFeatured={onSetFeatured ? () => onSetFeatured(badge.id) : undefined}
+              isFeatured={featuredBadgeIds.includes(badge.id)}
+              onToggleFeatured={() => onToggleFeatured(badge.id)}
             />
           );
         })}
@@ -168,17 +169,31 @@ export function BadgeGallery({
   subjectCounts = {}, 
   currentStreak = 0, 
   bestStreak = 0, 
-  journalCount = 0,
-  featuredBadgeId,
-  onSetFeatured
+  journalCount = 0
 }: BadgeGalleryProps) {
   const [earnedBadgeIds, setEarnedBadgeIds] = useState<string[]>([]);
+  const [featuredBadgeIds, setFeaturedBadgeIds] = useState<string[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [celebrateBadge, setCelebrateBadge] = useState<string | null>(null);
   const previousBadgesRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     setIsClient(true);
+    
+    // Fetch featured badges from API
+    async function fetchFeaturedBadges() {
+      try {
+        const res = await fetch(`/api/kids/${kidId}/featured-badges`);
+        if (res.ok) {
+          const data = await res.json();
+          setFeaturedBadgeIds(data.featuredBadges || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch featured badges:', error);
+      }
+    }
+    
+    fetchFeaturedBadges();
     
     const updateBadges = () => {
       // Get current unlocks from localStorage/db
@@ -228,6 +243,60 @@ export function BadgeGallery({
     return () => clearInterval(interval);
   }, [kidId, subjectCounts, currentStreak, bestStreak, journalCount, isClient]);
 
+  // Toggle featured badge
+  const toggleFeaturedBadge = async (badgeId: string) => {
+    const isCurrentlyFeatured = featuredBadgeIds.includes(badgeId);
+    const isEarned = earnedBadgeIds.includes(badgeId);
+
+    
+    if (!isEarned) {
+      toast.error('You must earn this badge first!');
+      return;
+    }
+
+    let newFeaturedBadges: string[];
+    
+    if (isCurrentlyFeatured) {
+      // Remove from featured
+      newFeaturedBadges = featuredBadgeIds.filter(id => id !== badgeId);
+    } else {
+      // Add to featured (max 3)
+      if (featuredBadgeIds.length >= 3) {
+        toast.error('You can only feature 3 badges at a time!');
+        return;
+      }
+      newFeaturedBadges = [...featuredBadgeIds, badgeId];
+    }
+
+    // Update locally first for instant feedback
+    setFeaturedBadgeIds(newFeaturedBadges);
+
+    // Save to API
+    try {
+      const res = await fetch(`/api/kids/${kidId}/featured-badges`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featuredBadges: newFeaturedBadges }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update featured badges');
+      }
+
+      const badge = getBadgeById(badgeId);
+      if (isCurrentlyFeatured) {
+        toast.success(`Removed "${badge?.name}" from featured!`);
+      } else {
+        toast.success(`Added "${badge?.name}" to featured! ✨`);
+      }
+    } catch (error) {
+      console.error('Failed to update featured badges:', error);
+      toast.error('Failed to update featured badges');
+      // Revert on error
+      setFeaturedBadgeIds(featuredBadgeIds);
+    }
+  };
+
   const earnedCount = earnedBadgeIds.length;
   const totalCount = ALL_BADGES.length;
 
@@ -249,8 +318,8 @@ export function BadgeGallery({
         title="Milestones" 
         badges={MILESTONE_BADGES} 
         earnedIds={earnedBadgeIds}
-        featuredBadgeId={featuredBadgeId}
-        onSetFeatured={onSetFeatured}
+        featuredBadgeIds={featuredBadgeIds}
+        onToggleFeatured={toggleFeaturedBadge}
       />
       
       {/* Subject Badges - dynamically rendered */}
@@ -262,8 +331,8 @@ export function BadgeGallery({
           earnedIds={earnedBadgeIds}
           subjectCounts={subjectCounts}
           subjectKey={group.key}
-          featuredBadgeId={featuredBadgeId}
-          onSetFeatured={onSetFeatured}
+          featuredBadgeIds={featuredBadgeIds}
+          onToggleFeatured={toggleFeaturedBadge}
         />
       ))}
       
@@ -272,8 +341,8 @@ export function BadgeGallery({
         title="Special Achievements" 
         badges={SPECIAL_BADGES} 
         earnedIds={earnedBadgeIds}
-        featuredBadgeId={featuredBadgeId}
-        onSetFeatured={onSetFeatured}     
+        featuredBadgeIds={featuredBadgeIds}
+        onToggleFeatured={toggleFeaturedBadge}    
       />
       
       {/* Badge unlock celebration modal */}

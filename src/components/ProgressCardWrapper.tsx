@@ -7,7 +7,8 @@ import { isDone } from '@/lib/storage';
 interface ProgressCardWrapperProps {
   kidId: string;
   initialStars: number;
-  initialUnlocks: string[];
+  featuredBadges?: string[];
+  streakEnabled?: boolean;
   date: string;
   itemIds: string[];
 }
@@ -29,7 +30,8 @@ function subscribe(callback: () => void) {
 export function ProgressCardWrapper({ 
   kidId, 
   initialStars, 
-  initialUnlocks,
+  featuredBadges = [],
+  streakEnabled = true,
   date,
   itemIds 
 }: ProgressCardWrapperProps) {
@@ -58,7 +60,8 @@ export function ProgressCardWrapper({
       initialStars={initialStars}
       todayCompleted={isClient ? completedCount : 0}
       todayTotal={totalCount}
-      initialUnlocks={initialUnlocks}
+      featuredBadges={featuredBadges}
+      streakEnabled={streakEnabled}
     />
   );
 }

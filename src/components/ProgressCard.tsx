@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Moon, Confetti, CheckCircle, ShoppingCart, Medal } from '@phosphor-icons/react';
+import { Moon, Confetti, CheckCircle, ShoppingCart, Sparkle } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
+import { getBadgeById } from '@/lib/badges';
 
 interface ProgressCardProps {
   kidId: string;
   initialStars?: number;
   todayCompleted?: number;
   todayTotal?: number;
-  initialUnlocks?: string[];
+  featuredBadges?: string[];
+  streakEnabled?: boolean;
 }
 
 export function ProgressCard({ 
@@ -18,11 +20,11 @@ export function ProgressCard({
   initialStars = 0,
   todayCompleted = 0,
   todayTotal = 0,
-  initialUnlocks = []
+  featuredBadges = [],
+  streakEnabled = true
 }: ProgressCardProps) {
   // Fetch moons via API (handles kid sessions properly)
   const [stars, setStars] = useState(initialStars);
-  const unlocks = initialUnlocks;
   
   useEffect(() => {
     async function fetchMoons() {
@@ -44,13 +46,19 @@ export function ProgressCard({
   
   const allDone = todayTotal > 0 && todayCompleted === todayTotal;
 
+  // Get badge details
+  const featuredBadgeData = featuredBadges
+    .map(id => getBadgeById(id))
+    .filter(Boolean)
+    .slice(0, 3); // Max 3
+
   return (
-    <div className="card p-4">
-      {/* Centered stats row */}
-      <div className="flex items-center justify-center gap-6">
+    <div className="card p-4 space-y-4">
+      {/* Stats row - flex to fill space evenly */}
+      <div className="flex items-center gap-3">
         
-        {/* Moons - Larger, centered */}
-        <div className="flex flex-col items-center gap-1 px-6 py-3 rounded-xl bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 border border-yellow-200 dark:border-yellow-800/50">
+        {/* Moons */}
+        <div className="flex-1 flex flex-col items-center gap-1 px-4 py-3 rounded-xl bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 border border-yellow-200  dark:border-yellow-800/50">
           <div className="flex items-center gap-2">
             <Moon size={24} weight="fill" className="text-yellow-500" />
             <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stars}</span>
@@ -58,9 +66,9 @@ export function ProgressCard({
           <span className="text-xs text-yellow-700/70 dark:text-yellow-400/70 font-medium">Moons</span>
         </div>
 
-        {/* Today's Progress - Larger, centered */}
+        {/* Today's Progress */}
         <div className={cn(
-          "flex flex-col items-center gap-1 px-6 py-3 rounded-xl border",
+          "flex-1 flex flex-col items-center gap-1 px-4 py-3 rounded-xl border",
           allDone 
             ? "bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 border-green-300 dark:border-green-700" 
             : "bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-900/30 border-teal-200 dark:border-teal-800/50"
@@ -88,26 +96,69 @@ export function ProgressCard({
         {/* Shop Button */}
         <Link
           href={`/kids/${kidId}/shop`}
-          className="flex flex-col items-center gap-1 px-6 py-3 bg-gradient-to-br from-teal-100 to-emerald-100 hover:from-teal-200 hover:to-emerald-200 dark:from-teal-900/30 dark:to-emerald-900/30 border border-teal-300 dark:border-teal-700 rounded-xl transition-all"
+          className="flex-1 flex flex-col items-center gap-1 px-4 py-3 bg-gradient-to-br from-teal-100 to-emerald-100 hover:from-teal-200 hover:to-emerald-200 dark:from-teal-900/30 dark:to-emerald-900/30 border border-teal-300 dark:border-teal-700 rounded-xl transition-all"
         >
           <ShoppingCart size={28} weight="duotone" className="text-teal-600 dark:text-teal-400" />
           <span className="text-xs font-medium text-teal-700 dark:text-teal-300">Shop</span>
         </Link>
       </div>
 
-      {/* Badges row - only if there are badges */}
-      {unlocks.length > 0 && (
-        <div className="flex items-center justify-center gap-2 flex-wrap mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-          <span className="text-xs text-gray-500 dark:text-gray-400">Badges:</span>
-          {unlocks.map(unlockId => (
-            <span
-              key={unlockId}
-              className="px-2 py-0.5 bg-[var(--fabric-gold)] text-[var(--ink-900)] rounded-full text-xs font-medium flex items-center gap-1"
+      {/* Featured Badges - only if at least 1 is set */}
+      {featuredBadgeData.length > 0 && (
+        <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              My Featured Badges
+            </h4>
+            <Link
+              href={`/kids/${kidId}/profile#badges`}
+              className="text-xs text-purple-600 dark:text-purple-400 hover:underline"
             >
-              <Medal size={12} weight="fill" />
-              {unlockId.split('-').pop()}
-            </span>
-          ))}
+              Manage
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-2">
+            {featuredBadgeData.map((badge) => {
+              if (!badge) return null;
+              const Icon = badge.icon;
+              
+              return (
+                <div
+                  key={badge.id}
+                  className="group relative p-3 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Badge Icon */}
+                    <div className={`
+                      flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center
+                      bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30
+                    `}>
+                      <Icon size={28} weight="fill" className={badge.color} />
+                    </div>
+                    
+                    {/* Badge Info */}
+                    <div className="flex-1 min-w-0">
+                      <h5 className="font-bold text-gray-900 dark:text-white text-sm flex items-center gap-1">
+                        {badge.name}
+                        <Sparkle size={12} weight="fill" className="text-yellow-500" />
+                      </h5>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2">
+                        {badge.description}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Hover tooltip for full description */}
+                  <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 dark:bg-gray-700 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <p className="text-white text-sm font-semibold mb-1">{badge.name}</p>
+                    <p className="text-gray-300 text-xs">{badge.description}</p>
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

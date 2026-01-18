@@ -12,6 +12,8 @@ import { StreakDisplay } from '@/components/kids/StreakDisplay';
 import { CaretLeft, CaretRight, CalendarBlank, Scroll, CheckCircle } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, format, startOfWeek, endOfWeek } from 'date-fns';
 import { KidStateHydrator } from '@/components/KidStateHydrator';
+import { AvatarSetupRedirect } from '@/components/kids/AvatarSetupRedirect';
+import { AvatarReminderBanner } from '@/components/kids/AvatarReminderBanner';
 
 interface KidPortalPageProps {
   params: Promise<{
@@ -96,6 +98,13 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
         }))}
       />
       
+      {/* Redirect to avatar setup on first login if not configured */}
+      <AvatarSetupRedirect 
+        kidId={kidId}
+        hasAvatarState={!!kid.avatarState}
+        lastLoginAt={kid.lastLoginAt}
+      />
+      
       {/* Page Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
@@ -119,6 +128,15 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
+        
+        {/* Avatar Reminder - Monthly if not set up */}
+        {isViewToday && (
+          <AvatarReminderBanner 
+            kidId={kidId}
+            hasAvatarState={!!kid.avatarState}
+            kidName={kid.nickname || kid.name}
+          />
+        )}
         
         {/* Week Calendar - Moved to TOP */}
         <section>
@@ -144,7 +162,8 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
           <ProgressCardWrapper 
             kidId={kidId}
             initialStars={progressData?.totalStars || 0}
-            initialUnlocks={unlocks}
+            featuredBadges={kid.featuredBadges}
+            streakEnabled={kid.streakEnabled}
             date={viewDateString}
             itemIds={todayItems.map(item => item.id)}
           />

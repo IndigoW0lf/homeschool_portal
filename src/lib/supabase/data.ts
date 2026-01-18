@@ -38,7 +38,7 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     // 1. Get current kid's family_id
     const { data: currentKid, error: kidError } = await supabase
       .from('kids')
-      .select('family_id, id, name, grade_band, grades, avatar_url, favorite_color, birthday, bio, favorite_shows, favorite_music, favorite_foods, favorite_subjects, hobbies, nickname, avatar_state, journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled')
+      .select('family_id, id, name, grade_band, grades, avatar_url, favorite_color, birthday, bio, favorite_shows, favorite_music, favorite_foods, favorite_subjects, hobbies, nickname, avatar_state, journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled, featured_badges')
       .eq('id', kidSession.kidId)
       .single();
 
@@ -129,6 +129,7 @@ function mapKidRow(row: any): Kid {
     journalAllowSkip: row.journal_allow_skip ?? true,
     journalPromptTypes: row.journal_prompt_types || undefined,
     streakEnabled: row.streak_enabled ?? true,
+    featuredBadges: row.featured_badges || [],
   };
 }
 
