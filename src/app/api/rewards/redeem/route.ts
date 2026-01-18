@@ -7,12 +7,18 @@ import { getKidSession } from '@/lib/kid-session';
  * Creates a pending redemption when kid "buys" a reward
  * ALSO deducts moons from the database
  */
+import designTemplatesData from '../../../../../content/design-templates.json';
+import { DesignTemplatesManifest } from '@/types/design-studio';
+
+// ... (imports)
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { kidId, rewardId } = body as {
+    const { kidId, rewardId, type } = body as {
       kidId: string;
       rewardId: string;
+      type?: 'template'; 
     };
 
     if (!kidId || !rewardId) {
@@ -40,16 +46,49 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // 1. Get the reward details to know the cost
-    const { data: reward, error: rewardError } = await supabase
-      .from('kid_rewards')
-      .select('moon_cost, name')
-      .eq('id', rewardId)
-      .single();
-    
-    if (rewardError || !reward) {
-      console.error('[Redeem] Reward not found:', rewardError);
-      return NextResponse.json({ error: 'Reward not found' }, { status: 404 });
+    let cost = 0;
+    let rewardName = '';
+
+    // Handle Template Purchase
+    if (type === 'template') {
+      const templates = designTemplatesData as DesignTemplatesManifest;
+      let foundTemplate = null;
+      
+      // Find template in JSON
+      for (const cat of templates.categories) {
+        const t = cat.templates.find(t => t.id === rewardId);
+        if (t) {
+          foundTemplate = t;
+          break;
+        }
+      }
+
+      if (!foundTemplate) {
+        return NextResponse.json({ error: 'Template not found' }, { status: 404 });
+      }
+
+      cost = foundTemplate.unlockCost || 0;
+      rewardName = foundTemplate.label;
+
+      if (cost === 0) {
+         return NextResponse.json({ error: 'Item is free or invalid' }, { status: 400 });
+      }
+
+    } else {
+      // 1. Get the reward details (Standard Reward)
+      const { data: reward, error: rewardError } = await supabase
+        .from('kid_rewards')
+        .select('moon_cost, name')
+        .eq('id', rewardId)
+        .single();
+      
+      if (rewardError || !reward) {
+        console.error('[Redeem] Reward not found:', rewardError);
+        return NextResponse.json({ error: 'Reward not found' }, { status: 404 });
+      }
+      
+      cost = reward.moon_cost;
+      rewardName = reward.name;
     }
     
     // 2. Get current moons for the kid from student_progress
@@ -65,7 +104,6 @@ export async function POST(request: NextRequest) {
     }
     
     const currentMoons = progress?.total_stars || 0;
-    const cost = reward.moon_cost || 0;
     
     // 3. Check if kid has enough moons
     if (currentMoons < cost) {
@@ -87,34 +125,61 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to deduct moons' }, { status: 500 });
     }
     
-    // 5. Create pending redemption
-    const { data, error } = await supabase
-      .from('reward_redemptions')
-      .insert({
-        kid_id: kidId,
-        reward_id: rewardId,
-        status: 'pending',
-      })
-      .select()
-      .single();
+    // 5. Fulfill the item
+    let resultData;
 
-    if (error) {
-      console.error('[Redeem] Database error:', error);
-      // Refund the moons since redemption failed
-      await supabase
-        .from('student_progress')
-        .update({ total_stars: currentMoons })
-        .eq('kid_id', kidId);
-      return NextResponse.json({ error: 'Failed to create redemption' }, { status: 500 });
+    if (type === 'template') {
+      // For templates, immediately grant the unlock
+      const { data, error } = await supabase
+        .from('student_unlocks')
+        .insert({
+          kid_id: kidId,
+          unlock_id: rewardId
+        })
+        .select()
+        .single();
+        
+      if (error) {
+        // Refund if purchase failed
+        await supabase
+          .from('student_progress')
+          .update({ total_stars: currentMoons })
+          .eq('kid_id', kidId);
+          
+        return NextResponse.json({ error: 'Failed to unlock template' }, { status: 500 });
+      }
+      resultData = data;
+    } else {
+      // For custom rewards, create pending redemption
+      const { data, error } = await supabase
+        .from('reward_redemptions')
+        .insert({
+          kid_id: kidId,
+          reward_id: rewardId,
+          status: 'pending',
+        })
+        .select()
+        .single();
+
+      if (error) {
+         // Refund
+         await supabase
+          .from('student_progress')
+          .update({ total_stars: currentMoons })
+          .eq('kid_id', kidId);
+          
+         return NextResponse.json({ error: 'Failed to create redemption' }, { status: 500 });
+      }
+      resultData = data;
     }
 
-    console.log(`[Redeem] Success: ${reward.name} for ${cost} moons. New balance: ${newMoonBalance}`);
+    console.log(`[Redeem] Success: ${rewardName} for ${cost} moons. New balance: ${newMoonBalance}`);
 
     return NextResponse.json({
       success: true,
-      redemption: data,
+      redemption: resultData,
       newMoonBalance,
-      message: 'Redemption request sent! Ask your parent to approve it.',
+      message: type === 'template' ? `Unlocked ${rewardName}! 🎉` : 'Redemption request sent! Ask your parent to approve it.',
     });
 
   } catch (error) {

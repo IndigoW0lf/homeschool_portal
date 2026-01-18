@@ -98,7 +98,7 @@ export async function enrichActivity(
   // YouTube video search
   if (searchYouTube && isYouTubeConfigured()) {
     enrichmentPromises.push(
-      searchYouTubeVideos(activity, maxVideos).then(
+      searchYouTubeVideos(activity, maxVideos, ageOrGrade).then(
         (links) => { result.videoLinks = links; },
         (error) => { 
           result.videoError = error instanceof Error ? error.message : String(error);
@@ -144,13 +144,15 @@ export async function enrichActivity(
  */
 async function searchYouTubeVideos(
   activity: { title: string; category: string },
-  maxResults: number
+  maxResults: number,
+  gradeLevel?: string | number
 ): Promise<ActivityLink[]> {
-  console.log('[Enrichment] Searching YouTube for:', activity.title);
+  console.log('[Enrichment] Searching YouTube for:', activity.title, '| Grade:', gradeLevel);
   
   const videos = await searchEducationalVideos(activity.title, {
     subject: activity.category,
     maxResults,
+    gradeLevel: gradeLevel ? String(gradeLevel) : undefined,
   });
 
   return videos.map(video => ({

@@ -57,6 +57,7 @@ interface RefineRequest {
   lessonData: LessonData;
   feedback: string;
   searchYouTube?: boolean;  // Option to search for videos
+  assignTo?: string[];  // Kid IDs to determine grade level
 }
 
 /**
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body: RefineRequest = await request.json();
-    const { lessonData, feedback, searchYouTube = true } = body;  // Default to true
+    const { lessonData, feedback, searchYouTube = true, assignTo } = body;  // Default to true
 
     if (!lessonData || !feedback) {
       return NextResponse.json(
@@ -84,6 +85,24 @@ export async function POST(request: NextRequest) {
 
     console.log('[API/refine-lesson] Refining lesson:', lessonData.title);
     console.log('[API/refine-lesson] User feedback:', feedback);
+
+    // Fetch kid grade levels if we have assigned students
+    let targetGradeLevel: string | undefined;
+    if (assignTo && assignTo.length > 0) {
+      const { data: kids } = await supabase
+        .from('kids')
+        .select('grades')
+        .in('id', assignTo);
+      
+      if (kids && kids.length > 0) {
+        // Use the first kid's first grade as the target
+        const firstKidGrades = kids[0].grades;
+        if (firstKidGrades && firstKidGrades.length > 0) {
+          targetGradeLevel = firstKidGrades[0];
+          console.log('[API/refine-lesson] Target grade level:', targetGradeLevel);
+        }
+      }
+    }
 
     // Normalize keyQuestions to strings for the prompt
     const normalizedLesson = {
@@ -139,7 +158,8 @@ Please return the refined lesson as valid JSON.
         },
         { 
           searchYouTube: true, 
-          generateWorksheet: false  // Don't generate worksheets during refine
+          generateWorksheet: false,  // Don't generate worksheets during refine
+          ageOrGrade: targetGradeLevel,
         }
       );
       

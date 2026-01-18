@@ -10,9 +10,11 @@ interface DesignCanvasProps {
   tool: 'fill' | 'draw' | 'eraser';
   currentColor: string;
   brushSize: number;
-  onRegionClick: (regionId: string) => void;
-  onRegionFill: (regionId: string, color: string) => void;
-  onStrokeComplete: (stroke: StrokeData) => void;
+  onRegionClick?: (regionId: string) => void;
+  onRegionFill?: (regionId: string, color: string) => void;
+  onStrokeComplete?: (stroke: StrokeData) => void;
+  readonly?: boolean;
+  transparent?: boolean;
 }
 
 export function DesignCanvas({
@@ -21,9 +23,11 @@ export function DesignCanvas({
   tool,
   currentColor,
   brushSize,
-  onRegionClick,
-  onRegionFill,
-  onStrokeComplete,
+  onRegionClick = () => {},
+  onRegionFill = () => {},
+  onStrokeComplete = () => {},
+  readonly = false,
+  transparent = false,
 }: DesignCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -190,14 +194,17 @@ export function DesignCanvas({
   return (
     <div 
       ref={containerRef}
-      className="relative bg-[var(--paper-100)] rounded-xl overflow-hidden aspect-square max-w-md mx-auto border-2 border-gray-200 dark:border-gray-700"
+      className={`
+        relative overflow-hidden aspect-square max-w-md mx-auto
+        ${transparent ? '' : 'bg-[var(--paper-100)] rounded-xl border-2 border-gray-200 dark:border-gray-700'}
+      `}
     >
       {/* SVG Template Layer */}
       <div 
         className="absolute inset-0 flex items-center justify-center p-4"
-        onClick={handleSvgClick}
+        onClick={(e) => !readonly && handleSvgClick(e)}
         dangerouslySetInnerHTML={{ __html: svgContent }}
-        style={{ pointerEvents: tool === 'fill' ? 'auto' : 'none' }}
+        style={{ pointerEvents: !readonly && tool === 'fill' ? 'auto' : 'none' }}
       />
       
       {/* Drawing Canvas Layer */}
@@ -208,7 +215,7 @@ export function DesignCanvas({
         className="absolute inset-0 w-full h-full"
         style={{ 
           touchAction: 'none',
-          pointerEvents: tool === 'draw' ? 'auto' : 'none',
+          pointerEvents: !readonly && tool === 'draw' ? 'auto' : 'none',
         }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -217,9 +224,11 @@ export function DesignCanvas({
       />
       
       {/* Tool indicator */}
-      <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-white text-xs rounded capitalize">
-        {tool} Mode
-      </div>
+      {!readonly && (
+        <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-white text-xs rounded capitalize">
+          {tool} Mode
+        </div>
+      )}
     </div>
   );
 }

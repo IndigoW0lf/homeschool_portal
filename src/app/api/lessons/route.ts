@@ -40,6 +40,24 @@ export async function POST(request: NextRequest) {
 
     console.log('[API/lessons] Creating lesson:', title);
 
+    // Fetch kid grade levels if we have assigned students
+    let targetGradeLevel: string | undefined;
+    if (assignTo && assignTo.length > 0) {
+      const { data: kids } = await supabase
+        .from('kids')
+        .select('grades')
+        .in('id', assignTo);
+      
+      if (kids && kids.length > 0) {
+        // Use the first kid's first grade as the target (could be improved)
+        const firstKidGrades = kids[0].grades;
+        if (firstKidGrades && firstKidGrades.length > 0) {
+          targetGradeLevel = firstKidGrades[0];
+          console.log('[API/lessons] Target grade level:', targetGradeLevel);
+        }
+      }
+    }
+
     // Use centralized enrichment instead of inline logic
     const enrichment = await enrichActivity(
       { title, category: type, description: description || instructions },
@@ -47,6 +65,7 @@ export async function POST(request: NextRequest) {
         searchYouTube: true,
         generateWorksheet: shouldGenerateWorksheet,
         worksheetInstructions: description || instructions || '',
+        ageOrGrade: targetGradeLevel,
       }
     );
 

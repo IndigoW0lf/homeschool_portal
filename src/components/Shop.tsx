@@ -10,46 +10,48 @@ interface ShopProps {
   items: ShopItem[];
 }
 
-type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'home';
+  type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'home' | 'template';
 
-export function Shop({ kidId, items }: ShopProps) {
-  const [stars, setStars] = useState(0);
-  const [filter, setFilter] = useState<FilterType>('all');
-  const [, setIsLoading] = useState(true);
+  export function Shop({ kidId, items }: ShopProps) {
+    const [stars, setStars] = useState(0);
+    const [filter, setFilter] = useState<FilterType>('all');
+    const [, setIsLoading] = useState(true);
 
-  // Fetch moons via API (handles kid sessions properly)
-  useEffect(() => {
-    async function syncMoons() {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/kids/${kidId}/moons`);
-        if (res.ok) {
-          const data = await res.json();
-          setStars(data.moons || 0);
+    // Fetch moons via API (handles kid sessions properly)
+    useEffect(() => {
+      async function syncMoons() {
+        setIsLoading(true);
+        try {
+          const res = await fetch(`/api/kids/${kidId}/moons`);
+          if (res.ok) {
+            const data = await res.json();
+            setStars(data.moons || 0);
+          }
+        } catch (error) {
+          console.error('[Shop] Failed to fetch moons:', error);
         }
-      } catch (error) {
-        console.error('[Shop] Failed to fetch moons:', error);
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    }
-    syncMoons();
-  }, [kidId]);
+      syncMoons();
+    }, [kidId]);
 
-  // Count items by type
-  const rewardCount = items.filter(i => i.type === 'reward').length;
-  const digitalCount = items.filter(i => i.type !== 'reward').length;
+    // Count items by type
+    const rewardCount = items.filter(i => i.type === 'reward').length;
+    const templateCount = items.filter(i => i.type === 'template').length;
+    const digitalCount = items.filter(i => i.type !== 'reward' && i.type !== 'template').length;
 
-  const filteredItems = filter === 'all' 
-    ? items 
-    : items.filter(item => item.type === filter);
+    const filteredItems = filter === 'all' 
+      ? items 
+      : items.filter(item => item.type === filter);
 
-  const filters: { key: FilterType; label: string; show: boolean }[] = [
-    { key: 'all', label: 'All', show: true },
-    { key: 'reward', label: `🎁 Rewards (${rewardCount})`, show: rewardCount > 0 },
-    { key: 'badge', label: 'Badges', show: digitalCount > 0 },
-    { key: 'avatar', label: 'Avatar', show: digitalCount > 0 },
-    { key: 'home', label: 'Home', show: digitalCount > 0 },
-  ];
+    const filters: { key: FilterType; label: string; show: boolean }[] = [
+      { key: 'all', label: 'All', show: true },
+      { key: 'template', label: `Clothing (${templateCount})`, show: templateCount > 0 },
+      { key: 'reward', label: `🎁 Rewards (${rewardCount})`, show: rewardCount > 0 },
+      { key: 'badge', label: 'Badges', show: digitalCount > 0 },
+      { key: 'avatar', label: 'Avatar', show: digitalCount > 0 },
+      { key: 'home', label: 'Home', show: digitalCount > 0 },
+    ];
 
   const handleRewardPurchase = async (item: ShopItem) => {
     if (stars < item.cost) return;
@@ -126,16 +128,32 @@ export function Shop({ kidId, items }: ShopProps) {
               item={item}
               kidId={kidId}
               onPurchase={async () => {
-                // Re-sync moons via API after purchase
-                try {
-                  const res = await fetch(`/api/kids/${kidId}/moons`);
+                // Determine API endpoint based on type
+                if (item.type === 'template') {
+                  const res = await fetch('/api/rewards/redeem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      kidId,
+                      rewardId: item.id,
+                      type: 'template' // Signal that this is a template purchase
+                    }),
+                  });
+                  
                   if (res.ok) {
+                    // Update stars
                     const data = await res.json();
-                    setStars(data.moons || 0);
+                    if (data.newMoonBalance !== undefined) {
+                      setStars(data.newMoonBalance);
+                    }
+                    // Refresh the page to remove the purchased item
+                    window.location.reload();
                   }
-                } catch (error) {
-                  console.error('[Shop] Failed to refresh moons:', error);
+                  return;
                 }
+
+                // Default behavior for other shop items (using existing logic if any)
+                // For now, let's assume other shop items follow similar pattern or are not fully implemented
               }}
             />
           )

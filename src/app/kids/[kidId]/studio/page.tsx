@@ -1,6 +1,8 @@
+import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server';
+import { getKidSession } from '@/lib/kid-session';
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB } from '@/lib/supabase/data';
-import { DesignStudio } from '@/components/studio';
+import { DesignStudio } from '@/components/studio/DesignStudio';
 import { DesignTemplatesManifest } from '@/types/design-studio';
 import designTemplatesData from '../../../../../content/design-templates.json';
 
@@ -18,13 +20,40 @@ export default async function StudioPage({ params }: StudioPageProps) {
     notFound();
   }
 
+  // Check for kid session to bypass RLS if needed
+  const kidSession = await getKidSession();
+  let supabase;
+  
+  if (kidSession && kidSession.kidId === kidId) {
+    supabase = await createServiceRoleClient();
+  } else {
+    supabase = await createServerClient();
+  }
+
   const templates = designTemplatesData as DesignTemplatesManifest;
+
+  // 1. Fetch unlocked templates
+  const { data: unlocks } = await supabase
+    .from('student_unlocks')
+    .select('unlock_id')
+    .eq('kid_id', kidId);
+  
+  const unlockedTemplateIds = unlocks?.map(u => u.unlock_id) || [];
+
+  // 2. Fetch existing designs (Wardrobe)
+  const { data: designs } = await supabase
+    .from('kid_designs')
+    .select('*')
+    .eq('kid_id', kidId)
+    .order('created_at', { ascending: false });
 
   return (
     <main className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
       <DesignStudio 
         kidId={kidId} 
-        templates={templates} 
+        templates={templates}
+        unlockedTemplateIds={unlockedTemplateIds}
+        initialDesigns={designs || []}
       />
     </main>
   );

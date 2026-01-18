@@ -229,7 +229,7 @@ export interface StudioTemplates {
 export interface ShopItem {
   id: string;
   name: string;
-  type: 'badge' | 'avatar' | 'home' | 'reward';
+  type: 'badge' | 'avatar' | 'home' | 'reward' | 'template';
   cost: number;
   description: string;
   unlocks?: string[];

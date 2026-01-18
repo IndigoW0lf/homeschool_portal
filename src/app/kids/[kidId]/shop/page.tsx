@@ -5,6 +5,8 @@ import { getKidSession } from '@/lib/kid-session';
 import { Shop } from '@/components/Shop';
 import { Moon } from '@phosphor-icons/react/dist/ssr';
 import { ShopItem } from '@/types';
+import { DesignTemplatesManifest } from '@/types/design-studio';
+import designTemplatesData from '../../../../../content/design-templates.json';
 
 interface ShopPageProps {
   params: Promise<{
@@ -32,14 +34,13 @@ export default async function ShopPage({ params }: ShopPageProps) {
     supabase = await createServerClient();
   }
 
-  // Get real-world rewards from database (parent-created only)
+  // 1. Get real-world rewards (parent-created)
   const { data: kidRewards } = await supabase
     .from('kid_rewards')
     .select('*')
     .eq('kid_id', kidId)
     .eq('is_active', true);
 
-  // Convert kid_rewards to ShopItem format
   const rewardItems: ShopItem[] = (kidRewards || []).map(reward => ({
     id: reward.id,
     name: reward.name,
@@ -49,8 +50,41 @@ export default async function ShopPage({ params }: ShopPageProps) {
     emoji: reward.emoji,
   }));
 
-  // Only show parent-created rewards (digital items removed for now)
-  const allItems = rewardItems;
+  // 2. Get unlocked templates for this kid
+  const { data: unlocks } = await supabase
+    .from('student_unlocks')
+    .select('unlock_id')
+    .eq('kid_id', kidId);
+  
+  const unlockedIds = new Set(unlocks?.map(u => u.unlock_id) || []);
+
+  // 3. Get lockable templates from manifest
+  const templates = designTemplatesData as DesignTemplatesManifest;
+  const templateItems: ShopItem[] = [];
+
+  templates.categories.forEach(category => {
+    category.templates.forEach(template => {
+      // Only include if it's a shop item, NOT initially unlocked, and NOT already owned
+      if (
+        !template.unlocked && 
+        template.unlockType === 'shop' && 
+        template.unlockCost && 
+        !unlockedIds.has(template.id)
+      ) {
+        templateItems.push({
+          id: template.id,
+          name: template.label,
+          type: 'template',
+          cost: template.unlockCost,
+          description: `Design your own ${template.label}!`,
+          // We can use the category icon as a fallback emoji if needed
+          emoji: category.icon 
+        });
+      }
+    });
+  });
+
+  const allItems = [...rewardItems, ...templateItems];
 
   return (
     <div className="min-h-screen">
@@ -80,6 +114,3 @@ export default async function ShopPage({ params }: ShopPageProps) {
     </div>
   );
 }
-
-
-

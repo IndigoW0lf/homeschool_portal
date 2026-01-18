@@ -195,6 +195,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
         body: JSON.stringify({
           lessonData: currentData,
           feedback: refinementFeedback,
+          assignTo: watch('assignTo'),  // Pass assigned kids for grade level context
         }),
       });
 

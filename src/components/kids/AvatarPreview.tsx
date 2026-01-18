@@ -70,7 +70,12 @@ export function AvatarPreview({
       {/* Outfit layer */}
       {avatarState.outfit && (
         <img
-          src={`/assets/avatars/outfits/${avatarState.outfit}.svg`}
+          src={
+            avatarState.outfit.startsWith('custom:') 
+              // Fallback for custom designs in preview (until we support full custom rendering here)
+              ? '/assets/avatars/outfits/shirt-01.svg' 
+              : `/assets/avatars/outfits/${avatarState.outfit}.svg`
+          }
           alt="Avatar outfit"
           className="absolute inset-0 w-full h-full object-contain z-10"
         />

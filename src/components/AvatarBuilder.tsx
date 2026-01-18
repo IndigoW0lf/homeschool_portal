@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AvatarAssets, AvatarAsset, AvatarState } from '@/types';
+import { ItemDesignRow, DesignTemplatesManifest } from '@/types/design-studio';
+import { DesignCanvas } from './studio/DesignCanvas';
+import designTemplatesData from '../../content/design-templates.json';
 import { getAvatarState, setAvatarState, getDefaultAvatarState, saveAvatarToDatabase } from '@/lib/avatarStorage';
 import { toast } from 'sonner';
 
@@ -10,6 +13,7 @@ interface AvatarBuilderProps {
   kidId: string;
   assets: AvatarAssets;
   initialAvatarState?: AvatarState | null;
+  customDesigns?: ItemDesignRow[];
 }
 
 const COLOR_PALETTE = [
@@ -23,11 +27,14 @@ const COLOR_PALETTE = [
   { value: '--sky-400', label: 'Sky', color: '#7FB3D5' },
 ];
 
-export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuilderProps) {
+export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns = [] }: AvatarBuilderProps) {
   const [state, setState] = useState<AvatarState>(getDefaultAvatarState());
   const [activeTab, setActiveTab] = useState<'base' | 'outfit' | 'accessory'>('outfit');
   const [isSaving, setIsSaving] = useState(false);
+  
+  const templates = designTemplatesData as DesignTemplatesManifest;
 
+  // ... (useEffect remains same) ...
   useEffect(() => {
     // Priority: initialAvatarState (from DB) > localStorage > default
     if (initialAvatarState) {
@@ -40,16 +47,23 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
     }
   }, [kidId, initialAvatarState]);
 
-  const handleAssetSelect = (asset: AvatarAsset) => {
-    if (asset.category === 'base') {
-      setState(prev => ({ ...prev, base: asset.id }));
-    } else if (asset.category === 'outfit') {
-      setState(prev => ({ ...prev, outfit: asset.id }));
-    } else if (asset.category === 'accessory') {
-      setState(prev => ({ ...prev, accessory: asset.id }));
+  const handleAssetSelect = (asset: AvatarAsset | ItemDesignRow) => {
+    if ('design_data' in asset) {
+       // It's a custom design
+       setState(prev => ({ ...prev, outfit: `custom:${asset.id}` }));
+    } else {
+      // Standard asset
+      if (asset.category === 'base') {
+        setState(prev => ({ ...prev, base: asset.id }));
+      } else if (asset.category === 'outfit') {
+        setState(prev => ({ ...prev, outfit: asset.id }));
+      } else if (asset.category === 'accessory') {
+        setState(prev => ({ ...prev, accessory: asset.id }));
+      }
     }
   };
-
+  
+  // ... (handleColorChange, handleSave remain same) ...
   const handleColorChange = (part: string, colorVar: string) => {
     setState(prev => ({
       ...prev,
@@ -81,15 +95,34 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
   const getCurrentAsset = (category: 'base' | 'outfit' | 'accessory'): AvatarAsset | undefined => {
     const id = category === 'base' ? state.base : category === 'outfit' ? state.outfit : state.accessory;
     if (!id) return undefined;
+    
+    // Check if custom design
+    if (category === 'outfit' && id.startsWith('custom:')) {
+       return undefined; // Handled separately
+    }
+
     const list = category === 'base' ? assets.bases : category === 'outfit' ? assets.outfits : assets.accessories;
     return list.find(a => a.id === id);
+  };
+  
+  const getCustomDesign = (): ItemDesignRow | undefined => {
+    if (!state.outfit.startsWith('custom:')) return undefined;
+    const designId = state.outfit.split('custom:')[1];
+    return customDesigns.find(d => d.id === designId);
   };
 
   const currentOutfit = getCurrentAsset('outfit');
   const colorableParts = currentOutfit?.colorableParts || [];
 
+  const getTemplateForDesign = (design: ItemDesignRow) => {
+    return templates.categories
+      .flatMap(c => c.templates)
+      .find(t => t.id === design.template_id);
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
+      {/* ... (Header) ... */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Avatar Builder</h2>
@@ -115,14 +148,42 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                 className="absolute inset-0 w-full h-full object-contain"
               />
             )}
-            {/* Outfit */}
-            {getCurrentAsset('outfit') && (
-              <img
-                src={getCurrentAsset('outfit')?.src}
-                alt="Avatar outfit"
-                className="absolute inset-0 w-full h-full object-contain z-10"
-              />
+            
+            {/* Outfit (Standard or Custom) */}
+            {state.outfit && (
+              state.outfit.startsWith('custom:') ? (
+                (() => {
+                  const design = getCustomDesign();
+                  const template = design ? getTemplateForDesign(design) : null;
+                  if (design && template) {
+                    return (
+                      <div className="absolute inset-0 w-full h-full z-10">
+                        <DesignCanvas
+                          template={template}
+                          regions={design.design_data.regions}
+                          activeRegion={null}
+                          tool="fill"
+                          currentColor="#000"
+                          brushSize={1}
+                          readonly={true}
+                          transparent={true}
+                        />
+                      </div>
+                    );
+                  }
+                  return null;
+                })()
+              ) : (
+                getCurrentAsset('outfit') && (
+                  <img
+                    src={getCurrentAsset('outfit')?.src}
+                    alt="Avatar outfit"
+                    className="absolute inset-0 w-full h-full object-contain z-10"
+                  />
+                )
+              )
             )}
+
             {/* Accessory */}
             {state.accessory && getCurrentAsset('accessory') && (
               <img
@@ -175,15 +236,19 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
             Select {activeTab === 'base' ? 'Base' : activeTab === 'outfit' ? 'Outfit' : 'Accessory'}
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {(activeTab === 'base' ? assets.bases : activeTab === 'outfit' ? assets.outfits : assets.accessories).map(asset => {
+            {(activeTab === 'base' ? assets.bases : activeTab === 'outfit' ? [...customDesigns, ...assets.outfits] : assets.accessories).map(asset => {
+              // Distinguish between standard Asset and Custom Design
+              const isCustom = 'design_data' in asset;
+              const assetId = asset.id;
+              
               const isSelected = 
-                (activeTab === 'base' && state.base === asset.id) ||
-                (activeTab === 'outfit' && state.outfit === asset.id) ||
-                (activeTab === 'accessory' && state.accessory === asset.id);
+                (activeTab === 'base' && state.base === assetId) ||
+                (activeTab === 'outfit' && (isCustom ? state.outfit === `custom:${assetId}` : state.outfit === assetId)) ||
+                (activeTab === 'accessory' && state.accessory === assetId);
               
               return (
                 <button
-                  key={asset.id}
+                  key={assetId}
                   onClick={() => handleAssetSelect(asset)}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     isSelected
@@ -191,17 +256,42 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                       : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                   }`}
                 >
-                  <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center">
-                    <img
-                      src={asset.src}
-                      alt={asset.label}
-                      className="max-w-full max-h-full object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
+                  <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
+                    {isCustom ? (
+                      (() => {
+                        const template = getTemplateForDesign(asset as ItemDesignRow);
+                        return template ? (
+                          <div className="absolute inset-0 transform scale-75 origin-center">
+                            <DesignCanvas
+                              template={template}
+                              regions={(asset as ItemDesignRow).design_data.regions}
+                              activeRegion={null}
+                              tool="fill"
+                              currentColor="#000"
+                              brushSize={1}
+                              readonly={true}
+                              transparent={true}
+                            />
+                          </div>
+                        ) : null;
+                      })()
+                    ) : (
+                      <img
+                        src={(asset as AvatarAsset).src}
+                        alt={(asset as AvatarAsset).label}
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    )}
                   </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 text-center">{asset.label}</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                    {(asset as any).label || (asset as any).name}
+                  </p>
+                  {isCustom && (
+                    <span className="text-xs text-[var(--ember-500)] block text-center">Custom</span>
+                  )}
                 </button>
               );
             })}
