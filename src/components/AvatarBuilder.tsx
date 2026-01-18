@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { AvatarAssets, AvatarAsset, AvatarState } from '@/types';
 import { getAvatarState, setAvatarState, getDefaultAvatarState, saveAvatarToDatabase } from '@/lib/avatarStorage';
 import { toast } from 'sonner';
@@ -90,7 +91,15 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Avatar Builder</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Avatar Builder</h2>
+          <Link 
+            href={`/kids/${kidId}/studio`}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity text-sm"
+          >
+            🎨 Design Studio
+          </Link>
+        </div>
         
         {/* Avatar Preview */}
         <div className="flex flex-col items-center mb-8">

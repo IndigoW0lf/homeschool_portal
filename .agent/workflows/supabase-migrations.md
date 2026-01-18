@@ -124,3 +124,11 @@ CREATE POLICY "tablename_access" ON public.tablename FOR ALL
   USING (user_id = (SELECT auth.uid()) OR user_id IS NULL)
   WITH CHECK (user_id = (SELECT auth.uid()));
 ```
+
+---
+
+## AI Context Maintenance
+
+Whenever you create or modify a migration to change the database schema, you **MUST** also update [supabase_schema.sql](file:///Users/indigowolf/workspace/homeschool_portal/docs/internal/supabase_schema.sql).
+
+This ensures the AI always has the latest source of truth for the database structure.

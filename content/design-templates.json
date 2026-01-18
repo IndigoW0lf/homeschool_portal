@@ -1,0 +1,143 @@
+{
+  "categories": [
+    {
+      "id": "tops",
+      "label": "Tops",
+      "icon": "👕",
+      "templates": [
+        {
+          "id": "top-tshirt",
+          "label": "T-Shirt",
+          "src": "/assets/avatars/blank-templates/tops/top-tshirt.svg",
+          "regions": ["body", "left-sleeve", "right-sleeve"],
+          "unlocked": true
+        },
+        {
+          "id": "top-tank",
+          "label": "Tank Top",
+          "src": "/assets/avatars/blank-templates/tops/top-tank.svg",
+          "regions": ["body", "left-strap", "right-strap"],
+          "unlocked": false,
+          "unlockCost": 50,
+          "unlockType": "shop"
+        },
+        {
+          "id": "top-sweater",
+          "label": "Sweater",
+          "src": "/assets/avatars/blank-templates/tops/top-sweater.svg",
+          "regions": ["body", "left-sleeve", "right-sleeve", "collar", "cuffs"],
+          "unlocked": false,
+          "unlockCost": 75,
+          "unlockType": "shop"
+        },
+        {
+          "id": "top-hoodie",
+          "label": "Hoodie",
+          "src": "/assets/avatars/blank-templates/tops/top-hoodie.svg",
+          "regions": ["body", "left-sleeve", "right-sleeve", "hood", "pocket"],
+          "unlocked": false,
+          "unlockCost": 100,
+          "unlockType": "shop"
+        }
+      ]
+    },
+    {
+      "id": "bottoms",
+      "label": "Bottoms",
+      "icon": "👖",
+      "templates": [
+        {
+          "id": "bottom-shorts",
+          "label": "Shorts",
+          "src": "/assets/avatars/blank-templates/bottoms/bottom-shorts.svg",
+          "regions": ["left-leg", "right-leg", "waistband"],
+          "unlocked": true
+        },
+        {
+          "id": "bottom-pants",
+          "label": "Pants",
+          "src": "/assets/avatars/blank-templates/bottoms/bottom-pants.svg",
+          "regions": ["left-leg", "right-leg", "waistband"],
+          "unlocked": false,
+          "unlockCost": 60,
+          "unlockType": "shop"
+        },
+        {
+          "id": "bottom-skirt",
+          "label": "Skirt",
+          "src": "/assets/avatars/blank-templates/bottoms/bottom-skirt.svg",
+          "regions": ["main", "waistband"],
+          "unlocked": false,
+          "unlockCost": 50,
+          "unlockType": "shop"
+        }
+      ]
+    },
+    {
+      "id": "shoes",
+      "label": "Shoes",
+      "icon": "👟",
+      "templates": [
+        {
+          "id": "shoes-sneakers",
+          "label": "Sneakers",
+          "src": "/assets/avatars/blank-templates/shoes/shoes-sneakers.svg",
+          "regions": ["left-shoe", "right-shoe", "left-sole", "right-sole", "laces"],
+          "unlocked": true
+        },
+        {
+          "id": "shoes-boots",
+          "label": "Boots",
+          "src": "/assets/avatars/blank-templates/shoes/shoes-boots.svg",
+          "regions": ["left-boot", "right-boot", "left-sole", "right-sole"],
+          "unlocked": false,
+          "unlockCost": 80,
+          "unlockType": "shop"
+        }
+      ]
+    },
+    {
+      "id": "accessories",
+      "label": "Accessories",
+      "icon": "🎀",
+      "templates": [
+        {
+          "id": "acc-hat",
+          "label": "Cap",
+          "src": "/assets/avatars/blank-templates/accessories/acc-hat.svg",
+          "regions": ["crown", "brim"],
+          "unlocked": false,
+          "unlockCost": 40,
+          "unlockType": "shop"
+        },
+        {
+          "id": "acc-headband",
+          "label": "Headband",
+          "src": "/assets/avatars/blank-templates/accessories/acc-headband.svg",
+          "regions": ["band"],
+          "unlocked": false,
+          "unlockCost": 30,
+          "unlockType": "shop"
+        },
+        {
+          "id": "acc-scarf",
+          "label": "Scarf",
+          "src": "/assets/avatars/blank-templates/accessories/acc-scarf.svg",
+          "regions": ["main", "fringe"],
+          "unlocked": false,
+          "unlockCost": 45,
+          "unlockType": "shop"
+        },
+        {
+          "id": "acc-necklace",
+          "label": "Necklace",
+          "src": "/assets/avatars/blank-templates/accessories/acc-necklace.svg",
+          "regions": ["chain", "pendant"],
+          "unlocked": false,
+          "unlockCost": 35,
+          "unlockType": "shop"
+        }
+      ]
+    }
+  ]
+}
