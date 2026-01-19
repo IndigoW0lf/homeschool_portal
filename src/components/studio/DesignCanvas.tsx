@@ -94,7 +94,13 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
         let svgText = await response.text();
         
         // Apply region fill colors from state
+        // Only apply if the color has been changed from default (don't overwrite original SVG colors)
         Object.entries(regions).forEach(([regionId, region]) => {
+          // Skip applying default gray - preserve original SVG colors
+          if (region.fillColor === '#E5E5E5') {
+            return;
+          }
+          
           // Robust regex to find the element by ID and update/add fill attribute
           // Handles both existing fill attributes and elements without fill
           const idRegex = new RegExp(`id="${regionId}"[^>]*>`, 'g');

@@ -16,10 +16,11 @@ export function AvatarSetupRedirect({ kidId, hasAvatarState, lastLoginAt }: Avat
   const router = useRouter();
 
   useEffect(() => {
-    // Check if this is the first login (no lastLoginAt or it's from today)
-    const isFirstLogin = !lastLoginAt || isToday(new Date(lastLoginAt));
+    // Only redirect on truly first login (never logged in before)
+    // NOT on every login today
+    const isFirstLogin = !lastLoginAt;
     
-    // If first login and no avatar state, redirect to avatar builder
+    // If first ever login and no avatar state, redirect to avatar builder
     if (isFirstLogin && !hasAvatarState) {
       router.push(`/kids/${kidId}/avatar`);
     }
