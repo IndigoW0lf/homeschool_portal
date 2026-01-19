@@ -9,7 +9,9 @@
    ----------------------------------------------------------------------------- */
 
 .btn-primary {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-gradient-magic text-white hover:opacity-90 shadow-lg shadow-rose-500/20;
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white hover:opacity-90 shadow-lg;
+  background: linear-gradient(90deg, #D48A8A 0%, #E27D60 100%);
+  box-shadow: 0 4px 6px -1px rgba(212, 138, 138, 0.2);
 }
 
 .btn-secondary {

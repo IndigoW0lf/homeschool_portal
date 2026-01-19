@@ -11,9 +11,20 @@ import { toast } from 'sonner';
 import { BlockyAvatar } from './BlockyAvatar';
 import { BlockyAvatar3D } from './BlockyAvatar3D';
 
+interface StarterOutfit {
+  id: string;
+  label: string;
+  src: string;
+  thumbnail: string;
+  unlocked: boolean;
+}
+
 interface AvatarBuilderProps {
   kidId: string;
-  assets: AvatarAssets;
+  assets: AvatarAssets & { 
+    starterOutfits?: StarterOutfit[]; 
+    skinTones?: { id: string; color: string; label: string }[];
+  };
   initialAvatarState?: AvatarState | null;
   customDesigns?: ItemDesignRow[];
 }
@@ -40,7 +51,7 @@ const COLOR_PALETTE = [
 
 export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns = [] }: AvatarBuilderProps) {
   const [state, setState] = useState<AvatarState>(getDefaultAvatarState());
-  const [activeTab, setActiveTab] = useState<'skin' | 'outfit' | 'accessory'>('outfit');
+  const [activeTab, setActiveTab] = useState<'skin' | 'face' | 'hair' | 'outfit' | 'accessory'>('skin');
   const [isSaving, setIsSaving] = useState(false);
   
   const templates = designTemplatesData as DesignTemplatesManifest;
@@ -58,17 +69,20 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
     }
   }, [kidId, initialAvatarState]);
 
-  const handleAssetSelect = (asset: AvatarAsset | ItemDesignRow) => {
+  const handleAssetSelect = (asset: AvatarAsset | ItemDesignRow | StarterOutfit) => {
     if ('design_data' in asset) {
        // It's a custom design
        setState(prev => ({ ...prev, outfit: `custom:${asset.id}` }));
+    } else if ('thumbnail' in asset && 'unlocked' in asset) {
+       // It's a starter outfit
+       setState(prev => ({ ...prev, outfit: `starter:${asset.id}` }));
     } else {
       // Standard asset
-      if (asset.category === 'base') {
+      if ((asset as AvatarAsset).category === 'base') {
         setState(prev => ({ ...prev, base: asset.id }));
-      } else if (asset.category === 'outfit') {
+      } else if ((asset as AvatarAsset).category === 'outfit') {
         setState(prev => ({ ...prev, outfit: asset.id }));
-      } else if (asset.category === 'accessory') {
+      } else if ((asset as AvatarAsset).category === 'accessory') {
         setState(prev => ({ ...prev, accessory: asset.id }));
       }
     }
@@ -124,6 +138,12 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
     const designId = state.outfit.split('custom:')[1];
     return customDesigns.find(d => d.id === designId);
   };
+  
+  const getStarterOutfit = (): StarterOutfit | undefined => {
+    if (!state.outfit.startsWith('starter:')) return undefined;
+    const outfitId = state.outfit.split('starter:')[1];
+    return assets.starterOutfits?.find(o => o.id === outfitId);
+  };
 
   const currentOutfit = getCurrentAsset('outfit');
   const colorableParts = currentOutfit?.colorableParts || [];
@@ -154,11 +174,11 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
             className="relative w-48 h-48 rounded-lg flex items-center justify-center mb-2"
             style={{ backgroundColor: 'var(--paper-100)' }}
           >
-            {/* Custom 3D Avatar or Standard 2D Avatar */}
-            {state.outfit && state.outfit.startsWith('custom:') ? (
+            {/* Custom 3D Avatar, Starter Outfit, or Standard 2D Avatar */}
+            {state.outfit && (state.outfit.startsWith('custom:') || state.outfit.startsWith('starter:')) ? (
               <div className="absolute inset-0 w-full h-full">
                 <BlockyAvatar3D 
-                  textureUrl={getCustomDesign()?.texture_url} 
+                  textureUrl={state.outfit.startsWith('custom:') ? getCustomDesign()?.texture_url : getStarterOutfit()?.src} 
                   className="w-full h-full"
                 />
               </div>
@@ -199,7 +219,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={() => setActiveTab('skin')}
             className={`px-4 py-2 font-medium transition-colors ${
@@ -209,6 +229,26 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
             }`}
           >
             Skin
+          </button>
+          <button
+            onClick={() => setActiveTab('face')}
+            className={`px-4 py-2 font-medium transition-colors ${
+              activeTab === 'face'
+                ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            }`}
+          >
+            Face
+          </button>
+          <button
+            onClick={() => setActiveTab('hair')}
+            className={`px-4 py-2 font-medium transition-colors ${
+              activeTab === 'hair'
+                ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            }`}
+          >
+            Hair
           </button>
           <button
             onClick={() => setActiveTab('outfit')}
@@ -235,19 +275,25 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
         {/* Asset Selection */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-            Select {activeTab === 'skin' ? 'Skin Tone' : activeTab === 'outfit' ? 'Outfit' : 'Accessory'}
+            Select {
+              activeTab === 'skin' ? 'Skin Tone' : 
+              activeTab === 'face' ? 'Face' : 
+              activeTab === 'hair' ? 'Hair Style' : 
+              activeTab === 'outfit' ? 'Outfit' : 'Accessory'
+            }
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {activeTab === 'skin' ? (
               // Skin Tone Selection
-              SKIN_TONES.map(tone => {
-                const isSelected = state.colors?.skin === tone.color || (!state.colors?.skin && tone.id === 'skin-01');
+              (assets.skinTones || SKIN_TONES).map(tone => {
+                const isSelected = state.skinTone === tone.color || state.colors?.skin === tone.color || (!state.skinTone && !state.colors?.skin && tone.id === 'skin-01');
                 
                 return (
                   <button
                     key={tone.id}
                     onClick={() => setState(prev => ({
                       ...prev,
+                      skinTone: tone.color,
                       colors: { ...prev.colors, skin: tone.color }
                     }))}
                     className={`p-4 rounded-lg border-2 transition-all ${
@@ -268,9 +314,109 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
                   </button>
                 );
               })
+            ) : activeTab === 'face' ? (
+              // Face Selection
+              (assets.faces || []).map(face => {
+                const isSelected = state.faceId === face.id;
+                return (
+                  <button
+                    key={face.id}
+                    onClick={() => setState(prev => ({ ...prev, faceId: face.id }))}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      isSelected
+                        ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                  >
+                    <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
+                      <img
+                        src={face.thumbnail}
+                        alt={face.label}
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          // Show emoji as fallback
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `<span class="text-4xl">${face.label.split(' ').pop()}</span>`;
+                        }}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                      {face.label}
+                    </p>
+                  </button>
+                );
+              })
+            ) : activeTab === 'hair' ? (
+              // Hair Selection
+              (assets.hairStyles || []).map(hair => {
+                const isSelected = state.hairId === hair.id;
+                return (
+                  <button
+                    key={hair.id}
+                    onClick={() => setState(prev => ({ ...prev, hairId: hair.id }))}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      isSelected
+                        ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                  >
+                    <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
+                      <img
+                        src={hair.thumbnail}
+                        alt={hair.label}
+                        className="max-w-full max-h-full object-contain"
+                        onError={(e) => {
+                          // Show placeholder
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = `<span class="text-2xl">💇</span>`;
+                        }}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                      {hair.label}
+                    </p>
+                  </button>
+                );
+              })
             ) : (
               // Outfits and Accessories
-              (activeTab === 'outfit' ? [...customDesigns, ...assets.outfits] : assets.accessories).map(asset => {
+              <>
+                {/* Starter Outfits Section (only for outfit tab) */}
+                {activeTab === 'outfit' && assets.starterOutfits && assets.starterOutfits.length > 0 && (
+                  <>
+                    <p className="col-span-full text-sm text-gray-500 dark:text-gray-400 font-medium mb-2">✨ Starter Outfits</p>
+                    {assets.starterOutfits.map(outfit => {
+                      const isSelected = state.outfit === `starter:${outfit.id}`;
+                      return (
+                        <button
+                          key={outfit.id}
+                          onClick={() => handleAssetSelect(outfit)}
+                          className={`p-4 rounded-lg border-2 transition-all ${
+                            isSelected
+                              ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
+                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                          }`}
+                        >
+                          <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
+                            <img
+                              src={outfit.thumbnail}
+                              alt={outfit.label}
+                              className="max-w-full max-h-full object-contain"
+                            />
+                          </div>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                            {outfit.label}
+                          </p>
+                        </button>
+                      );
+                    })}
+                    <p className="col-span-full text-sm text-gray-500 dark:text-gray-400 font-medium mb-2 mt-4">🎨 My Designs & Outfits</p>
+                  </>
+                )}
+                {/* Custom Designs and Standard Outfits */}
+              {(activeTab === 'outfit' ? [...customDesigns, ...assets.outfits] : assets.accessories).map(asset => {
                 // Distinguish between standard Asset and Custom Design
                 const isCustom = 'design_data' in asset;
                 const assetId = asset.id;
@@ -328,6 +474,8 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
                   </button>
                 );
               })
+              }
+              </>
             )}
           </div>
         </div>

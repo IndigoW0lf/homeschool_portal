@@ -49,6 +49,125 @@
       "src": "/assets/avatars/accessories/glasses-01.svg",
       "category": "accessory"
     }
+  ],
+  "starterOutfits": [
+    {
+      "id": "starter-classic-blue",
+      "label": "Classic Blue",
+      "src": "/assets/avatars/starter-outfits/classic-blue.png",
+      "thumbnail": "/assets/avatars/starter-outfits/classic-blue.png",
+      "unlocked": true
+    },
+    {
+      "id": "starter-sporty-red",
+      "label": "Sporty Red",
+      "src": "/assets/avatars/starter-outfits/sporty-red.png",
+      "thumbnail": "/assets/avatars/starter-outfits/sporty-red.png",
+      "unlocked": true
+    },
+    {
+      "id": "starter-nature-green",
+      "label": "Nature Green",
+      "src": "/assets/avatars/starter-outfits/nature-green.png",
+      "thumbnail": "/assets/avatars/starter-outfits/nature-green.png",
+      "unlocked": true
+    },
+    {
+      "id": "starter-galaxy-purple",
+      "label": "Galaxy Purple",
+      "src": "/assets/avatars/starter-outfits/galaxy-purple.png",
+      "thumbnail": "/assets/avatars/starter-outfits/galaxy-purple.png",
+      "unlocked": true
+    },
+    {
+      "id": "starter-sunset-orange",
+      "label": "Sunset Orange",
+      "src": "/assets/avatars/starter-outfits/sunset-orange.png",
+      "thumbnail": "/assets/avatars/starter-outfits/sunset-orange.png",
+      "unlocked": true
+    }
+  ],
+  "faces": [
+    {
+      "id": "face-happy",
+      "label": "Happy 😊",
+      "src": "/assets/avatars/faces/happy.png",
+      "thumbnail": "/assets/avatars/faces/happy.png",
+      "unlocked": true
+    },
+    {
+      "id": "face-cool",
+      "label": "Cool 😎",
+      "src": "/assets/avatars/faces/cool.png",
+      "thumbnail": "/assets/avatars/faces/cool.png",
+      "unlocked": true
+    },
+    {
+      "id": "face-surprised",
+      "label": "Surprised 😮",
+      "src": "/assets/avatars/faces/surprised.png",
+      "thumbnail": "/assets/avatars/faces/surprised.png",
+      "unlocked": true
+    },
+    {
+      "id": "face-sleepy",
+      "label": "Sleepy 😴",
+      "src": "/assets/avatars/faces/sleepy.png",
+      "thumbnail": "/assets/avatars/faces/sleepy.png",
+      "unlocked": true
+    },
+    {
+      "id": "face-silly",
+      "label": "Silly 😜",
+      "src": "/assets/avatars/faces/silly.png",
+      "thumbnail": "/assets/avatars/faces/silly.png",
+      "unlocked": true
+    }
+  ],
+  "hairStyles": [
+    {
+      "id": "hair-short",
+      "label": "Short",
+      "src": "/assets/avatars/hair/short.png",
+      "thumbnail": "/assets/avatars/hair/short.png",
+      "unlocked": true
+    },
+    {
+      "id": "hair-medium",
+      "label": "Medium",
+      "src": "/assets/avatars/hair/medium.png",
+      "thumbnail": "/assets/avatars/hair/medium.png",
+      "unlocked": true
+    },
+    {
+      "id": "hair-long",
+      "label": "Long",
+      "src": "/assets/avatars/hair/long.png",
+      "thumbnail": "/assets/avatars/hair/long.png",
+      "unlocked": true
+    },
+    {
+      "id": "hair-curly",
+      "label": "Curly",
+      "src": "/assets/avatars/hair/curly.png",
+      "thumbnail": "/assets/avatars/hair/curly.png",
+      "unlocked": true
+    },
+    {
+      "id": "hair-spiky",
+      "label": "Spiky",
+      "src": "/assets/avatars/hair/spiky.png",
+      "thumbnail": "/assets/avatars/hair/spiky.png",
+      "unlocked": true
+    }
+  ],
+  "skinTones": [
+    { "id": "skin-01", "color": "#ffdbac", "label": "Light" },
+    { "id": "skin-02", "color": "#f1c27d", "label": "Medium Light" },
+    { "id": "skin-03", "color": "#e0ac69", "label": "Medium" },
+    { "id": "skin-04", "color": "#c68642", "label": "Medium Dark" },
+    { "id": "skin-05", "color": "#8d5524", "label": "Dark" },
+    { "id": "skin-06", "color": "#3a2211", "label": "Deep" }
   ]
 }
 

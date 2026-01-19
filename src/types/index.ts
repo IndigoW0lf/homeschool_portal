@@ -190,6 +190,25 @@ export interface AvatarAssets {
   bases: AvatarAsset[];
   outfits: AvatarAsset[];
   accessories: AvatarAsset[];
+  faces?: FaceAsset[];
+  hairStyles?: HairAsset[];
+}
+
+export interface FaceAsset {
+  id: string;
+  label: string;
+  src: string;           // Texture overlay URL
+  thumbnail: string;     // Preview image
+  unlocked: boolean;
+}
+
+export interface HairAsset {
+  id: string;
+  label: string;
+  src: string;           // Texture or mesh URL
+  thumbnail: string;     // Preview image
+  color?: string;        // Default hair color (if applicable)
+  unlocked: boolean;
 }
 
 export interface AvatarColors {
@@ -201,6 +220,10 @@ export interface AvatarState {
   outfit: string;
   accessory?: string;
   colors: AvatarColors;
+  // Character customization
+  skinTone?: string;    // Hex color for skin
+  faceId?: string;      // Face expression ID
+  hairId?: string;      // Hair style ID
 }
 
 // Studio types
