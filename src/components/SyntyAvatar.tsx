@@ -114,7 +114,7 @@ function useTextureCompositor({
 }
 
 function Model({ 
-  modelPath = '/assets/avatars/models/character.glb',
+  modelPath = '/assets/avatars/models/SimplePeople.glb',
   textureUrl,
   topUrl,
   bottomUrl,
@@ -222,7 +222,7 @@ function Model({
 
 
 export function SyntyAvatar({
-  modelPath = '/assets/avatars/models/character.glb',
+  modelPath = '/assets/avatars/models/SimplePeople.glb',
   textureUrl,
   topUrl,
   bottomUrl,
@@ -278,4 +278,4 @@ export function SyntyAvatar({
 
 
 // Pre-load the model
-useGLTF.preload('/assets/avatars/models/character.glb');
+useGLTF.preload('/assets/avatars/models/SimplePeople.glb');

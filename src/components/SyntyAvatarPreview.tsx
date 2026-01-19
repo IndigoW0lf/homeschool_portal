@@ -40,7 +40,7 @@ export function SyntyAvatarPreview({
   
   return (
     <SyntyAvatar
-      modelPath="/assets/avatars/models/character.glb"
+      modelPath="/assets/avatars/models/SimplePeople.glb"
       textureUrl={finalTextureUrl}
       topUrl={topUrl}
       bottomUrl={bottomUrl}
