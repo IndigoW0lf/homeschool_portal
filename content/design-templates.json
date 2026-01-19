@@ -173,6 +173,20 @@
           "unlockType": "shop"
         }
       ]
+    },
+    {
+      "id": "full-body",
+      "label": "3D Character",
+      "icon": "👤",
+      "templates": [
+        {
+          "id": "template-synty",
+          "label": "Full Outfit",
+          "src": "/assets/avatars/templates/synty-outfit-draft.svg",
+          "regions": ["shirt", "pants", "arms", "skin-face", "skin-hands"],
+          "unlocked": true
+        }
+      ]
     }
   ]
 }

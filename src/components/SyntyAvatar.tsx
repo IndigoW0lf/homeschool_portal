@@ -20,34 +20,47 @@ function Model({
 }: { modelPath: string; textureUrl?: string; skinColor?: string }) {
   const { scene } = useGLTF(modelPath);
   const modelRef = useRef<THREE.Group>(null);
+  const clonedSceneRef = useRef<THREE.Group | null>(null);
 
   useEffect(() => {
     // Clone the scene to avoid modifying the cached version
-    const clonedScene = scene.clone();
+    if (!clonedSceneRef.current) {
+      clonedSceneRef.current = scene.clone(true);
+    }
+    const clonedScene = clonedSceneRef.current;
     
     // Apply texture or color to materials
     clonedScene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
+        // Clone material to avoid shared material issues
+        if (Array.isArray(child.material)) {
+          child.material = child.material.map(m => m.clone());
+        } else {
+          child.material = child.material.clone();
+        }
+        
         if (textureUrl) {
           // Load custom texture
           const textureLoader = new THREE.TextureLoader();
           textureLoader.load(textureUrl, (texture) => {
             texture.flipY = false;
-            if (child.material instanceof THREE.Material) {
-              const newMaterial = new THREE.MeshStandardMaterial({
-                map: texture,
-              });
-              child.material = newMaterial;
+            texture.colorSpace = THREE.SRGBColorSpace;
+            
+            const materials = Array.isArray(child.material) ? child.material : [child.material];
+            materials.forEach((mat) => {
+              if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshBasicMaterial) {
+                mat.map = texture;
+                mat.needsUpdate = true;
+              }
+            });
+          });
+        } else {
+          // Apply skin color for preview when no texture
+          const materials = Array.isArray(child.material) ? child.material : [child.material];
+          materials.forEach((mat) => {
+            if (mat instanceof THREE.MeshStandardMaterial) {
             }
           });
-        } else if (skinColor) {
-          // Apply a base color for preview
-          if (child.material instanceof THREE.Material) {
-            const mat = child.material as THREE.MeshStandardMaterial;
-            if (!mat.map) {
-              mat.color = new THREE.Color(skinColor);
-            }
-          }
         }
       }
     });
@@ -65,12 +78,9 @@ function Model({
     }
   });
 
-  return (
-    <group ref={modelRef}>
-      <primitive object={scene.clone()} />
-    </group>
-  );
+  return <group ref={modelRef} />;
 }
+
 
 export function SyntyAvatar({
   modelPath = '/assets/avatars/models/SimplePeople.glb',
@@ -82,8 +92,12 @@ export function SyntyAvatar({
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        camera={{ position: [0, 1.5, 5], fov: 35 }}
-        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0, 1.2, 7], fov: 30 }}
+        gl={{ 
+          antialias: true, 
+          alpha: true,
+          logarithmicDepthBuffer: true 
+        }}
         style={{ background: 'transparent' }}
       >
         <ambientLight intensity={0.6} />

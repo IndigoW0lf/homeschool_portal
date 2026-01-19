@@ -1,0 +1,17 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base Skin Texture (Reference) -->
+  <image href="/assets/avatars/uv-templates/synty_skin_base.png" width="512" height="512" opacity="0.5" />
+
+  <!-- Regions for coloring -->
+  
+  <!-- Torso / Shirt Area (Top Middle/Right) -->
+  <!-- Adjusting based on visual inspection of synty_base_texture.png -->
+  <rect id="shirt" x="170" y="0" width="140" height="200" fill="#FFFFFF" fill-opacity="0.2" stroke="red" stroke-width="2"/>
+  
+  <!-- Pants / Legs Area (Bottom Left/Right) -->
+  <rect id="pants" x="320" y="0" width="192" height="256" fill="#FFFFFF" fill-opacity="0.2" stroke="blue" stroke-width="2"/>
+  
+  <!-- Arms (Top Right?) -->
+  <rect id="arms" x="320" y="256" width="192" height="256" fill="#FFFFFF" fill-opacity="0.2" stroke="green" stroke-width="2"/>
+
+</svg>
