@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">
+  <!-- Sleepy face: closed curved eyes and small smile -->
+  <path d="M0 5 Q3 2 6 5" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M24 5 Q27 2 30 5" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M10 14 Q15 16 20 14" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

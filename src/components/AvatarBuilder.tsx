@@ -9,7 +9,6 @@ import designTemplatesData from '../../content/design-templates.json';
 import { getAvatarState, setAvatarState, getDefaultAvatarState, saveAvatarToDatabase } from '@/lib/avatarStorage';
 import { toast } from 'sonner';
 import { BlockyAvatar } from './BlockyAvatar';
-import { BlockyAvatar3D } from './BlockyAvatar3D';
 
 interface StarterOutfit {
   id: string;
@@ -49,7 +48,7 @@ const COLOR_PALETTE = [
   { value: '--sky-400', label: 'Sky', color: '#7FB3D5' },
 ];
 
-export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns = [] }: AvatarBuilderProps) {
+export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuilderProps) {
   const [state, setState] = useState<AvatarState>(getDefaultAvatarState());
   const [activeTab, setActiveTab] = useState<'skin' | 'face' | 'hair' | 'outfit' | 'accessory'>('skin');
   const [isSaving, setIsSaving] = useState(false);
@@ -69,24 +68,6 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
     }
   }, [kidId, initialAvatarState]);
 
-  const handleAssetSelect = (asset: AvatarAsset | ItemDesignRow | StarterOutfit) => {
-    if ('design_data' in asset) {
-       // It's a custom design
-       setState(prev => ({ ...prev, outfit: `custom:${asset.id}` }));
-    } else if ('thumbnail' in asset && 'unlocked' in asset) {
-       // It's a starter outfit
-       setState(prev => ({ ...prev, outfit: `starter:${asset.id}` }));
-    } else {
-      // Standard asset
-      if ((asset as AvatarAsset).category === 'base') {
-        setState(prev => ({ ...prev, base: asset.id }));
-      } else if ((asset as AvatarAsset).category === 'outfit') {
-        setState(prev => ({ ...prev, outfit: asset.id }));
-      } else if ((asset as AvatarAsset).category === 'accessory') {
-        setState(prev => ({ ...prev, accessory: asset.id }));
-      }
-    }
-  };
   
   // ... (handleColorChange, handleSave remain same) ...
   const handleColorChange = (part: string, colorVar: string) => {
@@ -133,26 +114,11 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
     return list.find(a => a.id === id);
   };
   
-  const getCustomDesign = (): ItemDesignRow | undefined => {
-    if (!state.outfit.startsWith('custom:')) return undefined;
-    const designId = state.outfit.split('custom:')[1];
-    return customDesigns.find(d => d.id === designId);
-  };
   
-  const getStarterOutfit = (): StarterOutfit | undefined => {
-    if (!state.outfit.startsWith('starter:')) return undefined;
-    const outfitId = state.outfit.split('starter:')[1];
-    return assets.starterOutfits?.find(o => o.id === outfitId);
-  };
 
   const currentOutfit = getCurrentAsset('outfit');
   const colorableParts = currentOutfit?.colorableParts || [];
 
-  const getTemplateForDesign = (design: ItemDesignRow) => {
-    return templates.categories
-      .flatMap(c => c.templates)
-      .find(t => t.id === design.template_id);
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -174,46 +140,18 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
             className="relative w-48 h-48 rounded-lg flex items-center justify-center mb-2"
             style={{ backgroundColor: 'var(--paper-100)' }}
           >
-            {/* Custom 3D Avatar, Starter Outfit, or Standard 2D Avatar */}
-            {state.outfit && (state.outfit.startsWith('custom:') || state.outfit.startsWith('starter:')) ? (
-              <div className="absolute inset-0 w-full h-full">
-                <BlockyAvatar3D 
-                  textureUrl={state.outfit.startsWith('custom:') ? getCustomDesign()?.texture_url : getStarterOutfit()?.src} 
-                  className="w-full h-full"
-                />
-              </div>
-            ) : (
-              <>
-                {/* 2D Base */}
-                <div className="absolute inset-x-0 bottom-4 flex justify-center h-[90%]">
-                  <BlockyAvatar 
-                    className="h-full w-auto" 
-                    size={180}
-                    skinColors={{ 
-                      skin: state.colors?.skin || '#ffdbac'
-                    }}
-                  />
-                </div>
-                
-                {/* 2D Outfit Overlay */}
-                {state.outfit && getCurrentAsset('outfit') && (
-                  <img
-                    src={getCurrentAsset('outfit')?.src}
-                    alt="Avatar outfit"
-                    className="absolute inset-0 w-full h-full object-contain z-10"
-                  />
-                )}
-                
-                {/* 2D Accessory Overlay */}
-                {state.accessory && getCurrentAsset('accessory') && (
-                  <img
-                    src={getCurrentAsset('accessory')?.src}
-                    alt="Avatar accessory"
-                    className="absolute inset-0 w-full h-full object-contain z-20"
-                  />
-                )}
-              </>
-            )}
+            {/* 2D BlockyAvatar with all customization */}
+            <BlockyAvatar 
+              size={180}
+              skinColors={{ 
+                skin: state.skinTone || state.colors?.skin || '#ffdbac'
+              }}
+              faceType={(state.faceId?.replace('face-', '') as 'happy' | 'cool' | 'surprised' | 'sleepy' | 'silly') || 'happy'}
+              hairType={(state.hairId?.replace('hair-', '') as 'none' | 'short' | 'medium' | 'long' | 'curly' | 'spiky') || 'none'}
+              hairColor={state.colors?.hair || '#4a3728'}
+              outfitColor={state.colors?.outfit || '#5e7fb8'}
+              pantsColor={state.colors?.pants || '#4a5568'}
+            />
           </div>
           <div className="avatar-shadow"></div>
         </div>
@@ -315,8 +253,14 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
                 );
               })
             ) : activeTab === 'face' ? (
-              // Face Selection
-              (assets.faces || []).map(face => {
+              // Face Selection - using mini BlockyAvatar previews
+              [
+                { id: 'face-happy', label: 'Happy 😊', type: 'happy' as const },
+                { id: 'face-cool', label: 'Cool 😎', type: 'cool' as const },
+                { id: 'face-surprised', label: 'Surprised 😮', type: 'surprised' as const },
+                { id: 'face-sleepy', label: 'Sleepy 😴', type: 'sleepy' as const },
+                { id: 'face-silly', label: 'Silly 😜', type: 'silly' as const },
+              ].map(face => {
                 const isSelected = state.faceId === face.id;
                 return (
                   <button
@@ -328,154 +272,188 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState, customDesigns
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                     }`}
                   >
-                    <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
-                      <img
-                        src={face.thumbnail}
-                        alt={face.label}
-                        className="max-w-full max-h-full object-contain"
-                        onError={(e) => {
-                          // Show emoji as fallback
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `<span class="text-4xl">${face.label.split(' ').pop()}</span>`;
-                        }}
+                    <div className="w-full h-24 flex items-center justify-center">
+                      <BlockyAvatar 
+                        size={80}
+                        skinColors={{ skin: state.skinTone || state.colors?.skin || '#ffdbac' }}
+                        faceType={face.type}
+                        hairType="none"
                       />
                     </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate mt-2">
                       {face.label}
                     </p>
                   </button>
                 );
               })
             ) : activeTab === 'hair' ? (
-              // Hair Selection
-              (assets.hairStyles || []).map(hair => {
-                const isSelected = state.hairId === hair.id;
-                return (
-                  <button
-                    key={hair.id}
-                    onClick={() => setState(prev => ({ ...prev, hairId: hair.id }))}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      isSelected
-                        ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }`}
-                  >
-                    <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
-                      <img
-                        src={hair.thumbnail}
-                        alt={hair.label}
-                        className="max-w-full max-h-full object-contain"
-                        onError={(e) => {
-                          // Show placeholder
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          target.parentElement!.innerHTML = `<span class="text-2xl">💇</span>`;
-                        }}
-                      />
-                    </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
-                      {hair.label}
-                    </p>
-                  </button>
-                );
-              })
-            ) : (
-              // Outfits and Accessories
+              // Hair Selection - using mini BlockyAvatar previews + color picker
               <>
-                {/* Starter Outfits Section (only for outfit tab) */}
-                {activeTab === 'outfit' && assets.starterOutfits && assets.starterOutfits.length > 0 && (
-                  <>
-                    <p className="col-span-full text-sm text-gray-500 dark:text-gray-400 font-medium mb-2">✨ Starter Outfits</p>
-                    {assets.starterOutfits.map(outfit => {
-                      const isSelected = state.outfit === `starter:${outfit.id}`;
+                {/* Hair Styles */}
+                {[
+                  { id: 'hair-none', label: 'None', type: 'none' as const },
+                  { id: 'hair-short', label: 'Short', type: 'short' as const },
+                  { id: 'hair-medium', label: 'Medium', type: 'medium' as const },
+                  { id: 'hair-long', label: 'Long', type: 'long' as const },
+                  { id: 'hair-curly', label: 'Curly', type: 'curly' as const },
+                  { id: 'hair-spiky', label: 'Spiky', type: 'spiky' as const },
+                ].map(hair => {
+                  const isSelected = state.hairId === hair.id || (!state.hairId && hair.id === 'hair-none');
+                  return (
+                    <button
+                      key={hair.id}
+                      onClick={() => setState(prev => ({ ...prev, hairId: hair.id }))}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        isSelected
+                          ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
+                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      }`}
+                    >
+                      <div className="w-full h-24 flex items-center justify-center">
+                        <BlockyAvatar 
+                          size={80}
+                          skinColors={{ skin: state.skinTone || state.colors?.skin || '#ffdbac' }}
+                          faceType={(state.faceId?.replace('face-', '') as 'happy' | 'cool' | 'surprised' | 'sleepy' | 'silly') || 'happy'}
+                          hairType={hair.type}
+                          hairColor={state.colors?.hair || '#4a3728'}
+                        />
+                      </div>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate mt-2">
+                        {hair.label}
+                      </p>
+                    </button>
+                  );
+                })}
+                
+                {/* Hair Color Picker */}
+                <div className="col-span-full mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hair Color</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { color: '#1a1a1a', label: 'Black' },
+                      { color: '#4a3728', label: 'Brown' },
+                      { color: '#8B4513', label: 'Auburn' },
+                      { color: '#D4A574', label: 'Blonde' },
+                      { color: '#B8860B', label: 'Golden' },
+                      { color: '#808080', label: 'Gray' },
+                      { color: '#FF6B6B', label: 'Red' },
+                      { color: '#9B59B6', label: 'Purple' },
+                      { color: '#3498DB', label: 'Blue' },
+                      { color: '#2ECC71', label: 'Green' },
+                      { color: '#F39C12', label: 'Orange' },
+                      { color: '#E91E8C', label: 'Pink' },
+                    ].map(hc => {
+                      const isSelected = state.colors?.hair === hc.color;
                       return (
                         <button
-                          key={outfit.id}
-                          onClick={() => handleAssetSelect(outfit)}
-                          className={`p-4 rounded-lg border-2 transition-all ${
+                          key={hc.color}
+                          onClick={() => setState(prev => ({
+                            ...prev,
+                            colors: { ...prev.colors, hair: hc.color }
+                          }))}
+                          className={`w-10 h-10 rounded-full border-2 transition-all ${
                             isSelected
-                              ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                              ? 'border-[var(--ink-900)] scale-110'
+                              : 'border-gray-300 dark:border-gray-600 hover:scale-105'
                           }`}
-                        >
-                          <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
-                            <img
-                              src={outfit.thumbnail}
-                              alt={outfit.label}
-                              className="max-w-full max-h-full object-contain"
-                            />
-                          </div>
-                          <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
-                            {outfit.label}
-                          </p>
-                        </button>
+                          style={{ backgroundColor: hc.color }}
+                          title={hc.label}
+                        />
                       );
                     })}
-                    <p className="col-span-full text-sm text-gray-500 dark:text-gray-400 font-medium mb-2 mt-4">🎨 My Designs & Outfits</p>
-                  </>
-                )}
-                {/* Custom Designs and Standard Outfits */}
-              {(activeTab === 'outfit' ? [...customDesigns, ...assets.outfits] : assets.accessories).map(asset => {
-                // Distinguish between standard Asset and Custom Design
-                const isCustom = 'design_data' in asset;
-                const assetId = asset.id;
-                
-                const isSelected = 
-                  (activeTab === 'outfit' && (isCustom ? state.outfit === `custom:${assetId}` : state.outfit === assetId)) ||
-                  (activeTab === 'accessory' && state.accessory === assetId);
-                
-                return (
-                  <button
-                    key={assetId}
-                    onClick={() => handleAssetSelect(asset)}
-                    className={`p-4 rounded-lg border-2 transition-all ${
-                      isSelected
-                        ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }`}
-                  >
-                    <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
-                      {isCustom ? (
-                        (() => {
-                          const template = getTemplateForDesign(asset as ItemDesignRow);
-                          return template ? (
-                            <div className="absolute inset-0 transform scale-75 origin-center">
-                              <DesignCanvas
-                                template={template}
-                                regions={(asset as ItemDesignRow).design_data.regions}
-                                activeRegion={null}
-                                tool="fill"
-                                currentColor="#000"
-                                brushSize={1}
-                                readonly={true}
-                                transparent={true}
-                              />
-                            </div>
-                          ) : null;
-                        })()
-                      ) : (
-                        <img
-                          src={(asset as AvatarAsset).src}
-                          alt={(asset as AvatarAsset).label}
-                          className="max-w-full max-h-full object-contain"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
-                      {(asset as any).label || (asset as any).name}
-                    </p>
-                    {isCustom && (
-                      <span className="text-xs text-[var(--ember-500)] block text-center">Custom</span>
-                    )}
-                  </button>
-                );
-              })
-              }
+                  </div>
+                </div>
               </>
+            ) : activeTab === 'outfit' ? (
+              // Outfit Color Selection
+              <>
+                {/* Shirt Color */}
+                <div className="col-span-full">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">👕 Shirt Color</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { color: '#5E7FB8', label: 'Blue' },
+                      { color: '#6FAFA2', label: 'Teal' },
+                      { color: '#E1B866', label: 'Gold' },
+                      { color: '#D48A8A', label: 'Rose' },
+                      { color: '#9C8FB8', label: 'Lilac' },
+                      { color: '#6F8F73', label: 'Sage' },
+                      { color: '#E27D60', label: 'Coral' },
+                      { color: '#7FB3D5', label: 'Sky' },
+                      { color: '#2c3e50', label: 'Navy' },
+                      { color: '#e74c3c', label: 'Red' },
+                      { color: '#27ae60', label: 'Green' },
+                      { color: '#f39c12', label: 'Orange' },
+                      { color: '#9b59b6', label: 'Purple' },
+                      { color: '#1abc9c', label: 'Mint' },
+                      { color: '#ffffff', label: 'White' },
+                      { color: '#2c2c2c', label: 'Black' },
+                    ].map(c => {
+                      const isSelected = state.colors?.outfit === c.color;
+                      return (
+                        <button
+                          key={c.color}
+                          onClick={() => setState(prev => ({
+                            ...prev,
+                            colors: { ...prev.colors, outfit: c.color }
+                          }))}
+                          className={`w-10 h-10 rounded-lg border-2 transition-all ${
+                            isSelected
+                              ? 'border-[var(--ink-900)] scale-110'
+                              : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: c.color }}
+                          title={c.label}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+                
+                {/* Pants Color */}
+                <div className="col-span-full mt-4">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">👖 Pants Color</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { color: '#4a5568', label: 'Gray' },
+                      { color: '#2c3e50', label: 'Navy' },
+                      { color: '#1a1a1a', label: 'Black' },
+                      { color: '#8B7355', label: 'Brown' },
+                      { color: '#5D6D7E', label: 'Slate' },
+                      { color: '#4a3728', label: 'Dark Brown' },
+                      { color: '#3498db', label: 'Denim' },
+                      { color: '#7f8c8d', label: 'Charcoal' },
+                      { color: '#27ae60', label: 'Olive' },
+                      { color: '#8e44ad', label: 'Plum' },
+                      { color: '#d35400', label: 'Rust' },
+                      { color: '#f5f5dc', label: 'Khaki' },
+                    ].map(c => {
+                      const isSelected = state.colors?.pants === c.color;
+                      return (
+                        <button
+                          key={c.color}
+                          onClick={() => setState(prev => ({
+                            ...prev,
+                            colors: { ...prev.colors, pants: c.color }
+                          }))}
+                          className={`w-10 h-10 rounded-lg border-2 transition-all ${
+                            isSelected
+                              ? 'border-[var(--ink-900)] scale-110'
+                              : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+                          }`}
+                          style={{ backgroundColor: c.color }}
+                          title={c.label}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            ) : (
+              // Accessories - keep simple for now
+              <p className="col-span-full text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+                🎩 Accessories coming soon!
+              </p>
             )}
           </div>
         </div>

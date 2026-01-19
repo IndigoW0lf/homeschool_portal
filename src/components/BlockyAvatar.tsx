@@ -1,43 +1,130 @@
 import { CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 
-// ... imports
-
 interface BlockyAvatarProps {
   className?: string;
   skinColors?: {
     head?: string;
     torso?: string;
-    torsoSide?: string; // New: Side of torso
+    torsoSide?: string;
     leftArm?: string;
     rightArm?: string;
     leftLeg?: string;
     rightLeg?: string;
-    leftLegSide?: string; // New
-    rightLegSide?: string; // New
+    leftLegSide?: string;
+    rightLegSide?: string;
     skin?: string;
   };
   size?: number;
+  faceType?: 'happy' | 'cool' | 'surprised' | 'sleepy' | 'silly';
+  hairType?: 'none' | 'short' | 'medium' | 'long' | 'curly' | 'spiky';
+  hairColor?: string;
+  outfitColor?: string;
+  pantsColor?: string;
 }
 
+// Face components as inline SVG for reliability
+const FACES = {
+  happy: (
+    <g transform="translate(12, 18)" opacity="0.9">
+      <circle cx="0" cy="0" r="3" fill="#333"/>
+      <circle cx="26" cy="0" r="3" fill="#333"/>
+      <path d="M3 10 Q13 18 23 10" stroke="#333" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+    </g>
+  ),
+  cool: (
+    <g transform="translate(12, 18)" opacity="0.9">
+      <path d="M-3 -2 L3 0 L-3 2 Z" fill="#333"/>
+      <path d="M23 -2 L29 0 L23 2 Z" fill="#333"/>
+      <path d="M5 12 Q13 14 21 10" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"/>
+    </g>
+  ),
+  surprised: (
+    <g transform="translate(12, 18)" opacity="0.9">
+      <circle cx="0" cy="0" r="4" fill="#333"/>
+      <circle cx="26" cy="0" r="4" fill="#333"/>
+      <circle cx="13" cy="12" r="4" fill="#333"/>
+    </g>
+  ),
+  sleepy: (
+    <g transform="translate(12, 18)" opacity="0.9">
+      <path d="M-3 0 Q0 -3 3 0" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M23 0 Q26 -3 29 0" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M8 12 Q13 14 18 12" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"/>
+    </g>
+  ),
+  silly: (
+    <g transform="translate(12, 18)" opacity="0.9">
+      <circle cx="0" cy="0" r="3" fill="#333"/>
+      <path d="M23 -2 L29 0 L23 2" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M5 10 Q13 14 21 10" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <ellipse cx="13" cy="14" rx="4" ry="3" fill="#e57373"/>
+    </g>
+  ),
+};
+
+// Hair components as inline SVG
+const HAIR = {
+  none: null,
+  short: (color: string) => (
+    <g transform="translate(73, -5)">
+      <path d="M0 20 L0 8 L4 4 L52 4 L56 8 L56 20 L48 16 L8 16 Z" fill={color}/>
+    </g>
+  ),
+  medium: (color: string) => (
+    <g transform="translate(68, -8)">
+      <path d="M0 10 L4 5 L60 5 L64 10 L64 35 L56 40 L48 30 L16 30 L8 40 L0 35 Z" fill={color}/>
+    </g>
+  ),
+  long: (color: string) => (
+    <g transform="translate(65, -10)">
+      <path d="M0 10 L5 5 L65 5 L70 10 L70 55 L60 60 L50 45 L20 45 L10 60 L0 55 Z" fill={color}/>
+    </g>
+  ),
+  curly: (color: string) => (
+    <g transform="translate(68, -8)">
+      <path d="M4 25 Q0 20 4 15 Q0 10 4 8 Q10 4 20 8 Q30 0 35 8 Q45 0 50 8 Q58 4 64 12 Q68 16 64 20 Q68 25 56 30 L8 30 Q0 28 4 25" fill={color}/>
+    </g>
+  ),
+  spiky: (color: string) => (
+    <g transform="translate(70, -15)">
+      <path d="M0 30 L4 22 L8 12 L12 22 L20 0 L24 22 L32 6 L36 22 L44 0 L48 22 L52 12 L56 30 Z" fill={color}/>
+    </g>
+  ),
+};
 
 /**
  * Renders a blocky character in "Isometric" 3D style (Roblox/Minecraft look)
+ * with customizable face, hair, and outfit colors
  */
-export function BlockyAvatar({ className, skinColors = {}, size = 200 }: BlockyAvatarProps) {
+export function BlockyAvatar({ 
+  className, 
+  skinColors = {}, 
+  size = 200,
+  faceType = 'happy',
+  hairType = 'none',
+  hairColor = '#4a3728',
+  outfitColor,
+  pantsColor,
+}: BlockyAvatarProps) {
   // Default skin tone if not specified
   const defaultSkin = skinColors.skin || '#ffdbac';
+  const torsoColor = outfitColor || skinColors.torso || '#5e7fb8';
+  const legColor = pantsColor || skinColors.leftLeg || skinColors.rightLeg || '#4a5568';
   
   const style = {
     '--skin-head': skinColors.head || defaultSkin,
-    '--skin-torso': skinColors.torso || '#5e7fb8', 
-    '--skin-torso-side': skinColors.torsoSide || skinColors.torso || '#5e7fb8', // Fallback to main torso color
+    '--skin-torso': torsoColor,
+    '--skin-torso-side': skinColors.torsoSide || torsoColor,
     '--skin-arm': skinColors.leftArm || skinColors.rightArm || defaultSkin,
-    '--skin-leg': skinColors.leftLeg || skinColors.rightLeg || '#4a5568', 
-    '--skin-leg-side': skinColors.leftLegSide || skinColors.rightLegSide || skinColors.leftLeg || skinColors.rightLeg || '#4a5568',
+    '--skin-leg': legColor,
+    '--skin-leg-side': skinColors.leftLegSide || skinColors.rightLegSide || legColor,
     width: size,
-    height: size, 
+    height: size,
   } as CSSProperties;
+
+  const faceElement = FACES[faceType] || FACES.happy;
+  const hairElement = hairType !== 'none' && HAIR[hairType] ? HAIR[hairType](hairColor) : null;
 
   return (
     <div className={cn("relative inline-block", className)} style={style}>
@@ -85,14 +172,9 @@ export function BlockyAvatar({ className, skinColors = {}, size = 200 }: BlockyA
 
         {/* TORSO - Center */}
         <g transform="translate(65, 55)">
-          {/* Torso Front - with basic Neckline cutout simulation if needed (though hard in isometric projection) */}
-          {/* We'll keep it simple: The underlying fill is the torso color. */}
           <path d="M0 0 L70 0 L70 60 L0 60 Z" fill="var(--skin-torso)" />
-          
-           {/* If we want a neckline, we could overlay a skin-colored shape at the top center. 
-               Let's simulate a simple round neck by drawing a small arc at the top. */}
-           <path d="M25 0 Q35 15 45 0 Z" fill={defaultSkin} /> 
-
+          {/* Neckline */}
+          <path d="M25 0 Q35 15 45 0 Z" fill={defaultSkin} />
           {/* Torso Side (Right) */}
           <path d="M70 0 L90 -15 L90 45 L70 60 Z" fill="var(--skin-torso-side)" filter="url(#shade-side)" />
           {/* Torso Top */}
@@ -106,6 +188,9 @@ export function BlockyAvatar({ className, skinColors = {}, size = 200 }: BlockyA
            <path d="M0 0 L8 -8 L26 -8 L18 0 Z" fill="var(--skin-arm)" filter="url(#shade-top)" />
         </g>
 
+        {/* HAIR - Behind head for some styles */}
+        {hairType === 'long' && hairElement}
+
         {/* HEAD */}
         <g transform="translate(75, 10)">
           <path d="M0 0 L50 0 L50 50 L0 50 Z" fill="var(--skin-head)" />
@@ -113,13 +198,13 @@ export function BlockyAvatar({ className, skinColors = {}, size = 200 }: BlockyA
           <path d="M0 0 L20 -15 L70 -15 L50 0 Z" fill="var(--skin-head)" filter="url(#shade-top)" />
           
           {/* Face */}
-          <g transform="translate(12, 18)" opacity="0.8">
-            <circle cx="0" cy="0" r="3" fill="#333" />
-            <circle cx="26" cy="0" r="3" fill="#333" />
-            <path d="M3 10 Q13 16 23 10" stroke="#333" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-          </g>
+          {faceElement}
         </g>
+
+        {/* HAIR - On top of head for most styles */}
+        {hairType !== 'long' && hairElement}
       </svg>
     </div>
   );
 }
+
