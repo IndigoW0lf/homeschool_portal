@@ -230,13 +230,17 @@ export interface AvatarColors {
 
 export interface AvatarState {
   base: string;
-  outfit: string;
+  outfit: string;       // Legacy or full outfit design
+  topId?: string;      // ID of custom top design
+  bottomId?: string;   // ID of custom bottom design
+  shoesId?: string;    // ID of custom shoes design
   accessory?: string;
   colors: AvatarColors;
   // Character customization
   skinTone?: string;    // Hex color for skin
   faceId?: string;      // Face expression ID
   hairId?: string;      // Hair style ID
+  hairColor?: string;   // Hex color for hair
 }
 
 // Studio types

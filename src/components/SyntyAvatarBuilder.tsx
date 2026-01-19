@@ -7,57 +7,106 @@ import { toast } from 'sonner';
 import { SyntyAvatarPreview } from '@/components/SyntyAvatarPreview';
 import { ItemDesignRow } from '@/types/design-studio';
 
+import { AvatarState } from '@/types';
+
 interface SyntyAvatarBuilderProps {
   kidId: string;
   kidName: string;
-  initialTextureUrl?: string; // Currently equipped texture
-  savedDesigns: ItemDesignRow[]; // Saved "template-synty" designs
+  initialTextureUrl?: string; // Legacy/Full Outfit
+  initialTopUrl?: string;
+  initialBottomUrl?: string;
+  initialShoesUrl?: string;
+  initialSkinColor?: string;
+  savedDesigns: ItemDesignRow[]; // All Synty designs
 }
+
+type Category = 'full' | 'top' | 'bottom' | 'shoes' | 'skin';
 
 export function SyntyAvatarBuilder({ 
   kidId, 
   kidName, 
-  initialTextureUrl, 
+  initialTextureUrl,
+  initialTopUrl,
+  initialBottomUrl,
+  initialShoesUrl,
+  initialSkinColor = '#f2d3b1',
   savedDesigns 
 }: SyntyAvatarBuilderProps) {
   const router = useRouter();
-  const [selectedTextureUrl, setSelectedTextureUrl] = useState<string | undefined>(initialTextureUrl);
-  const [selectedDesignId, setSelectedDesignId] = useState<string | undefined>();
+  const [activeCategory, setActiveCategory] = useState<Category>('top');
+  
+  // Selection state
+  const [selectedFullUrl, setSelectedFullUrl] = useState<string | undefined>(initialTextureUrl);
+  const [selectedTopUrl, setSelectedTopUrl] = useState<string | undefined>(initialTopUrl);
+  const [selectedBottomUrl, setSelectedBottomUrl] = useState<string | undefined>(initialBottomUrl);
+  const [selectedShoesUrl, setSelectedShoesUrl] = useState<string | undefined>(initialShoesUrl);
+  const [selectedSkinColor, setSelectedSkinColor] = useState(initialSkinColor);
+  
+  // Tracking selected IDs to save
+  const [selectedFullId, setSelectedFullId] = useState<string | undefined>();
+  const [selectedTopId, setSelectedTopId] = useState<string | undefined>();
+  const [selectedBottomId, setSelectedBottomId] = useState<string | undefined>();
+  const [selectedShoesId, setSelectedShoesId] = useState<string | undefined>();
+  
   const [isSaving, setIsSaving] = useState(false);
 
+  const filteredDesigns = savedDesigns.filter(d => {
+    switch (activeCategory) {
+      case 'full': return d.template_id === 'template-synty-full' || d.template_id === 'template-synty';
+      case 'top': return d.template_id === 'template-synty-top';
+      case 'bottom': return d.template_id === 'template-synty-bottom';
+      case 'shoes': return d.template_id === 'template-synty-shoes';
+      default: return false;
+    }
+  });
+
   const handleSelectDesign = (design: ItemDesignRow) => {
-    if (design.texture_url) {
-      setSelectedTextureUrl(design.texture_url);
-      setSelectedDesignId(design.id);
+    if (!design.texture_url) return;
+    
+    switch (activeCategory) {
+      case 'full':
+        setSelectedFullUrl(design.texture_url);
+        setSelectedFullId(design.id);
+        // Clear modular pieces if selecting full
+        setSelectedTopUrl(undefined);
+        setSelectedBottomUrl(undefined);
+        break;
+      case 'top':
+        setSelectedTopUrl(design.texture_url);
+        setSelectedTopId(design.id);
+        setSelectedFullUrl(undefined); // Clear full if selecting modular
+        break;
+      case 'bottom':
+        setSelectedBottomUrl(design.texture_url);
+        setSelectedBottomId(design.id);
+        setSelectedFullUrl(undefined);
+        break;
+      case 'shoes':
+        setSelectedShoesUrl(design.texture_url);
+        setSelectedShoesId(design.id);
+        setSelectedFullUrl(undefined);
+        break;
     }
   };
 
   const handleSave = async () => {
-    if (!selectedDesignId) {
-      toast.error("Please select a design first!");
-      return;
-    }
-
     setIsSaving(true);
     try {
-      // Save the selected design ID to the kid's profile
-      // We'll treat this as the "outfit" in avatar_state
+      const avatarState: Partial<AvatarState> = {
+        outfit: selectedFullId ? `custom:${selectedFullId}` : (selectedFullUrl ? 'custom' : ''),
+        topId: selectedTopId,
+        bottomId: selectedBottomId,
+        shoesId: selectedShoesId,
+        skinTone: selectedSkinColor,
+      };
+
       const response = await fetch(`/api/kids/${kidId}/avatar`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          avatarState: {
-            // We preserve existing state structure but update outfit
-            outfit: `custom:${selectedDesignId}`,
-            // We could also store the texture URL directly if needed, but ID is better
-            last_updated: new Date().toISOString()
-          }
-        }),
+        body: JSON.stringify({ avatarState }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to save');
-      }
+      if (!response.ok) throw new Error('Failed to save');
 
       toast.success('Avatar updated! 🌟');
       router.refresh();
@@ -69,124 +118,199 @@ export function SyntyAvatarBuilder({
     }
   };
 
+  const categories: { id: Category; label: string; icon: string }[] = [
+    { id: 'skin', label: 'Skin', icon: '🎨' },
+    { id: 'top', label: 'Tops', icon: '👕' },
+    { id: 'bottom', label: 'Bottoms', icon: '👖' },
+    { id: 'shoes', label: 'Shoes', icon: '👟' },
+    { id: 'full', label: 'Full', icon: '👤' },
+  ];
+
+  const skinColors = [
+    '#f2d3b1', '#ebbe9b', '#e0ac69', '#c68642', '#8d5524',
+    '#5e3c1e', '#3d2516', '#ffffff', '#f1f1f1'
+  ];
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+    <div className="max-w-6xl mx-auto p-4 md:p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-8 shadow-xl border border-gray-100 dark:border-gray-700">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Avatar Builder
-          </h1>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+              Avatar Builder
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 font-medium">
+              Create your unique look, {kidName}!
+            </p>
+          </div>
           <Link
             href={`/kids/${kidId}/studio`}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity text-sm"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-xl font-bold hover:scale-105 transition-all shadow-lg shadow-purple-500/20 active:scale-95 text-sm"
           >
-            🎨 Design New Outfit
+            🎨 Design New Items
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left Column: 3D Preview */}
-          <div className="flex flex-col items-center">
-            <div className="w-full aspect-[3/4] rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 border border-gray-100 dark:border-gray-700 shadow-inner">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Left: 3D Preview (5/12) */}
+          <div className="lg:col-span-5 flex flex-col items-center">
+            <div className="w-full aspect-square md:aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-b from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900/20 border-4 border-white dark:border-gray-700 shadow-2xl relative group">
               <SyntyAvatarPreview 
                 kidId={kidId} 
-                textureUrl={selectedTextureUrl}
-                // Determine skin color if we want to support it later
-                skinColor="#f2d3b1"
+                textureUrl={selectedFullUrl}
+                topUrl={selectedTopUrl}
+                bottomUrl={selectedBottomUrl}
+                shoesUrl={selectedShoesUrl}
+                skinColor={selectedSkinColor}
               />
+              <div className="absolute top-4 left-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30 uppercase tracking-widest shadow-sm">
+                3D Life Preview
+              </div>
             </div>
-            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 font-medium">
-              {kidName}'s Avatar
-            </p>
           </div>
 
-          {/* Right Column: Wardrobe */}
-          <div className="flex flex-col h-full">
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-              <span>👕</span> Your Wardrobe
-            </h2>
-            
-            {savedDesigns.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl text-center">
-                <p className="text-gray-500 dark:text-gray-400 mb-4">
-                  You haven't designed any outfits yet!
-                </p>
-                <Link
-                  href={`/kids/${kidId}/studio`}
-                  className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          {/* Right: Wardrobe (7/12) */}
+          <div className="lg:col-span-7 flex flex-col h-full min-h-[500px]">
+            {/* Category Tabs */}
+            <div className="flex gap-1 bg-gray-100 dark:bg-gray-900/50 p-1 rounded-xl mb-6 overflow-x-auto no-scrollbar">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
+                    activeCategory === cat.id
+                      ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100/50 dark:border-indigo-900/30'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-800/30'
+                  }`}
                 >
-                  Go to Design Studio
-                </Link>
-              </div>
-            ) : (
-              <div className="flex-1 overflow-y-auto max-h-[400px] pr-2">
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Default/None Option */}
-                  <button
-                    onClick={() => {
-                      setSelectedTextureUrl(undefined);
-                      setSelectedDesignId(undefined);
-                    }}
-                    className={`aspect-square rounded-lg border-2 p-2 flex flex-col items-center justify-center gap-2 transition-all ${
-                      selectedTextureUrl === undefined
-                        ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }`}
-                  >
-                    <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xl">
-                      👤
-                    </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Basic</span>
-                  </button>
-
-                  {/* Saved Designs */}
-                  {savedDesigns.map((design) => (
+                  <span>{cat.icon}</span>
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex-1 bg-gray-50 dark:bg-gray-900/30 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
+              {activeCategory === 'skin' ? (
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                  {skinColors.map((color) => (
                     <button
-                      key={design.id}
-                      onClick={() => handleSelectDesign(design)}
-                      className={`aspect-square rounded-lg border-2 p-2 relative group transition-all ${
-                        selectedTextureUrl === design.texture_url
-                          ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      key={color}
+                      onClick={() => setSelectedSkinColor(color)}
+                      className={`aspect-square rounded-full border-4 transition-all hover:scale-110 active:scale-95 ${
+                        selectedSkinColor === color
+                          ? 'border-indigo-500 shadow-lg shadow-indigo-500/20'
+                          : 'border-white dark:border-gray-800'
                       }`}
-                    >
-                      {design.texture_url ? (
-                        <img 
-                          src={design.texture_url} 
-                          alt={design.name}
-                          className="w-full h-full object-contain rounded-md"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center">
-                          ?
-                        </div>
-                      )}
-                      <div className="absolute inset-x-0 bottom-0 bg-black/50 p-1 text-center backdrop-blur-sm rounded-b-md">
-                        <p className="text-xs text-white truncate px-1">
-                          {design.name || 'Untitled'}
-                        </p>
-                      </div>
-                    </button>
+                      style={{ backgroundColor: color }}
+                    />
                   ))}
                 </div>
-              </div>
-            )}
+              ) : filteredDesigns.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                  <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center text-2xl mb-4 shadow-sm">
+                    🪹
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-400 font-medium max-w-[200px] mx-auto text-sm leading-relaxed">
+                    You haven't designed any {activeCategory}s yet!
+                  </p>
+                  <Link
+                    href={`/kids/${kidId}/studio`}
+                    className="mt-4 px-6 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                  >
+                    Go to Design Studio
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {/* Clear-Selection / Default Option */}
+                    <button
+                      onClick={() => {
+                        if (activeCategory === 'full') {
+                          setSelectedFullUrl(undefined);
+                          setSelectedFullId(undefined);
+                        } else if (activeCategory === 'top') {
+                          setSelectedTopUrl(undefined);
+                          setSelectedTopId(undefined);
+                        } else if (activeCategory === 'bottom') {
+                          setSelectedBottomUrl(undefined);
+                          setSelectedBottomId(undefined);
+                        } else if (activeCategory === 'shoes') {
+                          setSelectedShoesUrl(undefined);
+                          setSelectedShoesId(undefined);
+                        }
+                      }}
+                      className={`aspect-square rounded-xl border-2 p-3 flex flex-col items-center justify-center font-bold tracking-tight transition-all hover:border-indigo-200 dark:hover:border-indigo-800 ${
+                        (activeCategory === 'full' && !selectedFullUrl) ||
+                        (activeCategory === 'top' && !selectedTopUrl) ||
+                        (activeCategory === 'bottom' && !selectedBottomUrl) ||
+                        (activeCategory === 'shoes' && !selectedShoesUrl)
+                          ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                          : 'border-dashed border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                      }`}
+                    >
+                      <div className="text-lg mb-1">❌</div>
+                      <span className="text-[10px] uppercase font-black">None</span>
+                    </button>
+
+                    {/* Saved Designs */}
+                    {filteredDesigns.map((design) => {
+                      const isSelected = 
+                        (activeCategory === 'full' && selectedFullId === design.id) ||
+                        (activeCategory === 'top' && selectedTopId === design.id) ||
+                        (activeCategory === 'bottom' && selectedBottomId === design.id) ||
+                        (activeCategory === 'shoes' && selectedShoesId === design.id);
+
+                      return (
+                        <button
+                          key={design.id}
+                          onClick={() => handleSelectDesign(design)}
+                          className={`aspect-square rounded-xl border-2 overflow-hidden transition-all hover:scale-102 active:scale-98 relative ${
+                            isSelected
+                              ? 'border-indigo-500 shadow-lg shadow-indigo-500/10'
+                              : 'border-transparent bg-white dark:bg-gray-800 shadow-sm hover:shadow-md'
+                          }`}
+                        >
+                          {design.texture_url ? (
+                            <img 
+                              src={design.texture_url} 
+                              alt={design.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-2xl bg-gray-100 dark:bg-gray-800">
+                              🖼️
+                            </div>
+                          )}
+                          <div className={`absolute inset-0 bg-indigo-500/10 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                            <p className="text-[10px] font-bold text-white truncate text-left">
+                              {design.name || 'Untitled'}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Actions */}
-            <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700 flex gap-3">
+            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex gap-4">
               <Link
                 href={`/kids/${kidId}`}
-                className="flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="flex-[2] py-4 px-6 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95 border border-transparent dark:border-gray-700"
               >
-                Cancel
+                Back to Portal
               </Link>
               <button
                 onClick={handleSave}
-                disabled={isSaving || selectedTextureUrl === initialTextureUrl}
-                className="flex-1 py-3 px-4 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSaving}
+                className="flex-[3] py-4 px-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-black shadow-lg shadow-emerald-500/20 hover:scale-102 transition-all active:scale-98 disabled:opacity-50 disabled:grayscale uppercase tracking-wider"
               >
-                {isSaving ? 'Saving...' : 'Save Avatar'}
+                {isSaving ? 'Saving Changes...' : 'Save My Legend 🌟'}
               </button>
             </div>
           </div>
@@ -195,3 +319,4 @@ export function SyntyAvatarBuilder({
     </div>
   );
 }
+

@@ -180,7 +180,34 @@
       "icon": "👤",
       "templates": [
         {
-          "id": "template-synty",
+          "id": "template-synty-top",
+          "label": "Top",
+          "src": "/assets/avatars/templates/synty-outfit.svg",
+          "regions": [
+            "shirt-front", "collar", "tie", "shirt-left", "shirt-right", "shirt-back",
+            "arm-left-outer", "arm-left-inner", "arm-right-outer", "arm-right-inner"
+          ],
+          "unlocked": true
+        },
+        {
+          "id": "template-synty-bottom",
+          "label": "Bottom",
+          "src": "/assets/avatars/templates/synty-outfit.svg",
+          "regions": [
+            "pants-left-front", "pants-left-back", "pants-left-side",
+            "pants-right-front", "pants-right-back", "pants-right-side"
+          ],
+          "unlocked": true
+        },
+        {
+          "id": "template-synty-shoes",
+          "label": "Shoes",
+          "src": "/assets/avatars/templates/synty-outfit.svg",
+          "regions": ["shoe-left", "shoe-right"],
+          "unlocked": true
+        },
+        {
+          "id": "template-synty-full",
           "label": "Full Outfit",
           "src": "/assets/avatars/templates/synty-outfit.svg",
           "regions": [

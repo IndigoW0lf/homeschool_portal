@@ -3,6 +3,7 @@ import { getKidByIdFromDB } from '@/lib/supabase/data';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { SyntyAvatarBuilder } from '@/components/SyntyAvatarBuilder';
 import { ItemDesignRow } from '@/types/design-studio';
+import { AvatarState } from '@/types';
 
 interface AvatarPageProps {
   params: Promise<{
@@ -19,39 +20,46 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
   }
 
   // Fetch saved designs for the "Wardrobe"
-  // Specifically look for 'template-synty' designs
+  // Look for any synty-related templates
   const supabase = await createServiceRoleClient();
   const { data: designs } = await supabase
     .from('kid_designs')
     .select('*')
     .eq('kid_id', kidId)
-    .eq('template_id', 'template-synty')
+    .like('template_id', 'template-synty%')
     .order('created_at', { ascending: false });
 
   const savedDesigns = (designs || []) as ItemDesignRow[];
   
-  // Determine currently equipped texture URL
+  // Determine currently equipped texture URLs
+  const avatarState = (kid.avatarState || {}) as AvatarState;
   let initialTextureUrl: string | undefined;
-  if (kid.avatarState?.outfit && kid.avatarState.outfit.startsWith('custom:')) {
-    const designId = kid.avatarState.outfit.split(':')[1];
-    
-    // Check if the equipped design is in our fetched list
-    const equippedDesign = savedDesigns.find(d => d.id === designId);
-    if (equippedDesign) {
-      initialTextureUrl = equippedDesign.texture_url;
-    } else {
-      // If not in fetched list (maybe older?), try to fetch it specifically
-      const { data: specificDesign } = await supabase
-        .from('kid_designs')
-        .select('texture_url')
-        .eq('id', designId)
-        .single();
-        
-      if (specificDesign) {
-        initialTextureUrl = specificDesign.texture_url;
-      }
+  let initialTopUrl: string | undefined;
+  let initialBottomUrl: string | undefined;
+  let initialShoesUrl: string | undefined;
+
+  // 1. Full Outfit (Legacy)
+  if (avatarState.outfit?.startsWith('custom:')) {
+    const designId = avatarState.outfit.split(':')[1];
+    initialTextureUrl = savedDesigns.find(d => d.id === designId)?.texture_url;
+    if (!initialTextureUrl) {
+      const { data } = await supabase.from('kid_designs').select('texture_url').eq('id', designId).single();
+      initialTextureUrl = data?.texture_url;
     }
   }
+
+  // 2. Modular Pieces
+  const fetchDesignUrl = async (id?: string) => {
+    if (!id) return undefined;
+    const local = savedDesigns.find(d => d.id === id);
+    if (local) return local.texture_url;
+    const { data } = await supabase.from('kid_designs').select('texture_url').eq('id', id).single();
+    return data?.texture_url;
+  };
+
+  initialTopUrl = await fetchDesignUrl(avatarState.topId);
+  initialBottomUrl = await fetchDesignUrl(avatarState.bottomId);
+  initialShoesUrl = await fetchDesignUrl(avatarState.shoesId);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-12">
@@ -59,7 +67,11 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
         kidId={kidId}
         kidName={kid.nickname || kid.name}
         initialTextureUrl={initialTextureUrl}
+        initialTopUrl={initialTopUrl}
+        initialBottomUrl={initialBottomUrl}
+        initialShoesUrl={initialShoesUrl}
         savedDesigns={savedDesigns}
+        initialSkinColor={avatarState.skinTone || '#f2d3b1'}
       />
     </div>
   );
