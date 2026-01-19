@@ -182,8 +182,16 @@
         {
           "id": "template-synty",
           "label": "Full Outfit",
-          "src": "/assets/avatars/templates/synty-outfit-draft.svg",
-          "regions": ["shirt", "pants", "arms", "skin-face", "skin-hands"],
+          "src": "/assets/avatars/templates/synty-outfit.svg",
+          "regions": [
+            "skin-base", "face", "hair-top", "hair-left", "hair-right", "hair-back",
+            "shirt-front", "collar", "tie", "shirt-left", "shirt-right", "shirt-back",
+            "arm-left-outer", "arm-left-inner", "hand-left",
+            "arm-right-outer", "arm-right-inner", "hand-right",
+            "pants-left-front", "pants-left-back", "pants-left-side",
+            "pants-right-front", "pants-right-back", "pants-right-side",
+            "shoe-left", "shoe-right", "belt"
+          ],
           "unlocked": true
         }
       ]
