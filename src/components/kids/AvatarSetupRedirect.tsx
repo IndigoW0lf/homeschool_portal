@@ -1,8 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
 interface AvatarSetupRedirectProps {
   kidId: string;
   hasAvatarState: boolean;
@@ -10,22 +7,12 @@ interface AvatarSetupRedirectProps {
 }
 
 /**
- * Redirects kids to avatar setup on their first login
+ * Previously redirected kids to avatar setup on first login.
+ * Now disabled - we rely on AvatarReminderBanner for gentle prompting instead.
+ * Keeping component for backward compatibility.
  */
 export function AvatarSetupRedirect({ kidId, hasAvatarState, lastLoginAt }: AvatarSetupRedirectProps) {
-  const router = useRouter();
-
-  useEffect(() => {
-    // Only redirect on truly first login (never logged in before)
-    // NOT on every login today
-    const isFirstLogin = !lastLoginAt;
-    
-    // If first ever login and no avatar state, redirect to avatar builder
-    if (isFirstLogin && !hasAvatarState) {
-      router.push(`/kids/${kidId}/avatar`);
-    }
-  }, [kidId, hasAvatarState, lastLoginAt, router]);
-
+  // No automatic redirect - let users navigate freely
   return null;
 }
 

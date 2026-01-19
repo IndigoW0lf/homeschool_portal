@@ -119,14 +119,16 @@ function Model({
   topUrl,
   bottomUrl,
   shoesUrl,
-  skinColor = '#f2d3b1'
+  skinColor = '#f2d3b1',
+  autoRotate = true
 }: { 
   modelPath: string; 
   textureUrl?: string; 
   topUrl?: string; 
   bottomUrl?: string; 
   shoesUrl?: string;
-  skinColor?: string 
+  skinColor?: string;
+  autoRotate?: boolean 
 }) {
   const { scene } = useGLTF(modelPath);
   const modelRef = useRef<THREE.Group>(null);
@@ -207,9 +209,9 @@ function Model({
     }
   }, [scene, textureUrl, compositeTexture, skinColor]);
 
-  // Slow auto-rotation
+  // Slow auto-rotation (only if enabled)
   useFrame((_state, delta) => {
-    if (modelRef.current) {
+    if (modelRef.current && autoRotate) {
       modelRef.current.rotation.y += delta * 0.3;
     }
   });
@@ -253,6 +255,7 @@ export function SyntyAvatar({
               bottomUrl={bottomUrl}
               shoesUrl={shoesUrl}
               skinColor={skinColor}
+              autoRotate={autoRotate}
             />
           </Center>
         </Suspense>

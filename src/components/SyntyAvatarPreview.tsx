@@ -28,7 +28,6 @@ interface SyntyAvatarPreviewProps {
 }
 
 export function SyntyAvatarPreview({ 
-  kidId, 
   textureUrl,
   topUrl,
   bottomUrl,
@@ -47,7 +46,7 @@ export function SyntyAvatarPreview({
       bottomUrl={bottomUrl}
       shoesUrl={shoesUrl}
       skinColor={skinColor}
-      autoRotate={true}
+      autoRotate={false}
       className="w-full h-full"
     />
   );

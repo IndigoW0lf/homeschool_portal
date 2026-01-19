@@ -382,6 +382,9 @@ export function DesignStudio({
               placeholder="Name your design..."
               className="w-full px-4 py-2 text-lg border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[var(--ember-300)] focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             />
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              💡 Give your design a name to save it to your wardrobe
+            </p>
           </div>
 
           {/* Template Selector */}
