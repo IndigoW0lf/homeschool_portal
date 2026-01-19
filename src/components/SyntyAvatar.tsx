@@ -114,7 +114,7 @@ function useTextureCompositor({
 }
 
 function Model({ 
-  modelPath = '/assets/avatars/models/SimplePeople.glb',
+  modelPath = '/assets/avatars/models/character.glb',
   textureUrl,
   topUrl,
   bottomUrl,
@@ -123,8 +123,8 @@ function Model({
 }: { 
   modelPath: string; 
   textureUrl?: string; 
-  topUrl?: string;
-  bottomUrl?: string;
+  topUrl?: string; 
+  bottomUrl?: string; 
   shoesUrl?: string;
   skinColor?: string 
 }) {
@@ -220,7 +220,7 @@ function Model({
 
 
 export function SyntyAvatar({
-  modelPath = '/assets/avatars/models/SimplePeople.glb',
+  modelPath = '/assets/avatars/models/character.glb',
   textureUrl,
   topUrl,
   bottomUrl,
@@ -232,7 +232,7 @@ export function SyntyAvatar({
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        camera={{ position: [0, 1.6, 5], fov: 35 }}
+        camera={{ position: [0, 1.8, 6], fov: 35 }}
         gl={{ 
           antialias: true, 
           alpha: true,
@@ -266,7 +266,7 @@ export function SyntyAvatar({
           maxPolarAngle={Math.PI / 1.8}
           autoRotate={autoRotate}
           autoRotateSpeed={1}
-          target={[0, 1.2, 0]}
+          target={[0, 1.3, 0]}
         />
       </Canvas>
     </div>
@@ -275,4 +275,4 @@ export function SyntyAvatar({
 
 
 // Pre-load the model
-useGLTF.preload('/assets/avatars/models/SimplePeople.glb');
+useGLTF.preload('/assets/avatars/models/character.glb');

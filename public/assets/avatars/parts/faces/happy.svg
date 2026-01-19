@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">
-  <!-- Happy face: friendly eyes and smile -->
-  <circle cx="3" cy="5" r="3" fill="#333"/>
-  <circle cx="27" cy="5" r="3" fill="#333"/>
-  <path d="M5 12 Q15 20 25 12" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-</svg>

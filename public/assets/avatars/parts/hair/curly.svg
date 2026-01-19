@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75 35">
-  <!-- Curly hair: wavy texture on top -->
-  <path d="M5 30 Q0 25 5 20 Q0 15 5 10 Q10 5 20 8 Q30 0 40 8 Q50 0 60 8 Q70 5 75 15 Q80 20 75 25 Q80 30 70 35 L10 35 Q0 32 5 30" fill="currentColor"/>
-</svg>

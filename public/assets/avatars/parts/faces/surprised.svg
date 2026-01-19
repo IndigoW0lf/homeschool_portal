@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20">
-  <!-- Surprised face: wide eyes and O mouth -->
-  <circle cx="3" cy="5" r="4" fill="#333"/>
-  <circle cx="27" cy="5" r="4" fill="#333"/>
-  <circle cx="15" cy="15" r="4" fill="#333"/>
-</svg>

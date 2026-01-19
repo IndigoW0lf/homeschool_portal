@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 30">
-  <!-- Spiky hair: angular spikes -->
-  <path d="M0 30 L5 20 L10 10 L15 20 L25 0 L30 20 L40 5 L45 20 L55 0 L60 20 L65 10 L70 30 Z" fill="currentColor"/>
-</svg>
