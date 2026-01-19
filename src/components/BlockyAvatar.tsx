@@ -163,10 +163,10 @@ export function BlockyAvatar({
           <path d="M0 0 L10 -10 L35 -10 L25 0 Z" fill="var(--skin-leg)" filter="url(#shade-top)" />
         </g>
         
-        {/* RIGHT ARM (Stage Left) - Back */}
-        <g transform="translate(133, 55)">
-          <path d="M0 0 L18 0 L18 45 L0 45 Z" fill="var(--skin-arm)" />
-          <path d="M18 0 L26 -8 L26 37 L18 45 Z" fill="var(--skin-arm)" filter="url(#shade-side)" />
+        {/* RIGHT ARM (Stage Left) - Back, attached to torso right side */}
+        <g transform="translate(135, 60)">
+          <path d="M0 0 L18 0 L18 40 L0 40 Z" fill="var(--skin-arm)" />
+          <path d="M18 0 L26 -8 L26 32 L18 40 Z" fill="var(--skin-arm)" filter="url(#shade-side)" />
           <path d="M0 0 L8 -8 L26 -8 L18 0 Z" fill="var(--skin-arm)" filter="url(#shade-top)" />
         </g>
 
@@ -181,10 +181,10 @@ export function BlockyAvatar({
           <path d="M0 0 L20 -15 L90 -15 L70 0 Z" fill="var(--skin-torso)" filter="url(#shade-top)" />
         </g>
 
-        {/* LEFT ARM (Stage Right) - Front */}
-        <g transform="translate(42, 55)">
-           <path d="M0 0 L18 0 L18 45 L0 45 Z" fill="var(--skin-arm)" />
-           <path d="M18 0 L26 -8 L26 37 L18 45 Z" fill="var(--skin-arm)" filter="url(#shade-side)" />
+        {/* LEFT ARM (Stage Right) - Front, attached to torso left side */}
+        <g transform="translate(47, 60)">
+           <path d="M0 0 L18 0 L18 40 L0 40 Z" fill="var(--skin-arm)" />
+           <path d="M18 0 L26 -8 L26 32 L18 40 Z" fill="var(--skin-arm)" filter="url(#shade-side)" />
            <path d="M0 0 L8 -8 L26 -8 L18 0 Z" fill="var(--skin-arm)" filter="url(#shade-top)" />
         </g>
 
