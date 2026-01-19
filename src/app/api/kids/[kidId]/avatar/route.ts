@@ -107,3 +107,57 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+/**
+ * PATCH /api/kids/[kidId]/avatar
+ * Update a kid's DiceBear avatar configuration
+ */
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ kidId: string }> }) {
+  const { kidId } = await params;
+
+  try {
+    const kidSession = await getKidSession();
+    let supabase;
+
+    if (kidSession && kidSession.kidId === kidId) {
+      // Kid updating their own avatar → Use Service Role (bypass RLS)
+      supabase = await createServiceRoleClient();
+    } else {
+      // Parent/other user → Use standard client (RLS)
+      supabase = await createServerClient();
+      
+      // Verify user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+    }
+
+    const body = await request.json();
+    const { dicebearState } = body;
+
+    if (!dicebearState) {
+      return NextResponse.json({ error: 'No dicebearState provided' }, { status: 400 });
+    }
+
+    // Update kid record with new DiceBear configuration
+    const { error: updateError } = await supabase
+      .from('kid')
+      .update({ dicebear_avatar_state: dicebearState })
+      .eq('id', kidId);
+
+    if (updateError) {
+      console.error('[Avatar API] DiceBear update error:', updateError);
+      return NextResponse.json({ error: 'Failed to update avatar' }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Avatar updated!'
+    });
+
+  } catch (error) {
+    console.error('[Avatar API] Unexpected error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

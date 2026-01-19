@@ -27,6 +27,19 @@ export interface Kid {
     accessory?: string;
     colors: Record<string, string>;
   };
+  // DiceBear avatar state (new system)
+  dicebear_avatar_state?: {
+    seed: string;
+    skinColor: string;
+    hairColor: string;
+    hair: string;
+    eyes: string;
+    eyebrows: string;
+    mouth: string;
+    glasses?: string;
+    earrings?: string;
+    features?: string;
+  };
   // Journal settings
   journalEnabled?: boolean;
   journalAllowSkip?: boolean;
