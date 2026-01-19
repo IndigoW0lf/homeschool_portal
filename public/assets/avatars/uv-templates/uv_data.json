@@ -1,0 +1,184 @@
+{
+  "CH_BusinessMan": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": -0.032213106751441956,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 180,
+    "num_faces": 147,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_FireFighter": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 240,
+    "num_faces": 193,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Hobo": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 200,
+    "num_faces": 164,
+    "materials": [
+      "blinn6"
+    ]
+  },
+  "CH_Pimp": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 188,
+    "num_faces": 156,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Policeman": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 188,
+    "num_faces": 156,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Prostitute": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": -0.0462966226041317,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 192,
+    "num_faces": 154,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Punk": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": -0.4407769739627838,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 180,
+    "num_faces": 148,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_RiotCop": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.006215572357177734,
+      "max_v": 0.9858429431915283
+    },
+    "num_vertices": 192,
+    "num_faces": 156,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Roadworker": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 196,
+    "num_faces": 161,
+    "materials": [
+      "blinn5"
+    ]
+  },
+  "CH_Robber": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": -0.032213106751441956,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 180,
+    "num_faces": 147,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Sheriff": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 200,
+    "num_faces": 170,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_StreetMan": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 188,
+    "num_faces": 156,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Trucker": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": 0.00980619341135025,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 208,
+    "num_faces": 169,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  },
+  "CH_Woman": {
+    "uv_bounds": {
+      "min_u": 0.017639636993408203,
+      "max_u": 0.9867182970046997,
+      "min_v": -0.032213106751441956,
+      "max_v": 0.9852396249771118
+    },
+    "num_vertices": 192,
+    "num_faces": 157,
+    "materials": [
+      "SimplePeople_mesh_lambert2"
+    ]
+  }
+}

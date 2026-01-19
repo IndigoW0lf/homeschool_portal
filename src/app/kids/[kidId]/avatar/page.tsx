@@ -36,7 +36,7 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
 
           {/* 3D Avatar Preview */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-64 h-80 rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30">
+            <div className="w-80 h-[28rem] rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30">
               <SyntyAvatarPreview kidId={kidId} />
             </div>
             <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">

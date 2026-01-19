@@ -82,7 +82,7 @@ export function SyntyAvatar({
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        camera={{ position: [0, 1, 3], fov: 45 }}
+        camera={{ position: [0, 1.5, 5], fov: 35 }}
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
@@ -102,11 +102,14 @@ export function SyntyAvatar({
         
         <OrbitControls 
           enablePan={false}
-          enableZoom={false}
-          minPolarAngle={Math.PI / 3}
-          maxPolarAngle={Math.PI / 2}
+          enableZoom={true}
+          minDistance={3}
+          maxDistance={8}
+          minPolarAngle={Math.PI / 4}
+          maxPolarAngle={Math.PI / 1.8}
           autoRotate={autoRotate}
           autoRotateSpeed={1}
+          target={[0, 1, 0]}
         />
       </Canvas>
     </div>
