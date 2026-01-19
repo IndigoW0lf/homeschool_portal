@@ -14,8 +14,8 @@ import {
 import { DesignCanvas, DesignCanvasRef } from './DesignCanvas';
 import { useRef } from 'react';
 import { ColorPalette } from './ColorPalette';
-import { BlockyAvatar3D } from '../BlockyAvatar3D';
 import { PaintBucket, Pencil, Eraser, ArrowLeft, FloppyDisk, Eye, Lock, TShirt } from '@phosphor-icons/react';
+import { SyntyAvatarPreview } from '@/components/SyntyAvatarPreview';
 import { ItemDesignRow } from '@/types/design-studio';
 
 interface DesignStudioProps {
@@ -446,24 +446,21 @@ export function DesignStudio({
             {/* Canvas Area */}
             <div className="md:col-span-2 relative">
               {showPreview && (
-                <div className="absolute inset-0 z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                  <div className="text-center">
-                    <div className="mb-4 transform scale-150">
-                      <div className="w-full h-full relative">
-                        <BlockyAvatar3D 
-                          textureUrl={previewTexture}
-                          className="w-full h-full"
-                          autoRotate={true}
-                        />
-                      </div>
+                <div className="absolute inset-0 z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-gray-200 dark:border-gray-700 p-6">
+                  <div className="text-center flex flex-col items-center">
+                    <div className="w-48 h-64 mb-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gradient-to-b from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
+                      <SyntyAvatarPreview 
+                        kidId="preview"
+                        textureUrl={previewTexture || undefined}
+                        skinColor="#f2d3b1"
+                      />
                     </div>
                     <p className="text-sm text-gray-500 max-w-xs mx-auto">
-                      Previewing your design on the avatar. 
-                      <br/>Some details like specific patterns only show in the flat view.
+                      Previewing your design on the 3D character.
                     </p>
                     <button 
                       onClick={() => setShowPreview(false)}
-                      className="mt-4 text-sm text-[var(--ember-500)] hover:underline"
+                      className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors font-medium text-sm"
                     >
                       Close Preview
                     </button>

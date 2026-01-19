@@ -232,7 +232,7 @@ export function SyntyAvatar({
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        camera={{ position: [0, 1.2, 7], fov: 30 }}
+        camera={{ position: [0, 1.6, 5], fov: 35 }}
         gl={{ 
           antialias: true, 
           alpha: true,
@@ -266,7 +266,7 @@ export function SyntyAvatar({
           maxPolarAngle={Math.PI / 1.8}
           autoRotate={autoRotate}
           autoRotateSpeed={1}
-          target={[0, 1, 0]}
+          target={[0, 1.2, 0]}
         />
       </Canvas>
     </div>

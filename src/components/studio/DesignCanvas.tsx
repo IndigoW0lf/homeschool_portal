@@ -246,7 +246,7 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
   };
 
   const handleSvgClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (tool !== 'fill') return;
+    if (tool !== 'fill' && tool !== 'eraser') return;
     
     const target = e.target as SVGElement;
     const regionId = target.id;
@@ -254,6 +254,9 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
     if (regionId && (template.regions?.includes(regionId) || template.parts?.some(p => p.name === regionId))) {
       if (tool === 'fill') {
         onRegionFill(regionId, currentColor);
+      } else if (tool === 'eraser') {
+        // Reset region to default gray
+        onRegionFill(regionId, '#E5E5E5');
       }
       onRegionClick(regionId);
     }
