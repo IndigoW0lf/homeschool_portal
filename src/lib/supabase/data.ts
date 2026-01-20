@@ -31,6 +31,7 @@ export async function getKidsFromDB(): Promise<Kid[]> {
   const kidSession = await getKidSession();
   
   if (kidSession) {
+    console.log('[getKidsFromDB] using kid session', kidSession.kidId);
     // If logged in as a kid, use Service Role to fetch ONLY their own profile
     const { createServiceRoleClient } = await import('./server');
     const supabase = await createServiceRoleClient();
@@ -44,6 +45,11 @@ export async function getKidsFromDB(): Promise<Kid[]> {
 
     if (kidError) {
        console.error('[getKidsFromDB] Error fetching current kid:', kidError);
+       return [];
+    }
+    
+    if (!currentKid) {
+       console.error('[getKidsFromDB] No kid found for ID:', kidSession.kidId);
        return [];
     }
 

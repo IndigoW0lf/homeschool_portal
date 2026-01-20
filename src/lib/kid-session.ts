@@ -44,12 +44,14 @@ export async function getKidSession(): Promise<KidSession | null> {
     const sessionCookie = cookieStore.get(KID_SESSION_COOKIE);
     
     // console.log('[getKidSession] Cookie present:', !!sessionCookie?.value);
-
+    
     if (!sessionCookie?.value) {
+      console.log('[getKidSession] No cookie found');
       return null;
     }
     
     const session = JSON.parse(sessionCookie.value) as KidSession;
+    console.log('[getKidSession] Session found for kid:', session.kidId);
     return session;
   } catch {
     return null;
