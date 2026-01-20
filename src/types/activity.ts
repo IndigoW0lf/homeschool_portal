@@ -29,8 +29,8 @@ export interface ActivityInput {
   /** Activity title - required */
   title: string;
   
-  /** Whether this is a lesson (teaching) or assignment (practice) */
-  activityType: 'lesson' | 'assignment';
+  /** Whether this is a lesson (teaching), assignment (practice), or standalone worksheet */
+  activityType: 'lesson' | 'assignment' | 'worksheet';
   
   /** Subject category: Math, Science, History, etc. */
   category: string;
@@ -109,7 +109,7 @@ export interface ActivityLink {
 export interface ActivityCreateResult {
   success: boolean;
   id: string;
-  type: 'lesson' | 'assignment';
+  type: 'lesson' | 'assignment' | 'worksheet';
   hasWorksheet: boolean;
   videoCount: number;
   worksheetId?: string;
@@ -287,7 +287,7 @@ export function assignmentRowToActivity(row: AssignmentItemRow): Partial<Activit
  * Create a new ActivityInput with sensible defaults
  */
 export function createDefaultActivity(
-  type: 'lesson' | 'assignment' = 'lesson'
+  type: 'lesson' | 'assignment' | 'worksheet' = 'lesson'
 ): ActivityInput {
   return {
     title: '',
@@ -316,7 +316,7 @@ export function createDefaultActivity(
  */
 export function mergeWithDefaults(
   partial: Partial<ActivityInput>,
-  type: 'lesson' | 'assignment' = 'lesson'
+  type: 'lesson' | 'assignment' | 'worksheet' = 'lesson'
 ): ActivityInput {
   return {
     ...createDefaultActivity(type),

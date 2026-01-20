@@ -44,7 +44,7 @@ interface LinkItem {
 
 interface FormData {
   title: string;
-  activityType: 'lesson' | 'assignment';
+  activityType: 'lesson' | 'assignment' | 'worksheet';
   category: string;
   description: string;
   estimatedMinutes: number;
@@ -213,7 +213,11 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         if (result.hasWorksheet) extras.push('worksheet generated');
         if (result.videoCount > 0) extras.push(`${result.videoCount} videos found`);
         
-        toast.success(`${form.activityType === 'lesson' ? 'Lesson' : 'Assignment'} created!`, {
+        const activityTypeName = form.activityType === 'lesson' ? 'Lesson' : 
+                                  form.activityType === 'worksheet' ? 'Worksheet' : 
+                                  'Assignment';
+        
+        toast.success(`${activityTypeName} created!`, {
           description: extras.length > 0 ? extras.join(', ') : undefined,
         });
         onClose();
@@ -241,7 +245,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         </div>
 
         {/* Type Toggle - Prominent */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <button
             type="button"
             onClick={() => updateForm({ activityType: 'lesson' })}
@@ -273,6 +277,22 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               Assignment
             </span>
             <span className="text-xs text-gray-500">Practice work</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => updateForm({ activityType: 'worksheet', generateWorksheet: true })}
+            className={cn(
+              "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
+              form.activityType === 'worksheet'
+                ? "border-green-500 bg-green-50 dark:bg-green-900/30"
+                : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
+            )}
+          >
+            <MagicWand size={28} weight="duotone" className={form.activityType === 'worksheet' ? "text-green-500" : "text-gray-400"} />
+            <span className={cn("font-semibold", form.activityType === 'worksheet' ? "text-green-600 dark:text-green-400" : "text-gray-600 dark:text-gray-400")}>
+              Worksheet
+            </span>
+            <span className="text-xs text-gray-500">AI-generated</span>
           </button>
         </div>
 
@@ -494,24 +514,26 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
           </div>
         </div>
 
-        {/* AI Worksheet Toggle */}
-        <label className="flex items-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl cursor-pointer border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
-          <input
-            type="checkbox"
-            checked={form.generateWorksheet}
-            onChange={e => updateForm({ generateWorksheet: e.target.checked })}
-            className="w-5 h-5 rounded border-purple-300 text-purple-600 focus:ring-purple-500"
-          />
-          <div className="flex-1">
-            <span className="font-medium text-purple-700 dark:text-purple-300 flex items-center gap-2">
-              <Sparkle size={18} weight="fill" className="text-purple-500" />
-              Auto-generate worksheet
-            </span>
-            <p className="text-xs text-purple-600/70 dark:text-purple-400/70 mt-0.5">
-              AI will create practice questions based on this activity
-            </p>
-          </div>
-        </label>
+        {/* AI Worksheet Toggle - only show for lessons/assignments */}
+        {form.activityType !== 'worksheet' && (
+          <label className="flex items-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl cursor-pointer border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+            <input
+              type="checkbox"
+              checked={form.generateWorksheet}
+              onChange={e => updateForm({ generateWorksheet: e.target.checked })}
+              className="w-5 h-5 rounded border-purple-300 text-purple-600 focus:ring-purple-500"
+            />
+            <div className="flex-1">
+              <span className="font-medium text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                <Sparkle size={18} weight="fill" className="text-purple-500" />
+                Auto-generate worksheet
+              </span>
+              <p className="text-xs text-purple-600/70 dark:text-purple-400/70 mt-0.5">
+                AI will create practice questions based on this activity
+              </p>
+            </div>
+          </label>
+        )}
 
         {/* Footer */}
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
@@ -531,11 +553,17 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               "px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm",
               form.activityType === 'lesson'
                 ? "bg-blue-500 hover:bg-blue-600 text-white"
+                : form.activityType === 'worksheet'
+                ? "bg-green-500 hover:bg-green-600 text-white"
                 : "bg-purple-500 hover:bg-purple-600 text-white",
               (isSubmitting || !form.title.trim()) && "opacity-50 cursor-not-allowed"
             )}
           >
-            {isSubmitting ? 'Creating...' : `Create ${form.activityType === 'lesson' ? 'Lesson' : 'Assignment'}`}
+            {isSubmitting ? 'Creating...' : `Create ${
+              form.activityType === 'lesson' ? 'Lesson' : 
+              form.activityType === 'worksheet' ? 'Worksheet' : 
+              'Assignment'
+            }`}
           </button>
         </div>
       </div>

@@ -21,7 +21,7 @@ The output MUST be valid JSON matching the following schema:
           "id": "unique-id-1",
           "type": "text" | "multiple_choice" | "fill_in_blank" | "drawing_space" | "matching" | "true_false" | "word_bank" | "creative_prompt",
           "question": "Question text",
-          "options": ["Option A", "Option B"] (only for multiple_choice, matching, word_bank),
+          "options": ["Option A", "Option B"] (REQUIRED for multiple_choice, matching, word_bank),
           "answer": "Correct answer" (for answer key),
           "space_lines": 3 (number of lines for text answers)
         }
@@ -30,26 +30,65 @@ The output MUST be valid JSON matching the following schema:
   ]
 }
 
-**Question Type Guidelines:**
-- "text": Open-ended questions (reflection, analysis, explanation)
-- "multiple_choice": 3-4 options, use sparingly
-- "fill_in_blank": Use underscores (____) for blanks, great for vocabulary
-- "drawing_space": Creative expression, diagrams, illustrations
-- "matching": Connect terms to definitions (use options array for pairs)
-- "true_false": Quick knowledge checks
-- "word_bank": Provide word choices to fill in blanks
-- "creative_prompt": Open-ended creative writing or art prompts
+**CRITICAL FORMATTING RULES:**
 
-**VARIETY IS KEY:**
-- Mix question types based on the topic and age
-- For younger kids (K-2): More drawing, matching, true/false, simple fill-in-blank
-- For middle grades (3-5): Balance of all types, include some reasoning questions
-- For older kids (6-8): More text responses, analysis, creative prompts
-- For high school (9-12): Deeper analysis, essay prompts, critical thinking
+1. **multiple_choice**: 
+   - Question MUST be a single question
+   - MUST include "options" array with 3-4 choices
+   - Example: {"type": "multiple_choice", "question": "What helps muscles become stretchy?", "options": ["Warming up", "Staying still", "Eating candy", "Sleeping"], "answer": "Warming up"}
 
-**Respond creatively to the specific instructions provided.** If they want "deeper thinking" questions, emphasize reflection and analysis. If they want "fun" make it playful with creative prompts.
+2. **fill_in_blank**: 
+   - Use underscores (____) in the question for blanks
+   - If you use this type, you MUST also create a separate word_bank item with the missing words
+   - Example question: {"type": "fill_in_blank", "question": "The ____ is the center of our solar system.", "answer": "sun"}
+   - Example word bank: {"type": "word_bank", "question": "Word Bank", "options": ["sun", "moon", "stars", "planets"]}
 
-Ensure the tone is encouraging and age-appropriate.
+3. **word_bank**:
+   - ONLY use this with fill_in_blank questions
+   - MUST include "options" array with word choices
+   - Place BEFORE the fill-in-blank questions it supports
+
+4. **matching**:
+   - MUST include "options" array with PAIRS to match
+   - Format: ["Item 1:Match 1", "Item 2:Match 2"]
+   - Students draw lines between items
+   - Example: {"type": "matching", "question": "Match the animal to its home", "options": ["Dog:Doghouse", "Bird:Nest", "Fish:Tank"], "answer": "Dog-Doghouse, Bird-Nest, Fish-Tank"}
+
+5. **true_false**:
+   - Question should be a statement
+   - Answer is "true" or "false"
+   - Example: {"type": "true_false", "question": "The sun rises in the west.", "answer": "false"}
+
+6. **drawing_space**:
+   - Give a creative prompt
+   - No options needed
+   - Example: {"type": "drawing_space", "question": "Draw yourself doing your favorite warm-up exercise"}
+
+7. **text**:
+   - Open-ended question requiring written response
+   - Include space_lines (2-5)
+   - Example: {"type": "text", "question": "Explain why warming up is important before exercise.", "space_lines": 3}
+
+8. **creative_prompt**:
+   - Open-ended creative task
+   - Can be writing, drawing, or project
+   - Example: {"type": "creative_prompt", "question": "Write a song about the importance of warming up!"}
+
+**AGE-APPROPRIATE VARIETY:**
+- K-2: More drawing_space, matching, true_false. Simple fill_in_blank with word banks.
+- 3-5: Mix of all types. Multiple choice with 3-4 options. Short text responses.
+- 6-8: More text responses and creative_prompts. Complex matching.
+- 9-12: Deep analysis questions, essays, multi-step problems.
+
+**VALIDATION CHECKLIST (do NOT skip these):**
+✓ Every multiple_choice has "options" array with 3-4 items
+✓ Every fill_in_blank has a corresponding word_bank item
+✓ Every matching has "options" array with colon-separated pairs
+✓ No empty or null "options" arrays
+✓ All questions are grammatically correct
+✓ Answers are provided for grading
+
+Ensure the tone is encouraging and age-appropriate. Make it fun and engaging!
 `;
 
 

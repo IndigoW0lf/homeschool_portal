@@ -84,7 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       ...enrichment.videoLinks,
     ];
 
-    // 6. Create the activity (lesson or assignment)
+    // 6. Create the activity (lesson, assignment, or worksheet)
     let createdItem: { id: string };
     
     if (input.activityType === 'lesson') {
@@ -95,18 +95,29 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       createdItem = await createLesson(lessonPayload);
       console.log('[API/activities] Lesson created:', createdItem.id);
     } else {
+      // Both 'assignment' and 'worksheet' create assignments
+      // For 'worksheet', we override the type to ensure it's marked as worksheet
       const assignmentPayload = activityToAssignmentPayload(
-        { ...input, links: allLinks },
+        { 
+          ...input, 
+          links: allLinks,
+          // Override category to 'worksheet' for standalone worksheets
+          ...(input.activityType === 'worksheet' ? { category: 'worksheet' } : {})
+        },
         enrichment.worksheet  // Attach worksheet to assignment
       );
       createdItem = await createAssignment(assignmentPayload);
-      console.log('[API/activities] Assignment created:', createdItem.id);
+      console.log('[API/activities] Assignment created:', createdItem.id, '| Type:', input.activityType);
     }
 
     // 7. Schedule if requested
     if (createdItem.id && input.scheduleDate && input.assignTo.length > 0) {
+      // Treat worksheet as assignment for scheduling purposes
+      const scheduleType: 'lesson' | 'assignment' = 
+        input.activityType === 'lesson' ? 'lesson' : 'assignment';
+      
       await assignItemToSchedule(
-        input.activityType,
+        scheduleType,
         createdItem.id,
         input.scheduleDate,
         input.assignTo
@@ -181,7 +192,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
 function parseActivityInput(body: Record<string, unknown>): ActivityInput {
   return {
     title: String(body.title || ''),
-    activityType: body.activityType === 'assignment' ? 'assignment' : 'lesson',
+    activityType: body.activityType === 'worksheet' ? 'worksheet' : 
+                   body.activityType === 'assignment' ? 'assignment' : 'lesson',
     category: String(body.category || body.type || 'Math'),
     description: String(body.description || body.instructions || ''),
     estimatedMinutes: Number(body.estimatedMinutes || body.estimated_minutes || 30),
