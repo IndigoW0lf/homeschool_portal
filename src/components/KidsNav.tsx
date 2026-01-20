@@ -73,13 +73,14 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
       color: '#f59e0b', // amber
       exactMatch: false
     },
-    { 
-      href: `/kids/${kidId}/avatar`, 
-      label: 'Avatar', 
-      icon: UserCircle,
-      color: 'var(--lavender-500)',
-      exactMatch: false
-    },
+    // Avatar and Studio temporarily hidden - UV mapping work in progress
+    // { 
+    //   href: `/kids/${kidId}/avatar`, 
+    //   label: 'Avatar', 
+    //   icon: UserCircle,
+    //   color: 'var(--lavender-500)',
+    //   exactMatch: false
+    // },
     { 
       href: `/kids/${kidId}/journal`, 
       label: 'Journal', 
@@ -94,13 +95,13 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
       color: '#8b5cf6', // purple
       exactMatch: false
     },
-    { 
-      href: `/kids/${kidId}/studio`, 
-      label: 'Studio', 
-      icon: Palette,
-      color: '#ec4899', // pink
-      exactMatch: false
-    },
+    // { 
+    //   href: `/kids/${kidId}/studio`, 
+    //   label: 'Studio', 
+    //   icon: Palette,
+    //   color: '#ec4899', // pink
+    //   exactMatch: false
+    // },
   ];
 
   const isActive = (tab: typeof tabs[0]) => {

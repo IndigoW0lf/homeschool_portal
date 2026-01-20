@@ -46,7 +46,24 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       generateWorksheet: input.generateWorksheet,
     });
 
-    // 3. Run AI enrichment (YouTube + worksheet)
+    // 3. Fetch kid grade levels if we have assigned students
+    let targetGradeLevel: string | undefined;
+    if (input.assignTo && input.assignTo.length > 0) {
+      const { data: kids } = await supabase
+        .from('kids')
+        .select('grades')
+        .in('id', input.assignTo);
+      
+      if (kids && kids.length > 0) {
+        const firstKidGrades = kids[0].grades;
+        if (firstKidGrades && firstKidGrades.length > 0) {
+          targetGradeLevel = firstKidGrades[0];
+          console.log('[API/activities] Target grade level:', targetGradeLevel);
+        }
+      }
+    }
+
+    // 4. Run AI enrichment (YouTube + worksheet)
     const enrichment = await enrichActivity(
       {
         title: input.title,
@@ -57,16 +74,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
         searchYouTube: input.searchYouTube !== false,  // Default to true
         generateWorksheet: input.generateWorksheet,
         worksheetInstructions: input.description,
+        ageOrGrade: targetGradeLevel,  // Pass grade level for age-appropriate content
       }
     );
 
-    // 4. Merge enriched links with any provided links
+    // 5. Merge enriched links with any provided links
     const allLinks: ActivityLink[] = [
       ...input.links,
       ...enrichment.videoLinks,
     ];
 
-    // 5. Create the activity (lesson or assignment)
+    // 6. Create the activity (lesson or assignment)
     let createdItem: { id: string };
     
     if (input.activityType === 'lesson') {
@@ -85,7 +103,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       console.log('[API/activities] Assignment created:', createdItem.id);
     }
 
-    // 6. Schedule if requested
+    // 7. Schedule if requested
     if (createdItem.id && input.scheduleDate && input.assignTo.length > 0) {
       await assignItemToSchedule(
         input.activityType,
@@ -96,7 +114,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       console.log('[API/activities] Scheduled for:', input.assignTo.length, 'kids');
     }
 
-    // 7. If worksheet was generated for a LESSON, create a separate assignment for it
+    // 8. If worksheet was generated for a LESSON, create a separate assignment for it
     let worksheetAssignmentId: string | undefined;
     
     if (input.activityType === 'lesson' && enrichment.worksheet) {
@@ -129,7 +147,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       console.log('[API/activities] Worksheet assignment created:', worksheetAssignmentId);
     }
 
-    // 8. Build and return result
+    // 9. Build and return result
     const result: ActivityCreateResult = {
       success: true,
       id: createdItem.id,

@@ -53,7 +53,7 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         <KidProfileEditor kidId={kidId} initialData={kid} />
         
-        {/* Avatar Builder Link */}
+        {/* Avatar Builder - Coming Soon */}
         <div className="max-w-md mx-auto p-6 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-200 dark:border-purple-800">
           <div className="flex flex-col items-center text-center gap-4">
             {/* Avatar preview */}
@@ -65,17 +65,14 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
             />
             <div>
               <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">
-                ✨ Build Your Avatar
+                ✨ Avatar Builder
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                Dress up your character and make it yours!
+                Coming soon! We're working on an awesome avatar creator for you.
               </p>
-              <Link 
-                href={`/kids/${kidId}/avatar`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors"
-              >
-                Customize →
-              </Link>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg font-medium cursor-not-allowed">
+                🚧 In Progress
+              </div>
             </div>
           </div>
         </div>

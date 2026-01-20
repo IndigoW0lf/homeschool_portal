@@ -12,8 +12,13 @@ interface AvatarReminderBannerProps {
 
 /**
  * Shows a monthly reminder to set up avatar if not configured
+ * TEMPORARILY DISABLED - Avatar builder in progress (UV mapping work)
  */
 export function AvatarReminderBanner({ kidId, hasAvatarState, kidName }: AvatarReminderBannerProps) {
+  // Temporarily disabled while avatar builder is being rebuilt
+  return null;
+  
+  /* Original code - restore when ready
   const [isDismissed, setIsDismissed] = useState(true);
 
   useEffect(() => {
@@ -82,4 +87,5 @@ export function AvatarReminderBanner({ kidId, hasAvatarState, kidName }: AvatarR
       </div>
     </div>
   );
+  */
 }
