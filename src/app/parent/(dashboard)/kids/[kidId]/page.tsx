@@ -200,16 +200,22 @@ export default async function ParentKidProfilePage({ params }: Props) {
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Link
-            href={`/kids/${kidId}/shop`}
+            href={`/parent/kids/${kidId}/profile`}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          >
+            Edit Profile
+          </Link>
+          <Link
+            href={`/parent/kids/${kidId}/shop`}
             className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             View Shop
           </Link>
           <Link
-            href={`/kids/${kidId}/profile`}
+            href={`/parent/kids/${kidId}/journal`}
             className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
-            Edit Profile
+            View Journal
           </Link>
           <Link
             href="/parent/progress"
