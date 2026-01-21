@@ -110,6 +110,8 @@ export function UnifiedActivityList({
                   const Icon = style.icon;
                   const itemId = extractItemId(activity.id);
                   const isClickableLesson = activity.source === 'lunara_quest' && activity.type === 'lesson' && itemId;
+                  const isClickableAssignment = activity.source === 'lunara_quest' && activity.type === 'assignment' && itemId;
+                  const isClickable = isClickableLesson || isClickableAssignment;
                   const canEditTime = activity.source === 'lunara_quest' && activity.scheduleItemId;
                   const displayTime = getDisplayTime(activity);
                   const hasActualTime = !!activity.actualMinutes || !!localTimes[activity.id];
@@ -117,7 +119,7 @@ export function UnifiedActivityList({
                   const content = (
                     <div 
                       className={`flex items-center gap-3 p-2.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700 ${
-                        isClickableLesson ? 'hover:bg-gray-100 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group' : ''
+                        isClickable ? 'hover:bg-gray-100 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group' : ''
                       }`}
                     >
                       {/* Source Icon */}
@@ -131,7 +133,7 @@ export function UnifiedActivityList({
                           <p className="font-medium text-gray-900 dark:text-white truncate text-sm">
                             {activity.title}
                           </p>
-                          {isClickableLesson && (
+                          {isClickable && (
                             <ArrowSquareOut size={12} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                           )}
                         </div>
@@ -183,12 +185,24 @@ export function UnifiedActivityList({
                     </div>
                   );
                   
-                  // Wrap in Link if it's a clickable lesson
+                  // Wrap in Link if it's a clickable lesson or assignment
                   if (isClickableLesson) {
                     return (
                       <Link 
                         key={activity.id} 
                         href={`/parent/lessons?view=${itemId}`}
+                        className="block"
+                      >
+                        {content}
+                      </Link>
+                    );
+                  }
+                  
+                  if (isClickableAssignment) {
+                    return (
+                      <Link 
+                        key={activity.id} 
+                        href={`/parent/assignments?view=${itemId}`}
                         className="block"
                       >
                         {content}

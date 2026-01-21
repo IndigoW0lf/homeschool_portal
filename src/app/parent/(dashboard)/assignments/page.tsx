@@ -1,59 +1,87 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { createServerClient } from '@/lib/supabase/server';
+import { AssignmentViewer } from '@/components/assignments/AssignmentViewer';
 import { AssignmentForm } from '@/components/assignments/AssignmentForm';
 import { WorksheetGeneratorModal } from '@/components/worksheets/WorksheetGeneratorModal';
-import { MagicWand } from '@phosphor-icons/react';
+import { MagicWand, ArrowLeft } from '@phosphor-icons/react/dist/ssr';
+import Link from 'next/link';
 
-export default function AssignmentsPage() {
-  const router = useRouter();
-  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+interface PageProps {
+  searchParams: Promise<{ view?: string }>;
+}
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Only navigate if clicking directly on the backdrop (not on children)
-    if (e.target === e.currentTarget) {
-      router.push('/parent');
-    }
-  };
+export default async function AssignmentsPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const viewId = params.view;
+
+  // If viewing an assignment, fetch it
+  let assignment = null;
+  if (viewId) {
+    const supabase = await createServerClient();
+    const { data } = await supabase
+      .from('assignment_items')
+      .select('*')
+      .eq('id', viewId)
+      .single();
+    assignment = data;
+  }
 
   return (
-    <div 
-      className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 cursor-pointer"
-      onClick={handleBackdropClick}
-    >
-      <div 
-        className="max-w-3xl mx-auto cursor-default"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Create Assignment
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Assign new work to students manually or generate it.
-            </p>
-          </div>
-          
-          <button
-            onClick={() => setIsGeneratorOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold shadow-md hover:shadow-lg transition-all hover:scale-105"
-          >
-            <MagicWand size={20} weight="fill" />
-            Generate Worksheet
-          </button>
-        </div>
+    <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-3xl mx-auto">
+        {/* View Mode - Read-only assignment */}
+        {viewId && assignment ? (
+          <>
+            <div className="mb-6">
+              <Link 
+                href="/parent/progress" 
+                className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-3 transition-colors"
+              >
+                <ArrowLeft size={16} weight="bold" />
+                Back to Progress
+              </Link>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {assignment.title}
+              </h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                Assignment Details
+              </p>
+            </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-          <AssignmentForm />
-        </div>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+              <AssignmentViewer assignment={assignment} />
+            </div>
+          </>
+        ) : viewId ? (
+          // Assignment not found
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400">Assignment not found</p>
+            <Link 
+              href="/parent/progress"
+              className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 mt-2 inline-block"
+            >
+              Return to Progress
+            </Link>
+          </div>
+        ) : (
+          // Create Mode - Assignment form
+          <>
+            <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Create Assignment
+                </h1>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                  Assign new work to students manually or generate it.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+              <AssignmentForm />
+            </div>
+          </>
+        )}
       </div>
-      
-      <WorksheetGeneratorModal 
-        isOpen={isGeneratorOpen} 
-        onClose={() => setIsGeneratorOpen(false)} 
-      />
     </div>
   );
 }
