@@ -4,78 +4,170 @@
 /* Enable dark mode with class strategy for Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* =============================================================================
+   LUNARA COSMIC PALETTE
+   A blend of Cosmic Wilderness + Moonlit Altar for magical, kid-friendly design
+   ============================================================================= */
+
 /* Light mode - default */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-
-  /* Neutrals / Structure */
-  --ink-900: #2B2B2B;        /* text, outlines */
-  --ink-700: #4A4A4A;
-  --paper-50: #FAF9F7;       /* backgrounds */
-  --paper-100: #F2EFEA;
-
-  /* Warm Naturals (world cohesion) */
-  --wood-600: #8B6A4E;
-  --wood-400: #B99A7A;
-  --stone-500: #9DA3A6;
-  --stone-300: #C9CED1;
-
-  /* Greens (world + calm energy) */
-  --leaf-700: #4E6B50;
-  --leaf-500: #6F8F73;
-  --leaf-300: #AFC4B2;
-
-  /* Fabric / Play (avatars, outfits) */
-  --fabric-blue: #5E7FB8;
-  --fabric-green: #6FAFA2;
-  --fabric-gold: #E1B866;
-  --fabric-rose: #D48A8A;
-  --fabric-lilac: #9C8FB8;
-
-  /* Brand / Galaxy Theme (Login, Marketing, Primary) */
-  --brand-deep: #1a1a2e;       /* Deep space blue */
-  --brand-dark: #16213e;       /* Darker space blue */
-  --brand-lilac: #9c8fb8;      /* Primary brand purple */
-  --brand-coral: #E27D60;      /* Primary brand accent/ember - KEEPING for legacy, but introducing ROSE override */
-  --brand-rose: #D48A8A;       /* Secondary accent */
-  --brand-gold: #E1B866;       /* Stars/Highlight */
+  /* Night / Dark Backgrounds (used in dark mode, defined here for reference) */
+  --night-900: #0D0F14;
+  --night-800: #14171F;
+  --night-700: #1C2029;
+  --night-600: #252A36;
+  --night-500: #2F3542;
   
-  /* Magical Theme Gradients */
-  --magical-gradient-start: #240b36; 
-  --magical-gradient-end: #c31432;
-
-  /* Accent / Aurora (teal-blue, aurora borealis theme) - LIGHTER TEAL UPDATE */
-  --ember-100: #E0F7FA;        /* lightest Cyan */
-  --ember-200: #B2EBF2;
-  --ember-300: #80DEEA;
-  --ember-400: #4DD0E1;        /* bright cyan */
-  --ember-500: #26C6DA;        /* primary accent - vibrant cyan/teal */
-  --ember-600: #00ACC1;        /* hover state */
-  --ember-700: #0097A7;        /* active/pressed */
-  --ember-800: #00838F;
-  --ember-900: #006064;        /* darkest teal */
-  --sky-400: #7FB3D5;          /* selection, highlights */
+  /* Moon / Light Backgrounds */
+  --moon-50: #F8F6F3;
+  --moon-100: #EDE9E3;
+  --moon-200: #DED8CF;
+  --moon-300: #C9C1B5;
+  
+  /* Celestial Teal - Primary Accent (from Moonlit Altar) */
+  --celestial-100: #D4E8E9;
+  --celestial-200: #B3D4D6;
+  --celestial-300: #8AC0C3;
+  --celestial-400: #5B9B9E;
+  --celestial-500: #4A8689;
+  --celestial-600: #3B7073;
+  --celestial-700: #2D595C;
+  
+  /* Ember Gold - Stars, Achievements, Moons currency (from Cosmic Wilderness) */
+  --ember-gold-100: #F5ECD4;
+  --ember-gold-200: #EBDAAA;
+  --ember-gold-300: #E1C87F;
+  --ember-gold-400: #D4A853;
+  --ember-gold-500: #C49842;
+  --ember-gold-600: #A67E35;
+  --ember-gold-700: #876528;
+  
+  /* Cosmic Rust - CTAs, Energy, Warmth (from Cosmic Wilderness) */
+  --cosmic-rust-100: #F2DDD5;
+  --cosmic-rust-200: #E5BBA9;
+  --cosmic-rust-300: #D4937B;
+  --cosmic-rust-400: #C47A5E;
+  --cosmic-rust-500: #B86A4B;
+  --cosmic-rust-600: #A35A3D;
+  --cosmic-rust-700: #8B4A32;
+  
+  /* Nebula Accents - Kid-friendly pops of color */
+  --nebula-pink: #D4A0B3;
+  --nebula-pink-light: #E8C9D5;
+  --nebula-teal: #6BB8B8;
+  --nebula-teal-light: #A8D8D8;
+  --nebula-purple: #9C8FB8;
+  --nebula-purple-light: #C4BBD6;
+  --nebula-peach: #E8C4A8;
+  
+  /* Slate - Neutral tones (from Cosmic Wilderness) */
+  --slate-100: #E8EAED;
+  --slate-200: #D1D5DB;
+  --slate-300: #9CA3AF;
+  --slate-400: #6B7280;
+  --slate-500: #4B5563;
+  --slate-600: #374151;
+  --slate-700: #1F2937;
+  
+  /* Semantic Colors */
+  --success-light: #D1E7DD;
+  --success: #6F8F73;
+  --success-dark: #4E6B50;
+  --warning-light: #F5ECD4;
+  --warning: #D4A853;
+  --warning-dark: #A67E35;
+  --error-light: #F2DDD5;
+  --error: #D48A8A;
+  --error-dark: #B86A6A;
+  --info-light: #D4E8E9;
+  --info: #5B9B9E;
+  --info-dark: #3B7073;
+  
+  /* Gradients */
+  --gradient-cosmic: linear-gradient(135deg, #1C2029 0%, #14171F 50%, #0D0F14 100%);
+  --gradient-ember: linear-gradient(90deg, #B86A4B 0%, #D4A853 100%);
+  --gradient-ember-reverse: linear-gradient(90deg, #D4A853 0%, #B86A4B 100%);
+  --gradient-nebula: linear-gradient(135deg, rgba(91, 155, 158, 0.15) 0%, rgba(156, 143, 184, 0.15) 100%);
+  --gradient-aurora: linear-gradient(180deg, #5B9B9E 0%, #6BB8B8 50%, #9C8FB8 100%);
+  --gradient-gold-shimmer: linear-gradient(90deg, #C49842 0%, #D4A853 50%, #E1C87F 100%);
+  
+  /* Light Mode Semantic Mappings */
+  --background: var(--moon-50);
+  --background-secondary: var(--moon-100);
+  --background-elevated: #ffffff;
+  --foreground: #2B2B2B;
+  --foreground-muted: var(--slate-400);
+  
+  /* Border & Divider */
+  --border: var(--moon-200);
+  --border-subtle: var(--moon-100);
+  --divider: var(--moon-200);
+  
+  /* Interactive states */
+  --focus-ring: var(--celestial-400);
+  --hover-overlay: rgba(0, 0, 0, 0.04);
   
   /* Shadows */
-  --shadow-soft: rgba(0,0,0,0.12);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(212, 168, 83, 0.3);
+  
+  /* Legacy compatibility (phasing out) */
+  --paper-50: var(--moon-50);
+  --paper-100: var(--moon-100);
+  --ink-900: #2B2B2B;
+  --ink-700: #4A4A4A;
+  --brand-deep: var(--night-900);
+  --brand-dark: var(--night-800);
+  --brand-lilac: var(--nebula-purple);
+  --brand-coral: var(--cosmic-rust-500);
+  --brand-rose: var(--nebula-pink);
+  --brand-gold: var(--ember-gold-400);
+  --ember-500: var(--celestial-400);
+  --ember-600: var(--celestial-500);
+  --ember-400: var(--celestial-300);
+  --sky-400: var(--celestial-300);
+  --fabric-blue: #5E7FB8;
+  --fabric-green: var(--nebula-teal);
+  --fabric-gold: var(--ember-gold-400);
+  --fabric-rose: var(--nebula-pink);
+  --fabric-lilac: var(--nebula-purple);
 }
 
-/* Dark mode - ONLY via .dark class on html element */
-/* The toggle in layout.tsx manages this class based on localStorage */
+/* Dark mode - THE PRIMARY FOCUS */
 html.dark,
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: var(--night-900);
+  --background-secondary: var(--night-800);
+  --background-elevated: var(--night-700);
+  --foreground: #F0ECE6;
+  --foreground-muted: var(--slate-300);
+  
+  /* Border & Divider */
+  --border: var(--night-600);
+  --border-subtle: var(--night-700);
+  --divider: var(--night-600);
+  
+  /* Interactive states */
+  --hover-overlay: rgba(255, 255, 255, 0.04);
+  
+  /* Shadows in dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 30px rgba(212, 168, 83, 0.4);
+  
+  /* Legacy compatibility */
+  --paper-50: var(--night-900);
+  --paper-100: var(--night-800);
   --ink-900: #E5E5E5;
   --ink-700: #B5B5B5;
-  --paper-50: #13111C;       /* Very dark purple-black */
-  --paper-100: #1F1D2B;      /* Dark purple-gray */
-  --stone-300: #6B7073;
-  --leaf-700: #6F8F73;
-  --leaf-500: #8FAF93;
-  --shadow-soft: rgba(0,0,0,0.3);
 }
+
+/* =============================================================================
+   BASE STYLES
+   ============================================================================= */
 
 body {
   background: var(--background);
@@ -83,53 +175,147 @@ body {
   font-family: var(--font-quicksand), 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* MAGICAL BACKGROUND UTILITY - Light mode: soft lavender gradient, Dark mode: deep space gradient */
+/* =============================================================================
+   MAGICAL BACKGROUNDS
+   ============================================================================= */
+
+/* Cosmic gradient background for immersive pages */
+.bg-cosmic {
+  background: var(--gradient-cosmic);
+  background-attachment: fixed;
+  color: #F0ECE6;
+}
+
+/* Legacy magical background (maps to cosmic) */
 .bg-magical {
-  background: linear-gradient(to bottom right, #e8dff5 0%, #d4c5e8 50%, #c5b3db 100%);
+  background: radial-gradient(circle at 50% 0%, var(--night-700) 0%, var(--night-900) 100%);
   background-attachment: fixed;
-  min-height: 100vh;
+  color: #F0ECE6;
 }
 
-/* Dark mode - match login page galaxy gradient */
-html.dark .bg-magical,
-.dark .bg-magical {
-  background: linear-gradient(to bottom right, var(--brand-deep), #2a2a4a, var(--brand-dark));
-  background-attachment: fixed;
-  color: white;
+/* Starfield pattern overlay */
+.bg-starfield {
+  position: relative;
 }
 
-/* MAGICAL BUTTON GRADIENT */
+.bg-starfield::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 50%, rgba(212,168,83,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 60%, rgba(156,143,184,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 40%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-starfield > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Nebula glow effect */
+.bg-nebula-glow {
+  background: 
+    radial-gradient(ellipse at 20% 80%, rgba(156, 143, 184, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(91, 155, 158, 0.1) 0%, transparent 50%),
+    var(--gradient-cosmic);
+}
+
+/* =============================================================================
+   GRADIENT UTILITIES
+   ============================================================================= */
+
+.bg-gradient-ember {
+  background: var(--gradient-ember);
+}
+
+.bg-gradient-cosmic {
+  background: var(--gradient-cosmic);
+}
+
+.bg-gradient-aurora {
+  background: var(--gradient-aurora);
+}
+
+.bg-gradient-nebula {
+  background: var(--gradient-nebula);
+}
+
+.bg-gradient-gold-shimmer {
+  background: var(--gradient-gold-shimmer);
+}
+
+/* Text gradients */
+.text-gradient-ember {
+  background: var(--gradient-ember);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-aurora {
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Legacy support */
 .bg-gradient-magic {
-  background: linear-gradient(90deg, #D48A8A 0%, #E27D60 100%);
+  background: var(--gradient-ember);
 }
 
 .text-gradient-magic {
-  background: linear-gradient(90deg, #D48A8A 0%, #E27D60 100%);
+  background: var(--gradient-ember);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.avatar-shadow {
-  width: 60%;
-  height: 10px;
-  background: var(--shadow-soft);
-  border-radius: 50%;
-  filter: blur(2px);
+/* =============================================================================
+   GLOW & SPECIAL EFFECTS
+   ============================================================================= */
+
+.glow-gold {
+  box-shadow: var(--shadow-glow);
 }
 
-/* SVG Title styling for better contrast */
-.svg-title {
-  /* Light mode: darken the SVG more and add stronger shadow for readability */
-  filter: brightness(0.7) saturate(1.1) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+.glow-celestial {
+  box-shadow: 0 0 20px rgba(91, 155, 158, 0.4);
 }
 
-/* Dark mode: brighten slightly and adjust shadow */
-.dark .svg-title,
-html.dark .svg-title {
-  filter: brightness(1.1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+.glow-nebula {
+  box-shadow: 0 0 20px rgba(156, 143, 184, 0.4);
 }
 
-/* Marketing page animations */
+/* Animated gold shimmer for achievements */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, 
+    var(--ember-gold-500) 0%, 
+    var(--ember-gold-300) 25%, 
+    var(--ember-gold-400) 50%, 
+    var(--ember-gold-300) 75%, 
+    var(--ember-gold-500) 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Twinkle animation for stars */
 @keyframes twinkle {
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
@@ -137,4 +323,106 @@ html.dark .svg-title {
 
 .animate-twinkle {
   animation: twinkle 2s ease-in-out infinite;
+}
+
+/* Pulse glow for notifications */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(212, 168, 83, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(212, 168, 83, 0.6); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* =============================================================================
+   UTILITY CLASSES
+   ============================================================================= */
+
+.avatar-shadow {
+  width: 60%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+/* SVG Title styling for better contrast */
+.svg-title {
+  filter: brightness(0.7) saturate(1.1) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
+}
+
+.dark .svg-title,
+html.dark .svg-title {
+  filter: brightness(1.1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+}
+
+/* Accent color utilities using CSS variables */
+.text-accent {
+  color: var(--celestial-400);
+}
+
+.bg-accent {
+  background-color: var(--celestial-400);
+}
+
+.border-accent {
+  border-color: var(--celestial-400);
+}
+
+.text-gold {
+  color: var(--ember-gold-400);
+}
+
+.bg-gold {
+  background-color: var(--ember-gold-400);
+}
+
+/* =============================================================================
+   KID ACCENT COLOR SYSTEM
+   Per-kid customizable accent colors within the Lunara Cosmic palette
+   ============================================================================= */
+
+:root {
+  /* Default kid accent (falls back to celestial teal) */
+  --kid-accent: var(--celestial-400);
+  --kid-accent-light: var(--celestial-200);
+  --kid-accent-dark: var(--celestial-600);
+}
+
+/* Available kid accent options (set via data attribute or JS) */
+[data-kid-accent="celestial"] {
+  --kid-accent: var(--celestial-400);
+  --kid-accent-light: var(--celestial-200);
+  --kid-accent-dark: var(--celestial-600);
+}
+
+[data-kid-accent="nebula-teal"] {
+  --kid-accent: var(--nebula-teal);
+  --kid-accent-light: var(--nebula-teal-light);
+  --kid-accent-dark: #4A9999;
+}
+
+[data-kid-accent="nebula-pink"] {
+  --kid-accent: var(--nebula-pink);
+  --kid-accent-light: var(--nebula-pink-light);
+  --kid-accent-dark: #B8879A;
+}
+
+[data-kid-accent="nebula-purple"] {
+  --kid-accent: var(--nebula-purple);
+  --kid-accent-light: var(--nebula-purple-light);
+  --kid-accent-dark: #7D7299;
+}
+
+[data-kid-accent="ember-gold"] {
+  --kid-accent: var(--ember-gold-400);
+  --kid-accent-light: var(--ember-gold-200);
+  --kid-accent-dark: var(--ember-gold-600);
+}
+
+[data-kid-accent="cosmic-rust"] {
+  --kid-accent: var(--cosmic-rust-400);
+  --kid-accent-light: var(--cosmic-rust-200);
+  --kid-accent-dark: var(--cosmic-rust-600);
 }

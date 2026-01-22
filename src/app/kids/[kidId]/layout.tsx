@@ -46,19 +46,9 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
 
   return (
     <div 
-      className="min-h-screen bg-magical"
+      className="min-h-screen bg-cosmic bg-starfield"
       style={kid.favoriteColor ? { '--kid-accent': kid.favoriteColor } as React.CSSProperties : undefined}
     >
-      {/* Stars background effect */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-2 h-2 bg-white/60 dark:bg-white rounded-full animate-pulse" />
-        <div className="absolute top-20 right-20 w-1 h-1 bg-white/60 dark:bg-white rounded-full animate-pulse" style={{ animationDelay: '0.1s' }} />
-        <div className="absolute top-40 left-1/4 w-1.5 h-1.5 bg-white/60 dark:bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
-        <div className="absolute bottom-20 right-1/4 w-2 h-2 bg-white/60 dark:bg-white rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
-        <div className="absolute bottom-40 left-20 w-1 h-1 bg-white/60 dark:bg-white rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
-        <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-white/60 dark:bg-white rounded-full animate-pulse" style={{ animationDelay: '0.7s' }} />
-      </div>
-
       <KidsNav 
         kidId={kidId} 
         kidName={kid.name}
@@ -68,7 +58,7 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
       />
       
       {/* Main content area - offset for sidebar on desktop, header on mobile */}
-      <main className="pt-16 lg:pt-0 lg:pl-20">
+      <main className="pt-16 lg:pt-0 lg:pl-20 relative z-10">
         {children}
       </main>
 

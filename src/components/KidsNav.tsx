@@ -56,52 +56,37 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
       href: `/kids/${kidId}`, 
       label: 'Home', 
       icon: House,
-      color: 'var(--sage-500)',
+      color: 'var(--celestial-400)',
       exactMatch: true
     },
     { 
       href: `/kids/${kidId}/play`, 
       label: 'Play', 
       icon: GameController,
-      color: 'var(--ember-500)',
+      color: 'var(--cosmic-rust-400)',
       exactMatch: false
     },
     { 
       href: `/kids/${kidId}/profile`, 
       label: 'Me', 
       icon: Star,
-      color: '#f59e0b', // amber
+      color: 'var(--ember-gold-400)',
       exactMatch: false
     },
-    // Avatar and Studio temporarily hidden - UV mapping work in progress
-    // { 
-    //   href: `/kids/${kidId}/avatar`, 
-    //   label: 'Avatar', 
-    //   icon: UserCircle,
-    //   color: 'var(--lavender-500)',
-    //   exactMatch: false
-    // },
     { 
       href: `/kids/${kidId}/journal`, 
       label: 'Journal', 
       icon: NotePencil,
-      color: '#ec4899', // pink
+      color: 'var(--nebula-pink)',
       exactMatch: false
     },
     { 
       href: `/kids/${kidId}/shop`, 
       label: 'Shop', 
       icon: Moon,
-      color: '#8b5cf6', // purple
+      color: 'var(--nebula-purple)',
       exactMatch: false
     },
-    // { 
-    //   href: `/kids/${kidId}/studio`, 
-    //   label: 'Studio', 
-    //   icon: Palette,
-    //   color: '#ec4899', // pink
-    //   exactMatch: false
-    // },
   ];
 
   const isActive = (tab: typeof tabs[0]) => {
@@ -114,12 +99,12 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
   return (
     <>
       {/* Mobile Header with Hamburger */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-[var(--night-800)] shadow-lg border-b border-[var(--night-600)]">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <Link 
               href="/"
-              className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              className="text-[var(--slate-400)] hover:text-white"
               aria-label="Back to Dashboard"
             >
               ← 
@@ -129,7 +114,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
               alt={`Hello, ${kidName}!`}
               width={150}
               height={40}
-              className="h-8 w-auto dark:brightness-110"
+              className="h-8 w-auto brightness-110"
               priority
             />
           </div>
@@ -137,13 +122,13 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
             <DarkModeToggle />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg hover:bg-[var(--night-700)] transition-colors"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
-                <X size={24} weight="bold" className="text-gray-600 dark:text-gray-300" />
+                <X size={24} weight="bold" className="text-[var(--slate-300)]" />
               ) : (
-                <List size={24} weight="bold" className="text-gray-600 dark:text-gray-300" />
+                <List size={24} weight="bold" className="text-[var(--slate-300)]" />
               )}
             </button>
           </div>
@@ -151,7 +136,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
 
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <nav className="px-4 pb-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+          <nav className="px-4 pb-4 bg-[var(--night-800)] border-t border-[var(--night-600)]">
             <div className="flex flex-col gap-1">
               {tabs.map(tab => {
                 const Icon = tab.icon;
@@ -164,17 +149,17 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
                     className={`
                       flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                       ${active
-                        ? 'bg-gray-100 dark:bg-gray-700'
-                        : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}
+                        ? 'bg-[var(--night-700)]'
+                        : 'hover:bg-[var(--night-700)]/50'}
                     `}
                   >
                     <Icon 
                       size={24} 
                       weight={active ? 'fill' : 'duotone'} 
                       color={active ? tab.color : undefined}
-                      className={active ? '' : 'text-gray-400 dark:text-gray-500'}
+                      className={active ? '' : 'text-[var(--slate-400)]'}
                     />
-                    <span className={`font-medium ${active ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
+                    <span className={`font-medium ${active ? 'text-white' : 'text-[var(--slate-300)]'}`}>
                       {tab.label}
                     </span>
                   </Link>
@@ -184,7 +169,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
               {/* Mobile Logout */}
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 text-red-500"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-[var(--error)]/10 text-[var(--error)]"
               >
                 <SignOut size={24} weight="duotone" />
                 <span className="font-medium">Sign Out</span>
@@ -196,7 +181,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
 
       {/* Desktop Sidebar */}
       <aside 
-        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col border-r border-gray-200 dark:border-gray-700 z-20 transition-colors bg-white dark:bg-gray-800"
+        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col border-r border-[var(--night-600)] z-20 transition-colors bg-[var(--night-800)]"
         style={{ 
           '--kid-accent': kidFavoriteColor,
         } as React.CSSProperties}
@@ -204,15 +189,15 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
         {/* Color Tint Overlay */}
         {kidFavoriteColor && (
           <div 
-            className="absolute inset-0 pointer-events-none opacity-20 dark:opacity-30"
+            className="absolute inset-0 pointer-events-none opacity-10"
             style={{ backgroundColor: 'var(--kid-accent)' }}
           />
         )}
         {/* Top Section */}
-        <div className="flex flex-col items-center py-6 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex flex-col items-center py-6 border-b border-[var(--night-600)] relative z-10">
           <Link 
             href="/"
-            className="mb-4 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 text-sm"
+            className="mb-4 text-[var(--slate-400)] hover:text-white text-sm"
             aria-label="Back to Dashboard"
           >
             ←
@@ -222,13 +207,12 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
             size={80}
             skinColors={{
               skin: kidAvatarState?.colors?.skin,
-              // We'll add support for full avatar state rendering (outfits) soon
             }}
           />
           <span className={`mt-2 text-xs font-medium text-center ${
             needsDarkText 
-              ? 'text-gray-800 dark:text-gray-200' 
-              : 'text-gray-600 dark:text-gray-400'
+              ? 'text-[var(--slate-200)]' 
+              : 'text-[var(--slate-300)]'
           }`}>
             {displayName}
           </span>
@@ -239,7 +223,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-4 flex flex-col justify-between">
+        <nav className="flex-1 py-4 flex flex-col justify-between relative z-10">
           <div className="flex flex-col items-center gap-2">
             {tabs.map(tab => {
               const Icon = tab.icon;
@@ -251,8 +235,8 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
                   className={`
                     group relative flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all
                     ${active
-                      ? 'bg-gray-100 dark:bg-gray-700'
-                      : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}
+                      ? 'bg-[var(--night-700)]'
+                      : 'hover:bg-[var(--night-700)]/50'}
                   `}
                   title={tab.label}
                 >
@@ -260,9 +244,9 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
                     size={28} 
                     weight={active ? 'fill' : 'duotone'} 
                     color={active ? tab.color : undefined}
-                    className={active ? '' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300'}
+                    className={active ? '' : 'text-[var(--slate-400)] group-hover:text-[var(--slate-200)]'}
                   />
-                  <span className={`text-[10px] mt-1 font-medium ${active ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}>
+                  <span className={`text-[10px] mt-1 font-medium ${active ? 'text-white' : 'text-[var(--slate-400)]'}`}>
                     {tab.label}
                   </span>
                   {active && (
@@ -280,7 +264,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
           <div className="flex flex-col items-center mt-auto mb-2">
              <button
                onClick={handleLogout}
-               className="group flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all hover:bg-red-50 dark:hover:bg-red-900/10 text-gray-400 hover:text-red-500"
+               className="group flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all hover:bg-[var(--error)]/10 text-[var(--slate-400)] hover:text-[var(--error)]"
                title="Sign Out"
              >
                <SignOut size={24} weight="duotone" />
@@ -289,7 +273,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
         </nav>
 
         {/* Bottom Section */}
-        <div className="py-4 border-t border-gray-100 dark:border-gray-700 flex justify-center">
+        <div className="py-4 border-t border-[var(--night-600)] flex justify-center relative z-10">
           <DarkModeToggle />
         </div>
       </aside>

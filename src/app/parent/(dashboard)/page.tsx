@@ -42,13 +42,13 @@ export default async function ParentDashboard() {
       {/* Pending Rewards + Weekly Progress - 2 column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pending Reward Redemptions */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-[var(--night-700)] rounded-xl shadow-lg border border-[var(--night-600)] p-6">
           <RedemptionManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
         </div>
 
         {/* Weekly Progress */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <div className="bg-[var(--night-700)] rounded-xl shadow-lg border border-[var(--night-600)] p-6">
+          <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
             📊 Weekly Progress
           </h3>
           <WeeklyProgressChart 

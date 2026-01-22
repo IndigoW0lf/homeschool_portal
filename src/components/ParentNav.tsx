@@ -58,17 +58,19 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-56 bg-gray-800 dark:bg-gray-900 flex flex-col z-30">
+    <aside className="fixed left-0 top-0 h-full w-56 bg-[var(--night-800)] flex flex-col z-30 border-r border-[var(--night-600)]">
       {/* Logo / Header */}
-      <div className="p-4 border-b border-gray-700">
+      <div className="p-4 border-b border-[var(--night-600)]">
         <Link href="/home" className="flex items-center gap-2 text-white hover:opacity-80 transition-opacity">
-          <Sparkle size={24} weight="duotone" className="text-[var(--fabric-lilac)]" />
+          <div className="p-1.5 rounded-lg bg-gradient-ember">
+            <Sparkle size={18} weight="fill" className="text-white" />
+          </div>
           <span className="font-bold text-lg">Lunara Quest</span>
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-4 overflow-y-auto">
+      <nav className="flex-1 py-4 overflow-y-auto custom-scrollbar">
         {/* Main Nav Items */}
         <div className="space-y-1">
           {navItems.map(item => {
@@ -83,8 +85,8 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all",
                   isActive 
-                    ? "bg-gray-700 text-white" 
-                    : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                    ? "bg-[var(--night-600)] text-white" 
+                    : "text-[var(--slate-300)] hover:text-white hover:bg-[var(--night-700)]"
                 )}
               >
                 <Icon size={22} weight={isActive ? "fill" : "regular"} />
@@ -96,8 +98,8 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
 
         {/* Kids Section */}
         {kids.length > 0 && (
-          <div className="mt-6 pt-4 border-t border-gray-700">
-            <div className="flex items-center gap-2 px-4 mb-3 text-gray-500 text-xs font-semibold uppercase tracking-wider">
+          <div className="mt-6 pt-4 border-t border-[var(--night-600)]">
+            <div className="flex items-center gap-2 px-4 mb-3 text-[var(--slate-400)] text-xs font-semibold uppercase tracking-wider">
               <UsersThree size={16} />
               Kids
             </div>
@@ -113,8 +115,8 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-all",
                       isActive 
-                        ? "bg-gray-700 text-white" 
-                        : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                        ? "bg-[var(--night-600)] text-white" 
+                        : "text-[var(--slate-300)] hover:text-white hover:bg-[var(--night-700)]"
                     )}
                   >
                     <AvatarPreview 
@@ -124,7 +126,7 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
                       fallbackColor={kid.favorite_color}
                     />
                     <span className="flex-1 font-medium truncate">{displayName}</span>
-                    <div className="flex items-center gap-1 text-yellow-400 text-xs">
+                    <div className="flex items-center gap-1 text-[var(--ember-gold-400)] text-xs">
                       <Moon size={12} weight="fill" />
                       <span>{kid.moons}</span>
                     </div>
@@ -137,13 +139,13 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-700 space-y-2">
+      <div className="p-4 border-t border-[var(--night-600)] space-y-2">
         <div className="flex items-center justify-between">
           <DarkModeToggle />
         </div>
         <button
           onClick={handleSignOut}
-          className="flex items-center gap-2 w-full px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all"
+          className="flex items-center gap-2 w-full px-4 py-2 text-[var(--slate-400)] hover:text-white hover:bg-[var(--night-700)] rounded-lg transition-all"
         >
           <SignOut size={20} />
           <span className="text-sm font-medium">Sign Out</span>
@@ -152,10 +154,3 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
     </aside>
   );
 }
-
-
-
-
-
-
-

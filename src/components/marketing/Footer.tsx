@@ -3,18 +3,18 @@ import { Sparkle, EnvelopeSimple, TwitterLogo, InstagramLogo } from '@phosphor-i
 
 export function Footer() {
   return (
-    <footer className="bg-gray-950 border-t border-gray-800">
+    <footer className="bg-[var(--night-900)] border-t border-[var(--night-700)]">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-[#9c8fb8] to-[#E27D60]">
+              <div className="p-2 rounded-xl bg-gradient-ember">
                 <Sparkle size={24} weight="fill" className="text-white" />
               </div>
               <span className="text-xl font-bold text-white">Lunara Quest</span>
             </Link>
-            <p className="text-gray-400 max-w-sm">
+            <p className="text-[var(--slate-400)] max-w-sm">
               Your magical homeschool companion. Making learning organized, 
               joyful, and engaging for the whole family.
             </p>
@@ -25,17 +25,17 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-4">Product</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#features" className="text-gray-400 hover:text-white transition-colors">
+                <a href="#features" className="text-[var(--slate-400)] hover:text-white transition-colors">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="text-gray-400 hover:text-white transition-colors">
+                <a href="#pricing" className="text-[var(--slate-400)] hover:text-white transition-colors">
                   Pricing
                 </a>
               </li>
               <li>
-                <Link href="/signup" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/signup" className="text-[var(--slate-400)] hover:text-white transition-colors">
                   Get Started
                 </Link>
               </li>
@@ -47,12 +47,12 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-4">Legal</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/legal/privacy" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/legal/privacy" className="text-[var(--slate-400)] hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/legal/terms" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/legal/terms" className="text-[var(--slate-400)] hover:text-white transition-colors">
                   Terms of Service
                 </Link>
               </li>
@@ -61,28 +61,28 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-sm">
+        <div className="mt-12 pt-8 border-t border-[var(--night-700)] flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[var(--slate-500)] text-sm">
             © {new Date().getFullYear()} Lunara Quest. Made with ✨ for homeschool families.
           </p>
           <div className="flex items-center gap-4">
             <a 
               href="mailto:hello@lunara.quest" 
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-[var(--slate-400)] hover:text-white transition-colors"
               aria-label="Email"
             >
               <EnvelopeSimple size={20} />
             </a>
             <a 
               href="#" 
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-[var(--slate-400)] hover:text-white transition-colors"
               aria-label="Twitter"
             >
               <TwitterLogo size={20} />
             </a>
             <a 
               href="#" 
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-[var(--slate-400)] hover:text-white transition-colors"
               aria-label="Instagram"
             >
               <InstagramLogo size={20} />

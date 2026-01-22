@@ -23,11 +23,11 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-24 bg-gray-900">
+    <section className="py-24 bg-[var(--night-800)]">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="text-[#9c8fb8] font-medium">TESTIMONIALS</span>
+          <span className="text-[var(--celestial-400)] font-medium">TESTIMONIALS</span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">
             Loved by homeschool families
           </h2>
@@ -38,18 +38,18 @@ export function Testimonials() {
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.author}
-              className="p-8 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-800/50 border border-gray-700/50"
+              className="p-8 rounded-2xl bg-gradient-to-br from-[var(--night-700)] to-[var(--night-700)]/50 border border-[var(--night-600)]"
             >
               {/* Stars */}
               <div className="flex items-center gap-1 mb-6">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={18} weight="fill" className="text-yellow-400" />
+                  <Star key={i} size={18} weight="fill" className="text-[var(--ember-gold-400)]" />
                 ))}
               </div>
 
               {/* Quote */}
-              <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                "{testimonial.quote}"
+              <p className="text-[var(--slate-200)] text-lg leading-relaxed mb-6">
+                &ldquo;{testimonial.quote}&rdquo;
               </p>
 
               {/* Author */}
@@ -57,7 +57,7 @@ export function Testimonials() {
                 <span className="text-3xl">{testimonial.avatar}</span>
                 <div>
                   <p className="font-medium text-white">{testimonial.author}</p>
-                  <p className="text-sm text-gray-500">{testimonial.role}</p>
+                  <p className="text-sm text-[var(--slate-400)]">{testimonial.role}</p>
                 </div>
               </div>
             </div>

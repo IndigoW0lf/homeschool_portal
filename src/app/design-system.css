@@ -1,5 +1,5 @@
 /* =============================================================================
-   DESIGN SYSTEM
+   DESIGN SYSTEM - LUNARA COSMIC
    Semantic utility classes using Tailwind @apply
    Import this in globals.css
    ============================================================================= */
@@ -10,20 +10,48 @@
 
 .btn-primary {
   @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white hover:opacity-90 shadow-lg;
-  background: linear-gradient(90deg, #D48A8A 0%, #E27D60 100%);
-  box-shadow: 0 4px 6px -1px rgba(212, 138, 138, 0.2);
+  background: var(--gradient-ember);
+  box-shadow: 0 4px 6px -1px rgba(184, 106, 75, 0.25);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 10px -2px rgba(184, 106, 75, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700;
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2;
+  background-color: var(--background-elevated);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--hover-overlay);
+  border-color: var(--celestial-400);
 }
 
 .btn-ghost {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400;
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-transparent;
+  color: var(--foreground-muted);
+}
+
+.btn-ghost:hover {
+  background-color: var(--hover-overlay);
+  color: var(--foreground);
 }
 
 .btn-danger {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-red-500 text-white hover:bg-red-600;
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white;
+  background-color: var(--error);
+}
+
+.btn-danger:hover {
+  background-color: var(--error-dark);
 }
 
 .btn-sm {
@@ -36,20 +64,62 @@
 }
 
 .btn-pill-active {
-  @apply bg-[var(--ember-500)] text-white shadow-lg shadow-[var(--ember-500)]/20;
+  background-color: var(--celestial-400);
+  color: white;
+  box-shadow: 0 4px 12px rgba(91, 155, 158, 0.3);
 }
 
 .btn-pill-inactive {
-  @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700;
+  background-color: var(--background-elevated);
+  color: var(--foreground-muted);
+  border: 1px solid var(--border);
+}
+
+.btn-pill-inactive:hover {
+  border-color: var(--celestial-400);
+  color: var(--foreground);
 }
 
 /* Icon buttons */
 .btn-icon {
-  @apply p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+  @apply p-2 rounded-lg transition-colors;
+  color: var(--foreground-muted);
+}
+
+.btn-icon:hover {
+  background-color: var(--hover-overlay);
+  color: var(--foreground);
 }
 
 .btn-icon-sm {
-  @apply p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors;
+  @apply p-1.5 rounded-lg transition-colors;
+  color: var(--foreground-muted);
+}
+
+.btn-icon-sm:hover {
+  background-color: var(--hover-overlay);
+  color: var(--foreground);
+}
+
+/* Gold/Achievement button variant */
+.btn-gold {
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white;
+  background: var(--gradient-gold-shimmer);
+  box-shadow: 0 4px 12px rgba(212, 168, 83, 0.3);
+}
+
+.btn-gold:hover {
+  box-shadow: 0 6px 16px rgba(212, 168, 83, 0.4);
+}
+
+/* Celestial button variant */
+.btn-celestial {
+  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white;
+  background-color: var(--celestial-500);
+}
+
+.btn-celestial:hover {
+  background-color: var(--celestial-600);
 }
 
 /* -----------------------------------------------------------------------------
@@ -57,15 +127,29 @@
    ----------------------------------------------------------------------------- */
 
 .card {
-  @apply bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm;
+  @apply rounded-xl;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-elevated {
-  @apply bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-lg;
+  @apply rounded-xl;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-cosmic {
+  @apply rounded-xl;
+  background: var(--gradient-nebula);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(8px);
 }
 
 .card-section {
-  @apply p-4 border-b border-gray-100 dark:border-gray-700;
+  @apply p-4;
+  border-bottom: 1px solid var(--border);
 }
 
 .card-body {
@@ -73,16 +157,25 @@
 }
 
 .card-header {
-  @apply p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between;
+  @apply p-4 flex items-center justify-between;
+  border-bottom: 1px solid var(--border);
 }
 
 /* List item variant */
 .list-item {
-  @apply flex items-center justify-between gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors;
+  @apply flex items-center justify-between gap-3 p-3 rounded-lg transition-colors;
+}
+
+.list-item:hover {
+  background-color: var(--hover-overlay);
 }
 
 .list-item-clickable {
-  @apply flex items-center justify-between gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer;
+  @apply flex items-center justify-between gap-3 p-3 rounded-lg transition-colors cursor-pointer;
+}
+
+.list-item-clickable:hover {
+  background-color: var(--hover-overlay);
 }
 
 /* -----------------------------------------------------------------------------
@@ -90,27 +183,67 @@
    ----------------------------------------------------------------------------- */
 
 .input {
-  @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all;
+  @apply w-full px-3 py-2 rounded-lg outline-none transition-all;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.input:focus {
+  border-color: var(--celestial-400);
+  box-shadow: 0 0 0 3px rgba(91, 155, 158, 0.15);
+}
+
+.input::placeholder {
+  color: var(--foreground-muted);
 }
 
 .input-sm {
-  @apply px-2.5 py-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-1 focus:ring-[var(--ember-500)] outline-none;
+  @apply px-2.5 py-1.5 text-sm rounded-lg outline-none;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+}
+
+.input-sm:focus {
+  border-color: var(--celestial-400);
+  box-shadow: 0 0 0 2px rgba(91, 155, 158, 0.15);
 }
 
 .textarea {
-  @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all min-h-[100px] resize-y;
+  @apply w-full px-3 py-2 rounded-lg outline-none transition-all min-h-[100px] resize-y;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.textarea:focus {
+  border-color: var(--celestial-400);
+  box-shadow: 0 0 0 3px rgba(91, 155, 158, 0.15);
 }
 
 .select {
-  @apply w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all appearance-none cursor-pointer;
+  @apply w-full px-3 py-2 rounded-lg outline-none transition-all appearance-none cursor-pointer;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.select:focus {
+  border-color: var(--celestial-400);
+  box-shadow: 0 0 0 3px rgba(91, 155, 158, 0.15);
 }
 
 .input-label {
-  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+  @apply block text-sm font-medium mb-1;
+  color: var(--foreground);
 }
 
 .input-error {
-  @apply border-red-500 focus:ring-red-500;
+  border-color: var(--error) !important;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(212, 138, 138, 0.15) !important;
 }
 
 /* -----------------------------------------------------------------------------
@@ -118,35 +251,70 @@
    ----------------------------------------------------------------------------- */
 
 .text-muted {
-  @apply text-gray-500 dark:text-gray-400;
+  color: var(--foreground-muted);
 }
 
 .text-heading {
-  @apply text-gray-900 dark:text-white;
+  color: var(--foreground);
 }
 
 .heading-xl {
-  @apply text-3xl font-bold text-gray-900 dark:text-white;
+  @apply text-3xl font-bold;
+  color: var(--foreground);
 }
 
 .heading-lg {
-  @apply text-2xl font-bold text-gray-900 dark:text-white;
+  @apply text-2xl font-bold;
+  color: var(--foreground);
 }
 
 .heading-md {
-  @apply text-xl font-semibold text-gray-900 dark:text-white;
+  @apply text-xl font-semibold;
+  color: var(--foreground);
 }
 
 .heading-sm {
-  @apply text-lg font-semibold text-gray-900 dark:text-white;
+  @apply text-lg font-semibold;
+  color: var(--foreground);
 }
 
 .section-label {
-  @apply text-xs font-semibold text-gray-500 uppercase tracking-wider;
+  @apply text-xs font-semibold uppercase tracking-wider;
+  color: var(--foreground-muted);
 }
 
 .link {
-  @apply text-[var(--ember-500)] hover:text-[var(--ember-600)] transition-colors;
+  color: var(--celestial-400);
+  transition: color 0.15s;
+}
+
+.link:hover {
+  color: var(--celestial-500);
+}
+
+/* Accent text colors */
+.text-celestial {
+  color: var(--celestial-400);
+}
+
+.text-ember-gold {
+  color: var(--ember-gold-400);
+}
+
+.text-cosmic-rust {
+  color: var(--cosmic-rust-500);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-error {
+  color: var(--error);
 }
 
 /* -----------------------------------------------------------------------------
@@ -154,7 +322,8 @@
    ----------------------------------------------------------------------------- */
 
 .page-container {
-  @apply min-h-screen bg-[var(--paper-50)] dark:bg-gray-900;
+  @apply min-h-screen;
+  background-color: var(--background);
 }
 
 .page-content {
@@ -194,25 +363,71 @@
   @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
 }
 
-.badge-blue {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300;
+.badge-celestial {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  background-color: var(--celestial-100);
+  color: var(--celestial-700);
+}
+
+.dark .badge-celestial {
+  background-color: rgba(91, 155, 158, 0.2);
+  color: var(--celestial-300);
+}
+
+.badge-gold {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  background-color: var(--ember-gold-100);
+  color: var(--ember-gold-700);
+}
+
+.dark .badge-gold {
+  background-color: rgba(212, 168, 83, 0.2);
+  color: var(--ember-gold-300);
+}
+
+.badge-rust {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  background-color: var(--cosmic-rust-100);
+  color: var(--cosmic-rust-700);
+}
+
+.dark .badge-rust {
+  background-color: rgba(184, 106, 75, 0.2);
+  color: var(--cosmic-rust-300);
 }
 
 .badge-purple {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300;
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  background-color: var(--nebula-purple-light);
+  color: var(--nebula-purple);
 }
 
-.badge-green {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300;
+.dark .badge-purple {
+  background-color: rgba(156, 143, 184, 0.2);
+  color: var(--nebula-purple-light);
 }
 
-.badge-ember {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--ember-100)] text-[var(--ember-700)] dark:bg-[var(--ember-900)/30] dark:text-[var(--ember-400)];
+.badge-success {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  background-color: var(--success-light);
+  color: var(--success-dark);
 }
+
+.dark .badge-success {
+  background-color: rgba(111, 143, 115, 0.2);
+  color: var(--success);
+}
+
+/* Legacy badge names for compatibility */
+.badge-blue { @apply badge-celestial; }
+.badge-green { @apply badge-success; }
+.badge-ember { @apply badge-celestial; }
 
 /* Tag pills (removable) */
 .tag {
-  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300;
+  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+  background-color: var(--background-secondary);
+  color: var(--foreground-muted);
 }
 
 /* -----------------------------------------------------------------------------
@@ -220,11 +435,15 @@
    ----------------------------------------------------------------------------- */
 
 .modal-backdrop {
-  @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm;
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
 }
 
 .modal-content {
-  @apply bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden;
+  @apply w-full max-w-2xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden;
+  background-color: var(--background-elevated);
+  box-shadow: var(--shadow-lg);
 }
 
 /* -----------------------------------------------------------------------------
@@ -232,16 +451,18 @@
    ----------------------------------------------------------------------------- */
 
 .side-panel-backdrop {
-  @apply fixed inset-0 z-40 bg-black/20 backdrop-blur-sm;
+  @apply fixed inset-0 z-40;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
 }
 
 .side-panel {
-  @apply fixed right-0 top-0 z-50 h-full w-full max-w-md;
-  @apply bg-white dark:bg-gray-900 shadow-2xl;
-  @apply flex flex-col;
+  @apply fixed right-0 top-0 z-50 h-full w-full max-w-md flex flex-col;
+  background-color: var(--background-elevated);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Animation classes (Tailwind animate-in plugin) */
+/* Animation classes */
 @keyframes slideInFromRight {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
@@ -263,35 +484,34 @@
    ----------------------------------------------------------------------------- */
 
 .kid-accent-bg {
-  background-color: var(--kid-accent, var(--ember-500));
+  background-color: var(--kid-accent, var(--celestial-400));
 }
 
 .kid-accent-text {
-  color: var(--kid-accent, var(--ember-500));
+  color: var(--kid-accent, var(--celestial-400));
 }
 
 .kid-accent-border {
-  border-color: var(--kid-accent, var(--ember-500));
+  border-color: var(--kid-accent, var(--celestial-400));
 }
 
 .kid-accent-ring {
-  --tw-ring-color: var(--kid-accent, var(--ember-500));
+  --tw-ring-color: var(--kid-accent, var(--celestial-400));
 }
 
 /* Gradient variants using kid accent */
 .kid-accent-gradient {
-  background: linear-gradient(135deg, var(--kid-accent, var(--ember-500)), var(--kid-accent-light, var(--ember-400)));
+  background: linear-gradient(135deg, var(--kid-accent, var(--celestial-400)), var(--kid-accent-light, var(--celestial-200)));
 }
 
 /* Hover states */
 .hover\:kid-accent-bg:hover {
-  background-color: var(--kid-accent, var(--ember-500));
+  background-color: var(--kid-accent, var(--celestial-400));
 }
 
 .hover\:kid-accent-text:hover {
-  color: var(--kid-accent, var(--ember-500));
+  color: var(--kid-accent, var(--celestial-400));
 }
-
 
 /* -----------------------------------------------------------------------------
    BRAND THEME UTILITIES
@@ -299,11 +519,11 @@
 
 /* Gradients */
 .bg-brand-gradient {
-  background: linear-gradient(135deg, var(--brand-lilac), var(--brand-coral));
+  background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-rust-500));
 }
 
 .text-brand-gradient {
-  background: linear-gradient(to right, var(--brand-lilac), #c4a7e7, var(--brand-coral));
+  background: linear-gradient(to right, var(--nebula-purple), var(--nebula-purple-light), var(--cosmic-rust-400));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -311,14 +531,109 @@
 }
 
 .bg-galaxy-gradient {
-  background: linear-gradient(to bottom right, var(--brand-deep), #2a2a4a, var(--brand-dark));
+  background: linear-gradient(to bottom right, var(--night-900), var(--night-700), var(--night-800));
 }
 
 /* Glassmorphism */
 .glass-panel {
-  @apply bg-white/10 backdrop-blur-md border border-white/10;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-panel-dark {
-  @apply bg-black/20 backdrop-blur-md border border-white/5;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* -----------------------------------------------------------------------------
+   PROGRESS & GAMIFICATION
+   ----------------------------------------------------------------------------- */
+
+.progress-bar {
+  @apply h-2 rounded-full overflow-hidden;
+  background-color: var(--background-secondary);
+}
+
+.progress-bar-fill {
+  @apply h-full rounded-full transition-all duration-500;
+  background: var(--gradient-aurora);
+}
+
+.progress-bar-gold {
+  @apply h-full rounded-full transition-all duration-500;
+  background: var(--gradient-gold-shimmer);
+}
+
+/* XP/Moon counter styling */
+.moon-counter {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold;
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.15), rgba(212, 168, 83, 0.05));
+  color: var(--ember-gold-400);
+  border: 1px solid rgba(212, 168, 83, 0.3);
+}
+
+.dark .moon-counter {
+  background: linear-gradient(135deg, rgba(212, 168, 83, 0.2), rgba(212, 168, 83, 0.1));
+}
+
+/* Streak badge styling */
+.streak-badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold;
+  background: linear-gradient(135deg, rgba(184, 106, 75, 0.15), rgba(184, 106, 75, 0.05));
+  color: var(--cosmic-rust-500);
+  border: 1px solid rgba(184, 106, 75, 0.3);
+}
+
+.dark .streak-badge {
+  background: linear-gradient(135deg, rgba(184, 106, 75, 0.2), rgba(184, 106, 75, 0.1));
+}
+
+/* Achievement card */
+.achievement-card {
+  @apply rounded-xl p-4 text-center;
+  background: var(--gradient-nebula);
+  border: 1px solid var(--border);
+}
+
+.achievement-card:hover {
+  border-color: var(--ember-gold-400);
+  box-shadow: var(--shadow-glow);
+}
+
+/* -----------------------------------------------------------------------------
+   DIVIDERS
+   ----------------------------------------------------------------------------- */
+
+.divider {
+  @apply w-full h-px;
+  background-color: var(--divider);
+}
+
+.divider-vertical {
+  @apply w-px h-full;
+  background-color: var(--divider);
+}
+
+/* -----------------------------------------------------------------------------
+   SCROLLBAR STYLING (Dark mode optimized)
+   ----------------------------------------------------------------------------- */
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--slate-400);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--slate-300);
 }

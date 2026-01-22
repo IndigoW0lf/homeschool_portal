@@ -12,51 +12,51 @@ const features = [
     icon: CalendarCheck,
     title: 'Lesson Planning',
     description: 'Organize your curriculum with lessons, daily playlists, and a visual calendar. Never wonder "what are we doing today?" again.',
-    color: 'from-blue-500 to-cyan-500',
+    color: 'from-[var(--celestial-400)] to-[var(--nebula-teal)]',
   },
   {
     icon: ChartLineUp,
     title: 'Progress Tracking',
     description: 'See assignments completed, streaks maintained, and growth over time. Beautiful insights without the spreadsheet headaches.',
-    color: 'from-green-500 to-emerald-500',
+    color: 'from-[var(--success)] to-[var(--success-dark)]',
   },
   {
     icon: Users,
     title: 'Kid Portals',
     description: 'Each child gets their own personalized dashboard with daily quests, their favorite colors, and age-appropriate views.',
-    color: 'from-purple-500 to-pink-500',
+    color: 'from-[var(--nebula-purple)] to-[var(--nebula-pink)]',
   },
   {
     icon: Moon,
     title: 'Moon Rewards',
     description: 'Kids earn moons for completing work, then spend them in the shop. Motivation that feels like play, not pressure.',
-    color: 'from-yellow-500 to-orange-500',
+    color: 'from-[var(--ember-gold-400)] to-[var(--cosmic-rust-400)]',
   },
   {
     icon: Sparkle,
     title: 'Luna AI Assistant',
     description: 'Your helpful planning companion. Get lesson ideas, adapt activities for different ages, and brainstorm together.',
-    color: 'from-[#9c8fb8] to-[#E27D60]',
+    color: 'from-[var(--nebula-purple)] to-[var(--cosmic-rust-500)]',
   },
   {
     icon: BookOpen,
     title: 'Family Collaboration',
     description: 'Invite co-parents, grandparents, or tutors to share the load. Everyone stays on the same page.',
-    color: 'from-rose-500 to-red-500',
+    color: 'from-[var(--nebula-pink)] to-[var(--cosmic-rust-500)]',
   },
 ];
 
 export function Features() {
   return (
-    <section id="features" className="py-24 bg-gray-900">
+    <section id="features" className="py-24 bg-[var(--night-800)]">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="text-[#E27D60] font-medium">FEATURES</span>
+          <span className="text-[var(--cosmic-rust-400)] font-medium">FEATURES</span>
           <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">
             Everything you need to homeschool joyfully
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--slate-300)] max-w-2xl mx-auto">
             From planning to tracking to keeping kids engaged—Lunara Quest handles it all.
           </p>
         </div>
@@ -66,7 +66,7 @@ export function Features() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group p-8 rounded-2xl bg-gray-800/50 border border-gray-700/50 hover:border-gray-600 hover:bg-gray-800 transition-all duration-300"
+              className="group p-8 rounded-2xl bg-[var(--night-700)]/50 border border-[var(--night-600)] hover:border-[var(--celestial-400)]/50 hover:bg-[var(--night-700)] transition-all duration-300"
             >
               {/* Icon */}
               <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.color} mb-6 group-hover:scale-110 transition-transform`}>
@@ -77,7 +77,7 @@ export function Features() {
               <h3 className="text-xl font-semibold text-white mb-3">
                 {feature.title}
               </h3>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-[var(--slate-300)] leading-relaxed">
                 {feature.description}
               </p>
             </div>

@@ -43,8 +43,6 @@ export default function StudentLoginPage() {
       }
 
       toast.success(`Welcome back, ${data.name}! 🌟`);
-      // Use window.location.href to force a full page load.
-      // This ensures Safari properly sets the session cookie before navigating.
       window.location.href = data.redirectTo;
     } catch (err) {
       setError('Something went wrong. Please try again.');
@@ -54,35 +52,33 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-galaxy-gradient flex items-center justify-center p-4">
-      {/* Stars background effect */}
+    <div className="min-h-screen bg-cosmic bg-starfield flex items-center justify-center p-4">
+      {/* Animated orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-2 h-2 bg-white rounded-full animate-pulse" />
-        <div className="absolute top-20 right-20 w-1 h-1 bg-white rounded-full animate-pulse delay-100" />
-        <div className="absolute top-40 left-1/4 w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-200" />
-        <div className="absolute bottom-20 right-1/4 w-2 h-2 bg-white rounded-full animate-pulse delay-300" />
-        <div className="absolute bottom-40 left-20 w-1 h-1 bg-white rounded-full animate-pulse delay-500" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--nebula-purple)]/15 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[var(--cosmic-rust-400)]/15 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[var(--ember-gold-400)]/10 rounded-full blur-3xl animate-pulse delay-500" />
       </div>
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md relative z-10">
         {/* Card */}
         <div className="glass-panel rounded-3xl p-8 relative shadow-2xl">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-lilac)] to-[var(--brand-coral)] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="w-16 h-16 bg-gradient-ember rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg glow-gold">
               <Student size={32} weight="duotone" className="text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-1">
               Welcome Back!
             </h1>
-            <p className="text-gray-300 text-sm">
+            <p className="text-[var(--slate-300)] text-sm">
               Enter your info to start learning
             </p>
           </div>
 
           {/* Error message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-200 rounded-lg text-sm text-center">
+            <div className="mb-4 p-3 bg-[var(--error)]/10 border border-[var(--error)]/20 text-[var(--error)] rounded-lg text-sm text-center">
               {error}
             </div>
           )}
@@ -91,7 +87,7 @@ export default function StudentLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* First Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--slate-300)] mb-1.5">
                 First Name
               </label>
               <input
@@ -99,7 +95,7 @@ export default function StudentLoginPage() {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Enter your first name"
-                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent transition-all text-white placeholder-gray-500"
+                className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all text-white placeholder-[var(--slate-500)]"
                 required
                 autoComplete="given-name"
               />
@@ -107,18 +103,18 @@ export default function StudentLoginPage() {
 
             {/* Last Initial */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--slate-300)] mb-1.5">
                 Last Name Initial
               </label>
               <select
                 value={lastInitial}
                 onChange={(e) => setLastInitial(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent transition-all text-white appearance-none cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all text-white appearance-none cursor-pointer"
                 required
               >
-                <option value="" className="bg-gray-800">Select...</option>
+                <option value="" className="bg-[var(--night-800)]">Select...</option>
                 {LAST_INITIALS.map((letter) => (
-                  <option key={letter} value={letter} className="bg-gray-800">
+                  <option key={letter} value={letter} className="bg-[var(--night-800)]">
                     {letter}
                   </option>
                 ))}
@@ -127,7 +123,7 @@ export default function StudentLoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              <label className="block text-sm font-medium text-[var(--slate-300)] mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -136,14 +132,14 @@ export default function StudentLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 focus:ring-2 focus:ring-[var(--brand-coral)] focus:border-transparent transition-all pr-12 text-white placeholder-gray-500"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all pr-12 text-white placeholder-[var(--slate-500)]"
                   required
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--slate-400)] hover:text-white"
                 >
                   {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
                 </button>
@@ -152,16 +148,16 @@ export default function StudentLoginPage() {
 
             {/* Remember Me */}
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm text-gray-300">
+              <label className="flex items-center gap-2 text-sm text-[var(--slate-300)]">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 text-[var(--brand-coral)] rounded focus:ring-[var(--brand-coral)] bg-black/20 border-white/10"
+                  className="w-4 h-4 text-[var(--celestial-400)] rounded focus:ring-[var(--celestial-400)] bg-[var(--night-700)] border-[var(--night-600)]"
                 />
                 Remember me
               </label>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[var(--slate-500)]">
                 Forgot password? Ask a parent!
               </p>
             </div>
@@ -170,7 +166,7 @@ export default function StudentLoginPage() {
             <button
               type="submit"
               disabled={isLoading || !firstName || !lastInitial || !password}
-              className="w-full py-3.5 bg-gradient-to-r from-[var(--brand-lilac)] to-[var(--brand-coral)] text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-gradient-ember text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -185,15 +181,15 @@ export default function StudentLoginPage() {
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-6">
-            <div className="flex-1 h-px bg-white/10" />
-            <span className="text-xs text-gray-400">Or continue with</span>
-            <div className="flex-1 h-px bg-white/10" />
+            <div className="flex-1 h-px bg-[var(--night-600)]" />
+            <span className="text-xs text-[var(--slate-500)]">Or continue with</span>
+            <div className="flex-1 h-px bg-[var(--night-600)]" />
           </div>
 
           {/* Parent Login Link */}
           <Link
             href="/parent/login"
-            className="w-full py-3 border-2 border-white/10 text-gray-300 font-medium rounded-xl hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 border-2 border-[var(--night-600)] text-[var(--slate-300)] font-medium rounded-xl hover:bg-[var(--night-700)] transition-all flex items-center justify-center gap-2"
           >
             <Users size={20} />
             Parent Account
@@ -201,7 +197,7 @@ export default function StudentLoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[var(--brand-lilac)] text-xs mt-6 opacity-60">
+        <p className="text-center text-[var(--celestial-400)] text-xs mt-6 opacity-60">
           Lunara Quest • Learning is an adventure ✨
         </p>
       </div>

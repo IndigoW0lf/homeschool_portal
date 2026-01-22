@@ -49,9 +49,9 @@ export default async function FamilyHomePage() {
   }).format(today);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-amber-50/30 dark:from-gray-900 dark:via-purple-950/20 dark:to-gray-800">
+    <div className="min-h-screen bg-[var(--moon-50)] dark:bg-[var(--night-900)]">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-700">
+      <header className="bg-white/80 dark:bg-[var(--night-800)]/80 backdrop-blur-sm border-b border-[var(--moon-200)] dark:border-[var(--night-700)]">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -63,13 +63,13 @@ export default async function FamilyHomePage() {
                 className="h-12 w-auto svg-title -ml-3"
                 priority
               />
-              <p className="text-gray-500 dark:text-gray-400 mt-2">{formattedDate}</p>
+              <p className="text-[var(--slate-400)] dark:text-[var(--slate-300)] mt-2">{formattedDate}</p>
             </div>
             <div className="flex items-center gap-3">
               <DarkModeToggle />
               <Link 
                 href="/parent"
-                className="px-4 py-2.5 bg-gradient-to-r from-[var(--brand-lilac)] via-[var(--brand-coral)] to-[var(--brand-rose)] text-white rounded-xl hover:opacity-90 transition-all font-bold text-base uppercase tracking-wide shadow-lg"
+                className="px-4 py-2.5 bg-gradient-ember text-white rounded-xl hover:opacity-90 transition-all font-bold text-base uppercase tracking-wide shadow-lg"
                 aria-label="Parent Dashboard"
               >
                 {displayName}
@@ -98,20 +98,18 @@ export default async function FamilyHomePage() {
           {kids.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {kids.map(kid => {
-                const bgClass = 'bg-gradient-to-br from-purple-100 to-teal-100 hover:from-purple-150 hover:to-teal-150 dark:from-purple-900/30 dark:to-teal-900/30 dark:hover:from-purple-900/50 dark:hover:to-teal-900/50 border-purple-200 dark:border-purple-800';
-                
                 return (
                   <Link
                     key={kid.id}
                     href={`/kids/${kid.id}`}
-                    className={`group p-6 rounded-2xl ${bgClass} border-2 shadow-sm hover:shadow-lg transition-all hover:scale-[1.02]`}
+                    className="group p-6 rounded-2xl bg-gradient-nebula dark:bg-[var(--night-700)] border-2 border-[var(--celestial-200)] dark:border-[var(--night-600)] shadow-sm hover:shadow-lg hover:border-[var(--celestial-400)] transition-all hover:scale-[1.02]"
                   >
                     <div className="flex items-center justify-center gap-4">
-                      <span className="text-2xl font-bold text-gray-800 dark:text-white group-hover:scale-105 transition-transform">
+                      <span className="text-2xl font-bold text-[var(--foreground)] group-hover:scale-105 transition-transform">
                         {kid.name}
                       </span>
                     </div>
-                    <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <p className="text-center text-sm text-[var(--foreground-muted)] mt-2">
                       Grade {kid.gradeBand}
                     </p>
                   </Link>
@@ -120,12 +118,12 @@ export default async function FamilyHomePage() {
             </div>
           ) : (
             <div className="card p-8 text-center">
-              <p className="text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-[var(--foreground-muted)] mb-4">
                 No kids added yet! Add your first child to get started.
               </p>
               <Link 
                 href="/parent/settings"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--celestial-400)] text-white rounded-lg font-medium hover:bg-[var(--celestial-500)] transition-all"
               >
                 Add Your First Kid
               </Link>
@@ -143,7 +141,7 @@ export default async function FamilyHomePage() {
               height={60}
               className="h-12 w-auto mb-4 dark:brightness-110"
             />
-            <div className="card overflow-hidden divide-y divide-gray-100 dark:divide-gray-700">
+            <div className="card overflow-hidden divide-y divide-[var(--border)]">
               {upcomingHolidays.map(holiday => (
                 <div
                   key={holiday.id}
