@@ -83,11 +83,19 @@ body {
   font-family: var(--font-quicksand), 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* MAGICAL BACKGROUND UTILITY */
+/* MAGICAL BACKGROUND UTILITY - Light mode: soft lavender gradient, Dark mode: deep space gradient */
 .bg-magical {
-  background: radial-gradient(circle at 50% 0%, #2a2a4a 0%, #1a1a2e 100%);
+  background: linear-gradient(to bottom right, #e8dff5 0%, #d4c5e8 50%, #c5b3db 100%);
   background-attachment: fixed;
-  color: white; /* Default to white text on magical background */
+  min-height: 100vh;
+}
+
+/* Dark mode - match login page galaxy gradient */
+html.dark .bg-magical,
+.dark .bg-magical {
+  background: linear-gradient(to bottom right, var(--brand-deep), #2a2a4a, var(--brand-dark));
+  background-attachment: fixed;
+  color: white;
 }
 
 /* MAGICAL BUTTON GRADIENT */
