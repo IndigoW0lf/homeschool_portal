@@ -1,6 +1,6 @@
 /* =============================================================================
    DESIGN SYSTEM - LUNARA COSMIC
-   Semantic utility classes using Tailwind @apply
+   Semantic utility classes using pure CSS (Tailwind v4 compatible)
    Import this in globals.css
    ============================================================================= */
 
@@ -9,12 +9,20 @@
    ----------------------------------------------------------------------------- */
 
 .btn-primary {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white hover:opacity-90 shadow-lg;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  color: white;
   background: var(--gradient-ember);
   box-shadow: 0 4px 6px -1px rgba(184, 106, 75, 0.25);
+  transition: all 0.2s;
 }
 
 .btn-primary:hover {
+  opacity: 0.9;
   box-shadow: 0 6px 10px -2px rgba(184, 106, 75, 0.35);
   transform: translateY(-1px);
 }
@@ -24,10 +32,16 @@
 }
 
 .btn-secondary {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
   background-color: var(--background-elevated);
   color: var(--foreground);
   border: 1px solid var(--border);
+  transition: all 0.2s;
 }
 
 .btn-secondary:hover {
@@ -36,8 +50,15 @@
 }
 
 .btn-ghost {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 bg-transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  background: transparent;
   color: var(--foreground-muted);
+  transition: all 0.2s;
 }
 
 .btn-ghost:hover {
@@ -46,8 +67,15 @@
 }
 
 .btn-danger {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  color: white;
   background-color: var(--error);
+  transition: all 0.2s;
 }
 
 .btn-danger:hover {
@@ -55,12 +83,23 @@
 }
 
 .btn-sm {
-  @apply px-3 py-1.5 text-sm rounded-lg font-medium transition-all inline-flex items-center gap-1.5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
-/* Pill buttons (rounded-full) */
+/* Pill buttons */
 .btn-pill {
-  @apply px-4 py-2 rounded-full text-sm font-medium transition-all;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
 .btn-pill-active {
@@ -82,8 +121,10 @@
 
 /* Icon buttons */
 .btn-icon {
-  @apply p-2 rounded-lg transition-colors;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   color: var(--foreground-muted);
+  transition: colors 0.2s;
 }
 
 .btn-icon:hover {
@@ -92,8 +133,10 @@
 }
 
 .btn-icon-sm {
-  @apply p-1.5 rounded-lg transition-colors;
+  padding: 0.375rem;
+  border-radius: 0.5rem;
   color: var(--foreground-muted);
+  transition: colors 0.2s;
 }
 
 .btn-icon-sm:hover {
@@ -101,21 +144,35 @@
   color: var(--foreground);
 }
 
-/* Gold/Achievement button variant */
+/* Gold/Achievement button */
 .btn-gold {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  color: white;
   background: var(--gradient-gold-shimmer);
   box-shadow: 0 4px 12px rgba(212, 168, 83, 0.3);
+  transition: all 0.2s;
 }
 
 .btn-gold:hover {
   box-shadow: 0 6px 16px rgba(212, 168, 83, 0.4);
 }
 
-/* Celestial button variant */
+/* Celestial button */
 .btn-celestial {
-  @apply px-4 py-2 rounded-lg font-medium transition-all inline-flex items-center gap-2 text-white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  color: white;
   background-color: var(--celestial-500);
+  transition: all 0.2s;
 }
 
 .btn-celestial:hover {
@@ -127,43 +184,52 @@
    ----------------------------------------------------------------------------- */
 
 .card {
-  @apply rounded-xl;
+  border-radius: 0.75rem;
   background-color: var(--background-elevated);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
 }
 
 .card-elevated {
-  @apply rounded-xl;
+  border-radius: 0.75rem;
   background-color: var(--background-elevated);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
 }
 
 .card-cosmic {
-  @apply rounded-xl;
+  border-radius: 0.75rem;
   background: var(--gradient-nebula);
   border: 1px solid var(--border-subtle);
   backdrop-filter: blur(8px);
 }
 
 .card-section {
-  @apply p-4;
+  padding: 1rem;
   border-bottom: 1px solid var(--border);
 }
 
 .card-body {
-  @apply p-4;
+  padding: 1rem;
 }
 
 .card-header {
-  @apply p-4 flex items-center justify-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
   border-bottom: 1px solid var(--border);
 }
 
-/* List item variant */
+/* List item */
 .list-item {
-  @apply flex items-center justify-between gap-3 p-3 rounded-lg transition-colors;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: colors 0.2s;
 }
 
 .list-item:hover {
@@ -171,7 +237,14 @@
 }
 
 .list-item-clickable {
-  @apply flex items-center justify-between gap-3 p-3 rounded-lg transition-colors cursor-pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: colors 0.2s;
 }
 
 .list-item-clickable:hover {
@@ -183,10 +256,14 @@
    ----------------------------------------------------------------------------- */
 
 .input {
-  @apply w-full px-3 py-2 rounded-lg outline-none transition-all;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  outline: none;
   background-color: var(--background-elevated);
   border: 1px solid var(--border);
   color: var(--foreground);
+  transition: all 0.2s;
 }
 
 .input:focus {
@@ -199,7 +276,10 @@
 }
 
 .input-sm {
-  @apply px-2.5 py-1.5 text-sm rounded-lg outline-none;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  outline: none;
   background-color: var(--background-elevated);
   border: 1px solid var(--border);
 }
@@ -210,10 +290,16 @@
 }
 
 .textarea {
-  @apply w-full px-3 py-2 rounded-lg outline-none transition-all min-h-[100px] resize-y;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  outline: none;
+  min-height: 100px;
+  resize: vertical;
   background-color: var(--background-elevated);
   border: 1px solid var(--border);
   color: var(--foreground);
+  transition: all 0.2s;
 }
 
 .textarea:focus {
@@ -222,10 +308,16 @@
 }
 
 .select {
-  @apply w-full px-3 py-2 rounded-lg outline-none transition-all appearance-none cursor-pointer;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
   background-color: var(--background-elevated);
   border: 1px solid var(--border);
   color: var(--foreground);
+  transition: all 0.2s;
 }
 
 .select:focus {
@@ -234,7 +326,10 @@
 }
 
 .input-label {
-  @apply block text-sm font-medium mb-1;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
   color: var(--foreground);
 }
 
@@ -259,27 +354,34 @@
 }
 
 .heading-xl {
-  @apply text-3xl font-bold;
+  font-size: 1.875rem;
+  font-weight: 700;
   color: var(--foreground);
 }
 
 .heading-lg {
-  @apply text-2xl font-bold;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--foreground);
 }
 
 .heading-md {
-  @apply text-xl font-semibold;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--foreground);
 }
 
 .heading-sm {
-  @apply text-lg font-semibold;
+  font-size: 1.125rem;
+  font-weight: 600;
   color: var(--foreground);
 }
 
 .section-label {
-  @apply text-xs font-semibold uppercase tracking-wider;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--foreground-muted);
 }
 
@@ -322,37 +424,52 @@
    ----------------------------------------------------------------------------- */
 
 .page-container {
-  @apply min-h-screen;
+  min-height: 100vh;
   background-color: var(--background);
 }
 
 .page-content {
-  @apply max-w-7xl mx-auto px-4 py-8;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
 .section-header {
-  @apply flex items-center justify-between mb-6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
 }
 
 .flex-center {
-  @apply flex items-center justify-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .flex-between {
-  @apply flex items-center justify-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 /* Stack layouts */
 .stack {
-  @apply flex flex-col gap-4;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .stack-sm {
-  @apply flex flex-col gap-2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .stack-lg {
-  @apply flex flex-col gap-6;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* -----------------------------------------------------------------------------
@@ -360,11 +477,21 @@
    ----------------------------------------------------------------------------- */
 
 .badge {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .badge-celestial {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background-color: var(--celestial-100);
   color: var(--celestial-700);
 }
@@ -375,7 +502,12 @@
 }
 
 .badge-gold {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background-color: var(--ember-gold-100);
   color: var(--ember-gold-700);
 }
@@ -386,7 +518,12 @@
 }
 
 .badge-rust {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background-color: var(--cosmic-rust-100);
   color: var(--cosmic-rust-700);
 }
@@ -397,7 +534,12 @@
 }
 
 .badge-purple {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background-color: var(--nebula-purple-light);
   color: var(--nebula-purple);
 }
@@ -408,7 +550,12 @@
 }
 
 .badge-success {
-  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background-color: var(--success-light);
   color: var(--success-dark);
 }
@@ -418,14 +565,64 @@
   color: var(--success);
 }
 
-/* Legacy badge names for compatibility */
-.badge-blue { @apply badge-celestial; }
-.badge-green { @apply badge-success; }
-.badge-ember { @apply badge-celestial; }
+/* Legacy badge names */
+.badge-blue { 
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--celestial-100);
+  color: var(--celestial-700);
+}
 
-/* Tag pills (removable) */
+.dark .badge-blue {
+  background-color: rgba(91, 155, 158, 0.2);
+  color: var(--celestial-300);
+}
+
+.badge-green { 
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--success-light);
+  color: var(--success-dark);
+}
+
+.dark .badge-green {
+  background-color: rgba(111, 143, 115, 0.2);
+  color: var(--success);
+}
+
+.badge-ember { 
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--celestial-100);
+  color: var(--celestial-700);
+}
+
+.dark .badge-ember {
+  background-color: rgba(91, 155, 158, 0.2);
+  color: var(--celestial-300);
+}
+
+/* Tag pills */
 .tag {
-  @apply inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
   background-color: var(--background-secondary);
   color: var(--foreground-muted);
 }
@@ -435,13 +632,25 @@
    ----------------------------------------------------------------------------- */
 
 .modal-backdrop {
-  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
 }
 
 .modal-content {
-  @apply w-full max-w-2xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden;
+  width: 100%;
+  max-width: 42rem;
+  max-height: 90vh;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background-color: var(--background-elevated);
   box-shadow: var(--shadow-lg);
 }
@@ -451,13 +660,23 @@
    ----------------------------------------------------------------------------- */
 
 .side-panel-backdrop {
-  @apply fixed inset-0 z-40;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
   background-color: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(4px);
 }
 
 .side-panel {
-  @apply fixed right-0 top-0 z-50 h-full w-full max-w-md flex flex-col;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 50;
+  height: 100%;
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
   background-color: var(--background-elevated);
   box-shadow: var(--shadow-lg);
 }
@@ -480,7 +699,6 @@
 
 /* -----------------------------------------------------------------------------
    KID ACCENT COLOR UTILITIES
-   Use --kid-accent CSS variable set in the kid layout for personalized colors
    ----------------------------------------------------------------------------- */
 
 .kid-accent-bg {
@@ -499,25 +717,14 @@
   --tw-ring-color: var(--kid-accent, var(--celestial-400));
 }
 
-/* Gradient variants using kid accent */
 .kid-accent-gradient {
   background: linear-gradient(135deg, var(--kid-accent, var(--celestial-400)), var(--kid-accent-light, var(--celestial-200)));
-}
-
-/* Hover states */
-.hover\:kid-accent-bg:hover {
-  background-color: var(--kid-accent, var(--celestial-400));
-}
-
-.hover\:kid-accent-text:hover {
-  color: var(--kid-accent, var(--celestial-400));
 }
 
 /* -----------------------------------------------------------------------------
    BRAND THEME UTILITIES
    ----------------------------------------------------------------------------- */
 
-/* Gradients */
 .bg-brand-gradient {
   background: linear-gradient(135deg, var(--nebula-purple), var(--cosmic-rust-500));
 }
@@ -552,23 +759,34 @@
    ----------------------------------------------------------------------------- */
 
 .progress-bar {
-  @apply h-2 rounded-full overflow-hidden;
+  height: 0.5rem;
+  border-radius: 9999px;
+  overflow: hidden;
   background-color: var(--background-secondary);
 }
 
 .progress-bar-fill {
-  @apply h-full rounded-full transition-all duration-500;
+  height: 100%;
+  border-radius: 9999px;
   background: var(--gradient-aurora);
+  transition: all 0.5s;
 }
 
 .progress-bar-gold {
-  @apply h-full rounded-full transition-all duration-500;
+  height: 100%;
+  border-radius: 9999px;
   background: var(--gradient-gold-shimmer);
+  transition: all 0.5s;
 }
 
-/* XP/Moon counter styling */
+/* XP/Moon counter */
 .moon-counter {
-  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
   background: linear-gradient(135deg, rgba(212, 168, 83, 0.15), rgba(212, 168, 83, 0.05));
   color: var(--ember-gold-400);
   border: 1px solid rgba(212, 168, 83, 0.3);
@@ -578,9 +796,14 @@
   background: linear-gradient(135deg, rgba(212, 168, 83, 0.2), rgba(212, 168, 83, 0.1));
 }
 
-/* Streak badge styling */
+/* Streak badge */
 .streak-badge {
-  @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
   background: linear-gradient(135deg, rgba(184, 106, 75, 0.15), rgba(184, 106, 75, 0.05));
   color: var(--cosmic-rust-500);
   border: 1px solid rgba(184, 106, 75, 0.3);
@@ -592,7 +815,9 @@
 
 /* Achievement card */
 .achievement-card {
-  @apply rounded-xl p-4 text-center;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
   background: var(--gradient-nebula);
   border: 1px solid var(--border);
 }
@@ -607,17 +832,19 @@
    ----------------------------------------------------------------------------- */
 
 .divider {
-  @apply w-full h-px;
+  width: 100%;
+  height: 1px;
   background-color: var(--divider);
 }
 
 .divider-vertical {
-  @apply w-px h-full;
+  width: 1px;
+  height: 100%;
   background-color: var(--divider);
 }
 
 /* -----------------------------------------------------------------------------
-   SCROLLBAR STYLING (Dark mode optimized)
+   SCROLLBAR STYLING
    ----------------------------------------------------------------------------- */
 
 .custom-scrollbar::-webkit-scrollbar {
