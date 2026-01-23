@@ -174,23 +174,23 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
       {/* HEADER */}
       <div className="flex items-center justify-between">
          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-heading flex items-center gap-2">
                <Layout className="text-[var(--ember-500)]" /> Add Resource
             </h2>
-            <p className="text-sm text-gray-500">Add a reusable link, book, or app to the library.</p>
+            <p className="text-sm text-muted">Add a reusable link, book, or app to the library.</p>
          </div>
          <div className="flex gap-2">
             <button 
                type="button" 
                onClick={() => setValue('isPinned', !isPinned)}
-               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", isPinned ? "bg-amber-50 border-amber-300 text-amber-700" : "border-gray-200 text-gray-500")}
+               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", isPinned ? "bg-amber-50 border-amber-300 text-amber-700" : "border-[var(--border)] text-muted")}
             >
                 <PushPin size={16} weight="duotone" color="#e7b58d" className={isPinned ? "fill-current" : ""} /> Pin to Top
             </button>
             <button 
                type="button" 
                onClick={() => setValue('showOnToday', !showOnToday)}
-               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", showOnToday ? "bg-blue-50 border-blue-300 text-blue-700" : "border-gray-200 text-gray-500")}
+               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", showOnToday ? "bg-blue-50 border-blue-300 text-blue-700" : "border-[var(--border)] text-muted")}
             >
                 <CalendarBlank size={16} weight="duotone" color="#b6e1d8" /> Show on Today
             </button>
@@ -198,21 +198,21 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
       </div>
 
       {/* 1. CORE DETAILS */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
+      <div className="bg-[var(--background-elevated)] p-6 rounded-xl border border-[var(--border)] shadow-sm space-y-6">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Resource Title</label>
+               <label className="block text-sm font-medium text-heading dark:text-muted mb-1">Resource Title</label>
                <input 
                   {...register('title')}
                   placeholder="e.g. Khan Academy Kids"
-                  className="w-full text-lg p-2 border-b-2 border-gray-200 dark:border-gray-700 bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-gray-300"
+                  className="w-full text-lg p-2 border-b-2 border-[var(--border)] bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-muted"
                />
                {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
             </div>
 
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-               <select {...register('category')} className="w-full p-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-[var(--ember-500)] outline-none">
+               <label className="block text-sm font-medium text-heading dark:text-muted mb-2">Category</label>
+               <select {...register('category')} className="w-full p-2.5 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)] focus:ring-2 focus:ring-[var(--ember-500)] outline-none">
                   <option value="">Select Category...</option>
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                </select>
@@ -220,8 +220,8 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
             </div>
 
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format Type</label>
-               <div className="flex bg-gray-100 dark:bg-gray-900 p-1 rounded-lg">
+               <label className="block text-sm font-medium text-heading dark:text-muted mb-2">Format Type</label>
+               <div className="flex bg-[var(--background-secondary)] p-1 rounded-lg">
                   {RESOURCE_TYPES.map((t) => (
                      <button
                         key={t}
@@ -229,7 +229,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
                         onClick={() => setValue('type', t.toLowerCase() as ResourceFormData['type'])}
                         className={cn(
                            "flex-1 py-1.5 text-xs font-medium capitalize rounded-md transition-all",
-                           type === t.toLowerCase() ? "bg-white dark:bg-gray-700 shadow text-gray-900 dark:text-white" : "text-gray-500 hover:text-gray-700"
+                           type === t.toLowerCase() ? "bg-white dark:bg-[var(--background-secondary)] shadow text-heading" : "text-muted hover:text-heading"
                         )}
                      >
                         {t}
@@ -249,16 +249,16 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                <div className="md:col-span-2">
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Video URL</label>
-                  <input {...register('url')} placeholder="https://youtube.com/..." className="w-full p-2 text-sm rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                  <label className="text-xs font-medium text-muted mb-1 block">Video URL</label>
+                  <input {...register('url')} placeholder="https://youtube.com/..." className="w-full p-2 text-sm rounded border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]" />
                </div>
                <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Duration (mins)</label>
-                  <input {...register('duration', { valueAsNumber: true })} type="number" className="w-full p-2 text-sm rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                  <label className="text-xs font-medium text-muted mb-1 block">Duration (mins)</label>
+                  <input {...register('duration', { valueAsNumber: true })} type="number" className="w-full p-2 text-sm rounded border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]" />
                </div>
                <div className="md:col-span-2">
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Purpose Question (&quot;Watch with purpose...&quot;)</label>
-                  <input {...register('purposePrompt')} placeholder="e.g. What was the main idea?" className="w-full p-2 text-sm rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                  <label className="text-xs font-medium text-muted mb-1 block">Purpose Question (&quot;Watch with purpose...&quot;)</label>
+                  <input {...register('purposePrompt')} placeholder="e.g. What was the main idea?" className="w-full p-2 text-sm rounded border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]" />
                </div>
             </div>
          </div>
@@ -272,12 +272,12 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Author</label>
-                  <input {...register('author')} className="w-full p-2 text-sm rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                  <label className="text-xs font-medium text-muted mb-1 block">Author</label>
+                  <input {...register('author')} className="w-full p-2 text-sm rounded border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]" />
                </div>
                <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">Reading Level (Lexile/Grade)</label>
-                  <input {...register('readingLevel')} className="w-full p-2 text-sm rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                  <label className="text-xs font-medium text-muted mb-1 block">Reading Level (Lexile/Grade)</label>
+                  <input {...register('readingLevel')} className="w-full p-2 text-sm rounded border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]" />
                </div>
             </div>
          </div>
@@ -291,22 +291,22 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
             </h3>
             <div className="space-y-4">
                <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1 block">URL</label>
-                  <input {...register('url')} className="w-full p-2 text-sm rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                  <label className="text-xs font-medium text-muted mb-1 block">URL</label>
+                  <input {...register('url')} className="w-full p-2 text-sm rounded border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]" />
                </div>
                <div className="flex items-center gap-2">
-                  <input type="checkbox" {...register('requiresAccount')} className="rounded border-gray-300 text-blue-600" />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">Requires Login?</span>
+                  <input type="checkbox" {...register('requiresAccount')} className="rounded border-[var(--border)] text-blue-600" />
+                  <span className="text-sm text-muted dark:text-muted">Requires Login?</span>
                </div>
             </div>
          </div>
       )}
 
       {/* 3. ASSIGNMENT & LOGISTICS */}
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm space-y-6">
+      <div className="bg-[var(--background-elevated)] p-6 rounded-xl border border-[var(--border)] shadow-sm space-y-6">
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tags</label>
+               <label className="block text-sm font-medium text-heading dark:text-muted mb-2">Tags</label>
                <TagInput 
                   value={tags} 
                   onChange={(t) => setValue('tags', t)} 
@@ -316,7 +316,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
             </div>
 
             <div>
-               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Assign To</label>
+               <label className="block text-sm font-medium text-heading dark:text-muted mb-2">Assign To</label>
                <div className="flex gap-2 flex-wrap">
                   {studentsLoading ? (
                     <div className="text-sm text-muted">Loading...</div>
@@ -341,14 +341,14 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
 
             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1">
+                  <label className="block text-sm font-medium text-heading dark:text-muted mb-1 flex items-center gap-1">
                      <Key size={14} /> Access Instructions / Login Hints
                   </label>
-                  <input {...register('loginHints')} placeholder="e.g. Use shared family login" className="w-full p-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700" />
+                  <input {...register('loginHints')} placeholder="e.g. Use shared family login" className="w-full p-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]" />
                </div>
                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Frequency</label>
-                  <select {...register('frequency')} className="w-full p-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700">
+                  <label className="block text-sm font-medium text-heading dark:text-muted mb-1">Frequency</label>
+                  <select {...register('frequency')} className="w-full p-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]">
                      <option value="Optional">Optional / As Needed</option>
                      <option value="Daily">Daily</option>
                      <option value="Weekly">Weekly</option>
@@ -359,7 +359,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
          </div>
       </div>
 
-      <div className="flex justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+      <div className="flex justify-between pt-4 border-t border-[var(--border)]">
          {initialData?.id && (
            <button
               type="button"
@@ -380,7 +380,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
                 <button
                    type="button"
                    onClick={onCancel}
-                   className="px-6 py-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg font-medium transition-colors"
+                   className="px-6 py-2 text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-lg font-medium transition-colors"
                 >
                    Cancel
                 </button>

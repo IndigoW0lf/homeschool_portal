@@ -63,13 +63,13 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-2">
         <Lock size={24} className="text-[var(--lavender-500)]" weight="fill" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-lg font-semibold text-heading">
           Student Login
         </h3>
       </div>
 
-      <p className="text-sm text-gray-600 dark:text-gray-400">
-        Your child needs a Last Name and a Password to log in independently at <span className="font-mono text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">/student</span>.
+      <p className="text-sm text-muted">
+        Your child needs a Last Name and a Password to log in independently at <span className="font-mono text-xs bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] px-1 py-0.5 rounded">/student</span>.
       </p>
 
       {/* Setup / Update Form */}
@@ -77,7 +77,7 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
         "p-5 rounded-xl border-2 transition-all",
         isSetup 
           ? "border-[var(--lavender-200)] bg-[var(--lavender-50)] dark:bg-[var(--lavender-900)]/10 dark:border-[var(--lavender-800)]"
-          : "border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900"
+          : "border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--night-900)]"
       )}>
         <div className="flex items-start gap-3 mb-6">
           <div className={cn(
@@ -87,10 +87,10 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
             {isSetup ? <Warning size={20} weight="fill" /> : <Check size={20} weight="bold" />}
           </div>
           <div>
-            <h4 className="font-medium text-gray-900 dark:text-white">
+            <h4 className="font-medium text-heading">
               {isSetup ? 'Enable Student Login' : 'Login Credentials Active'}
             </h4>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted mt-1">
               {isSetup 
                 ? 'Set a Last Name and Password to enable login.' 
                 : 'Last Name and Password are set. Use the form below to update them.'}
@@ -101,7 +101,7 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
         <div className="space-y-4">
           {/* Last Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            <label className="block text-sm font-medium text-heading dark:text-muted mb-1.5">
               Last Name {isSetup && <span className="text-red-500">*</span>}
             </label>
             <div className="relative">
@@ -110,9 +110,9 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Enter last name"
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-[var(--lavender-500)] outline-none"
+                className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-[var(--lavender-500)] outline-none"
               />
-              <p className="text-[10px] text-gray-400 mt-1.5 ml-1">
+              <p className="text-[10px] text-muted mt-1.5 ml-1">
                 Used for login initial matching (e.g. "Stella A")
               </p>
             </div>
@@ -120,7 +120,7 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+            <label className="block text-sm font-medium text-heading dark:text-muted mb-1.5">
               {isSetup ? 'Create Password' : 'Update Password'} {isSetup && <span className="text-red-500">*</span>}
             </label>
             <div className="relative">
@@ -129,18 +129,18 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={isSetup ? "Enter a new password" : "Enter new password to change"}
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-[var(--lavender-500)] outline-none pr-10"
+                className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-[var(--lavender-500)] outline-none pr-10"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted"
               >
                 {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
               </button>
             </div>
             {!isSetup && (
-              <p className="text-[10px] text-gray-400 mt-1.5 ml-1">
+              <p className="text-[10px] text-muted mt-1.5 ml-1">
                 Leave empty to keep current password
               </p>
             )}
@@ -155,7 +155,7 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
                 "w-full py-2.5 rounded-lg font-medium transition-all shadow-sm",
                 isSetup
                   ? "bg-[var(--lavender-500)] text-white hover:bg-[var(--lavender-600)]"
-                  : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+                  : "bg-white border border-[var(--border)] text-heading hover:bg-[var(--background-secondary)] dark:border-[var(--border)] dark:text-heading"
               )}
             >
               {isSaving ? 'Saving...' : (isSetup ? 'Enable Login' : 'Update Credentials')}

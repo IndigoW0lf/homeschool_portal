@@ -143,25 +143,25 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
       onClick={onClose}
     >
       <div 
-        className="bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-[var(--night-900)] w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)] dark:border-[var(--border)]">
           <div>
-             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+             <h2 className="text-2xl font-bold text-heading">
                 {date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
              </h2>
-             <p className="text-sm text-gray-500">Day Plan & Playlist</p>
+             <p className="text-sm text-muted">Day Plan & Playlist</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-            <X size={24} className="text-gray-500" />
+          <button onClick={onClose} className="p-2 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-full transition-colors">
+            <X size={24} className="text-muted" />
           </button>
         </div>
 
          {/* Scrollable Playlist OR Picker OR Item Detail */}
-         <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50/50 dark:bg-black/20">
+         <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[var(--background-secondary)]/50 dark:bg-black/20">
            
            {viewingItem ? (
               /* Item Detail View */
@@ -211,10 +211,10 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                     return (
                     <>
                  <div className="flex items-center gap-2 mb-4">
-                    <button onClick={() => setViewingItem(null)} className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors">
-                       <CaretLeft size={20} weight="bold" className="text-gray-500" />
+                    <button onClick={() => setViewingItem(null)} className="p-1.5 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] rounded-full transition-colors">
+                       <CaretLeft size={20} weight="bold" className="text-muted" />
                     </button>
-                    <h3 className="font-bold text-lg flex-1 text-gray-900 dark:text-white">{itemType === 'lesson' ? 'Lesson' : 'Assignment'} Details</h3>
+                    <h3 className="font-bold text-lg flex-1 text-heading">{itemType === 'lesson' ? 'Lesson' : 'Assignment'} Details</h3>
                     <button 
                        onClick={() => {
                           // Navigate to edit page
@@ -231,7 +231,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                  </div>
                  
                  {/* Item Title Card */}
-                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
+                 <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
                     <div className="flex items-start gap-3">
                        <div className={cn(
                           "w-10 h-10 rounded-lg flex items-center justify-center",
@@ -248,8 +248,8 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                           )}>
                              {detailData.type || viewingItem.type || itemType}
                           </span>
-                          <h2 className="text-xl font-bold text-gray-900 dark:text-white">{detailData.title || viewingItem.title || 'Untitled'}</h2>
-                          <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
+                          <h2 className="text-xl font-bold text-heading">{detailData.title || viewingItem.title || 'Untitled'}</h2>
+                          <div className="flex items-center gap-3 mt-2 text-sm text-muted">
                              <span className="flex items-center gap-1">
                                 <Timer size={14} weight="duotone" />
                                 {detailData.estimatedMinutes || detailData.estimated_minutes || viewingItem.estimatedMinutes || 20} mins
@@ -264,9 +264,9 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        
                        {/* Description */}
                        {description && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Description</h3>
-                             <div className="text-gray-700 dark:text-gray-300 prose prose-sm max-w-none">
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading mb-2">Description</h3>
+                             <div className="text-heading dark:text-muted prose prose-sm max-w-none">
                                 {description.split('\n').map((line: string, i: number) => (
                                    <p key={i} className="mb-1 last:mb-0">{line}</p>
                                 ))}
@@ -276,15 +276,15 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
 
                        {/* Key Questions (for lessons) */}
                        {safeQuestions.length > 0 && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
                                 <Question size={18} weight="duotone" className="text-[var(--ember-500)]" />
                                 Key Questions
                              </h3>
                              <ul className="space-y-2">
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {safeQuestions.map((q: any, i: number) => (
-                                   <li key={i} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                   <li key={i} className="flex items-start gap-2 text-heading dark:text-muted">
                                       <span className="text-[var(--ember-500)] font-bold">{i + 1}.</span>
                                       <span>{typeof q === 'string' ? q : q.text}</span>
                                    </li>
@@ -295,15 +295,15 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        
                        {/* Steps (for assignments) */}
                        {detailData.steps && safeArray(detailData.steps).length > 0 && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
                                 <ListBullets size={18} weight="duotone" className="text-[var(--fabric-lilac)]" />
                                 Steps
                              </h3>
                              <ul className="space-y-2">
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {safeArray(detailData.steps).map((step: any, i: number) => (
-                                   <li key={i} className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                                   <li key={i} className="flex items-start gap-2 text-heading dark:text-muted">
                                       <span className="text-[var(--fabric-lilac)] font-bold">{i + 1}.</span>
                                       <span>{typeof step === 'string' ? step : step.text}</span>
                                    </li>
@@ -314,16 +314,16 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        
                        {/* Rubric (Success Criteria) for Assignments */}
                        {detailData.rubric && safeArray(detailData.rubric).length > 0 && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
                                 <CheckCircle size={18} weight="duotone" className="text-green-500" />
                                 Success Criteria
                              </h3>
                              <ul className="space-y-2">
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {safeArray(detailData.rubric).map((item: any, i: number) => (
-                                   <li key={i} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                      <div className="w-4 h-4 rounded-sm border-2 border-gray-300 dark:border-gray-600"></div>
+                                   <li key={i} className="flex items-center gap-2 text-heading dark:text-muted">
+                                      <div className="w-4 h-4 rounded-sm border-2 border-[var(--border)] dark:border-[var(--border)]"></div>
                                       <span>{typeof item === 'string' ? item : item.text}</span>
                                    </li>
                                 ))}
@@ -333,24 +333,24 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
 
                        {/* Deliverable (for assignments) */}
                        {detailData.deliverable && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Expected Deliverable</h3>
-                             <p className="text-gray-700 dark:text-gray-300">{detailData.deliverable}</p>
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading mb-2">Expected Deliverable</h3>
+                             <p className="text-heading dark:text-muted">{detailData.deliverable}</p>
                           </div>
                        )}
                        
                        {/* Materials (for lessons) */}
                        {detailData.materials && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Materials Needed</h3>
-                             <p className="text-gray-700 dark:text-gray-300">{detailData.materials}</p>
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading mb-2">Materials Needed</h3>
+                             <p className="text-heading dark:text-muted">{detailData.materials}</p>
                           </div>
                        )}
 
                        {/* Links/Resources */}
                        {safeLinks.length > 0 && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Links & Resources</h3>
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading mb-2">Links & Resources</h3>
                              <div className="flex flex-col gap-2">
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {safeLinks.map((link: any, i: number) => (
@@ -359,7 +359,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       href={link.url}
                                       target="_blank"
                                       rel="noopener noreferrer" 
-                                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+                                      className="flex items-center gap-3 p-3 rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)]/50 hover:bg-[var(--hover-overlay)] transition-colors group"
                                    >
                                       <div className="w-8 h-8 rounded-lg bg-[var(--fabric-mint)]/20 text-[var(--fabric-mint)] flex items-center justify-center">
                                          <LinkSimple size={16} weight="bold" />
@@ -367,7 +367,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       <span className="flex-1 font-medium text-blue-600 dark:text-blue-400 group-hover:underline">
                                          {link.label || link.url}
                                       </span>
-                                      <ArrowSquareOut size={16} className="text-gray-400 group-hover:text-blue-500" />
+                                      <ArrowSquareOut size={16} className="text-muted group-hover:text-blue-500" />
                                    </a>
                                 ))}
                              </div>
@@ -376,15 +376,15 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        
                        {/* Tags */}
                        {detailData.tags && safeArray(detailData.tags).length > 0 && (
-                          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-5 shadow-sm">
-                             <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
+                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
                                 <Tag size={18} weight="duotone" className="text-[var(--fabric-mint)]" />
                                 Tags
                              </h3>
                              <div className="flex flex-wrap gap-2">
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {safeArray(detailData.tags).map((tag: any, i: number) => (
-                                   <span key={i} className="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full">
+                                   <span key={i} className="px-2 py-1 text-xs font-medium bg-[var(--background-secondary)] text-muted dark:text-muted rounded-full">
                                       {tag}
                                    </span>
                                 ))}
@@ -403,7 +403,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                  
                  {/* No details message - fallback if really empty */}
                  {!detailData.details && !description && !safeQuestions.length && !detailData.steps &&  (
-                    <div className="text-center py-10 text-gray-400">
+                    <div className="text-center py-10 text-muted">
                        <p>No additional details available for this item.</p>
                     </div>
                  )}
@@ -414,15 +414,15 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
            ) : pickerType ? (
               <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                  <div className="flex items-center gap-2 mb-4">
-                    <button onClick={() => setPickerType(null)} className="p-1 hover:bg-gray-200 rounded-full">
+                    <button onClick={() => setPickerType(null)} className="p-1 hover:bg-[var(--background-secondary)] rounded-full">
                        <X size={20} />
                     </button>
                     <h3 className="font-bold text-lg flex-1">Select {pickerType === 'lesson' ? 'Lesson' : 'Assignment'}</h3>
                  </div>
                  
                  {/* Kid Selection */}
-                 <div className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
-                    <span className="text-sm font-medium text-gray-500">Assign to:</span>
+                 <div className="flex items-center gap-3 p-3 bg-[var(--background-elevated)] rounded-xl border border-[var(--border)]">
+                    <span className="text-sm font-medium text-muted">Assign to:</span>
                     {students.map(student => (
                        <button
                           key={student.id}
@@ -432,7 +432,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                              "flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all text-sm font-medium",
                              selectedKids.includes(student.id)
                                ? "border-[var(--ember-500)] bg-[var(--ember-50)] text-[var(--ember-600)]"
-                               : "border-gray-200 text-gray-400 hover:border-gray-300"
+                               : "border-[var(--border)] text-muted hover:border-[var(--border)]"
                           )}
                        >
                           <StudentAvatar name={student.name} className="w-5 h-5 text-[8px]" />
@@ -446,11 +446,11 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        <div 
                           key={item.id}
                           onClick={() => handleScheduleItem(item)}
-                          className="p-4 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl hover:border-[var(--ember-400)] cursor-pointer transition-all shadow-sm hover:shadow-md flex items-center justify-between group"
+                          className="p-4 bg-[var(--background-elevated)] border border-[var(--border)] rounded-xl hover:border-[var(--ember-400)] cursor-pointer transition-all shadow-sm hover:shadow-md flex items-center justify-between group"
                        >
                           <div>
-                             <h4 className="font-semibold text-gray-900 dark:text-white">{item.title}</h4>
-                             <p className="text-xs text-gray-500">
+                             <h4 className="font-semibold text-heading">{item.title}</h4>
+                             <p className="text-xs text-muted">
                                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {item.type} • {(item as any).estimatedMinutes || (item as any).estimated_minutes || 20} mins
                              </p>
@@ -462,7 +462,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                     ))}
                     
                     {(pickerType === 'lesson' ? lessons : assignments).length === 0 && (
-                       <div className="text-center py-10 text-gray-400">
+                       <div className="text-center py-10 text-muted">
                           <p>No items found in library.</p>
                        </div>
                     )}
@@ -479,22 +479,22 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                      {!filterStudentId && students.length > 1 && (
                         <div className="flex items-center gap-2 pt-2 pb-1">
                            <StudentAvatar name={student.name} className="w-6 h-6 text-[10px]" />
-                           <span className="font-semibold text-sm text-gray-600 dark:text-gray-400">{student.name}'s Tasks</span>
-                           <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                           <span className="font-semibold text-sm text-muted">{student.name}'s Tasks</span>
+                           <div className="flex-1 h-px bg-[var(--background-secondary)]" />
                         </div>
                      )}
                      
                      {studentItems.length === 0 && !filterStudentId && students.length > 1 && (
-                        <p className="text-xs text-gray-400 pl-8">No tasks scheduled</p>
+                        <p className="text-xs text-muted pl-8">No tasks scheduled</p>
                      )}
                      
                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                      {studentItems.map((item: any) => (
-                        <div key={item.id} className="group relative bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm transition-all hover:shadow-md hover:border-[var(--ember-200)]">
+                        <div key={item.id} className="group relative bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] shadow-sm transition-all hover:shadow-md hover:border-[var(--ember-200)]">
                           
                           {/* Variation Overlay */}
                           {activeVariationId === item.id && (
-                             <div className="absolute inset-x-0 -top-12 z-10 bg-white dark:bg-gray-800 p-3 rounded-t-xl border-x border-t border-[var(--ember-200)] shadow-lg animate-in slide-in-from-bottom-2">
+                             <div className="absolute inset-x-0 -top-12 z-10 bg-[var(--background-elevated)] p-3 rounded-t-xl border-x border-t border-[var(--ember-200)] shadow-lg animate-in slide-in-from-bottom-2">
                                 <div className="flex gap-2">
                                    <Sparkle size={20} weight="duotone" color="#e7b58d" className="mt-2" />
                                    <div className="flex-1">
@@ -504,7 +504,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                           value={variationText}
                                           onChange={e => setVariationText(e.target.value)}
                                           placeholder="e.g. Read only pages 10-15..." 
-                                          className="w-full text-sm bg-transparent outline-none placeholder:text-gray-400"
+                                          className="w-full text-sm bg-transparent outline-none placeholder:text-muted"
                                        />
                                    </div>
                                    <button onClick={() => applyVariation(item.id)} className="px-3 py-1 bg-[var(--ember-500)] text-white text-xs font-bold rounded-lg hover:opacity-90">
@@ -515,7 +515,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                           )}
      
                           <div className="flex items-center gap-4 p-4">
-                             <div className="text-gray-300 cursor-grab active:cursor-grabbing hover:text-gray-500">
+                             <div className="text-muted cursor-grab active:cursor-grabbing hover:text-muted">
                                  <DotsSixVertical size={24} weight="duotone" color="#b6e1d8" />
                              </div>
                              
@@ -553,7 +553,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       toast.error('Could not update status');
                                    }
                                 }} 
-                                className={cn("cursor-pointer transition-colors", item.status === 'completed' ? "text-green-500" : "text-gray-300 hover:text-gray-400")}
+                                className={cn("cursor-pointer transition-colors", item.status === 'completed' ? "text-green-500" : "text-muted hover:text-muted")}
                              >
                                 {item.status === 'completed' ? <CheckCircle size={24} /> : <Circle size={24} />}
                              </div>
@@ -574,19 +574,19 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       <StudentAvatar name={student.name} className="w-5 h-5 text-[8px]" />
                                    )}
                                 </div>
-                                <h3 className="font-semibold text-gray-900 dark:text-white text-lg hover:text-[var(--ember-600)] transition-colors">
+                                <h3 className="font-semibold text-heading text-lg hover:text-[var(--ember-600)] transition-colors">
                                    {item.title || 'Untitled Item'}
                                 </h3>
                                 {item.type && (
                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                   <p className="text-sm text-gray-500">{item.title ? item.type : ''} • {item.details?.estimatedMinutes || (item as any).estimated_minutes || 20} mins</p>
+                                   <p className="text-sm text-muted">{item.title ? item.type : ''} • {item.details?.estimatedMinutes || (item as any).estimated_minutes || 20} mins</p>
                                 )}
                              </div>
      
                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button 
                                     onClick={() => handleCloneWithVariation(item.id)}
-                                    className="p-2 text-gray-400 hover:text-[var(--ember-500)] hover:bg-[var(--ember-50)] rounded-lg tooltip-trigger"
+                                    className="p-2 text-muted hover:text-[var(--ember-500)] hover:bg-[var(--ember-50)] rounded-lg tooltip-trigger"
                                     title="Tweak this item"
                                  >
                                     <Copy size={18} />
@@ -598,7 +598,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       e.stopPropagation();
                                       handleDeleteItem(item.id, e);
                                     }}
-                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg"
+                                    className="p-2 text-muted hover:text-red-500 hover:bg-red-50 rounded-lg"
                                     title="Remove from schedule"
                                 >
                                    <Trash size={22} weight="duotone" color="#ffcdf6" />
@@ -616,9 +616,9 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                    {!showAddMenu ? (
                       <button 
                        onClick={() => setShowAddMenu(true)}
-                       className="w-full py-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl text-gray-500 hover:border-[var(--ember-400)] hover:text-[var(--ember-600)] hover:bg-[var(--ember-50)] transition-all flex items-center justify-center gap-2 group"
+                       className="w-full py-4 border-2 border-dashed border-[var(--border)] rounded-xl text-muted hover:border-[var(--ember-400)] hover:text-[var(--ember-600)] hover:bg-[var(--ember-50)] transition-all flex items-center justify-center gap-2 group"
                       >
-                         <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-[var(--ember-200)] flex items-center justify-center transition-colors">
+                         <div className="w-8 h-8 rounded-full bg-[var(--background-secondary)] group-hover:bg-[var(--ember-200)] flex items-center justify-center transition-colors">
                             <Plus size={20} />
                          </div>
                          <span className="font-medium">Add to Playlist</span>
@@ -647,7 +647,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                          </button>
                          <button 
                             onClick={() => setShowAddMenu(false)}
-                            className="absolute -top-3 -right-3 p-1.5 bg-gray-200 rounded-full text-gray-500 hover:bg-gray-300"
+                            className="absolute -top-3 -right-3 p-1.5 bg-[var(--background-secondary)] rounded-full text-muted hover:bg-[var(--moon-200)]"
                          >
                             <X size={14} />
                          </button>

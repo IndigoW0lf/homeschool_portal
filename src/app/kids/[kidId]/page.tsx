@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
@@ -9,6 +8,7 @@ import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { JournalCard } from '@/components/kids/JournalCard';
 import { StreakDisplay } from '@/components/kids/StreakDisplay';
+import { LunaraTitle } from '@/components/ui/LunaraTitle';
 import { CaretLeft, CaretRight, CalendarBlank, Scroll, CheckCircle } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, format, startOfWeek, endOfWeek } from 'date-fns';
 import { KidStateHydrator } from '@/components/KidStateHydrator';
@@ -110,15 +110,14 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <Image 
-                src={kid.name.toLowerCase() === 'stella' ? '/assets/titles/hello_stella.svg' : '/assets/titles/hello_atlas.svg'}
-                alt={`Hello, ${kid.name}!`}
-                width={200}
-                height={50}
-                className="h-10 w-auto mb-1 svg-title"
-                priority
-              />
-              <p className="text-gray-500 dark:text-gray-400 opacity-80">{formattedDate}</p>
+              <LunaraTitle 
+                gradient="teal-pink" 
+                size="lg" 
+                as="h1"
+              >
+                Hello, {kid.name}!
+              </LunaraTitle>
+              <p className="text-muted opacity-80">{formattedDate}</p>
             </div>
             
             {/* Header Navigation Removed - Integrated into Calendar */}
@@ -182,15 +181,14 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                 </div>
             ) : (
                 <>
-                    <Image 
-                    src="/assets/titles/todays_quest.svg" 
-                    alt="Today's Quest" 
-                    width={180} 
-                    height={40}
-                    className="h-8 w-auto svg-title"
-                    />
+                    <LunaraTitle 
+                      gradient="sunset" 
+                      size="lg"
+                    >
+                      Today&apos;s Quest
+                    </LunaraTitle>
                     {!isViewToday && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{formattedDate}</p>
+                    <p className="text-sm text-muted mt-1">{formattedDate}</p>
                     )}
                 </>
             )}
@@ -240,13 +238,13 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
         {/* Resources */}
         <section>
-          <Image 
-            src="/assets/titles/resources.svg" 
-            alt="Resources" 
-            width={140} 
-            height={40}
-            className="h-7 w-auto mb-4 svg-title"
-            />
+          <LunaraTitle 
+            gradient="herbal-bloom" 
+            size="md"
+            className="mb-4"
+          >
+            Resources
+          </LunaraTitle>
           <ResourceSection resources={resources} />
         </section>
       </div>

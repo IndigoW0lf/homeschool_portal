@@ -77,10 +77,10 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+        <h2 className="text-xl font-bold text-heading mb-1">
           Create your account
         </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-muted">
           This will be your parent/educator login
         </p>
       </div>
@@ -89,29 +89,29 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
       <div className="space-y-4">
         {/* Display Name */}
         <div>
-          <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="displayName" className="block text-sm font-medium text-heading dark:text-muted mb-1">
             What should we call you? (optional)
           </label>
           <div className="relative">
-            <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="displayName"
               type="text"
               value={data.displayName}
               onChange={(e) => updateData({ displayName: e.target.value })}
               placeholder="Your name"
-              className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
           </div>
         </div>
 
         {/* Email */}
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-heading dark:text-muted mb-1">
             Email address *
           </label>
           <div className="relative">
-            <EnvelopeSimple size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <EnvelopeSimple size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="email"
               type="email"
@@ -119,18 +119,18 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
               onChange={(e) => updateData({ email: e.target.value })}
               placeholder="you@example.com"
               required
-              className="w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
           </div>
         </div>
 
         {/* Password */}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="password" className="block text-sm font-medium text-heading dark:text-muted mb-1">
             Create a password *
           </label>
           <div className="relative">
-            <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -139,18 +139,18 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
               placeholder="At least 6 characters"
               required
               minLength={6}
-              className="w-full pl-10 pr-12 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-12 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted hover:text-muted dark:hover:text-muted transition-colors"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
+          <p className="text-xs text-muted mt-1">Must be at least 6 characters</p>
         </div>
 
         {/* Error */}
@@ -165,7 +165,7 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
       <div className="flex gap-3">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 px-4 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          className="flex items-center gap-1 px-4 py-2.5 text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-lg transition-colors"
         >
           <ArrowLeft size={16} />
           Back

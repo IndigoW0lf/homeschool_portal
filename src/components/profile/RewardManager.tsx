@@ -117,7 +117,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Storefront size={24} weight="fill" className="text-purple-500" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-lg font-semibold text-heading">
           Shop Rewards
         </h3>
       </div>
@@ -127,7 +127,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
         <select
           value={selectedKid}
           onChange={(e) => setSelectedKid(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+          className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)]"
         >
           {kids.map(kid => (
             <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -160,7 +160,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
             </h4>
             <button 
               onClick={() => setShowTemplates(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-muted hover:text-heading"
             >
               <X size={20} />
             </button>
@@ -175,7 +175,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
                 className={`px-3 py-1 rounded-full text-sm transition-colors ${
                   selectedCategory === cat
                     ? 'bg-purple-500 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100'
+                    : 'bg-[var(--background-elevated)] text-muted hover:bg-[var(--background-secondary)]'
                 }`}
               >
                 {REWARD_CATEGORIES[cat].emoji} {REWARD_CATEGORIES[cat].label}
@@ -189,15 +189,15 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
               <button
                 key={template.id}
                 onClick={() => addFromTemplate(template)}
-                className="p-3 text-left rounded-lg bg-white dark:bg-gray-800 hover:ring-2 hover:ring-purple-400 transition-all"
+                className="p-3 text-left rounded-lg bg-[var(--background-elevated)] hover:ring-2 hover:ring-purple-400 transition-all"
               >
                 <div className="flex items-start gap-2">
                   <span className="text-xl">{template.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-800 dark:text-gray-200 text-sm truncate">
+                    <p className="font-medium text-heading dark:text-heading text-sm truncate">
                       {template.name}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted">
                       ~{template.suggestedCost} moons
                     </p>
                   </div>
@@ -210,16 +210,16 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
 
       {/* Current Rewards List */}
       <div>
-        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+        <h4 className="text-sm font-medium text-heading dark:text-muted mb-3">
           {selectedKidName}'s Shop Rewards ({rewards.length})
         </h4>
 
         {isLoading ? (
           <div className="text-center py-4">
-            <ArrowsClockwise size={20} className="animate-spin mx-auto text-gray-400" />
+            <ArrowsClockwise size={20} className="animate-spin mx-auto text-muted" />
           </div>
         ) : rewards.length === 0 ? (
-          <p className="text-sm text-gray-500 text-center py-4">
+          <p className="text-sm text-muted text-center py-4">
             No rewards yet. Add some from the templates above!
           </p>
         ) : (
@@ -227,11 +227,11 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
             {rewards.map(reward => (
               <div
                 key={reward.id}
-                className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                className="flex items-center gap-3 p-3 bg-[var(--background-secondary)] rounded-lg"
               >
                 <span className="text-xl">{reward.emoji}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-800 dark:text-gray-200 truncate">
+                  <p className="font-medium text-heading dark:text-heading truncate">
                     {reward.name}
                   </p>
                 </div>
@@ -254,7 +254,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
                     </button>
                     <button
                       onClick={() => setEditingId(null)}
-                      className="p-1 text-gray-500 hover:bg-gray-100 rounded"
+                      className="p-1 text-muted hover:bg-[var(--background-secondary)] rounded"
                     >
                       <X size={16} />
                     </button>
@@ -269,7 +269,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
                         setEditingId(reward.id);
                         setEditCost(reward.moon_cost);
                       }}
-                      className="p-1 text-gray-500 hover:text-purple-600 hover:bg-purple-100 rounded"
+                      className="p-1 text-muted hover:text-purple-600 hover:bg-purple-100 rounded"
                       title="Edit cost"
                     >
                       <Pencil size={16} />
@@ -279,7 +279,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
 
                 <button
                   onClick={() => deleteReward(reward.id)}
-                  className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-100 rounded"
+                  className="p-1 text-muted hover:text-red-600 hover:bg-red-100 rounded"
                   title="Remove"
                 >
                   <Trash size={16} />

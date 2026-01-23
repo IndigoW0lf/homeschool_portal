@@ -7,6 +7,7 @@ import { House, GameController, UserCircle, Moon, Palette, List, X, Star, NotePe
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { BlockyAvatar } from '@/components/BlockyAvatar';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
+import { LunaraTitle } from '@/components/ui/LunaraTitle';
 import { useState } from 'react';
 import { AvatarState } from '@/types';
 
@@ -109,14 +110,12 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
             >
               ← 
             </Link>
-            <Image 
-              src={kidName.toLowerCase() === 'stella' ? '/assets/titles/hello_stella.svg' : '/assets/titles/hello_atlas.svg'}
-              alt={`Hello, ${kidName}!`}
-              width={150}
-              height={40}
-              className="h-8 w-auto brightness-110"
-              priority
-            />
+            <LunaraTitle 
+              gradient="teal-pink" 
+              size="md"
+            >
+              Hello, {kidName}!
+            </LunaraTitle>
           </div>
           <div className="flex items-center gap-2">
             <DarkModeToggle />

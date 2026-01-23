@@ -8,10 +8,6 @@ import { useRouter } from 'next/navigation';
 import { KidSettingsModal } from './KidSettingsModal';
 import { Kid } from '@/types';
 
-// We map local interface to match what's needed, or import shared type
-// Using local interface strict subset if needed, but imported Kid is better
-// if we ensure data compatibility.
-
 interface KidManagerProps {
   kids: Kid[];
 }
@@ -71,7 +67,7 @@ export function KidManager({ kids }: KidManagerProps) {
           id: kidId,
           name: newKidName.trim(),
           grade_band: newKidGrade,
-          grades: [newKidGrade], // Initialize with selected band for now
+          grades: [newKidGrade],
           pin_hash: pinHash,
           user_id: user.id,
         });
@@ -83,7 +79,7 @@ export function KidManager({ kids }: KidManagerProps) {
       setNewKidName('');
       setNewKidGrade('3-5');
       setNewKidPin('');
-      router.refresh(); // This will reload props with new kid
+      router.refresh();
     } catch (err) {
       console.error('Failed to add kid:', err);
       toast.error('Failed to add kid. Please try again.');
@@ -95,14 +91,14 @@ export function KidManager({ kids }: KidManagerProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-          <User size={20} weight="duotone" className="text-[var(--ember-500)]" />
+        <h3 className="heading-sm flex items-center gap-2">
+          <User size={20} weight="duotone" className="text-[var(--cosmic-rust-500)]" />
           Manage Kids
         </h3>
         {!showAddForm && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="px-4 py-2 bg-[var(--ember-500)] text-white text-sm rounded-lg font-medium hover:bg-[var(--ember-600)] flex items-center gap-2 shadow-sm transition-all hover:translate-y-[-1px]"
+            className="btn-primary text-sm"
           >
             <Plus size={16} weight="bold" />
             Add Kid
@@ -112,29 +108,29 @@ export function KidManager({ kids }: KidManagerProps) {
 
       {/* Add Form */}
       {showAddForm && (
-        <div className="p-6 rounded-2xl bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20 border border-[var(--ember-200)] dark:border-[var(--ember-800)] space-y-4 animate-in fade-in slide-in-from-top-2">
+        <div className="p-6 rounded-2xl bg-gradient-candle-teal border border-[var(--celestial-400)]/30 space-y-4 animate-in fade-in slide-in-from-top-2">
           <div className="flex justify-between items-start">
-            <h4 className="font-medium text-gray-900 dark:text-white">Add a new learner</h4>
-            <button onClick={() => setShowAddForm(false)} className="text-gray-400 hover:text-gray-600"><X size={20}/></button>
+            <h4 className="font-medium text-[var(--night-900)]">Add a new learner</h4>
+            <button onClick={() => setShowAddForm(false)} className="text-[var(--night-700)] hover:text-[var(--night-900)]"><X size={20}/></button>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Name</label>
+              <label className="block text-xs font-semibold text-[var(--night-700)] uppercase tracking-wider mb-1.5">Name</label>
               <input
                 type="text"
                 value={newKidName}
                 onChange={(e) => setNewKidName(e.target.value)}
                 placeholder="Child's Name"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-[var(--ember-500)] outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-[var(--cosmic-rust-500)] outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Grade Level</label>
+              <label className="block text-xs font-semibold text-[var(--night-700)] uppercase tracking-wider mb-1.5">Grade Level</label>
               <select
                 value={newKidGrade}
                 onChange={(e) => setNewKidGrade(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-[var(--ember-500)] outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-[var(--cosmic-rust-500)] outline-none"
               >
                 {GRADE_BANDS.map(g => (
                   <option key={g.value} value={g.value}>{g.label}</option>
@@ -144,7 +140,7 @@ export function KidManager({ kids }: KidManagerProps) {
           </div>
 
           <div>
-             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">4-Digit PIN</label>
+             <label className="block text-xs font-semibold text-[var(--night-700)] uppercase tracking-wider mb-1.5">4-Digit PIN</label>
              <input
                type="text"
                inputMode="numeric"
@@ -152,22 +148,22 @@ export function KidManager({ kids }: KidManagerProps) {
                value={newKidPin}
                onChange={(e) => setNewKidPin(e.target.value.replace(/\D/g, ''))}
                placeholder="1234"
-               className="w-32 px-4 py-2.5 text-center font-mono text-lg rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-[var(--ember-500)] outline-none"
+               className="w-32 px-4 py-2.5 text-center font-mono text-lg rounded-xl border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-[var(--cosmic-rust-500)] outline-none"
              />
-             <p className="text-xs text-gray-400 mt-1">Used to log in to their portal.</p>
+             <p className="text-xs text-[var(--night-600)] mt-1">Used to log in to their portal.</p>
           </div>
 
           <div className="flex gap-3 pt-2">
             <button
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-800 rounded-lg font-medium transition-colors"
+              className="px-4 py-2 text-muted hover:bg-[var(--hover-overlay)] rounded-lg font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={addKid}
               disabled={isAdding || !newKidName.trim() || newKidPin.length !== 4}
-              className="px-6 py-2 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:bg-[var(--ember-600)] disabled:opacity-50 shadow-md"
+              className="btn-primary disabled:opacity-50"
             >
               {isAdding ? 'Adding...' : 'Create Profile'}
             </button>
@@ -181,22 +177,22 @@ export function KidManager({ kids }: KidManagerProps) {
           <button
             key={kid.id}
             onClick={() => setSelectedKid(kid)}
-            className="group relative flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md hover:border-[var(--ember-200)] dark:hover:border-[var(--ember-800)] transition-all text-left"
+            className="group relative flex items-center gap-4 p-4 rounded-2xl card hover:shadow-md hover:border-[var(--cosmic-rust-400)] transition-all text-left"
           >
             {/* Avatar / Initials */}
             {kid.avatarUrl ? (
-               <img src={kid.avatarUrl} alt={kid.name} className="w-14 h-14 rounded-full bg-gray-100 object-cover group-hover:scale-105 transition-transform" />
+               <img src={kid.avatarUrl} alt={kid.name} className="w-14 h-14 rounded-full bg-[var(--background-secondary)] object-cover group-hover:scale-105 transition-transform" />
             ) : (
-               <div className="w-14 h-14 rounded-full bg-[var(--ember-100)] dark:bg-[var(--ember-900)] flex items-center justify-center text-[var(--ember-600)] font-bold text-xl group-hover:scale-105 transition-transform">
+               <div className="w-14 h-14 rounded-full bg-[var(--cosmic-rust-100)] flex items-center justify-center text-[var(--cosmic-rust-600)] font-bold text-xl group-hover:scale-105 transition-transform">
                  {kid.name[0]}
                </div>
             )}
 
             <div>
-              <h4 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-[var(--ember-600)] transition-colors">
+              <h4 className="text-lg font-bold text-heading group-hover:text-[var(--cosmic-rust-600)] transition-colors">
                 {kid.name}
               </h4>
-              <div className="flex items-center gap-3 text-sm text-gray-500">
+              <div className="flex items-center gap-3 text-sm text-muted">
                 {kid.grades && kid.grades.length > 0 ? (
                    <span className="flex items-center gap-1"><GraduationCap size={14} /> Grades {kid.grades.join(', ')}</span>
                 ) : kid.gradeBand ? (
@@ -208,17 +204,17 @@ export function KidManager({ kids }: KidManagerProps) {
             </div>
 
             {/* Hover Indicator */}
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-gray-300">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-muted">
                Settings →
             </div>
           </button>
         ))}
 
-        {/* Add Card (if empty or just as option) -> We effectively use the top button, but if empty show placeholder card */}
+        {/* Add Card placeholder */}
         {kids.length === 0 && !showAddForm && (
            <button 
              onClick={() => setShowAddForm(true)}
-             className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 text-gray-400 hover:border-[var(--ember-300)] hover:text-[var(--ember-500)] hover:bg-[var(--ember-50)]/50 transition-all"
+             className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl border-2 border-dashed border-[var(--border)] text-muted hover:border-[var(--cosmic-rust-400)] hover:text-[var(--cosmic-rust-500)] hover:bg-[var(--cosmic-rust-100)]/50 transition-all"
            >
              <Plus size={32} />
              <span className="font-medium">Add a child</span>

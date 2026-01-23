@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { getKidsFromDB, getUpcomingHolidaysFromDB, getUserProfileFromDB } from '@/lib/supabase/data';
 import { getDailyQuote } from '@/lib/content';
 import { QuoteCard } from '@/components';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { HolidayIcon } from '@/components/ui/HolidayIcon';
+import { LunaraTitle } from '@/components/ui/LunaraTitle';
 import { createServerClient } from '@/lib/supabase/server';
 
 // Helper to format date range
@@ -55,14 +55,13 @@ export default async function FamilyHomePage() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <Image 
-                src="/assets/titles/page_title.svg" 
-                alt="Lunara Homeschool Quest" 
-                width={300} 
-                height={60}
-                className="h-12 w-auto svg-title -ml-3"
-                priority
-              />
+              <LunaraTitle 
+                gradient="cosmic" 
+                size="xl" 
+                as="h1"
+              >
+                Lunara Quest
+              </LunaraTitle>
               <p className="text-[var(--slate-400)] dark:text-[var(--slate-300)] mt-2">{formattedDate}</p>
             </div>
             <div className="flex items-center gap-3">
@@ -83,13 +82,13 @@ export default async function FamilyHomePage() {
       <main className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         {/* Today's Quest / Daily Quote */}
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <Image 
-            src="/assets/titles/todays_quest.svg" 
-            alt="Today's Quest" 
-            width={200} 
-            height={40}
-            className="h-8 w-auto mb-4 svg-title"
-          />
+          <LunaraTitle 
+            gradient="sunset" 
+            size="lg"
+            className="mb-4"
+          >
+            Today&apos;s Quest
+          </LunaraTitle>
           <QuoteCard quote={quote} />
         </section>
 
@@ -134,13 +133,13 @@ export default async function FamilyHomePage() {
         {/* Upcoming Holidays */}
         {upcomingHolidays.length > 0 && (
           <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
-            <Image 
-              src="/assets/titles/breaks_holidays.svg" 
-              alt="Upcoming Breaks & Holidays" 
-              width={315} 
-              height={60}
-              className="h-12 w-auto mb-4 dark:brightness-110"
-            />
+            <LunaraTitle 
+              gradient="dusk" 
+              size="lg"
+              className="mb-4"
+            >
+              Breaks &amp; Holidays
+            </LunaraTitle>
             <div className="card overflow-hidden divide-y divide-[var(--border)]">
               {upcomingHolidays.map(holiday => (
                 <div

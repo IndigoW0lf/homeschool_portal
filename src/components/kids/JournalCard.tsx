@@ -149,19 +149,19 @@ export function JournalCard({
     return null;
   }
 
-  // Completed state
+  // Completed state - using success gradient
   if (isComplete) {
     return (
-      <div className="card p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
+      <div className="card p-4 bg-gradient-forest border-[var(--success)]">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-            <Check size={24} weight="bold" className="text-green-600" />
+          <div className="p-2 rounded-lg bg-white/20">
+            <Check size={24} weight="bold" className="text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-green-800 dark:text-green-300">
+            <h3 className="font-semibold text-white">
               Journal Complete! ✨
             </h3>
-            <p className="text-sm text-green-600 dark:text-green-400">
+            <p className="text-sm text-white/80">
               Great job reflecting today
             </p>
           </div>
@@ -171,18 +171,18 @@ export function JournalCard({
   }
 
   return (
-    <div className="card p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800">
+    <div className="card p-4 bg-gradient-teal-pink border-[var(--nebula-purple)]/30">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-          <NotePencil size={24} weight="duotone" className="text-purple-600" />
+        <div className="p-2 rounded-lg bg-white/20">
+          <NotePencil size={24} weight="duotone" className="text-[var(--nebula-purple)]" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-purple-800 dark:text-purple-300">
+          <h3 className="font-semibold text-[var(--night-900)]">
             Daily Journal
           </h3>
-          <p className="text-sm text-purple-600 dark:text-purple-400 flex items-center gap-1">
-            <Sparkle size={14} weight="fill" className="text-yellow-500" />
+          <p className="text-sm text-[var(--night-700)] flex items-center gap-1">
+            <Sparkle size={14} weight="fill" className="text-[var(--ember-gold-400)]" />
             Earn 1 moon
           </p>
         </div>
@@ -190,21 +190,21 @@ export function JournalCard({
 
       {/* Prompt */}
       {isLoading ? (
-        <div className="py-4 text-center text-purple-600 dark:text-purple-400">
+        <div className="py-4 text-center text-[var(--nebula-purple)]">
           <ArrowsClockwise size={24} className="animate-spin mx-auto mb-2" />
           Thinking of a question...
         </div>
       ) : prompt ? (
         <>
-          <div className="mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg border border-purple-100 dark:border-purple-800">
-            <p className="text-gray-800 dark:text-gray-200 font-medium">
+          <div className="mb-4 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)]">
+            <p className="text-heading font-medium">
               {prompt}
             </p>
           </div>
 
           {/* Mood Picker */}
           <div className="mb-4">
-            <p className="text-sm text-purple-600 dark:text-purple-400 mb-2">How are you feeling?</p>
+            <p className="text-sm text-muted mb-2">How are you feeling?</p>
             <div className="flex gap-2 justify-center">
               {MOODS.map(({ emoji, label, value }) => (
                 <button
@@ -213,8 +213,8 @@ export function JournalCard({
                   className={cn(
                     "text-2xl p-2 rounded-lg transition-all",
                     mood === value
-                      ? "bg-purple-200 dark:bg-purple-800 scale-110 ring-2 ring-purple-400"
-                      : "hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:scale-105"
+                      ? "bg-[var(--nebula-purple-light)] scale-110 ring-2 ring-[var(--nebula-purple)]"
+                      : "hover:bg-[var(--hover-overlay)] hover:scale-105"
                   )}
                   title={label}
                 >
@@ -229,7 +229,7 @@ export function JournalCard({
             value={response}
             onChange={(e) => setResponse(e.target.value)}
             placeholder="Write your thoughts here..."
-            className="w-full p-3 rounded-lg border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+            className="w-full p-3 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)] text-heading focus:ring-2 focus:ring-[var(--nebula-purple)] focus:border-transparent resize-none"
             rows={4}
           />
 
@@ -241,8 +241,8 @@ export function JournalCard({
               className={cn(
                 "flex-1 py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
                 response.trim()
-                  ? "bg-purple-500 text-white hover:bg-purple-600"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700"
+                  ? "bg-[var(--nebula-purple)] text-white hover:opacity-90"
+                  : "bg-[var(--background-secondary)] text-muted cursor-not-allowed"
               )}
             >
               {isSaving ? (
@@ -256,7 +256,7 @@ export function JournalCard({
             <button
               onClick={handleNewPrompt}
               disabled={isLoading}
-              className="py-2 px-3 rounded-lg border border-purple-300 dark:border-purple-600 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-all"
+              className="py-2 px-3 rounded-lg border border-[var(--nebula-purple)]/50 text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple-light)] transition-all"
               title="Get a different question"
             >
               <ArrowsClockwise size={18} />
@@ -266,7 +266,7 @@ export function JournalCard({
               <button
                 onClick={handleSkip}
                 disabled={isSaving}
-                className="py-2 px-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                className="py-2 px-3 rounded-lg border border-[var(--border)] text-muted hover:bg-[var(--hover-overlay)] transition-all"
                 title="Skip today"
               >
                 <FastForward size={18} />

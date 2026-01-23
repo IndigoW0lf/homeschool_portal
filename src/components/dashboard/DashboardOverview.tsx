@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { addWeeks, subWeeks } from 'date-fns';
 import { WeekView } from './WeekView';
 import { DayModal } from './DayModal';
 import { ItemDetailModal } from './ItemDetailModal';
 import { Modal } from '@/components/ui/Modal';
+import { LunaraTitle } from '@/components/ui/LunaraTitle';
 import { AssignmentForm } from '@/components/assignments/AssignmentForm';
 import { LessonForm } from '@/components/lessons/LessonForm';
 import { LunaTriggerButton } from '@/components/luna';
@@ -129,16 +129,17 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
-      {/* 1. Header - Custom SVG title */}
-      <div className="text-center py-6">
-        <Image 
-          src="/assets/titles/weekly_overview.svg" 
-          alt="Weekly Overview" 
-          width={560} 
-          height={100}
-          className="h-20 w-auto mx-auto mb-2 dark:brightness-110"
-        />
-        <p className="text-muted">
+      {/* 1. Header - Custom title */}
+      <div className="text-center py-2">
+        <LunaraTitle 
+          gradient="altar-flame" 
+          size="xl" 
+          as="h1"
+          className="mb-1"
+        >
+          Weekly Overview
+        </LunaraTitle>
+        <p className="text-muted text-sm">
           Manage the learning playlist for the week
         </p>
       </div>

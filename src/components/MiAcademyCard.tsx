@@ -93,7 +93,7 @@ export function MiAcademyCard({ kidId, date, url, onDoneChange }: MiAcademyCardP
             transition-all
             ${done
               ? 'bg-green-500 border-green-600 dark:border-green-400 text-white'
-              : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-green-400 dark:hover:border-green-500 text-gray-400 dark:text-gray-500'}
+              : 'bg-white dark:bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:border-green-400 dark:hover:border-green-500 text-muted'}
           `}
           aria-label={done ? 'Mark as not done' : 'Mark as done'}
         >

@@ -83,7 +83,7 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
       "border-l-2 border-[var(--fabric-lilac)]"
     )}>
       {/* Title */}
-      <h4 className="font-medium text-gray-900 dark:text-white">
+      <h4 className="font-medium text-heading">
         {suggestion.title}
       </h4>
 
@@ -94,10 +94,10 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
 
       {/* Steps */}
       {(suggestion.steps?.length ?? 0) > 0 && (
-        <ul className="space-y-1.5 text-sm text-gray-700 dark:text-gray-300">
+        <ul className="space-y-1.5 text-sm text-heading dark:text-muted">
           {suggestion.steps.map((step, i) => (
             <li key={i} className="flex items-start gap-2">
-              <span className="w-5 h-5 flex-shrink-0 rounded-full bg-[var(--paper-100)] dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-muted">
+              <span className="w-5 h-5 flex-shrink-0 rounded-full bg-[var(--paper-100)] dark:bg-[var(--background-secondary)] flex items-center justify-center text-xs font-medium text-muted">
                 {i + 1}
               </span>
               {step}
@@ -108,14 +108,14 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
 
       {/* Video Resources - shown when enriched with YouTube videos */}
       {suggestion.videos && suggestion.videos.length > 0 && (
-        <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+        <div className="pt-2 border-t border-[var(--border)]">
           <VideoResourceList videos={suggestion.videos} compact />
         </div>
       )}
 
       {/* Worksheet Resources - shown when enriched with Tavily search */}
       {suggestion.worksheets && suggestion.worksheets.length > 0 && (
-        <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+        <div className="pt-2 border-t border-[var(--border)]">
           <WorksheetResourceList worksheets={suggestion.worksheets} />
         </div>
       )}
@@ -132,7 +132,7 @@ export function LunaSuggestionCard({ suggestion, userMessage, onSave }: LunaSugg
         </button>
         <button
           onClick={handleIgnore}
-          className="btn-sm text-muted hover:text-gray-700 dark:hover:text-gray-300"
+          className="btn-sm text-muted hover:text-heading dark:hover:text-muted"
         >
           <X size={16} />
           Ignore

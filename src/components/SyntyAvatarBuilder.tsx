@@ -133,14 +133,14 @@ export function SyntyAvatarBuilder({
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-8 shadow-xl border border-gray-100 dark:border-gray-700">
+      <div className="bg-[var(--background-elevated)] rounded-2xl p-4 md:p-8 shadow-xl border border-[var(--border)]">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl font-black text-heading tracking-tight">
               Avatar Builder
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 font-medium">
+            <p className="text-muted font-medium">
               Create your unique look, {kidName}!
             </p>
           </div>
@@ -155,7 +155,7 @@ export function SyntyAvatarBuilder({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* Left: 3D Preview (5/12) */}
           <div className="lg:col-span-5 flex flex-col items-center">
-            <div className="w-full aspect-square md:aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-b from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900/20 border-4 border-white dark:border-gray-700 shadow-2xl relative group">
+            <div className="w-full aspect-square md:aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-b from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-indigo-900/20 border-4 border-white dark:border-[var(--border)] shadow-2xl relative group">
               <SyntyAvatarPreview 
                 kidId={kidId} 
                 textureUrl={selectedFullUrl}
@@ -164,7 +164,7 @@ export function SyntyAvatarBuilder({
                 shoesUrl={selectedShoesUrl}
                 skinColor={selectedSkinColor}
               />
-              <div className="absolute top-4 left-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30 uppercase tracking-widest shadow-sm">
+              <div className="absolute top-4 left-4 bg-white/80 dark:bg-[var(--background-secondary)]/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30 uppercase tracking-widest shadow-sm">
                 3D Life Preview
               </div>
             </div>
@@ -173,15 +173,15 @@ export function SyntyAvatarBuilder({
           {/* Right: Wardrobe (7/12) */}
           <div className="lg:col-span-7 flex flex-col h-full min-h-[500px]">
             {/* Category Tabs */}
-            <div className="flex gap-1 bg-gray-100 dark:bg-gray-900/50 p-1 rounded-xl mb-6 overflow-x-auto no-scrollbar">
+            <div className="flex gap-1 bg-[var(--background-secondary)]/50 p-1 rounded-xl mb-6 overflow-x-auto no-scrollbar">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
                     activeCategory === cat.id
-                      ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100/50 dark:border-indigo-900/30'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-white/50 dark:hover:bg-gray-800/30'
+                      ? 'bg-[var(--background-elevated)] text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100/50 dark:border-indigo-900/30'
+                      : 'text-muted hover:text-heading dark:hover:text-muted hover:bg-white/50 dark:hover:bg-[var(--night-800)]/30'
                   }`}
                 >
                   <span>{cat.icon}</span>
@@ -190,7 +190,7 @@ export function SyntyAvatarBuilder({
               ))}
             </div>
             
-            <div className="flex-1 bg-gray-50 dark:bg-gray-900/30 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
+            <div className="flex-1 bg-[var(--background-secondary)] dark:bg-[var(--night-900)]/30 rounded-2xl p-4 border border-[var(--border)] overflow-hidden flex flex-col">
               {activeCategory === 'skin' ? (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                   {skinColors.map((color) => (
@@ -200,7 +200,7 @@ export function SyntyAvatarBuilder({
                       className={`aspect-square rounded-full border-4 transition-all hover:scale-110 active:scale-95 ${
                         selectedSkinColor === color
                           ? 'border-indigo-500 shadow-lg shadow-indigo-500/20'
-                          : 'border-white dark:border-gray-800'
+                          : 'border-white dark:border-[var(--border)]'
                       }`}
                       style={{ backgroundColor: color }}
                     />
@@ -208,10 +208,10 @@ export function SyntyAvatarBuilder({
                 </div>
               ) : filteredDesigns.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                  <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center text-2xl mb-4 shadow-sm">
+                  <div className="w-16 h-16 bg-[var(--background-elevated)] rounded-full flex items-center justify-center text-2xl mb-4 shadow-sm">
                     🪹
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400 font-medium max-w-[200px] mx-auto text-sm leading-relaxed">
+                  <p className="text-muted font-medium max-w-[200px] mx-auto text-sm leading-relaxed">
                     You haven't designed any {activeCategory}s yet!
                   </p>
                   <Link
@@ -247,7 +247,7 @@ export function SyntyAvatarBuilder({
                         (activeCategory === 'bottom' && !selectedBottomUrl) ||
                         (activeCategory === 'shoes' && !selectedShoesUrl)
                           ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
-                          : 'border-dashed border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-500'
+                          : 'border-dashed border-[var(--border)] dark:border-[var(--border)] text-muted'
                       }`}
                     >
                       <div className="text-lg mb-1">❌</div>
@@ -269,7 +269,7 @@ export function SyntyAvatarBuilder({
                           className={`aspect-square rounded-xl border-2 overflow-hidden transition-all hover:scale-102 active:scale-98 relative ${
                             isSelected
                               ? 'border-indigo-500 shadow-lg shadow-indigo-500/10'
-                              : 'border-transparent bg-white dark:bg-gray-800 shadow-sm hover:shadow-md'
+                              : 'border-transparent bg-[var(--background-elevated)] shadow-sm hover:shadow-md'
                           }`}
                         >
                           {design.texture_url ? (
@@ -279,7 +279,7 @@ export function SyntyAvatarBuilder({
                               className="w-full h-full object-cover"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-2xl bg-gray-100 dark:bg-gray-800">
+                            <div className="w-full h-full flex items-center justify-center text-2xl bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)]">
                               🖼️
                             </div>
                           )}
@@ -298,10 +298,10 @@ export function SyntyAvatarBuilder({
             </div>
 
             {/* Actions */}
-            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex gap-4">
+            <div className="mt-8 pt-6 border-t border-[var(--border)] flex gap-4">
               <Link
                 href={`/kids/${kidId}`}
-                className="flex-[2] py-4 px-6 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all active:scale-95 border border-transparent dark:border-gray-700"
+                className="flex-[2] py-4 px-6 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-heading dark:text-muted rounded-xl font-bold text-center hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] transition-all active:scale-95 border border-transparent dark:border-[var(--border)]"
               >
                 Back to Portal
               </Link>

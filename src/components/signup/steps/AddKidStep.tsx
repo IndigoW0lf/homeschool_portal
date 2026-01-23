@@ -109,10 +109,10 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+        <h2 className="text-xl font-bold text-heading mb-1">
           Add your first kiddo
         </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-muted">
           Set up their profile so they can login safely.
         </p>
       </div>
@@ -122,7 +122,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
         {/* Kid Name */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="kidName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="kidName" className="block text-sm font-medium text-heading dark:text-muted mb-1">
               First Name *
             </label>
             <input
@@ -132,11 +132,11 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
               onChange={(e) => updateData({ kidName: e.target.value })}
               placeholder="First Name"
               required
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full px-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
           </div>
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="lastName" className="block text-sm font-medium text-heading dark:text-muted mb-1">
               Last Name *
             </label>
             <input
@@ -146,16 +146,16 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Last Name"
               required
-              className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full px-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
-            <p className="text-[10px] text-gray-500 mt-1">Needed for login (Initial only)</p>
+            <p className="text-[10px] text-muted mt-1">Needed for login (Initial only)</p>
           </div>
         </div>
 
         {/* Grade Multi-Select */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Grade level(s) * <span className="text-xs font-normal text-gray-500">(Select all that apply)</span>
+          <label className="block text-sm font-medium text-heading dark:text-muted mb-2">
+            Grade level(s) * <span className="text-xs font-normal text-muted">(Select all that apply)</span>
           </label>
           <div className="grid grid-cols-5 gap-2">
             {INDIVIDUAL_GRADES.map((grade) => {
@@ -169,7 +169,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
                       "px-2 py-2 rounded-lg text-sm font-medium border transition-all",
                       isSelected
                         ? "border-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20 text-[var(--ember-600)] dark:text-[var(--ember-400)] shadow-sm"
-                        : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-800"
+                        : "border-[var(--border)] dark:border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)] bg-[var(--background-elevated)]"
                     )}
                   >
                     {grade}
@@ -181,7 +181,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
 
         {/* Password Entry */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-heading dark:text-muted mb-2">
             <Lock size={16} className="inline mr-1" />
             Create Password *
           </label>
@@ -191,24 +191,24 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Create a password (min 4 chars)"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12 text-gray-900 dark:text-white"
+              className="w-full px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--background-secondary)] dark:bg-[var(--night-900)] focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all pr-12 text-heading"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-muted"
             >
               {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs text-muted mt-2">
             They'll use their <strong>First Name</strong>, <strong>Last Initial</strong>, and this <strong>Password</strong> to log in.
           </p>
         </div>
 
         {/* Avatar Selection (optional) */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-heading dark:text-muted mb-2">
             Pick an avatar (optional)
           </label>
           <div className="flex flex-wrap gap-2">
@@ -224,7 +224,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
                     "relative p-1 rounded-xl transition-all",
                     isSelected
                       ? "ring-2 ring-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20"
-                      : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                      : "hover:bg-[var(--hover-overlay)]"
                   )}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -260,7 +260,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
       <div className="flex gap-3">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 px-4 py-2.5 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          className="flex items-center gap-1 px-4 py-2.5 text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-lg transition-colors"
         >
           <ArrowLeft size={16} />
           Back

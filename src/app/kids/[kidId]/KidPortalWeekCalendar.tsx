@@ -1,12 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useSyncExternalStore } from 'react';
 import { isDone } from '@/lib/storage';
 import { cn } from '@/lib/utils';
 import { startOfWeek, addDays, format, isSameDay } from 'date-fns';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react/dist/ssr';
+import { LunaraTitle } from '@/components/ui/LunaraTitle';
 
 interface ScheduleItem {
   id: string;
@@ -100,25 +100,24 @@ export function KidPortalWeekCalendar({
     : `${format(monday, 'MMM d')} - ${format(addDays(monday, 6), 'MMM d')}`;
 
   return (
-    <div className={cn("bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm", className)}>
+    <div className={cn("bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm", className)}>
       {/* Header with Navigation - Integrated */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-            <Image 
-            src="/assets/titles/this_week.svg" 
-            alt="This Week" 
-            width={120} 
-            height={30}
-            className="h-6 w-auto dark:brightness-110"
-            />
+            <LunaraTitle 
+              gradient="gold" 
+              size="sm"
+            >
+              This Week
+            </LunaraTitle>
         </div>
 
         {/* Navigation Controls */}
-        <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-full p-1 scale-90 sm:scale-100">
-            <Link href={prevWeekUrl} className="p-1.5 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
+        <div className="flex items-center bg-[var(--background-secondary)] rounded-full p-1 scale-90 sm:scale-100">
+            <Link href={prevWeekUrl} className="p-1.5 hover:bg-[var(--background-elevated)] rounded-full transition-colors">
                 <CaretLeft size={20} weight="duotone" color="#b6e1d8" />
             </Link>
-            <div className="px-3 text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 flex items-center gap-2 cursor-pointer" title="Jump to Today">
+            <div className="px-3 text-xs sm:text-sm font-medium text-muted flex items-center gap-2 cursor-pointer" title="Jump to Today">
                 {!isCurrentWeek ? (
                     <Link href={currentWeekUrl} className="hover:text-[var(--ember-500)] whitespace-nowrap">
                         {weekLabel}
@@ -127,7 +126,7 @@ export function KidPortalWeekCalendar({
                     <span className="whitespace-nowrap">{weekLabel}</span>
                 )}
             </div>
-            <Link href={nextWeekUrl} className="p-1.5 hover:bg-white dark:hover:bg-gray-600 rounded-full transition-colors">
+            <Link href={nextWeekUrl} className="p-1.5 hover:bg-[var(--background-elevated)] rounded-full transition-colors">
                 <CaretRight size={20} weight="duotone" color="#b6e1d8" />
             </Link>
         </div>

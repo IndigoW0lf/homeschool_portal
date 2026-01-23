@@ -89,7 +89,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
     return (
       <button
         onClick={() => setIsExpanded(true)}
-        className="w-full p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl border border-purple-200 dark:border-purple-800 hover:border-purple-300 dark:hover:border-purple-700 transition-all group"
+        className="w-full p-4 bg-gradient-herbal-bloom rounded-xl border border-[var(--herbal-gold)]/30 hover:border-[var(--herbal-gold)]/50 transition-all group"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -97,34 +97,34 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
               <Lightning size={20} weight="fill" className="text-white" />
             </div>
             <div className="text-left">
-              <h3 className="font-semibold text-gray-900 dark:text-white">Quick Start</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">One-click lesson starters</p>
+              <h3 className="font-semibold text-heading">Quick Start</h3>
+              <p className="text-sm text-muted">One-click lesson starters</p>
             </div>
           </div>
-          <CaretDown size={20} className="text-gray-400 group-hover:text-purple-500 transition-colors" />
+          <CaretDown size={20} className="text-muted group-hover:text-purple-500 transition-colors" />
         </div>
       </button>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div className="card overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-purple-500/5 to-pink-500/5">
+      <div className="p-4 border-b border-[var(--border)] bg-gradient-to-r from-purple-500/5 to-pink-500/5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
               <Lightning size={20} weight="fill" className="text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">Quick Start</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">One-click lesson starters</p>
+              <h3 className="font-semibold text-heading">Quick Start</h3>
+              <p className="text-xs text-muted">One-click lesson starters</p>
             </div>
           </div>
           {compact && (
             <button
               onClick={() => setIsExpanded(false)}
-              className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="p-2 text-muted hover:text-muted dark:hover:text-muted rounded-lg hover:bg-[var(--hover-overlay)]"
             >
               <CaretUp size={18} />
             </button>
@@ -137,7 +137,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
             <select
               value={selectedKid}
               onChange={(e) => setSelectedKid(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
             >
               {kids.map(kid => (
                 <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -157,7 +157,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
           </button>
           <button
             onClick={handleDailyLineup}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium bg-[var(--background-secondary)] text-heading dark:text-muted rounded-lg hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)] transition-colors"
           >
             <Sparkle size={16} />
             Daily Lineup
@@ -166,7 +166,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
       </div>
 
       {/* Category filter */}
-      <div className="flex gap-1 p-2 overflow-x-auto border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+      <div className="flex gap-1 p-2 overflow-x-auto border-b border-[var(--border)] bg-[var(--background-secondary)] bg-[var(--background)]">
         {(Object.keys(CATEGORY_CONFIG) as CategoryFilter[]).map(cat => {
           const config = CATEGORY_CONFIG[cat];
           return (
@@ -177,7 +177,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
                 "px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-colors flex items-center gap-1",
                 category === cat
                   ? "bg-purple-500 text-white"
-                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  : "bg-[var(--background-elevated)] text-muted hover:bg-[var(--hover-overlay)]"
               )}
             >
               <config.Icon size={12} weight="bold" />
@@ -202,25 +202,25 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
                 "flex items-center gap-3 p-3 text-left rounded-lg border transition-all",
                 isScheduled
                   ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                  : "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-sm",
+                  : "bg-[var(--background-elevated)] border-[var(--border)] hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-sm",
                 isScheduling && "opacity-50"
               )}
             >
               <span className="text-2xl flex-shrink-0">{template.emoji}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                  <h4 className="font-medium text-heading text-sm truncate">
                     {template.title}
                   </h4>
                   {isScheduled && (
                     <CheckCircle size={16} weight="fill" className="text-green-500 flex-shrink-0" />
                   )}
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                <p className="text-xs text-muted truncate">
                   {template.description}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="flex items-center gap-1 text-xs text-gray-400">
+                  <span className="flex items-center gap-1 text-xs text-muted">
                     <Clock size={12} />
                     {template.duration} min
                   </span>

@@ -39,11 +39,11 @@ export function OnboardingModal({ slides, onComplete, welcomeMessage }: Onboardi
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-md bg-[var(--background-elevated)] rounded-2xl shadow-2xl overflow-hidden">
         {/* Close button */}
         <button
           onClick={onComplete}
-          className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors z-10"
+          className="absolute top-4 right-4 p-2 text-muted hover:text-muted dark:hover:text-muted transition-colors z-10"
           aria-label="Skip tutorial"
         >
           <X size={20} />
@@ -68,12 +68,12 @@ export function OnboardingModal({ slides, onComplete, welcomeMessage }: Onboardi
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+          <h2 className="text-2xl font-bold text-heading mb-3">
             {slide.title}
           </h2>
 
           {/* Description */}
-          <p className="text-gray-600 dark:text-gray-400 mb-2">
+          <p className="text-muted mb-2">
             {slide.description}
           </p>
 
@@ -97,7 +97,7 @@ export function OnboardingModal({ slides, onComplete, welcomeMessage }: Onboardi
                   "w-2 h-2 rounded-full transition-all",
                   index === currentSlide
                     ? "w-6 bg-[var(--ember-500)]"
-                    : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400"
+                    : "bg-[var(--moon-200)] dark:bg-[var(--night-600)] hover:bg-[var(--moon-300)]"
                 )}
                 aria-label={`Go to slide ${index + 1}`}
               />
@@ -109,7 +109,7 @@ export function OnboardingModal({ slides, onComplete, welcomeMessage }: Onboardi
             {currentSlide > 0 && (
               <button
                 onClick={prevSlide}
-                className="flex-1 py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-4 bg-[var(--background-secondary)] text-heading dark:text-muted rounded-xl font-medium hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)] transition-colors flex items-center justify-center gap-2"
               >
                 <CaretLeft size={18} weight="bold" />
                 Back

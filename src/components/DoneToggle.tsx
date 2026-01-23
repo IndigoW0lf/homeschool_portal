@@ -20,7 +20,7 @@ export function DoneToggle({ kidId, date, lessonId }: DoneToggleProps) {
         transition-all duration-200 cursor-pointer
         ${done 
           ? 'bg-green-500 border-green-500 text-white scale-110' 
-          : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:border-green-400 dark:hover:border-green-500'}
+          : 'bg-white dark:bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:border-green-400 dark:hover:border-green-500'}
         ${!isLoaded ? 'opacity-50' : ''}
       `}
       aria-label={done ? 'Mark as not done' : 'Mark as done'}
@@ -30,7 +30,7 @@ export function DoneToggle({ kidId, date, lessonId }: DoneToggleProps) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
         </svg>
       ) : (
-        <div className="w-3 h-3 rounded-full bg-gray-200 dark:bg-gray-600" />
+        <div className="w-3 h-3 rounded-full bg-[var(--background-secondary)] dark:bg-[var(--night-600)]" />
       )}
     </button>
   );

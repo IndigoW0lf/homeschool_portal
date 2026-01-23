@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Quicksand } from "next/font/google";
+import { Quicksand, Macondo } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'sonner';
 
@@ -7,6 +7,13 @@ const quicksand = Quicksand({
   subsets: ["latin"],
   variable: "--font-quicksand",
   weight: ["300", "400", "500", "600", "700"],
+});
+
+// Mystical hand-drawn calligraphy for magical titles (tarot-card inspired)
+const macondo = Macondo({
+  subsets: ["latin"],
+  variable: "--font-magical",
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -34,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={quicksand.variable} suppressHydrationWarning>
+    <html lang="en" className={`${quicksand.variable} ${macondo.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

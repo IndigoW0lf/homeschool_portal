@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { Plus, Books, PencilSimple, File, FunnelSimple } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow } from '@/types';
 import { ActivityModal } from './ActivityModal';
 import { QuickStartPanel } from './QuickStartPanel';
+import { LunaraTitle } from '@/components/ui/LunaraTitle';
 
 interface ContentLibraryProps {
   lessons: Lesson[];
@@ -70,17 +70,17 @@ export function ContentLibrary({
 
   const getTypeIcon = (type: ContentItem['type']) => {
     switch (type) {
-      case 'lesson': return <Books size={16} weight="duotone" className="text-blue-500" />;
-      case 'assignment': return <PencilSimple size={16} weight="duotone" className="text-purple-500" />;
-      case 'worksheet': return <File size={16} weight="duotone" className="text-green-500" />;
+      case 'lesson': return <Books size={16} weight="duotone" className="text-[var(--celestial-500)]" />;
+      case 'assignment': return <PencilSimple size={16} weight="duotone" className="text-[var(--nebula-purple)]" />;
+      case 'worksheet': return <File size={16} weight="duotone" className="text-[var(--success)]" />;
     }
   };
 
   const getTypeBadgeClass = (type: ContentItem['type']) => {
     switch (type) {
-      case 'lesson': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400';
-      case 'assignment': return 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400';
-      case 'worksheet': return 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400';
+      case 'lesson': return 'badge-celestial';
+      case 'assignment': return 'badge-purple';
+      case 'worksheet': return 'badge-success';
     }
   };
 
@@ -90,18 +90,17 @@ export function ContentLibrary({
         {/* Header */}
         <div className="card-header">
           <div className="flex items-center gap-3">
-            <Image 
-              src="/assets/titles/lessons.svg" 
-              alt="Content Library" 
-              width={200} 
-              height={40}
-              className="h-8 w-auto dark:brightness-110"
-            />
+            <LunaraTitle 
+              gradient="herbal-bloom" 
+              size="md"
+            >
+              Lessons
+            </LunaraTitle>
           </div>
           
           {/* Filter Tabs */}
           <div className="flex items-center gap-2">
-            <FunnelSimple size={16} className="text-gray-400" />
+            <FunnelSimple size={16} className="text-muted" />
             {(['all', 'lesson', 'assignment', 'worksheet'] as const).map(type => (
               <button
                 key={type}
@@ -109,8 +108,8 @@ export function ContentLibrary({
                 className={cn(
                   "px-3 py-1 text-xs font-medium rounded-full transition-all capitalize",
                   filter === type
-                    ? "bg-[var(--ember-500)] text-white"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200"
+                    ? "bg-[var(--celestial-500)] text-white shadow-md"
+                    : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)] hover:text-[var(--foreground)]"
                 )}
               >
                 {type === 'all' ? 'All' : type + 's'}
@@ -129,10 +128,10 @@ export function ContentLibrary({
         </div>
 
         {/* Quick Start Toggle */}
-        <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+        <div className="px-4 py-2 border-b border-[var(--border)]">
           <button
             onClick={() => setShowQuickStart(!showQuickStart)}
-            className="text-sm text-[var(--ember-500)] hover:text-[var(--ember-600)] font-medium flex items-center gap-2"
+            className="text-sm text-ember-gold font-medium flex items-center gap-2 hover:text-[var(--ember-gold-600)] transition-colors"
           >
             ⚡ Quick Start Templates
             <span className={cn("transition-transform", showQuickStart && "rotate-180")}>▼</span>
@@ -145,7 +144,7 @@ export function ContentLibrary({
         </div>
 
         {/* Content List */}
-        <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-80 overflow-y-auto">
+        <div className="divide-y divide-[var(--border)] max-h-80 overflow-y-auto custom-scrollbar">
           {filteredContent.length === 0 ? (
             <div className="p-8 text-center text-muted">
               <p>No content found. Create your first activity!</p>
@@ -155,13 +154,13 @@ export function ContentLibrary({
               <button
                 key={`${item.type}-${item.id}`}
                 onClick={() => handleItemClick(item)}
-                className="w-full p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-left"
+                className="w-full p-4 flex items-center gap-4 hover:bg-[var(--hover-overlay)] transition-colors text-left"
               >
                 <div className="flex-shrink-0">
                   {getTypeIcon(item.type)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-gray-900 dark:text-white truncate">
+                  <h4 className="font-medium text-heading truncate">
                     {item.title}
                   </h4>
                   <p className="text-xs text-muted truncate">{item.subtitle}</p>

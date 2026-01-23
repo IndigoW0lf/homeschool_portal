@@ -105,9 +105,9 @@ export function ProgressCard({
 
       {/* Featured Badges - only if at least 1 is set */}
       {featuredBadgeData.length > 0 && (
-        <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
+        <div className="pt-3 border-t border-[var(--border)]">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <h4 className="text-xs font-semibold text-muted uppercase tracking-wider">
               My Featured Badges
             </h4>
             <Link
@@ -139,21 +139,21 @@ export function ProgressCard({
                     
                     {/* Badge Info */}
                     <div className="flex-1 min-w-0">
-                      <h5 className="font-bold text-gray-900 dark:text-white text-sm flex items-center gap-1">
+                      <h5 className="font-bold text-heading text-sm flex items-center gap-1">
                         {badge.name}
                         <Sparkle size={12} weight="fill" className="text-yellow-500" />
                       </h5>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2">
+                      <p className="text-xs text-muted mt-0.5 line-clamp-2">
                         {badge.description}
                       </p>
                     </div>
                   </div>
                   
                   {/* Hover tooltip for full description */}
-                  <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 dark:bg-gray-700 rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-[var(--night-900)] dark:bg-[var(--background-secondary)] rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     <p className="text-white text-sm font-semibold mb-1">{badge.name}</p>
-                    <p className="text-gray-300 text-xs">{badge.description}</p>
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45" />
+                    <p className="text-muted text-xs">{badge.description}</p>
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--night-900)] dark:bg-[var(--background-secondary)] rotate-45" />
                   </div>
                 </div>
               );

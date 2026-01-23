@@ -51,7 +51,7 @@ export function AvatarPreview({
   // Render the layered avatar
   return (
     <div 
-      className={`${container} rounded-full relative overflow-hidden bg-[var(--paper-100)] dark:bg-gray-700 ${className}`}
+      className={`${container} rounded-full relative overflow-hidden bg-[var(--paper-100)] dark:bg-[var(--background-secondary)] ${className}`}
       style={{ 
         boxShadow: fallbackColor 
           ? `0 0 0 3px ${fallbackColor}40` 

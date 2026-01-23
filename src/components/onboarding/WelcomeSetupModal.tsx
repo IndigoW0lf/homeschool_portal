@@ -65,16 +65,16 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in zoom-in-95 fade-in duration-300">
+      <div className="bg-[var(--background-elevated)] rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in zoom-in-95 fade-in duration-300">
         {/* Header */}
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-[#9c8fb8] to-[#E27D60] rounded-full flex items-center justify-center mx-auto mb-4">
             <Sparkle size={32} weight="fill" className="text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-bold text-heading mb-2">
             Welcome to {familyName}!
           </h2>
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-muted">
             Let's set up your profile so everyone knows who you are
           </p>
         </div>
@@ -83,7 +83,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
         <div className="space-y-5">
           {/* Display Name */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-2">
               <User size={16} />
               What should we call you?
             </label>
@@ -92,14 +92,14 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="e.g., Mom, Dad, Alex..."
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none text-lg"
+              className="w-full px-4 py-3 border border-[var(--border)] dark:border-[var(--border)] rounded-xl bg-white dark:bg-[var(--background-secondary)] text-heading focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none text-lg"
               autoFocus
             />
           </div>
 
           {/* Favorite Color */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-2">
               <Palette size={16} />
               Pick your favorite color (just for fun!)
             </label>
@@ -108,7 +108,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
                 type="color"
                 value={favoriteColor}
                 onChange={(e) => setFavoriteColor(e.target.value)}
-                className="w-12 h-12 rounded-lg cursor-pointer border-2 border-gray-200 dark:border-gray-600"
+                className="w-12 h-12 rounded-lg cursor-pointer border-2 border-[var(--border)] dark:border-[var(--border)]"
               />
               <div 
                 className="flex-1 h-12 rounded-lg flex items-center justify-center text-white font-medium"
@@ -124,7 +124,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
         <div className="mt-8 flex gap-3">
           <button
             onClick={handleSkip}
-            className="flex-1 py-3 px-4 text-gray-600 dark:text-gray-400 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium"
+            className="flex-1 py-3 px-4 text-muted rounded-xl hover:bg-[var(--hover-overlay)] transition-colors font-medium"
           >
             Skip for now
           </button>

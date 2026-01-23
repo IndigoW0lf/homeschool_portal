@@ -80,7 +80,7 @@ export function UnifiedActivityList({
 
   if (activities.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-400">
+      <div className="text-center py-8 text-muted">
         <BookOpenText size={32} className="mx-auto mb-2 opacity-50" />
         <p className="text-sm">No activities recorded yet</p>
       </div>
@@ -97,7 +97,7 @@ export function UnifiedActivityList({
           return (
             <div key={dateStr} className="space-y-2">
               {/* Date Header */}
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
+              <div className="flex items-center gap-2 text-sm text-muted font-medium">
                 <Calendar size={16} weight="duotone" className="text-indigo-400" />
                 <span>{formattedDate}</span>
                 <span className="text-xs opacity-60 font-normal">({dayActivities.length})</span>
@@ -118,8 +118,8 @@ export function UnifiedActivityList({
                   
                   const content = (
                     <div 
-                      className={`flex items-center gap-3 p-2.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-700 ${
-                        isClickable ? 'hover:bg-gray-100 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group' : ''
+                      className={`flex items-center gap-3 p-2.5 bg-[var(--background-secondary)]/50 rounded-lg border border-[var(--border)] ${
+                        isClickable ? 'hover:bg-[var(--hover-overlay)]/50 cursor-pointer transition-colors group' : ''
                       }`}
                     >
                       {/* Source Icon */}
@@ -130,14 +130,14 @@ export function UnifiedActivityList({
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1">
-                          <p className="font-medium text-gray-900 dark:text-white truncate text-sm">
+                          <p className="font-medium text-heading truncate text-sm">
                             {activity.title}
                           </p>
                           {isClickable && (
-                            <ArrowSquareOut size={12} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                            <ArrowSquareOut size={12} className="text-muted opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-2 text-xs text-muted">
                           <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${style.bg} ${style.text}`}>
                             {style.label}
                           </span>
@@ -169,7 +169,7 @@ export function UnifiedActivityList({
                           className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                             hasActualTime 
                               ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-600'
+                              : 'bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'
                           }`}
                           title="Log actual time"
                         >
@@ -177,7 +177,7 @@ export function UnifiedActivityList({
                           <span>{displayTime ? `${displayTime}m` : 'Add time'}</span>
                         </button>
                       ) : displayTime ? (
-                        <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <div className="flex items-center gap-1 text-xs text-muted">
                           <Clock size={12} />
                           <span>{displayTime}m</span>
                         </div>
@@ -219,8 +219,8 @@ export function UnifiedActivityList({
         
         {/* Pagination */}
         {!isPrintView && totalPages > 1 && (
-          <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
-            <span className="text-xs text-gray-500">
+          <div className="flex items-center justify-between pt-3 border-t border-[var(--border)]">
+            <span className="text-xs text-muted">
               Showing {startIdx + 1}-{Math.min(endIdx, activities.length)} of {activities.length}
             </span>
             
@@ -228,7 +228,7 @@ export function UnifiedActivityList({
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 rounded hover:bg-[var(--hover-overlay)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <CaretLeft size={16} />
               </button>
@@ -248,14 +248,14 @@ export function UnifiedActivityList({
                   return (
                     <span key={page} className="flex items-center">
                       {showEllipsisBefore && (
-                        <span className="px-1 text-gray-400">…</span>
+                        <span className="px-1 text-muted">…</span>
                       )}
                       <button
                         onClick={() => setCurrentPage(page)}
                         className={`min-w-[28px] h-7 px-2 rounded text-sm font-medium transition-colors ${
                           page === currentPage
                             ? 'bg-indigo-500 text-white'
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
+                            : 'hover:bg-[var(--hover-overlay)] text-muted dark:text-muted'
                         }`}
                       >
                         {page}
@@ -267,7 +267,7 @@ export function UnifiedActivityList({
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 rounded hover:bg-[var(--hover-overlay)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <CaretRight size={16} />
               </button>

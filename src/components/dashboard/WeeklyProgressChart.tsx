@@ -72,7 +72,7 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
               fill="none"
               stroke="currentColor"
               strokeWidth="6"
-              className="text-gray-200 dark:text-gray-700"
+              className="text-[var(--background-secondary)]"
             />
             <circle
               cx="32"
@@ -83,20 +83,20 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
               strokeWidth="6"
               strokeDasharray={`${stats.percentage * 1.76} 176`}
               strokeLinecap="round"
-              className="text-green-500 transition-all duration-500"
+              className="text-[var(--success)] transition-all duration-500"
             />
           </svg>
           {/* Center text */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-sm font-bold text-gray-900 dark:text-white">
+            <span className="text-sm font-bold text-heading">
               {stats.percentage}%
             </span>
           </div>
         </div>
         
         <div className="flex-1">
-          <div className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white">
-            <ChartBar size={16} className="text-green-500" />
+          <div className="flex items-center gap-2 text-sm font-medium text-heading">
+            <ChartBar size={16} className="text-[var(--success)]" />
             This Week
           </div>
           <p className="text-xs text-muted mt-1">
@@ -106,36 +106,36 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
       </div>
 
       {/* Per-student breakdown with expandable details */}
-      <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+      <div className="space-y-2 pt-2 border-t border-[var(--border)]">
         {stats.students.map(student => (
           <div key={student.id} className="space-y-1">
             {/* Progress bar row - clickable */}
             <button
               onClick={() => setExpandedStudent(expandedStudent === student.id ? null : student.id)}
-              className="w-full flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg p-1 -ml-1 transition-colors"
+              className="w-full flex items-center gap-3 hover:bg-[var(--hover-overlay)] rounded-lg p-1 -ml-1 transition-colors"
             >
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 w-16 truncate text-left">
+              <span className="text-xs font-medium text-muted w-16 truncate text-left">
                 {student.name}
               </span>
-              <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="flex-1 h-2 bg-[var(--background-secondary)] rounded-full overflow-hidden">
                 <div
                   className={cn(
                     "h-full rounded-full transition-all duration-500",
-                    student.percentage === 100 ? "bg-green-500" : "bg-yellow-500"
+                    student.percentage === 100 ? "bg-[var(--success)]" : "bg-[var(--herbal-gold)]"
                   )}
                   style={{ width: `${student.percentage}%` }}
                 />
               </div>
               <span className={cn(
                 "text-xs w-10 text-right font-medium",
-                student.percentage === 100 ? "text-green-600 dark:text-green-400" : "text-yellow-600 dark:text-yellow-400"
+                student.percentage === 100 ? "text-[var(--success)]" : "text-[var(--herbal-gold)]"
               )}>
                 {student.completed}/{student.total}
               </span>
               <CaretDown 
                 size={14} 
                 className={cn(
-                  "text-gray-400 transition-transform",
+                  "text-muted transition-transform",
                   expandedStudent === student.id && "rotate-180"
                 )} 
               />
@@ -143,24 +143,24 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
             
             {/* Expanded: Show all items */}
             {expandedStudent === student.id && student.items.length > 0 && (
-              <div className="ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-1 py-1">
+              <div className="ml-4 pl-4 border-l-2 border-[var(--border)] space-y-1 py-1">
                 {student.items.map(item => (
                   <div
                     key={item.id}
                     className={cn(
                       "flex items-center gap-2 text-xs py-1 px-2 rounded",
                       item.status === 'completed'
-                        ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400"
-                        : "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400"
+                        ? "bg-[var(--success-light)] text-[var(--success-dark)]"
+                        : "bg-[var(--warning-light)] text-[var(--warning-dark)]"
                     )}
                   >
                     {item.status === 'completed' ? (
-                      <CheckCircle size={14} weight="fill" className="text-green-500 flex-shrink-0" />
+                      <CheckCircle size={14} weight="fill" className="text-[var(--success)] flex-shrink-0" />
                     ) : (
-                      <Circle size={14} weight="duotone" className="text-yellow-500 flex-shrink-0" />
+                      <Circle size={14} weight="duotone" className="text-[var(--herbal-gold)] flex-shrink-0" />
                     )}
                     <span className="truncate flex-1">{item.title || 'Untitled'}</span>
-                    <span className="text-gray-400 text-[10px]">{item.date}</span>
+                    <span className="text-muted text-[10px]">{item.date}</span>
                   </div>
                 ))}
               </div>

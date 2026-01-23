@@ -52,7 +52,7 @@ export function CalendarView() {
             onClick={prevMonth}
             className="btn-icon"
           >
-            <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
+            <CaretLeft size={24} weight="duotone" className="text-[var(--celestial-400)]" />
           </button>
           <button 
             onClick={() => setCurrentDate(new Date())}
@@ -64,7 +64,7 @@ export function CalendarView() {
             onClick={nextMonth}
             className="btn-icon"
           >
-            <CaretRight size={24} weight="duotone" color="#b6e1d8" />
+            <CaretRight size={24} weight="duotone" className="text-[var(--celestial-400)]" />
           </button>
         </div>
       </div>
@@ -90,27 +90,27 @@ export function CalendarView() {
               key={day.toString()} 
               className={cn(
                 "aspect-square p-2 rounded-xl relative border border-transparent transition-all cursor-pointer group",
-                isCurrentMonth ? "bg-white dark:bg-gray-800" : "bg-gray-50/50 dark:bg-gray-900/50 text-gray-300 dark:text-gray-600",
-                isTodayDate && "ring-2 ring-[var(--ember-500)] ring-offset-2 dark:ring-offset-gray-900",
-                !isTodayDate && isCurrentMonth && "hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-sm"
+                isCurrentMonth ? "bg-[var(--background-elevated)]" : "bg-[var(--background)] text-muted opacity-50",
+                isTodayDate && "ring-2 ring-[var(--cosmic-rust-500)] ring-offset-2 ring-offset-[var(--background)]",
+                !isTodayDate && isCurrentMonth && "hover:border-[var(--border)] hover:shadow-sm"
               )}
             >
               <span className={cn(
                 "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full",
-                isTodayDate ? "bg-[var(--ember-500)] text-white" : "text-gray-700 dark:text-gray-300"
+                isTodayDate ? "bg-[var(--cosmic-rust-500)] text-white" : "text-heading"
               )}>
                 {format(day, 'd')}
               </span>
               
-              {/* Event Dots */}
+              {/* Event Dots - using palette colors */}
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
                 {dayEvents.map((evt, i) => (
                   <div 
                     key={i} 
                     className={cn(
                       "w-1.5 h-1.5 rounded-full",
-                      evt.type === 'assignment' ? 'bg-pink-400' :
-                      evt.type === 'lesson' ? 'bg-blue-400' : 'bg-green-400'
+                      evt.type === 'assignment' ? 'bg-[var(--nebula-pink)]' :
+                      evt.type === 'lesson' ? 'bg-[var(--celestial-400)]' : 'bg-[var(--success)]'
                     )} 
                   />
                 ))}

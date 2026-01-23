@@ -75,7 +75,7 @@ export function KidActivityLog({ kidId, kidName, initialEntries }: KidActivityLo
     <div className="space-y-4">
       {/* Header with link to reports */}
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+        <h4 className="font-medium text-heading dark:text-muted flex items-center gap-2">
           <Book size={18} weight="duotone" className="text-[var(--ember-500)]" />
           Activity Log
         </h4>
@@ -104,7 +104,7 @@ export function KidActivityLog({ kidId, kidName, initialEntries }: KidActivityLo
         <div className="text-center">
           <Link 
             href={`/parent/progress/reports?kid=${kidId}`}
-            className="text-sm text-gray-500 hover:text-[var(--ember-500)]"
+            className="text-sm text-muted hover:text-[var(--ember-500)]"
           >
             View all {entries.length} entries →
           </Link>

@@ -211,8 +211,8 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
           </div>
          <div className="flex items-center gap-3">
             <LunaTriggerButton context="GENERAL" label="Need ideas?" iconOnly={false} />
-            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-               <span className="text-xs font-medium px-2 text-gray-500">Template?</span>
+            <div className="flex items-center gap-2 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] p-1 rounded-lg">
+               <span className="text-xs font-medium px-2 text-muted">Template?</span>
                <input type="checkbox" {...register('isTemplate')} className="w-4 h-4 text-[var(--ember-500)] rounded" />
             </div>
          </div>
@@ -226,7 +226,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                <input
                   {...register('title')}
                   placeholder="e.g. Fraction Pizza Project"
-                  className="w-full text-lg p-2 border-b-2 border-gray-200 dark:border-gray-700 bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-gray-300"
+                  className="w-full text-lg p-2 border-b-2 border-[var(--border)] bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-muted"
                />
                {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
             </div>
@@ -296,13 +296,13 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                <div className="space-y-3">
                   {rubricFields.map((field, index) => (
                      <div key={field.id} className="flex gap-2 items-center">
-                        <input type="checkbox" disabled className="text-gray-300 rounded" />
+                        <input type="checkbox" disabled className="text-muted rounded" />
                         <input
                            {...register(`rubric.${index}.text` as const)}
                            className="input-sm flex-1"
                            placeholder="e.g. I can identify 1/2 of a circle..."
                         />
-                        <button type="button" onClick={() => removeRubric(index)} className="text-gray-300 hover:text-red-400">
+                        <button type="button" onClick={() => removeRubric(index)} className="text-muted hover:text-red-400">
                            <X size={14} />
                         </button>
                      </div>
@@ -324,14 +324,14 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                  <div className="space-y-3">
                     {stepFields.map((field, index) => (
                        <div key={field.id} className="flex gap-2 items-start">
-                          <span className="text-sm font-bold text-gray-400 w-6 pt-2 text-right">{index + 1}.</span>
+                          <span className="text-sm font-bold text-muted w-6 pt-2 text-right">{index + 1}.</span>
                           <textarea
                              {...register(`steps.${index}.text` as const)}
-                             className="flex-1 p-2 text-sm rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 focus:ring-1 focus:ring-[var(--ember-500)] outline-none resize-none"
+                             className="flex-1 p-2 text-sm rounded bg-[var(--background-elevated)] border border-[var(--border)] dark:border-[var(--border)] focus:ring-1 focus:ring-[var(--ember-500)] outline-none resize-none"
                              rows={2}
                              placeholder={`Step ${index + 1}...`}
                           />
-                          <button type="button" onClick={() => removeStep(index)} className="text-gray-300 hover:text-red-400 pt-2">
+                          <button type="button" onClick={() => removeStep(index)} className="text-muted hover:text-red-400 pt-2">
                              <X size={14} />
                           </button>
                        </div>
@@ -388,7 +388,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
              </div>
          </div>
          
-         <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+         <div className="pt-4 border-t border-[var(--border)]">
              <div className="flex items-center justify-between mb-3">
                  <label className="input-label">Attachments & Links</label>
                 <button type="button" onClick={() => appendLink({ url: '', label: '' })} className="text-xs flex items-center gap-1 text-[var(--ember-600)] hover:underline">
@@ -398,18 +398,18 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
              
              <div className="space-y-2">
                 {linkFields.map((field, index) => (
-                   <div key={field.id} className="flex flex-wrap items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
+                   <div key={field.id} className="flex flex-wrap items-center gap-3 p-3 bg-[var(--background-secondary)] bg-[var(--background)] rounded-lg border border-[var(--border)]">
                        <Link size={14} weight="duotone" color="#b6e1d8" />
-                      <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
-                      <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
-                      <button type="button" onClick={() => removeLink(index)} className="text-gray-400 hover:text-red-500"><X size={16} /></button>
+                      <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
+                      <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
+                      <button type="button" onClick={() => removeLink(index)} className="text-muted hover:text-red-500"><X size={16} /></button>
                    </div>
                 ))}
              </div>
          </div>
       </div>
 
-      <div className="flex justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+      <div className="flex justify-between pt-4 border-t border-[var(--border)]">
          {initialData?.id && (
            <button
               type="button"

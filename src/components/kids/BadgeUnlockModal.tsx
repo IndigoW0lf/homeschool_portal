@@ -112,7 +112,7 @@ export function BadgeUnlockModal({ badgeId, onClose }: BadgeUnlockModalProps) {
         {/* Continue button */}
         <button
           onClick={onClose}
-          className="w-full py-3 px-6 bg-gradient-to-r from-yellow-400 to-amber-500 text-gray-900 font-bold rounded-xl hover:from-yellow-300 hover:to-amber-400 transition-all shadow-lg shadow-yellow-500/30"
+          className="w-full py-3 px-6 bg-gradient-to-r from-yellow-400 to-amber-500 text-heading font-bold rounded-xl hover:from-yellow-300 hover:to-amber-400 transition-all shadow-lg shadow-yellow-500/30"
         >
           Awesome! 🎉
         </button>

@@ -35,20 +35,20 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[var(--lavender-400)] to-[var(--ember-400)] mb-4">
           <Sparkle size={32} weight="fill" className="text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h2 className="text-2xl font-bold text-heading mb-2">
           Welcome to Lunara Quest!
         </h2>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-muted">
           Your magical homeschool companion awaits. Let's get you set up!
         </p>
       </div>
 
       {/* What You'll Get */}
-      <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
-        <h3 className="font-medium text-gray-900 dark:text-white mb-3">
+      <div className="bg-[var(--background-secondary)]/50 rounded-xl p-4">
+        <h3 className="font-medium text-heading mb-3">
           What's included:
         </h3>
-        <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+        <ul className="space-y-2 text-sm text-muted">
           <li className="flex items-center gap-2">
             <span className="text-green-500">✓</span>
             Plan and organize your homeschool day
@@ -69,7 +69,7 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
       </div>
 
       {/* Terms Checkbox */}
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+      <div className="border-t border-[var(--border)] pt-4">
         <button
           type="button"
           onClick={() => updateData({ termsAccepted: !data.termsAccepted })}
@@ -78,9 +78,9 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
           {data.termsAccepted ? (
             <CheckSquare size={24} weight="fill" className="text-[var(--ember-500)] flex-shrink-0 mt-0.5" />
           ) : (
-            <Square size={24} className="text-gray-400 flex-shrink-0 mt-0.5" />
+            <Square size={24} className="text-muted flex-shrink-0 mt-0.5" />
           )}
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-sm text-muted">
             I agree to the{' '}
             <Link href="/legal/terms" className="text-[var(--ember-500)] hover:underline" target="_blank">
               Terms of Service
@@ -101,7 +101,7 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
           theme="auto"
         />
         {!isVerified && (
-          <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs text-center text-muted mt-2">
             Please complete the security check above
           </p>
         )}

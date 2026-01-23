@@ -23,10 +23,10 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
 
       {/* Success Message */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h2 className="text-2xl font-bold text-heading mb-2">
           {joiningFamily ? "You're in! 🎉" : "You're all set! 🎉"}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-muted">
           {joiningFamily ? (
             <>
               Welcome to <strong>{joiningFamily}</strong>, {data.displayName || 'friend'}!
@@ -48,11 +48,11 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
       </div>
 
       {/* What's Next */}
-      <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-left">
-        <h3 className="font-medium text-gray-900 dark:text-white mb-3">
+      <div className="bg-[var(--background-secondary)]/50 rounded-xl p-4 text-left">
+        <h3 className="font-medium text-heading mb-3">
           What's next:
         </h3>
-        <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+        <ul className="space-y-2 text-sm text-muted">
           {joiningFamily ? (
             <>
               <li className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
       </div>
 
       {/* Note about email confirmation */}
-      <p className="text-xs text-gray-500 dark:text-gray-400">
+      <p className="text-xs text-muted">
         Check your email to confirm your account. You can still explore while waiting!
       </p>
 

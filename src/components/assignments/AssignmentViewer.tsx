@@ -29,7 +29,7 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
           {assignment.type}
         </span>
         {assignment.estimated_minutes && (
-          <span className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+          <span className="text-sm text-muted flex items-center gap-1">
             <Clock size={18} weight="duotone" color="#e7b58d" />
             {assignment.estimated_minutes} min
           </span>
@@ -38,8 +38,8 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
 
       {/* Deliverable */}
       {assignment.deliverable && (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-          <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+        <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+          <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-2">
             <FileText size={24} weight="duotone" color="#b6e1d8" />
             What to Turn In
           </h4>
@@ -50,15 +50,15 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
       {/* Steps */}
       {assignment.steps && assignment.steps.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+          <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
             Steps to Complete
           </h4>
           <div className="space-y-2">
             {assignment.steps.map((step, i) => (
               step.text && (
-                <div key={i} className="flex gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                <div key={i} className="flex gap-3 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)]">
                   <span className="font-bold text-[var(--ember-500)] w-6 text-right">{i + 1}.</span>
-                  <p className="text-gray-700 dark:text-gray-300 flex-1">{step.text}</p>
+                  <p className="text-heading dark:text-muted flex-1">{step.text}</p>
                 </div>
               )
             ))}
@@ -69,15 +69,15 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
       {/* Rubric / Success Criteria */}
       {assignment.rubric && assignment.rubric.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+          <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
             <CheckSquare size={24} weight="duotone" color="#b6e1d8" />
             Success Criteria
           </h4>
           <div className="space-y-2">
             {assignment.rubric.map((item, i) => (
               item.text && (
-                <div key={i} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <div className="w-4 h-4 rounded border-2 border-gray-300 dark:border-gray-600" />
+                <div key={i} className="flex items-center gap-2 text-heading dark:text-muted">
+                  <div className="w-4 h-4 rounded border-2 border-[var(--border)] dark:border-[var(--border)]" />
                   <span>{item.text}</span>
                 </div>
               )
@@ -89,7 +89,7 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
       {/* Links */}
       {assignment.links && assignment.links.length > 0 && (
         <div>
-          <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+          <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
             Resources & Links
           </h4>
           <div className="space-y-2">
@@ -99,10 +99,10 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
+                className="flex items-center gap-2 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)] hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
               >
                 <LinkSimple size={18} weight="duotone" className="text-[var(--ember-500)]" />
-                <span className="text-gray-700 dark:text-gray-300 flex-1 group-hover:text-[var(--ember-600)]">
+                <span className="text-heading dark:text-muted flex-1 group-hover:text-[var(--ember-600)]">
                   {link.label || link.url}
                 </span>
               </a>

@@ -301,7 +301,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
             <input
               {...register('title')}
               placeholder="e.g. Introduction to Fractions"
-              className="w-full text-lg p-2 border-b-2 border-gray-200 dark:border-gray-700 bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-gray-300"
+              className="w-full text-lg p-2 border-b-2 border-[var(--border)] bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-muted"
             />
             {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
           </div>
@@ -368,7 +368,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           <button
             type="button"
             onClick={() => setShowTeaching(!showTeaching)}
-            className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-gray-100 dark:border-gray-700"
+            className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-b border-[var(--border)]"
           >
             <span className="font-semibold text-blue-800 dark:text-blue-300 flex items-center gap-2">
               <Question size={18} /> Teaching Content (Lesson)
@@ -395,13 +395,13 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
                   </h4>
                   {questionFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2 items-center">
-                      <span className="text-xs font-bold text-gray-300 w-4">{index + 1}</span>
+                      <span className="text-xs font-bold text-muted w-4">{index + 1}</span>
                       <input
                         {...register(`keyQuestions.${index}.text` as const)}
                         className="input-sm flex-1"
                         placeholder="e.g. What is the numerator?"
                       />
-                      <button type="button" onClick={() => removeQuestion(index)} className="text-gray-300 hover:text-red-400">
+                      <button type="button" onClick={() => removeQuestion(index)} className="text-muted hover:text-red-400">
                         <X size={14} />
                       </button>
                     </div>
@@ -434,7 +434,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           <button
             type="button"
             onClick={() => setShowPractice(!showPractice)}
-            className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-b border-gray-100 dark:border-gray-700"
+            className="w-full p-4 flex items-center justify-between bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-b border-[var(--border)]"
           >
             <span className="font-semibold text-green-800 dark:text-green-300 flex items-center gap-2">
               <ListNumbers size={18} /> Practice / Assignment
@@ -462,14 +462,14 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
                   </h4>
                   {stepFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2 items-start">
-                      <span className="text-sm font-bold text-gray-400 w-6 pt-2 text-right">{index + 1}.</span>
+                      <span className="text-sm font-bold text-muted w-6 pt-2 text-right">{index + 1}.</span>
                       <textarea
                         {...register(`steps.${index}.text` as const)}
-                        className="flex-1 p-2 text-sm rounded bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 focus:ring-1 focus:ring-[var(--ember-500)] outline-none resize-none"
+                        className="flex-1 p-2 text-sm rounded bg-[var(--background-elevated)] border border-[var(--border)] dark:border-[var(--border)] focus:ring-1 focus:ring-[var(--ember-500)] outline-none resize-none"
                         rows={2}
                         placeholder={`Step ${index + 1}...`}
                       />
-                      <button type="button" onClick={() => removeStep(index)} className="text-gray-300 hover:text-red-400 pt-2">
+                      <button type="button" onClick={() => removeStep(index)} className="text-muted hover:text-red-400 pt-2">
                         <X size={14} />
                       </button>
                     </div>
@@ -489,13 +489,13 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
                   </h4>
                   {rubricFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2 items-center">
-                      <input type="checkbox" disabled className="text-gray-300 rounded" />
+                      <input type="checkbox" disabled className="text-muted rounded" />
                       <input
                         {...register(`rubric.${index}.text` as const)}
                         className="input-sm flex-1"
                         placeholder="e.g. I can identify 1/2 of a circle..."
                       />
-                      <button type="button" onClick={() => removeRubric(index)} className="text-gray-300 hover:text-red-400">
+                      <button type="button" onClick={() => removeRubric(index)} className="text-muted hover:text-red-400">
                         <X size={14} />
                       </button>
                     </div>
@@ -516,7 +516,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
         {/* WORKSHEETS */}
         <div className="card p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <h3 className="font-semibold text-heading dark:text-white flex items-center gap-2">
               <MagicWand size={18} className="text-purple-500" /> Worksheets
             </h3>
             <button
@@ -571,7 +571,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
 
         {/* NOTES & LINKS */}
         <div className="card p-6 space-y-6">
-          <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+          <h3 className="font-semibold text-heading dark:text-white flex items-center gap-2">
             <Stack size={18} className="text-amber-500" /> Resources & Notes
           </h3>
 
@@ -599,7 +599,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
             </div>
           </div>
           
-          <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+          <div className="pt-4 border-t border-[var(--border)]">
             <div className="flex items-center justify-between mb-3">
               <label className="input-label">Links & Attachments</label>
               <button type="button" onClick={() => appendLink({ url: '', label: '' })} className="text-xs flex items-center gap-1 text-[var(--ember-600)] hover:underline">
@@ -609,11 +609,11 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
             
             <div className="space-y-2">
               {linkFields.map((field, index) => (
-                <div key={field.id} className="flex flex-wrap items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-100 dark:border-gray-700">
+                <div key={field.id} className="flex flex-wrap items-center gap-3 p-3 bg-[var(--background-secondary)] bg-[var(--background)] rounded-lg border border-[var(--border)]">
                   <LinkIcon size={14} className="text-teal-500" />
-                  <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
-                  <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-gray-200 bg-white dark:bg-gray-800" />
-                  <button type="button" onClick={() => removeLink(index)} className="text-gray-400 hover:text-red-500"><X size={16} /></button>
+                  <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
+                  <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
+                  <button type="button" onClick={() => removeLink(index)} className="text-muted hover:text-red-500"><X size={16} /></button>
                 </div>
               ))}
             </div>

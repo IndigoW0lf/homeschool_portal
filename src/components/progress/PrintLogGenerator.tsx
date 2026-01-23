@@ -33,7 +33,7 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[var(--ember-500)] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center gap-1.5"
+        className="px-3 py-2 text-sm font-medium text-muted dark:text-muted hover:text-[var(--ember-500)] hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-lg transition-colors flex items-center gap-1.5"
       >
         <Printer size={16} weight="duotone" />
         Print Log
@@ -48,15 +48,15 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
           />
           
           {/* Dropdown */}
-          <div className="absolute right-0 top-full mt-2 z-50 w-80 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl p-4">
+          <div className="absolute right-0 top-full mt-2 z-50 w-80 bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] shadow-xl p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <h3 className="font-semibold text-heading flex items-center gap-2">
                 <Funnel size={16} />
                 Generate Print Log
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
+                className="p-1 text-muted hover:text-muted dark:hover:text-muted rounded"
               >
                 <X size={16} />
               </button>
@@ -65,13 +65,13 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
             <div className="space-y-4">
               {/* Student */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                <label className="block text-xs font-medium text-muted mb-1">
                   Student
                 </label>
                 <select
                   value={selectedKid}
                   onChange={(e) => setSelectedKid(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="">All Students</option>
                   {kids.map(kid => (
@@ -82,13 +82,13 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
 
               {/* Time Period */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                <label className="block text-xs font-medium text-muted mb-1">
                   Time Period
                 </label>
                 <select
                   value={days}
                   onChange={(e) => setDays(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="7">Last 7 Days</option>
                   <option value="30">Last 30 Days</option>
@@ -100,13 +100,13 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
 
               {/* Source */}
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                <label className="block text-xs font-medium text-muted mb-1">
                   Source
                 </label>
                 <select
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="">All Sources</option>
                   <option value="lunara_quest">Lunara Quest</option>

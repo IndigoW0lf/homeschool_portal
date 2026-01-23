@@ -45,15 +45,15 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
   return (
     <div className={cn("max-w-4xl mx-auto bg-white p-8 print:p-0 min-h-screen", className)}>
       {/* Header */}
-      <div className="border-b-2 border-gray-900 pb-4 mb-8">
+      <div className="border-b-2 border-[var(--night-900)] pb-4 mb-8">
         <EditableText
           value={data.title}
           editable={editable}
           onChange={(title) => onDataChange?.({ ...data, title })}
-          className="text-3xl font-bold text-center mb-2 font-serif text-gray-900"
+          className="text-3xl font-bold text-center mb-2 font-serif text-heading"
           inputClassName="text-3xl font-bold text-center font-serif"
         />
-        <div className="flex justify-between mt-6 text-sm font-semibold text-gray-600">
+        <div className="flex justify-between mt-6 text-sm font-semibold text-muted">
           <span>Name: ____________________</span>
           <span>Date: ____________________</span>
         </div>
@@ -61,13 +61,13 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
 
       {/* Instructions */}
       {(data.instructions || editable) && (
-        <div className="mb-8 p-4 bg-gray-50 rounded-lg print:border print:border-gray-300 print:bg-white">
-          <h3 className="font-bold text-gray-900 mb-1 uppercase tracking-wider text-xs">Instructions:</h3>
+        <div className="mb-8 p-4 bg-[var(--background-secondary)] rounded-lg print:border print:border-[var(--border)] print:bg-white">
+          <h3 className="font-bold text-heading mb-1 uppercase tracking-wider text-xs">Instructions:</h3>
           <EditableText
             value={data.instructions || ''}
             editable={editable}
             onChange={(instructions) => onDataChange?.({ ...data, instructions })}
-            className="text-gray-800 leading-relaxed"
+            className="text-heading leading-relaxed"
             multiline
           />
         </div>
@@ -82,7 +82,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
                 value={section.title || ''}
                 editable={editable}
                 onChange={(title) => updateSection(sIdx, { title })}
-                className="text-xl font-bold text-gray-800 border-b border-gray-200 pb-2 mb-4"
+                className="text-xl font-bold text-heading border-b border-[var(--border)] pb-2 mb-4"
                 placeholder="Section Title"
               />
             )}
@@ -105,7 +105,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
       </div>
       
       {/* Footer / Branding */}
-      <div className="mt-16 pt-4 border-t border-gray-100 text-center text-xs text-gray-400 print:fixed print:bottom-4 print:left-0 print:w-full">
+      <div className="mt-16 pt-4 border-t border-[var(--border)] text-center text-xs text-muted print:fixed print:bottom-4 print:left-0 print:w-full">
         Created with Lunara Quest
       </div>
     </div>
@@ -198,7 +198,7 @@ function EditableText({ value, editable, onChange, className, inputClassName, pl
         "cursor-pointer hover:bg-purple-50 hover:outline hover:outline-2 hover:outline-purple-200 rounded px-1 -mx-1 transition-colors group relative"
       )}
     >
-      {value || <span className="text-gray-400 italic">{placeholder || 'Click to edit'}</span>}
+      {value || <span className="text-muted italic">{placeholder || 'Click to edit'}</span>}
       <PencilSimple 
         size={14} 
         className="absolute -right-5 top-1/2 -translate-y-1/2 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" 
@@ -220,13 +220,13 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
   return (
     <div className="w-full">
       <div className="flex gap-2 mb-2">
-        <span className="font-bold text-gray-900">{index}.</span>
+        <span className="font-bold text-heading">{index}.</span>
         <div className="flex-1">
           <EditableText
             value={item.question}
             editable={editable}
             onChange={(question) => onQuestionChange?.({ question })}
-            className="text-gray-900 font-medium text-lg leading-snug"
+            className="text-heading font-medium text-lg leading-snug"
           />
         </div>
       </div>
@@ -237,12 +237,12 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
             {item.options.map((opt, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0"></div>
+                <div className="w-6 h-6 rounded-full border-2 border-[var(--border)] flex-shrink-0"></div>
                 <EditableText
                   value={opt}
                   editable={editable}
                   onChange={(value) => onOptionChange?.(i, value)}
-                  className="text-gray-700"
+                  className="text-heading"
                 />
               </div>
             ))}
@@ -251,30 +251,30 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
 
         {item.type === 'text' && (
           <div 
-            className="w-full mt-2 border-b border-gray-300" 
+            className="w-full mt-2 border-b border-[var(--border)]" 
             style={{ height: `${(item.space_lines || 3) * 2}rem` }}
           >
             {/* Visual lines for writing */}
             {Array.from({ length: item.space_lines || 3 }).map((_, i) => (
-              <div key={i} className="border-b border-gray-200 h-8 w-full"></div>
+              <div key={i} className="border-b border-[var(--border)] h-8 w-full"></div>
             ))}
           </div>
         )}
 
         {item.type === 'fill_in_blank' && (
           <div 
-            className="w-full mt-2 border-b border-gray-300" 
+            className="w-full mt-2 border-b border-[var(--border)]" 
             style={{ height: `${(item.space_lines || 2) * 2}rem` }}
           >
             {Array.from({ length: item.space_lines || 2 }).map((_, i) => (
-              <div key={i} className="border-b border-gray-200 h-8 w-full"></div>
+              <div key={i} className="border-b border-[var(--border)] h-8 w-full"></div>
             ))}
           </div>
         )}
         
         {item.type === 'drawing_space' && (
-          <div className="w-full h-64 border-2 border-gray-200 rounded-xl mt-2 bg-gray-50 print:bg-white print:border-gray-800">
-            <div className="h-full flex items-center justify-center text-gray-300 text-sm print:hidden">
+          <div className="w-full h-64 border-2 border-[var(--border)] rounded-xl mt-2 bg-[var(--background-secondary)] print:bg-white print:border-gray-800">
+            <div className="h-full flex items-center justify-center text-muted text-sm print:hidden">
               Drawing Space
             </div>
           </div>

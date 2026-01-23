@@ -165,8 +165,8 @@ export function FamilyManager() {
     if (loading) {
         return (
             <div className="animate-pulse space-y-4">
-                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-                <div className="h-20 bg-gray-100 dark:bg-gray-800 rounded"></div>
+                <div className="h-6 bg-[var(--background-secondary)] rounded w-1/3"></div>
+                <div className="h-20 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] rounded"></div>
             </div>
         );
     }
@@ -182,12 +182,12 @@ export function FamilyManager() {
                     </h3>
                     <div className="space-y-2">
                         {myInvites.map((invite) => (
-                            <div key={invite.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg">
+                            <div key={invite.id} className="flex items-center justify-between p-3 bg-[var(--background-elevated)] rounded-lg">
                                 <div>
-                                    <p className="font-medium text-gray-900 dark:text-white">
+                                    <p className="font-medium text-heading">
                                         {invite.family?.name || 'A Family'}
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    <p className="text-xs text-muted">
                                         Invited by {invite.inviter_profile?.display_name || invite.inviter_profile?.email || 'someone'}
                                     </p>
                                 </div>
@@ -200,7 +200,7 @@ export function FamilyManager() {
                                     </button>
                                     <button
                                         onClick={() => handleDeclineInvite(invite.id)}
-                                        className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                                        className="px-3 py-1.5 text-sm text-muted hover:bg-[var(--hover-overlay)] rounded-lg"
                                     >
                                         Decline
                                     </button>
@@ -223,25 +223,25 @@ export function FamilyManager() {
                                 type="text"
                                 value={familyName}
                                 onChange={(e) => setFamilyName(e.target.value)}
-                                className="px-2 py-1 text-lg font-semibold border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                className="px-2 py-1 text-lg font-semibold border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
                                 autoFocus
                             />
                             <button onClick={handleSaveFamilyName} className="p-1.5 text-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 rounded">
                                 <Check size={18} weight="bold" />
                             </button>
-                            <button onClick={() => { setEditingName(false); setFamilyName(family?.name || 'My Family'); }} className="p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+                            <button onClick={() => { setEditingName(false); setFamilyName(family?.name || 'My Family'); }} className="p-1.5 text-muted hover:bg-[var(--hover-overlay)] rounded">
                                 <X size={18} />
                             </button>
                         </div>
                     ) : (
                         <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            <h3 className="text-lg font-semibold text-heading">
                                 {family?.name || 'My Family'}
                             </h3>
                             {isAdmin && (
                                 <button
                                     onClick={() => setEditingName(true)}
-                                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                                    className="p-1 text-muted hover:text-muted dark:hover:text-muted"
                                     title="Edit family name"
                                 >
                                     <PencilSimple size={14} />
@@ -264,36 +264,36 @@ export function FamilyManager() {
             {/* Invite Form */}
             {showInviteForm && (
                 <div className="p-4 rounded-lg bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20 border border-[var(--ember-200)] dark:border-[var(--ember-800)] space-y-3">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <p className="text-sm font-medium text-heading dark:text-muted">
                         Invite another adult to join your family
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-muted">
                         They&apos;ll be able to see and manage all kids in the family.
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-xs text-gray-500 mb-1">Email Address</label>
+                            <label className="block text-xs text-muted mb-1">Email Address</label>
                             <input
                                 type="email"
                                 value={inviteEmail}
                                 onChange={(e) => setInviteEmail(e.target.value)}
                                 placeholder="parent@example.com"
-                                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+                                className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs text-gray-500 mb-1">Role</label>
+                            <label className="block text-xs text-muted mb-1">Role</label>
                             <div className="relative">
                                 <select
                                     value={inviteRole}
                                     onChange={(e) => setInviteRole(e.target.value as 'admin' | 'member')}
-                                    className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 outline-none focus:ring-2 focus:ring-[var(--ember-500)] appearance-none"
+                                    className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] outline-none focus:ring-2 focus:ring-[var(--ember-500)] appearance-none"
                                 >
                                     <option value="member">Member (can view & interact)</option>
                                     <option value="admin">Admin (full control)</option>
                                 </select>
-                                <CaretDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                <CaretDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
                             </div>
                         </div>
                     </div>
@@ -301,7 +301,7 @@ export function FamilyManager() {
                     <div className="flex gap-2 pt-2">
                         <button
                             onClick={() => { setShowInviteForm(false); setInviteEmail(''); }}
-                            className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                            className="px-3 py-1.5 text-sm text-muted hover:bg-[var(--hover-overlay)] rounded-lg"
                         >
                             Cancel
                         </button>
@@ -319,7 +319,7 @@ export function FamilyManager() {
 
             {/* Family Members */}
             <div className="space-y-2">
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <p className="text-xs font-medium text-muted uppercase tracking-wider">
                     Family Members ({members.length})
                 </p>
                 {members.map((member) => (
@@ -329,7 +329,7 @@ export function FamilyManager() {
                             "p-3 rounded-lg border transition-all",
                             removingId === member.id
                                 ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-                                : "bg-gray-50 dark:bg-gray-900/50 border-gray-200 dark:border-gray-700"
+                                : "bg-[var(--background-secondary)] bg-[var(--background)] border-[var(--border)]"
                         )}
                     >
                         {removingId === member.id ? (
@@ -340,7 +340,7 @@ export function FamilyManager() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => setRemovingId(null)}
-                                        className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
+                                        className="px-2 py-1 text-xs text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] rounded"
                                     >
                                         Cancel
                                     </button>
@@ -368,7 +368,7 @@ export function FamilyManager() {
                                     )}
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <p className="font-medium text-gray-900 dark:text-white">
+                                            <p className="font-medium text-heading">
                                                 {member.profile?.display_name || member.profile?.email || 'Unknown'}
                                             </p>
                                             {member.role === 'admin' && (
@@ -377,11 +377,11 @@ export function FamilyManager() {
                                                 </span>
                                             )}
                                             {member.user_id === currentUserId && (
-                                                <span className="text-xs text-gray-400">(You)</span>
+                                                <span className="text-xs text-muted">(You)</span>
                                             )}
                                         </div>
                                         {member.profile?.email && member.profile?.display_name && (
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            <p className="text-xs text-muted">
                                                 {member.profile.email}
                                             </p>
                                         )}
@@ -390,7 +390,7 @@ export function FamilyManager() {
                                 {isAdmin && member.user_id !== currentUserId && (
                                     <button
                                         onClick={() => setRemovingId(member.id)}
-                                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                        className="p-2 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                                         title="Remove member"
                                     >
                                         <Trash size={16} />
@@ -399,7 +399,7 @@ export function FamilyManager() {
                                 {!isAdmin && member.user_id === currentUserId && members.length > 1 && (
                                     <button
                                         onClick={() => setRemovingId(member.id)}
-                                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors flex items-center gap-1"
+                                        className="p-2 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors flex items-center gap-1"
                                         title="Leave family"
                                     >
                                         <SignOut size={16} />
@@ -414,24 +414,24 @@ export function FamilyManager() {
             {/* Pending Invites */}
             {invites.length > 0 && (
                 <div className="space-y-2">
-                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    <p className="text-xs font-medium text-muted uppercase tracking-wider">
                         Pending Invitations ({invites.length})
                     </p>
                     {invites.map((invite) => (
                         <div
                             key={invite.id}
-                            className="p-3 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-900/30"
+                            className="p-3 rounded-lg border border-dashed border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-secondary)]/50 dark:bg-[var(--night-900)]/30"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                        <Clock size={18} className="text-gray-400" />
+                                    <div className="w-10 h-10 rounded-full bg-[var(--background-secondary)] flex items-center justify-center">
+                                        <Clock size={18} className="text-muted" />
                                     </div>
                                     <div>
-                                        <p className="font-medium text-gray-600 dark:text-gray-300">
+                                        <p className="font-medium text-muted dark:text-muted">
                                             {invite.email}
                                         </p>
-                                        <p className="text-xs text-gray-400">
+                                        <p className="text-xs text-muted">
                                             Invited as {invite.role} • Expires {new Date(invite.expires_at).toLocaleDateString()}
                                         </p>
                                     </div>
@@ -439,7 +439,7 @@ export function FamilyManager() {
                                 {isAdmin && (
                                     <button
                                         onClick={() => handleCancelInvite(invite.id)}
-                                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                        className="p-2 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                                         title="Cancel invitation"
                                     >
                                         <X size={16} />

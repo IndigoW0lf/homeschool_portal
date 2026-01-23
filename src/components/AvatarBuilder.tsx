@@ -123,9 +123,9 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       {/* ... (Header) ... */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+      <div className="bg-[var(--background-elevated)] rounded-xl p-6 shadow-sm border border-[var(--border)]">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Avatar Builder</h2>
+          <h2 className="text-2xl font-bold text-heading dark:text-white">Avatar Builder</h2>
           <Link 
             href={`/kids/${kidId}/studio`}
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity text-sm"
@@ -157,13 +157,13 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex flex-wrap gap-2 mb-6 border-b border-[var(--border)]">
           <button
             onClick={() => setActiveTab('skin')}
             className={`px-4 py-2 font-medium transition-colors ${
               activeTab === 'skin'
                 ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                : 'text-muted hover:text-heading dark:hover:text-muted'
             }`}
           >
             Skin
@@ -173,7 +173,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
             className={`px-4 py-2 font-medium transition-colors ${
               activeTab === 'face'
                 ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                : 'text-muted hover:text-heading dark:hover:text-muted'
             }`}
           >
             Face
@@ -183,7 +183,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
             className={`px-4 py-2 font-medium transition-colors ${
               activeTab === 'hair'
                 ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                : 'text-muted hover:text-heading dark:hover:text-muted'
             }`}
           >
             Hair
@@ -193,7 +193,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
             className={`px-4 py-2 font-medium transition-colors ${
               activeTab === 'outfit'
                 ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                : 'text-muted hover:text-heading dark:hover:text-muted'
             }`}
           >
             Outfit
@@ -203,7 +203,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
             className={`px-4 py-2 font-medium transition-colors ${
               activeTab === 'accessory'
                 ? 'text-[var(--ember-500)] border-b-2 border-[var(--ember-500)]'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                : 'text-muted hover:text-heading dark:hover:text-muted'
             }`}
           >
             Accessory
@@ -212,7 +212,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
 
         {/* Asset Selection */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">
             Select {
               activeTab === 'skin' ? 'Skin Tone' : 
               activeTab === 'face' ? 'Face' : 
@@ -237,7 +237,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                     className={`p-4 rounded-lg border-2 transition-all ${
                       isSelected
                         ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                        : 'border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)]'
                     }`}
                   >
                     <div className="w-full h-24 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center relative overflow-hidden">
@@ -246,7 +246,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                         style={{ backgroundColor: tone.color }}
                       />
                     </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate">
+                    <p className="text-sm text-heading dark:text-muted text-center truncate">
                       {tone.label}
                     </p>
                   </button>
@@ -269,7 +269,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                     className={`p-4 rounded-lg border-2 transition-all ${
                       isSelected
                         ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                        : 'border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)]'
                     }`}
                   >
                     <div className="w-full h-24 flex items-center justify-center">
@@ -280,7 +280,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                         hairType="none"
                       />
                     </div>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate mt-2">
+                    <p className="text-sm text-heading dark:text-muted text-center truncate mt-2">
                       {face.label}
                     </p>
                   </button>
@@ -306,7 +306,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                       className={`p-4 rounded-lg border-2 transition-all ${
                         isSelected
                           ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                          : 'border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)]'
                       }`}
                     >
                       <div className="w-full h-24 flex items-center justify-center">
@@ -318,7 +318,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                           hairColor={state.colors?.hair || '#4a3728'}
                         />
                       </div>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 text-center truncate mt-2">
+                      <p className="text-sm text-heading dark:text-muted text-center truncate mt-2">
                         {hair.label}
                       </p>
                     </button>
@@ -326,8 +326,8 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                 })}
                 
                 {/* Hair Color Picker */}
-                <div className="col-span-full mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hair Color</p>
+                <div className="col-span-full mt-4 p-4 bg-[var(--background-secondary)] dark:bg-[var(--night-900)] rounded-lg">
+                  <p className="text-sm font-medium text-heading dark:text-muted mb-3">Hair Color</p>
                   <div className="flex flex-wrap gap-2">
                     {[
                       { color: '#1a1a1a', label: 'Black' },
@@ -354,7 +354,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                           className={`w-10 h-10 rounded-full border-2 transition-all ${
                             isSelected
                               ? 'border-[var(--ink-900)] scale-110'
-                              : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+                              : 'border-[var(--border)] dark:border-[var(--border)] hover:scale-105'
                           }`}
                           style={{ backgroundColor: hc.color }}
                           title={hc.label}
@@ -369,7 +369,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
               <>
                 {/* Shirt Color */}
                 <div className="col-span-full">
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">👕 Shirt Color</p>
+                  <p className="text-sm font-medium text-heading dark:text-muted mb-3">👕 Shirt Color</p>
                   <div className="flex flex-wrap gap-2">
                     {[
                       { color: '#5E7FB8', label: 'Blue' },
@@ -400,7 +400,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                           className={`w-10 h-10 rounded-lg border-2 transition-all ${
                             isSelected
                               ? 'border-[var(--ink-900)] scale-110'
-                              : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+                              : 'border-[var(--border)] dark:border-[var(--border)] hover:scale-105'
                           }`}
                           style={{ backgroundColor: c.color }}
                           title={c.label}
@@ -412,7 +412,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                 
                 {/* Pants Color */}
                 <div className="col-span-full mt-4">
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">👖 Pants Color</p>
+                  <p className="text-sm font-medium text-heading dark:text-muted mb-3">👖 Pants Color</p>
                   <div className="flex flex-wrap gap-2">
                     {[
                       { color: '#4a5568', label: 'Gray' },
@@ -439,7 +439,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                           className={`w-10 h-10 rounded-lg border-2 transition-all ${
                             isSelected
                               ? 'border-[var(--ink-900)] scale-110'
-                              : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+                              : 'border-[var(--border)] dark:border-[var(--border)] hover:scale-105'
                           }`}
                           style={{ backgroundColor: c.color }}
                           title={c.label}
@@ -451,7 +451,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
               </>
             ) : (
               // Accessories - keep simple for now
-              <p className="col-span-full text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              <p className="col-span-full text-sm text-muted text-center py-8">
                 🎩 Accessories coming soon!
               </p>
             )}
@@ -461,11 +461,11 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
         {/* Color Picker */}
         {activeTab === 'outfit' && colorableParts.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Colors</h3>
+            <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Colors</h3>
             <div className="space-y-4">
               {colorableParts.map(part => (
                 <div key={part}>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 capitalize">
+                  <label className="block text-sm font-medium text-heading dark:text-muted mb-2 capitalize">
                     {part}
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -478,7 +478,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
                           className={`w-10 h-10 rounded-full border-2 transition-all ${
                             isSelected
                               ? 'border-[var(--ink-900)] scale-110'
-                              : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+                              : 'border-[var(--border)] dark:border-[var(--border)] hover:scale-105'
                           }`}
                           style={{ backgroundColor: color.color }}
                           title={color.label}

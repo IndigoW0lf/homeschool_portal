@@ -52,7 +52,7 @@ export function ExternalCurriculumList({ items: initialItems, kidName }: Externa
 
     if (items.length === 0) {
         return (
-            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+            <p className="text-sm text-muted italic">
                 No imported curriculum data yet.
             </p>
         );
@@ -61,10 +61,10 @@ export function ExternalCurriculumList({ items: initialItems, kidName }: Externa
     return (
         <div>
             <div className="flex items-center justify-between mb-2">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <h4 className="text-sm font-medium text-heading dark:text-muted">
                     Recent Activity
                 </h4>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-muted">
                     {items.length} items
                 </span>
             </div>
@@ -73,13 +73,13 @@ export function ExternalCurriculumList({ items: initialItems, kidName }: Externa
                 {displayItems.map((item) => (
                     <div
                         key={item.id}
-                        className="group flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 text-sm"
+                        className="group flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)]/50 text-sm"
                     >
                         <span>🏫</span>
-                        <span className="flex-1 truncate text-gray-700 dark:text-gray-300">
+                        <span className="flex-1 truncate text-heading dark:text-muted">
                             {item.task_name}
                         </span>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-muted">
                             {new Date(item.date).toLocaleDateString()}
                         </span>
                         {item.score !== null && (
@@ -92,7 +92,7 @@ export function ExternalCurriculumList({ items: initialItems, kidName }: Externa
                         )}
                         <button
                             onClick={() => handleDelete(item)}
-                            className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition-opacity"
+                            className="opacity-0 group-hover:opacity-100 p-1 text-muted hover:text-red-500 transition-opacity"
                             title="Delete item"
                         >
                             <Trash size={14} />
@@ -124,24 +124,24 @@ export function ExternalCurriculumList({ items: initialItems, kidName }: Externa
             {/* Delete Confirmation Modal */}
             {deleteTarget && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-sm w-full p-5 animate-in zoom-in-95 fade-in duration-200">
+                    <div className="bg-[var(--background-elevated)] rounded-xl shadow-xl max-w-sm w-full p-5 animate-in zoom-in-95 fade-in duration-200">
                         <div className="flex items-center gap-3 text-amber-600 dark:text-amber-400 mb-4">
                             <Warning size={24} weight="fill" />
-                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                            <h3 className="text-lg font-bold text-heading">
                                 Delete Item?
                             </h3>
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                        <p className="text-muted text-sm mb-4">
                             Are you sure you want to delete <strong>&quot;{deleteTarget.task_name}&quot;</strong> from {kidName}&apos;s curriculum?
                         </p>
-                        <p className="text-xs text-gray-500 mb-4">
+                        <p className="text-xs text-muted mb-4">
                             This action cannot be undone.
                         </p>
                         <div className="flex gap-3 justify-end">
                             <button
                                 onClick={() => setDeleteTarget(null)}
                                 disabled={isPending}
-                                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                                className="px-4 py-2 text-muted hover:bg-[var(--hover-overlay)] rounded-lg transition-colors"
                             >
                                 Cancel
                             </button>

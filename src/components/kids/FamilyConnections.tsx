@@ -100,8 +100,8 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
+      <div className="bg-[var(--background-elevated)] rounded-xl p-6 border border-[var(--border)] shadow-sm">
+        <h3 className="text-lg font-bold text-heading flex items-center gap-2 mb-4">
           <Users size={24} weight="duotone" className="text-purple-500" />
           My Family
         </h3>
@@ -119,8 +119,8 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-      <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
+    <div className="bg-[var(--background-elevated)] rounded-xl p-6 border border-[var(--border)] shadow-sm">
+      <h3 className="text-lg font-bold text-heading flex items-center gap-2 mb-6">
         <Heart size={24} weight="fill" className="text-pink-500" />
         My Family
       </h3>
@@ -129,7 +129,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
         {/* Parents Section */}
         {parents.length > 0 && (
           <div>
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-3 flex items-center gap-1">
               <Crown size={14} weight="fill" className="text-yellow-500" />
               Parents
             </p>
@@ -150,7 +150,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
                       parent.displayName.charAt(0).toUpperCase()
                     )}
                   </div>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-medium text-heading dark:text-muted">
                     {parent.displayName}
                   </span>
                   {parent.role === 'admin' && (
@@ -167,7 +167,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
         {/* Siblings Section */}
         {siblings.length > 0 && (
           <div>
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+            <p className="text-xs font-medium text-muted uppercase tracking-wider mb-3 flex items-center gap-1">
               <Users size={14} weight="fill" className="text-blue-500" />
               Siblings
             </p>
@@ -185,10 +185,10 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
                     fallbackName={sibling.nickname || sibling.name}
                     fallbackColor={sibling.favoriteColor}
                   />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                  <span className="text-sm font-medium text-heading dark:text-muted group-hover:text-blue-600 dark:group-hover:text-blue-400">
                     {sibling.nickname || sibling.name}
                   </span>
-                  <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                  <span className="text-[10px] text-muted">
                     {isKidSession ? 'Switch User 🔒' : 'View Profile →'}
                   </span>
                 </Link>

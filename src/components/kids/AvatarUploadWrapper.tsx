@@ -20,8 +20,8 @@ export function AvatarUploadWrapper({ kidId, currentAvatarUrl }: AvatarUploadWra
   };
   
   return (
-    <div className="p-6 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-      <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-4 text-center">
+    <div className="p-6 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
+      <h3 className="font-semibold text-lg text-heading mb-4 text-center">
         📸 Upload Your Photo
       </h3>
       <AvatarUpload 

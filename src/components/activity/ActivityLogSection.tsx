@@ -73,7 +73,7 @@ export function ActivityLogSection({ kids, initialEntries }: ActivityLogSectionP
     <div className="space-y-4">
       {/* Header with link to reports */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-heading dark:text-white flex items-center gap-2">
           <Book size={20} weight="duotone" className="text-[var(--ember-500)]" />
           Activity Log
         </h3>
@@ -102,7 +102,7 @@ export function ActivityLogSection({ kids, initialEntries }: ActivityLogSectionP
         <div className="text-center">
           <Link 
             href="/parent/progress/reports"
-            className="text-sm text-gray-500 hover:text-[var(--ember-500)]"
+            className="text-sm text-muted hover:text-[var(--ember-500)]"
           >
             View all {entries.length} entries →
           </Link>

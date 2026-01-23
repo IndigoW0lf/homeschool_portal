@@ -268,11 +268,11 @@ export function DesignStudio({
         <div className="flex items-center gap-3">
           <Link 
             href={`/kids/${kidId}/avatar`}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-lg hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] transition-colors"
           >
-            <ArrowLeft size={24} className="text-gray-600 dark:text-gray-400" />
+            <ArrowLeft size={24} className="text-muted" />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-heading">
             🎨 Design Studio
           </h1>
         </div>
@@ -280,7 +280,7 @@ export function DesignStudio({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowPreview(!showPreview)}
-            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-[var(--border)] hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)]"
           >
             <Eye size={18} />
             Preview
@@ -298,14 +298,14 @@ export function DesignStudio({
 
       {/* View Toggle */}
       <div className="flex justify-center">
-        <div className="bg-gray-100 dark:bg-gray-800 p-1 rounded-xl flex gap-1">
+        <div className="bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] p-1 rounded-xl flex gap-1">
           <button
             onClick={handleStartNew}
             className={`
               px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
               ${view === 'create'
-                ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                ? 'bg-white dark:bg-[var(--background-secondary)] shadow-sm text-heading'
+                : 'text-muted hover:text-heading dark:hover:text-muted'
               }
             `}
           >
@@ -317,8 +317,8 @@ export function DesignStudio({
             className={`
               px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
               ${view === 'wardrobe'
-                ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white'
-                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                ? 'bg-white dark:bg-[var(--background-secondary)] shadow-sm text-heading'
+                : 'text-muted hover:text-heading dark:hover:text-muted'
               }
             `}
           >
@@ -331,7 +331,7 @@ export function DesignStudio({
       {view === 'wardrobe' ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {initialDesigns.length === 0 ? (
-            <div className="col-span-full py-12 text-center text-gray-500">
+            <div className="col-span-full py-12 text-center text-muted">
               <p>You haven't designed anything yet!</p>
               <button 
                 onClick={handleStartNew}
@@ -351,20 +351,20 @@ export function DesignStudio({
                 <button
                   key={design.id}
                   onClick={() => loadDesign(design)}
-                  className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[var(--ember-300)] transition-all text-left group"
+                  className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)] hover:border-[var(--ember-300)] transition-all text-left group"
                 >
-                  <div className="aspect-square bg-gray-50 dark:bg-gray-900 rounded-lg mb-3 flex items-center justify-center relative overflow-hidden">
+                  <div className="aspect-square bg-[var(--background-secondary)] dark:bg-[var(--night-900)] rounded-lg mb-3 flex items-center justify-center relative overflow-hidden">
                     {/* Placeholder preview - in future use actual thumbnail */}
                     <div className="text-4xl opacity-50 grayscale group-hover:grayscale-0 transition-all duration-300">
                        {/* Try to find category icon */}
                        {templates.categories.find(c => c.templates.some(t => t.id === design.template_id))?.icon || '👕'}
                     </div>
-                    {tmpl && <span className="absolute bottom-1 right-1 text-xs text-gray-400">{tmpl.label}</span>}
+                    {tmpl && <span className="absolute bottom-1 right-1 text-xs text-muted">{tmpl.label}</span>}
                   </div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                  <h3 className="font-semibold text-heading truncate">
                     {design.name}
                   </h3>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted">
                     {new Date(design.created_at).toLocaleDateString()}
                   </p>
                 </button>
@@ -380,21 +380,21 @@ export function DesignStudio({
               value={designName}
               onChange={(e) => setDesignName(e.target.value)}
               placeholder="Name your design..."
-              className="w-full px-4 py-2 text-lg border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[var(--ember-300)] focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2 text-lg border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--ember-300)] focus:border-transparent bg-[var(--background-elevated)] text-heading"
             />
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-muted mt-1">
               💡 Give your design a name to save it to your wardrobe
             </p>
           </div>
 
           {/* Template Selector */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+          <div className="bg-[var(--background-elevated)] rounded-xl p-4 border border-[var(--border)]">
+            <h3 className="text-sm font-medium text-muted mb-3">
               Choose what to design
             </h3>
             <div className="flex flex-wrap gap-2">
               {templates.categories.map(category => (
-                <div key={category.id} className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                <div key={category.id} className="flex gap-2 p-1 bg-[var(--background-secondary)] bg-[var(--background)] rounded-lg">
                   {category.templates.map(template => {
                     const isUnlocked = template.unlocked || unlockedTemplateIds.includes(template.id);
                     const isSelected = selectedTemplate?.id === template.id;
@@ -403,7 +403,7 @@ export function DesignStudio({
                       return (
                         <div
                           key={template.id}
-                          className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-400 flex items-center gap-2 cursor-not-allowed border border-transparent"
+                          className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-muted flex items-center gap-2 cursor-not-allowed border border-transparent"
                           title={`Unlock ${template.label} in the Moon Shop!`}
                         >
                           <Lock size={14} />
@@ -432,7 +432,7 @@ export function DesignStudio({
                           px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
                           ${isSelected
                             ? 'bg-[var(--ember-500)] text-white shadow-sm'
-                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+                            : 'bg-[var(--background-elevated)] text-heading dark:text-muted hover:bg-[var(--hover-overlay)] border border-[var(--border)]'
                           }
                         `}
                       >
@@ -449,16 +449,16 @@ export function DesignStudio({
             {/* Canvas Area */}
             <div className="md:col-span-2 relative">
               {showPreview && (
-                <div className="absolute inset-0 z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-gray-200 dark:border-gray-700 p-6">
+                <div className="absolute inset-0 z-10 bg-white/95 dark:bg-[var(--night-900)]/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-[var(--border)] p-6">
                   <div className="text-center flex flex-col items-center">
-                    <div className="w-48 h-64 mb-4 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gradient-to-b from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
+                    <div className="w-48 h-64 mb-4 rounded-xl overflow-hidden border border-[var(--border)] bg-gradient-to-b from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
                       <SyntyAvatarPreview 
                         kidId="preview"
                         textureUrl={previewTexture || undefined}
                         skinColor="#f2d3b1"
                       />
                     </div>
-                    <p className="text-sm text-gray-500 max-w-xs mx-auto">
+                    <p className="text-sm text-muted max-w-xs mx-auto">
                       Previewing your design on the 3D character.
                     </p>
                     <button 
@@ -485,8 +485,8 @@ export function DesignStudio({
                   onStrokeComplete={handleStrokeComplete}
                 />
               ) : (
-                <div className="aspect-square flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl">
-                  <p className="text-gray-500 dark:text-gray-400">
+                <div className="aspect-square flex items-center justify-center bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] rounded-xl">
+                  <p className="text-muted">
                     Select a template to start designing
                   </p>
                 </div>
@@ -496,8 +496,8 @@ export function DesignStudio({
             {/* Tools Panel */}
             <div className="space-y-4">
               {/* Tool Selection */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">
+              <div className="bg-[var(--background-elevated)] rounded-xl p-4 border border-[var(--border)]">
+                <h3 className="text-sm font-medium text-muted mb-3">
                   Tools
                 </h3>
                 <div className="grid grid-cols-3 gap-2">
@@ -507,7 +507,7 @@ export function DesignStudio({
                       flex flex-col items-center gap-1 p-3 rounded-lg transition-all
                       ${tool === 'fill'
                         ? 'bg-[var(--ember-100)] text-[var(--ember-600)] ring-2 ring-[var(--ember-300)]'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        : 'bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'
                       }
                     `}
                   >
@@ -520,7 +520,7 @@ export function DesignStudio({
                       flex flex-col items-center gap-1 p-3 rounded-lg transition-all
                       ${tool === 'draw'
                         ? 'bg-[var(--ember-100)] text-[var(--ember-600)] ring-2 ring-[var(--ember-300)]'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        : 'bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'
                       }
                     `}
                   >
@@ -533,7 +533,7 @@ export function DesignStudio({
                       flex flex-col items-center gap-1 p-3 rounded-lg transition-all
                       ${tool === 'eraser'
                         ? 'bg-[var(--ember-100)] text-[var(--ember-600)] ring-2 ring-[var(--ember-300)]'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        : 'bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'
                       }
                     `}
                   >
@@ -544,7 +544,7 @@ export function DesignStudio({
               </div>
 
               {/* Color Palette */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
+              <div className="bg-[var(--background-elevated)] rounded-xl p-4 border border-[var(--border)]">
                 <ColorPalette
                   selectedColor={currentColor}
                   onColorSelect={setCurrentColor}
@@ -556,17 +556,17 @@ export function DesignStudio({
 
               {/* Active Region Info */}
               {activeRegion && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-                  <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
+                <div className="bg-[var(--background-elevated)] rounded-xl p-4 border border-[var(--border)]">
+                  <h3 className="text-sm font-medium text-muted mb-2">
                     Selected Area
                   </h3>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white capitalize">
+                  <p className="text-lg font-semibold text-heading capitalize">
                     {activeRegion.replace(/-/g, ' ')}
                   </p>
                   <div className="mt-3 flex gap-2">
                     <button
                       onClick={handleUndo}
-                      className="flex-1 px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+                      className="flex-1 px-3 py-1.5 text-sm bg-[var(--background-secondary)] rounded-lg hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]"
                     >
                       Undo
                     </button>

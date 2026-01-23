@@ -63,10 +63,10 @@ export function AvatarReminderBanner({ kidId, hasAvatarState, kidName }: AvatarR
           <Sparkle size={24} weight="duotone" className="text-purple-600 dark:text-purple-400" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+          <h3 className="font-semibold text-heading mb-1">
             Hey {kidName}, create your avatar! ✨
           </h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+          <p className="text-sm text-heading dark:text-muted mb-3">
             Make your profile special by building a custom avatar. Pick your favorite outfit and colors!
           </p>
           <Link
@@ -79,10 +79,10 @@ export function AvatarReminderBanner({ kidId, hasAvatarState, kidName }: AvatarR
         </div>
         <button
           onClick={handleDismiss}
-          className="flex-shrink-0 p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="flex-shrink-0 p-1 rounded-lg hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] transition-colors"
           aria-label="Dismiss"
         >
-          <X size={20} className="text-gray-500 dark:text-gray-400" />
+          <X size={20} className="text-muted" />
         </button>
       </div>
     </div>

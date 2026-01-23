@@ -51,10 +51,10 @@ export function InteractiveWorksheet({ data, kidId, assignmentId, onComplete }: 
           <div className="w-24 h-24 mx-auto mb-6 bg-green-500 rounded-full flex items-center justify-center text-white">
             <Check size={48} weight="bold" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-3xl font-bold text-heading mb-4">
             Great Job! 🎉
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
+          <p className="text-muted mb-8">
             You completed the worksheet!
           </p>
           <Link
@@ -72,26 +72,26 @@ export function InteractiveWorksheet({ data, kidId, assignmentId, onComplete }: 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+      <header className="sticky top-0 z-10 bg-white/90 dark:bg-[var(--background-secondary)]/90 backdrop-blur-sm border-b border-[var(--border)] px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <Link
             href={`/kids/${kidId}`}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-[var(--hover-overlay)] rounded-lg transition-colors"
           >
-            <ArrowLeft size={24} className="text-gray-600 dark:text-gray-300" />
+            <ArrowLeft size={24} className="text-muted dark:text-muted" />
           </Link>
           <div className="flex-1 mx-4">
-            <h1 className="text-lg font-bold text-gray-900 dark:text-white truncate">
+            <h1 className="text-lg font-bold text-heading truncate">
               {data.title}
             </h1>
             <div className="flex items-center gap-2 mt-1">
-              <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="flex-1 h-2 bg-[var(--background-secondary)] rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <span className="text-xs text-gray-500">{progress}%</span>
+              <span className="text-xs text-muted">{progress}%</span>
             </div>
           </div>
           <button
@@ -118,7 +118,7 @@ export function InteractiveWorksheet({ data, kidId, assignmentId, onComplete }: 
         {data.sections?.map((section, sectionIdx) => (
           <section key={sectionIdx} className="space-y-4">
             {section.title && (
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold text-heading">
                 {section.title}
               </h2>
             )}
@@ -153,15 +153,15 @@ interface QuestionCardProps {
 
 function QuestionCard({ item, value, onChange }: QuestionCardProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-      <p className="text-gray-900 dark:text-white font-medium mb-4">
+    <div className="bg-[var(--background-elevated)] rounded-xl p-6 shadow-sm border border-[var(--border)]">
+      <p className="text-heading font-medium mb-4">
         {item.question}
       </p>
 
       {/* Text/Open Response */}
       {(item.type === 'text' || item.type === 'creative_prompt') && (
         <textarea
-          className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-4 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-secondary)] dark:bg-[var(--night-900)] text-heading resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           rows={item.space_lines || 4}
           placeholder="Type your answer here..."
           value={(value as string) || ''}
@@ -179,10 +179,10 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
               className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                 value === option
                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                  : 'border-gray-200 dark:border-gray-600 hover:border-purple-300'
+                  : 'border-[var(--border)] dark:border-[var(--border)] hover:border-purple-300'
               }`}
             >
-              <span className={`font-medium ${value === option ? 'text-purple-700 dark:text-purple-300' : 'text-gray-700 dark:text-gray-300'}`}>
+              <span className={`font-medium ${value === option ? 'text-purple-700 dark:text-purple-300' : 'text-heading dark:text-muted'}`}>
                 {option}
               </span>
             </button>
@@ -202,7 +202,7 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
                   ? option === 'True' 
                     ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300'
                     : 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300'
-                  : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 text-gray-600 dark:text-gray-400'
+                  : 'border-[var(--border)] dark:border-[var(--border)] hover:border-[var(--border)] text-muted'
               }`}
             >
               {option}
@@ -215,7 +215,7 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
       {item.type === 'fill_in_blank' && (
         <input
           type="text"
-          className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center text-lg"
+          className="w-full p-4 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-secondary)] dark:bg-[var(--night-900)] text-heading focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center text-lg"
           placeholder="Your answer..."
           value={(value as string) || ''}
           onChange={(e) => onChange(e.target.value)}
@@ -227,7 +227,7 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
         <div>
           <input
             type="text"
-            className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center mb-4"
+            className="w-full p-4 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-secondary)] dark:bg-[var(--night-900)] text-heading focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center mb-4"
             placeholder="Select from words below..."
             value={(value as string) || ''}
             readOnly
@@ -240,7 +240,7 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
                 className={`px-4 py-2 rounded-full border transition-all ${
                   value === word
                     ? 'bg-purple-500 text-white border-purple-500'
-                    : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 hover:bg-purple-100'
+                    : 'bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:bg-purple-100'
                 }`}
               >
                 {word}
@@ -252,9 +252,9 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
 
       {/* Drawing Space */}
       {item.type === 'drawing_space' && (
-        <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center bg-gray-50 dark:bg-gray-900 min-h-[200px] flex flex-col items-center justify-center">
-          <PencilSimple size={48} className="text-gray-400 mb-4" />
-          <p className="text-gray-500 dark:text-gray-400 mb-4">
+        <div className="border-2 border-dashed border-[var(--border)] dark:border-[var(--border)] rounded-xl p-8 text-center bg-[var(--background-secondary)] dark:bg-[var(--night-900)] min-h-[200px] flex flex-col items-center justify-center">
+          <PencilSimple size={48} className="text-muted mb-4" />
+          <p className="text-muted mb-4">
             Drawing space - use paper or a drawing app!
           </p>
           <button
@@ -262,7 +262,7 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
             className={`px-4 py-2 rounded-lg border transition-all ${
               value === 'completed'
                 ? 'bg-green-500 text-white border-green-500'
-                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-green-50'
+                : 'bg-[var(--background-elevated)] border-[var(--border)] dark:border-[var(--border)] hover:bg-green-50'
             }`}
           >
             {value === 'completed' ? '✓ Done drawing!' : 'Mark as done'}
@@ -280,7 +280,7 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
               className={`w-full text-left p-3 rounded-lg border transition-all ${
                 value === option
                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                  : 'border-gray-200 dark:border-gray-600 hover:border-purple-300'
+                  : 'border-[var(--border)] dark:border-[var(--border)] hover:border-purple-300'
               }`}
             >
               {option}

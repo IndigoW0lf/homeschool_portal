@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
 import { User } from '@supabase/supabase-js';
@@ -90,21 +90,21 @@ export function AccountSettings({ user }: AccountSettingsProps) {
   return (
     <div className="space-y-8">
       {/* Current Email */}
-      <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="pb-6 border-b border-[var(--border)]">
         <div className="flex items-center gap-3 mb-2">
-          <Envelope size={20} className="text-gray-500" />
-          <h3 className="font-medium text-gray-900 dark:text-white">
+          <Envelope size={20} className="text-muted" />
+          <h3 className="font-medium text-heading">
             Email Address
           </h3>
         </div>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
+        <p className="text-muted mb-4">
           {user.email}
         </p>
 
         {!showEmailForm ? (
           <button
             onClick={() => setShowEmailForm(true)}
-            className="text-sm text-[var(--ember-500)] hover:underline flex items-center gap-1"
+            className="text-sm text-[var(--cosmic-rust-500)] hover:underline flex items-center gap-1"
           >
             Change email address
             <ArrowRight size={14} />
@@ -120,14 +120,14 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                 onChange={(e) => setNewEmail(e.target.value)}
                 placeholder="Enter new email address"
                 required
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background-elevated)] text-heading focus:ring-2 focus:ring-[var(--cosmic-rust-500)] focus:border-transparent outline-none"
               />
             </div>
             <div className="flex gap-2">
               <button
                 type="submit"
                 disabled={isChangingEmail || !newEmail}
-                className="px-4 py-2 bg-[var(--ember-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-[var(--cosmic-rust-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {isChangingEmail ? 'Sending...' : 'Send Confirmation'}
               </button>
@@ -137,12 +137,12 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                   setShowEmailForm(false);
                   setNewEmail('');
                 }}
-                className="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm hover:underline"
+                className="px-4 py-2 text-muted text-sm hover:underline"
               >
                 Cancel
               </button>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-muted">
               We'll send a confirmation link to your new email. You'll need to click it to complete the change.
             </p>
           </form>
@@ -150,21 +150,21 @@ export function AccountSettings({ user }: AccountSettingsProps) {
       </div>
 
       {/* Password */}
-      <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="pb-6 border-b border-[var(--border)]">
         <div className="flex items-center gap-3 mb-2">
-          <Key size={20} className="text-gray-500" />
-          <h3 className="font-medium text-gray-900 dark:text-white">
+          <Key size={20} className="text-muted" />
+          <h3 className="font-medium text-heading">
             Password
           </h3>
         </div>
-        <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+        <p className="text-muted text-sm mb-4">
           {showPasswordForm ? 'Enter your new password below' : 'Set or update your password for login'}
         </p>
 
         {!showPasswordForm ? (
           <button
             onClick={() => setShowPasswordForm(true)}
-            className="text-sm text-[var(--ember-500)] hover:underline flex items-center gap-1"
+            className="text-sm text-[var(--cosmic-rust-500)] hover:underline flex items-center gap-1"
           >
             Set new password
             <ArrowRight size={14} />
@@ -172,7 +172,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
         ) : (
           <form onSubmit={handlePasswordUpdate} className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="newPassword" className="block text-sm font-medium text-muted mb-1">
                 New Password
               </label>
               <input
@@ -183,11 +183,11 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                 placeholder="Enter new password"
                 required
                 minLength={6}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background-elevated)] text-heading focus:ring-2 focus:ring-[var(--cosmic-rust-500)] focus:border-transparent outline-none"
               />
             </div>
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-muted mb-1">
                 Confirm Password
               </label>
               <input
@@ -198,14 +198,14 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                 placeholder="Confirm new password"
                 required
                 minLength={6}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+                className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background-elevated)] text-heading focus:ring-2 focus:ring-[var(--cosmic-rust-500)] focus:border-transparent outline-none"
               />
             </div>
             <div className="flex gap-2">
               <button
                 type="submit"
                 disabled={isUpdatingPassword || !newPassword || !confirmPassword}
-                className="px-4 py-2 bg-[var(--ember-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-[var(--cosmic-rust-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {isUpdatingPassword ? 'Updating...' : 'Update Password'}
               </button>
@@ -216,12 +216,12 @@ export function AccountSettings({ user }: AccountSettingsProps) {
                   setNewPassword('');
                   setConfirmPassword('');
                 }}
-                className="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm hover:underline"
+                className="px-4 py-2 text-muted text-sm hover:underline"
               >
                 Cancel
               </button>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-muted">
               Password must be at least 6 characters
             </p>
           </form>
@@ -229,23 +229,23 @@ export function AccountSettings({ user }: AccountSettingsProps) {
       </div>
 
       {/* Sign Out */}
-      <div className="pb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="pb-6 border-b border-[var(--border)]">
         <div className="flex items-center gap-3 mb-2">
-          <Warning size={20} className="text-gray-500" />
-          <h3 className="font-medium text-gray-900 dark:text-white">
+          <Warning size={20} className="text-muted" />
+          <h3 className="font-medium text-heading">
             Session
           </h3>
         </div>
         <button
           onClick={handleSignOut}
-          className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="px-4 py-2 border border-[var(--border)] text-muted text-sm rounded-lg hover:bg-[var(--hover-overlay)] transition-colors"
         >
           Sign out
         </button>
       </div>
 
       {/* Account Info */}
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+      <div className="text-sm text-muted">
         <p>Account created: {new Date(user.created_at).toLocaleDateString()}</p>
         <p>Last sign in: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'N/A'}</p>
       </div>

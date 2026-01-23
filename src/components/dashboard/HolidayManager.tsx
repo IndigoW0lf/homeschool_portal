@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { LunaraTitle } from '@/components/ui/LunaraTitle';
 import { 
   Plus, PencilSimple, Trash, X, Check,
   Sun, Snowflake, Tree, Gift, Heart, Star, Sparkle, Confetti,
@@ -212,16 +212,15 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div className="card overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-        <Image 
-          src="/assets/titles/breaks_holidays.svg" 
-          alt="Holidays & Days Off" 
-          width={300} 
-          height={40}
-          className="h-8 w-auto dark:brightness-110"
-        />
+      <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
+        <LunaraTitle 
+          gradient="dusk" 
+          size="md"
+        >
+          Breaks &amp; Holidays
+        </LunaraTitle>
         <button
           onClick={() => { 
             setFormData(formDefaults);
@@ -237,7 +236,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
 
       {/* Add Form */}
       {isAdding && (
-        <div className="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700">
+        <div className="p-4 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)]/50 border-b border-[var(--border)]">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-start">
             {/* Icon Picker */}
             <div className="relative">
@@ -248,7 +247,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                   "w-14 h-11 flex items-center justify-center rounded-lg border-2 transition-all",
                   showIconPicker 
                     ? "border-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)/20]" 
-                    : "border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-gray-300"
+                    : "border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)] hover:border-[var(--border)]"
                 )}
               >
                 {renderIcon(formData.emoji, 28)}
@@ -262,8 +261,8 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                     className="fixed inset-0 z-40" 
                     onClick={() => setShowIconPicker(false)}
                   />
-                  <div className="absolute top-full left-0 mt-2 z-50 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl p-3 w-72 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <p className="text-xs font-medium text-gray-500 mb-2">Choose an icon</p>
+                  <div className="absolute top-full left-0 mt-2 z-50 bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] shadow-xl p-3 w-72 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <p className="text-xs font-medium text-muted mb-2">Choose an icon</p>
                     <div className="grid grid-cols-6 gap-1.5">
                       {HOLIDAY_ICONS.map(icon => (
                         <button
@@ -277,7 +276,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                             "w-10 h-10 flex items-center justify-center rounded-lg transition-all hover:scale-110",
                             formData.emoji === icon.id 
                               ? "bg-[var(--ember-100)] dark:bg-[var(--ember-900)/30] ring-2 ring-[var(--ember-500)]" 
-                              : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                              : "hover:bg-[var(--hover-overlay)]"
                           )}
                           title={icon.label}
                         >
@@ -294,26 +293,26 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
               placeholder="Holiday name"
               value={formData.name}
               onChange={e => setFormData({ ...formData, name: e.target.value })}
-              className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+              className="flex-1 px-3 py-2 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)]"
             />
             <input
               type="date"
               value={formData.startDate}
               onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-              className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+              className="px-3 py-2 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)]"
             />
             <input
               type="date"
               placeholder="End date (optional)"
               value={formData.endDate}
               onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-              className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+              className="px-3 py-2 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)]"
             />
           </div>
           <div className="flex justify-end gap-2 mt-3">
             <button
               onClick={resetForm}
-              className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg"
+              className="px-3 py-1.5 text-sm text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)] rounded-lg"
             >
               Cancel
             </button>
@@ -330,7 +329,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
       {/* Holiday List */}
       <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-80 overflow-y-auto">
         {upcomingHolidays.length === 0 ? (
-          <div className="p-6 text-center text-gray-400 dark:text-gray-500">
+          <div className="p-6 text-center text-muted">
             {holidays.length > 0 
                 ? "No upcoming holidays." 
                 : "No holidays added yet. Click \"Add Holiday\" to get started!"
@@ -340,7 +339,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
           upcomingHolidays.sort((a, b) => a.startDate.localeCompare(b.startDate)).map(holiday => (
             <div
               key={holiday.id}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+              className="flex items-center gap-3 px-4 py-3 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)]/50"
             >
               {editingId === holiday.id ? (
                 // Edit mode
@@ -352,7 +351,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                       "w-12 h-10 flex items-center justify-center rounded border-2 transition-all",
                       showIconPicker 
                         ? "border-[var(--ember-500)] bg-[var(--ember-50)]" 
-                        : "border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+                        : "border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)]"
                     )}
                   >
                     {renderIcon(formData.emoji, 24)}
@@ -361,24 +360,24 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="flex-1 px-2 py-1 rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+                    className="flex-1 px-2 py-1 rounded border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)]"
                   />
                   <input
                     type="date"
                     value={formData.startDate}
                     onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-                    className="px-2 py-1 rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+                    className="px-2 py-1 rounded border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)]"
                   />
                   <input
                     type="date"
                     value={formData.endDate}
                     onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-                    className="px-2 py-1 rounded border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800"
+                    className="px-2 py-1 rounded border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)]"
                   />
                   <div className="flex gap-1 md:col-span-4 justify-end">
                     <button
                       onClick={resetForm}
-                      className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+                      className="p-1 text-muted hover:text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)] rounded"
                     >
                       <X size={16} />
                     </button>
@@ -395,8 +394,8 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                 <>
                   <div className="w-8 h-8 flex items-center justify-center">{renderIcon(holiday.emoji, 28)}</div>
                   <div className="flex-1">
-                    <div className="font-medium text-gray-800 dark:text-white">{holiday.name}</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="font-medium text-heading dark:text-white">{holiday.name}</div>
+                    <div className="text-sm text-muted">
                       {formatDate(holiday.startDate)}
                       {holiday.endDate && holiday.endDate !== holiday.startDate && (
                         <> - {formatDate(holiday.endDate)}</>
@@ -406,13 +405,13 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                   <div className="flex gap-1">
                     <button
                       onClick={() => startEdit(holiday)}
-                      className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
+                      className="p-1.5 text-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
                     >
                       <PencilSimple size={20} weight="duotone" color="#caa2d8" />
                     </button>
                     <button
                       onClick={() => handleDelete(holiday.id)}
-                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+                      className="p-1.5 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
                     >
                       <Trash size={20} weight="duotone" color="#ffcdf6" />
                     </button>

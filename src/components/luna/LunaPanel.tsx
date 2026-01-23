@@ -87,13 +87,13 @@ export function LunaPanel() {
         aria-modal="true"
         className={cn(
           "fixed right-0 top-0 z-50 h-full w-full max-w-md",
-          "bg-white dark:bg-gray-900 shadow-2xl",
+          "bg-white dark:bg-[var(--night-900)] shadow-2xl",
           "flex flex-col",
           "animate-in slide-in-from-right duration-300"
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
           <div className="flex items-center gap-2">
             <Sparkle size={24} weight="duotone" className="text-[var(--fabric-lilac)]" />
             <div>
@@ -109,7 +109,7 @@ export function LunaPanel() {
                 aria-label="Start new chat"
                 title="Start new chat"
               >
-                <ArrowCounterClockwise size={20} weight="duotone" className="text-gray-400" />
+                <ArrowCounterClockwise size={20} weight="duotone" className="text-muted" />
               </button>
             )}
             <button
@@ -117,7 +117,7 @@ export function LunaPanel() {
               className="btn-icon"
               aria-label="Close Luna panel"
             >
-              <X size={24} weight="duotone" className="text-gray-400" />
+              <X size={24} weight="duotone" className="text-muted" />
             </button>
           </div>
         </div>
@@ -164,7 +164,7 @@ export function LunaPanel() {
               {msg.role === 'user' && (
                 <div className="flex justify-end">
                   <div className="max-w-[85%] bg-[var(--fabric-lilac)]/10 dark:bg-[var(--fabric-lilac)]/20 rounded-lg px-4 py-2">
-                    <p className="text-sm text-gray-800 dark:text-gray-200">{msg.content}</p>
+                    <p className="text-sm text-heading dark:text-heading">{msg.content}</p>
                   </div>
                 </div>
               )}
@@ -182,7 +182,7 @@ export function LunaPanel() {
                         {msg.response.clarifying_questions.map((q, i) => (
                           <li 
                             key={i}
-                            className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300"
+                            className="flex items-start gap-2 text-sm text-heading dark:text-muted"
                           >
                             <span className="text-[var(--fabric-lilac)] mt-0.5">•</span>
                             <span>{q}</span>
@@ -257,7 +257,7 @@ export function LunaPanel() {
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-100 dark:border-gray-800">
+        <form onSubmit={handleSubmit} className="p-4 border-t border-[var(--border)] dark:border-[var(--border)]">
           <div className="flex gap-2">
             <textarea
               ref={inputRef}

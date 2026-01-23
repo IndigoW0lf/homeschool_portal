@@ -310,12 +310,12 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+    <div className="fixed inset-0 bg-[var(--night-900)]/95 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div className="bg-[var(--background-elevated)] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden animate-in zoom-in-95 fade-in duration-300">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--border)] bg-[var(--background-elevated)]">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-heading">
               Import External Curriculum
             </h2>
             {useAI && (
@@ -327,7 +327,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
           </div>
           <button
             onClick={handleClose}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="p-2 text-muted hover:text-muted dark:hover:text-muted rounded-lg hover:bg-[var(--hover-overlay)]"
           >
             <X size={20} />
           </button>
@@ -338,13 +338,13 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
             <div className="space-y-4">
               {/* Kid Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-heading dark:text-muted mb-2">
                   Select Child
                 </label>
                 <select
                   value={selectedKidId}
                   onChange={(e) => setSelectedKidId(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
                 >
                   {kids.map(kid => (
                     <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -354,13 +354,13 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
               {/* Source Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-heading dark:text-muted mb-2">
                   Where is this from?
                 </label>
                 <select
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="miacademy">MiAcademy</option>
                   <option value="khan">Khan Academy</option>
@@ -371,7 +371,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               {/* Smart Import Info */}
               <div className="flex items-center gap-2 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                 <Sparkle size={18} weight="fill" className="text-purple-500" />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-muted">
                   We&apos;ll automatically organize everything by subject ✨
                 </span>
               </div>
@@ -380,10 +380,10 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               <div
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
-                className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[var(--ember-500)] transition-colors"
+                className="border-2 border-dashed border-[var(--border)] dark:border-[var(--border)] rounded-xl p-8 text-center cursor-pointer hover:border-[var(--ember-500)] transition-colors"
               >
-                <Upload size={40} className="mx-auto text-gray-400 mb-3" />
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                <Upload size={40} className="mx-auto text-muted mb-3" />
+                <p className="text-muted mb-2">
                   Drag & drop a file here, or
                 </p>
                 <div className="flex flex-wrap justify-center gap-2">
@@ -398,7 +398,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                   </label>
                   <button
                     onClick={handlePasteData}
-                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600"
+                    className="px-4 py-2 bg-[var(--background-secondary)] text-heading dark:text-muted rounded-lg font-medium hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]"
                   >
                     Paste from Clipboard
                   </button>
@@ -414,16 +414,16 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                 <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
                 <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-purple-500 animate-pulse" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-lg font-semibold text-heading mb-2">
                 Reading Your File... 📚
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-1">
+              <p className="text-muted mb-1">
                 {fileName}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500">
+              <p className="text-sm text-muted dark:text-muted">
                 This may take a moment for larger files
               </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">
+              <p className="text-xs text-muted mt-3">
                 Hang tight! ✨
               </p>
             </div>
@@ -438,10 +438,10 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                     <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
                     <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-purple-500 animate-pulse" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="text-lg font-semibold text-heading mb-2">
                     Organizing by subject... 🎨
                   </h3>
-                  <p className="text-sm text-gray-500">Hang tight! ✨</p>
+                  <p className="text-sm text-muted">Hang tight! ✨</p>
                 </div>
               ) : (
                 <>
@@ -450,7 +450,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                     <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                       <FileText size={20} />
                       <span className="font-medium">{fileName}</span>
-                      <span className="text-gray-500">• {displayData.length} items</span>
+                      <span className="text-muted">• {displayData.length} items</span>
                     </div>
                     {useAI && aiParsedData.length > 0 && (
                       <span className="flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400">
@@ -462,16 +462,16 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
                   {/* Selection toolbar */}
                   {aiParsedData.length > 0 && (
-                    <div className="flex items-center justify-between flex-wrap gap-2 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
+                    <div className="flex items-center justify-between flex-wrap gap-2 p-3 bg-[var(--background-secondary)] bg-[var(--background)] rounded-lg">
                       <div className="flex items-center gap-3">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={selectedRows.size === aiParsedData.length && aiParsedData.length > 0}
                             onChange={toggleAllRows}
-                            className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                            className="w-4 h-4 rounded border-[var(--border)] text-purple-600 focus:ring-purple-500"
                           />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                          <span className="text-sm text-muted">
                             {selectedRows.size > 0 ? `${selectedRows.size} selected` : 'Select all'}
                           </span>
                         </label>
@@ -501,14 +501,14 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                   {/* Bulk edit panel */}
                   {showBulkEdit && selectedRows.size > 0 && (
                     <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg space-y-3">
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <p className="text-sm font-medium text-heading dark:text-muted">
                         Change subject for {selectedRows.size} selected items:
                       </p>
                       <div className="flex flex-wrap gap-2">
                         <select
                           value={bulkSubject}
                           onChange={(e) => setBulkSubject(e.target.value)}
-                          className="flex-1 min-w-[150px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          className="flex-1 min-w-[150px] px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading text-sm"
                         >
                           <option value="">Choose a subject...</option>
                           {SUBJECT_OPTIONS.map(s => (
@@ -522,7 +522,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                             placeholder="Enter custom subject"
                             value={customSubject}
                             onChange={(e) => setCustomSubject(e.target.value)}
-                            className="flex-1 min-w-[150px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                            className="flex-1 min-w-[150px] px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading text-sm"
                           />
                         )}
                         <button
@@ -534,7 +534,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                         </button>
                         <button
                           onClick={() => setShowBulkEdit(false)}
-                          className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg text-sm"
+                          className="px-4 py-2 text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] rounded-lg text-sm"
                         >
                           Cancel
                         </button>
@@ -556,26 +556,26 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                   )}
 
                   {/* Preview Table */}
-                  <div className={`${isPreviewExpanded ? 'max-h-[400px]' : 'max-h-64'} overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg transition-all duration-300`}>
+                  <div className={`${isPreviewExpanded ? 'max-h-[400px]' : 'max-h-64'} overflow-y-auto border border-[var(--border)] rounded-lg transition-all duration-300`}>
                     <table className="w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-900/50 sticky top-0">
+                      <thead className="bg-[var(--background-secondary)] bg-[var(--background)] sticky top-0">
                         <tr>
                           {aiParsedData.length > 0 && (
                             <th className="px-2 py-2 w-8"></th>
                           )}
-                          <th className="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400">Task</th>
+                          <th className="px-3 py-2 text-left font-medium text-muted">Task</th>
                           {useAI && aiParsedData.length > 0 && (
-                            <th className="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400">Subject</th>
+                            <th className="px-3 py-2 text-left font-medium text-muted">Subject</th>
                           )}
-                          <th className="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400">Date</th>
-                          <th className="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-400">Score</th>
+                          <th className="px-3 py-2 text-left font-medium text-muted">Date</th>
+                          <th className="px-3 py-2 text-left font-medium text-muted">Score</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                         {(isPreviewExpanded ? displayData : displayData.slice(0, 15)).map((row, idx) => (
                           <tr 
                             key={idx} 
-                            className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer ${
+                            className={`hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)]/50 cursor-pointer ${
                               selectedRows.has(idx) ? 'bg-purple-50 dark:bg-purple-900/20' : ''
                             }`}
                             onClick={() => aiParsedData.length > 0 && toggleRowSelection(idx)}
@@ -587,11 +587,11 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                                   checked={selectedRows.has(idx)}
                                   onChange={() => toggleRowSelection(idx)}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                                  className="w-4 h-4 rounded border-[var(--border)] text-purple-600 focus:ring-purple-500"
                                 />
                               </td>
                             )}
-                            <td className="px-3 py-2 text-gray-900 dark:text-white truncate max-w-[200px]">
+                            <td className="px-3 py-2 text-heading truncate max-w-[200px]">
                               {'taskName' in row ? row.taskName : ''}
                             </td>
                             {useAI && aiParsedData.length > 0 && (
@@ -601,10 +601,10 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                                 </span>
                               </td>
                             )}
-                            <td className="px-3 py-2 text-gray-600 dark:text-gray-400">
+                            <td className="px-3 py-2 text-muted">
                               {'date' in row ? row.date : ''}
                             </td>
-                            <td className="px-3 py-2 text-gray-600 dark:text-gray-400">
+                            <td className="px-3 py-2 text-muted">
                               {useAI && aiParsedData.length > 0
                                 ? ((row as AIParsedItem).score !== null ? `${(row as AIParsedItem).score}%` : '-')
                                 : ((row as ParsedRow).score || '-')
@@ -644,7 +644,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                         setAIParsedData([]);
                         setSelectedRows(new Set());
                       }}
-                      className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                      className="px-4 py-2 text-muted hover:bg-[var(--hover-overlay)] rounded-lg"
                     >
                       Back
                     </button>
@@ -675,10 +675,10 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check size={32} weight="bold" className="text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-heading mb-2">
                 Import Complete! 🎉
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-muted mb-4">
                 Successfully imported <strong>{result.imported}</strong> learning activities
               </p>
 

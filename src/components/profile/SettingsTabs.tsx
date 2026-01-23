@@ -25,7 +25,7 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-x-auto sm:w-fit">
+      <div className="flex p-1 bg-[var(--background-secondary)] rounded-xl overflow-x-auto sm:w-fit">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -36,8 +36,8 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
               className={cn(
                 "flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
                 isActive
-                  ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                  : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                  ? "bg-[var(--background-elevated)] text-heading shadow-sm"
+                  : "text-muted hover:text-heading"
               )}
             >
               <Icon size={18} weight={isActive ? 'fill' : 'regular'} />
@@ -55,18 +55,18 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
           <div className="space-y-6">
             
             {/* Kid Grid (Unified Management) */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <div className="card p-6">
                <KidManager kids={kids} />
             </div>
 
             {/* Family Members Section */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <div className="card p-6">
               <div className="mb-4">
-                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <Butterfly size={20} weight="duotone" className="text-blue-500" />
+                 <h3 className="heading-sm flex items-center gap-2">
+                    <Butterfly size={20} weight="duotone" className="text-[var(--celestial-400)]" />
                     Family & Guardians
                  </h3>
-                 <p className="text-sm text-gray-500">Manage adults who can access this account.</p>
+                 <p className="text-sm text-muted">Manage adults who can access this account.</p>
               </div>
               <FamilyManager />
             </div>
@@ -76,7 +76,7 @@ export function SettingsTabs({ user, kids }: SettingsTabsProps) {
         {/* General Tab */}
         {activeTab === 'general' && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <div className="card p-6">
               <AccountSettings user={user} />
             </div>
           </div>

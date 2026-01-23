@@ -419,6 +419,85 @@
   color: var(--error);
 }
 
+/* =============================================================================
+   DISPLAY TITLE FONTS - Macondo (Mystical hand-drawn calligraphy)
+   Use these for fancy section headers as replacements for SVG title graphics
+   ============================================================================= */
+
+/* Base magical font utility */
+.font-magical {
+  font-family: var(--font-magical), 'Macondo', cursive;
+}
+
+/* Macondo - Magical hand-drawn calligraphy */
+.title-magical {
+  font-family: var(--font-magical), 'Macondo', cursive;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.title-magical-lg {
+  font-family: var(--font-magical), 'Macondo', cursive;
+  font-size: 2.5rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.title-magical-xl {
+  font-family: var(--font-magical), 'Macondo', cursive;
+  font-size: 3.5rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.title-magical-hero {
+  font-family: var(--font-magical), 'Macondo', cursive;
+  font-size: 4.5rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+}
+
+/* Gradient text effects for titles */
+.title-gradient-sunset {
+  background: var(--gradient-sunset);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-gradient-altar {
+  background: var(--gradient-altar-flame);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+
+
+.title-gradient-ocean {
+  background: var(--gradient-ocean);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-gradient-gold {
+  background: var(--gradient-gold-shimmer);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-gradient-cosmic {
+  background: var(--gradient-dusk);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* -----------------------------------------------------------------------------
    LAYOUT
    ----------------------------------------------------------------------------- */
@@ -753,6 +832,40 @@
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* -----------------------------------------------------------------------------
+   OMBRÉ GRADIENT UTILITIES
+   ----------------------------------------------------------------------------- */
+
+/* Cosmic Wilderness */
+.bg-gradient-sunset { background: var(--gradient-sunset); }
+.bg-gradient-dusk { background: var(--gradient-dusk); }
+.bg-gradient-ocean { background: var(--gradient-ocean); }
+.bg-gradient-forest { background: var(--gradient-forest); }
+.bg-gradient-rust-gold { background: var(--gradient-rust-gold); }
+.bg-gradient-taupe-pink { background: var(--gradient-taupe-pink); }
+.bg-gradient-teal-pink { background: var(--gradient-teal-pink); }
+.bg-gradient-cosmic-glow { background: var(--gradient-cosmic-glow); }
+.bg-gradient-warm { background: var(--gradient-warm); }
+.bg-gradient-cool { background: var(--gradient-cool); }
+
+/* Moonlit Altar + Cosmic Wilderness */
+.bg-gradient-altar-flame { background: var(--gradient-altar-flame); }
+.bg-gradient-moonlit-dusk { background: var(--gradient-moonlit-dusk); }
+.bg-gradient-candle-teal { background: var(--gradient-candle-teal); }
+.bg-gradient-herbal-bloom { background: var(--gradient-herbal-bloom); }
+.bg-gradient-mystic-night { background: var(--gradient-mystic-night); }
+
+/* Moonlit Altar accent colors */
+.text-candle-cream { color: var(--candle-cream); }
+.text-herbal-gold { color: var(--herbal-gold); }
+.text-midnight-bloom { color: var(--midnight-bloom); }
+.text-mystic-ember { color: var(--mystic-ember); }
+
+.bg-candle-cream { background-color: var(--candle-cream); }
+.bg-herbal-gold { background-color: var(--herbal-gold); }
+.bg-midnight-bloom { background-color: var(--midnight-bloom); }
+.bg-mystic-ember { background-color: var(--mystic-ember); }
 
 /* -----------------------------------------------------------------------------
    PROGRESS & GAMIFICATION

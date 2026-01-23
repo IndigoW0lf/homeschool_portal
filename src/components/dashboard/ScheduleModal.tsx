@@ -139,7 +139,7 @@ export function ScheduleModal({
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       
       {/* Modal */}
-      <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
+      <div className="relative bg-[var(--background-elevated)] rounded-2xl shadow-xl w-full max-w-md mx-4 p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -147,27 +147,27 @@ export function ScheduleModal({
               <CalendarPlus size={24} weight="duotone" className="text-[var(--ember-500)]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Schedule This</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[200px]">{itemTitle}</p>
+              <h2 className="text-lg font-bold text-heading">Schedule This</h2>
+              <p className="text-sm text-muted truncate max-w-[200px]">{itemTitle}</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-            <X size={20} className="text-gray-400" />
+          <button onClick={onClose} className="p-2 hover:bg-[var(--hover-overlay)] rounded-lg">
+            <X size={20} className="text-muted" />
           </button>
         </div>
 
         {/* Date Selection */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="text-sm font-medium text-heading dark:text-muted">
               When?
             </label>
-            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg">
+            <div className="flex items-center gap-2 bg-[var(--background-secondary)] p-1 rounded-lg">
                 <button 
                     onClick={() => setScheduleMode('single')}
                     className={cn(
                         "text-xs font-bold px-2 py-1 rounded transition-colors",
-                        scheduleMode === 'single' ? "bg-white dark:bg-gray-600 shadow-sm text-gray-900 dark:text-white" : "text-gray-500"
+                        scheduleMode === 'single' ? "bg-white dark:bg-[var(--night-600)] shadow-sm text-heading" : "text-muted"
                     )}
                 >
                     One Day
@@ -176,7 +176,7 @@ export function ScheduleModal({
                     onClick={() => setScheduleMode('recurring')}
                     className={cn(
                         "text-xs font-bold px-2 py-1 rounded transition-colors",
-                        scheduleMode === 'recurring' ? "bg-white dark:bg-gray-600 shadow-sm text-gray-900 dark:text-white" : "text-gray-500"
+                        scheduleMode === 'recurring' ? "bg-white dark:bg-[var(--night-600)] shadow-sm text-heading" : "text-muted"
                     )}
                 >
                     Repeat
@@ -197,7 +197,7 @@ export function ScheduleModal({
                             "px-3 py-1.5 text-sm rounded-lg font-medium transition-all",
                             selectedDate === dateStr
                             ? "bg-[var(--ember-500)] text-white"
-                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                            : "bg-[var(--background-secondary)] text-heading dark:text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]"
                         )}
                         >
                         {label}
@@ -210,13 +210,13 @@ export function ScheduleModal({
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-4 py-2 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)] text-heading"
                 />
               </>
           ) : (
              <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                 <div>
-                    <label className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-2 block">Days of Week</label>
+                    <label className="text-xs text-muted uppercase font-bold tracking-wider mb-2 block">Days of Week</label>
                     <div className="flex justify-between gap-1">
                         {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, idx) => {
                             const isSelected = selectedWeekdays.includes(idx);
@@ -228,7 +228,7 @@ export function ScheduleModal({
                                         "w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all",
                                         isSelected 
                                             ? "bg-[var(--ember-500)] text-white" 
-                                            : "bg-gray-100 dark:bg-gray-700 text-gray-500 hover:bg-gray-200"
+                                            : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)]"
                                     )}
                                 >
                                     {day[0]}
@@ -240,16 +240,16 @@ export function ScheduleModal({
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1 block">Start Date</label>
+                        <label className="text-xs text-muted uppercase font-bold tracking-wider mb-1 block">Start Date</label>
                         <input
                             type="date"
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
-                            className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700"
+                            className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]"
                         />
                     </div>
                     <div>
-                        <label className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1 block">Duration</label>
+                        <label className="text-xs text-muted uppercase font-bold tracking-wider mb-1 block">Duration</label>
                         <div className="flex items-center gap-2">
                             <input
                                 type="number"
@@ -257,14 +257,14 @@ export function ScheduleModal({
                                 max={52}
                                 value={repeatWeeks}
                                 onChange={(e) => setRepeatWeeks(Math.max(1, parseInt(e.target.value) || 1))}
-                                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]"
                             />
-                            <span className="text-sm text-gray-500">Weeks</span>
+                            <span className="text-sm text-muted">Weeks</span>
                         </div>
                     </div>
                 </div>
                 
-                <p className="text-xs text-gray-500 bg-gray-50 dark:bg-gray-900/50 p-2 rounded">
+                <p className="text-xs text-muted bg-[var(--background-secondary)] bg-[var(--background)] p-2 rounded">
                     Will schedule <strong>{selectedWeekdays.length * repeatWeeks}</strong> items starting from {selectedDate}.
                 </p>
              </div>
@@ -273,7 +273,7 @@ export function ScheduleModal({
 
         {/* Student Selection */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-heading dark:text-muted mb-2">
             Students
           </label>
           <div className="space-y-2">
@@ -285,14 +285,14 @@ export function ScheduleModal({
                   "w-full flex items-center justify-between p-3 rounded-lg border transition-all",
                   selectedStudents.includes(student.id)
                     ? "border-[var(--ember-400)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20"
-                    : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+                    : "border-[var(--border)] dark:border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)]"
                 )}
               >
                 <span className={cn(
                   "font-medium",
                   selectedStudents.includes(student.id) 
                     ? "text-[var(--ember-600)] dark:text-[var(--ember-400)]" 
-                    : "text-gray-700 dark:text-gray-300"
+                    : "text-heading dark:text-muted"
                 )}>
                   {student.name}
                 </span>
@@ -308,7 +308,7 @@ export function ScheduleModal({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="flex-1 px-4 py-2.5 rounded-lg border border-[var(--border)] dark:border-[var(--border)] text-heading dark:text-muted font-medium hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] transition-colors"
           >
             Cancel
           </button>

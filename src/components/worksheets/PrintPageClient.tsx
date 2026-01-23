@@ -19,7 +19,7 @@ export function PrintPageClient({ data }: PrintPageClientProps) {
       `}</style>
 
       {/* Print Controls - Hidden when printing */}
-      <div className="no-print fixed top-0 left-0 w-full bg-gray-900/80 backdrop-blur-sm p-4 flex justify-between items-center text-white z-50">
+      <div className="no-print fixed top-0 left-0 w-full bg-[var(--night-900)]/80 backdrop-blur-sm p-4 flex justify-between items-center text-white z-50">
         <div className="font-medium">
           Print Preview: {data.title}
         </div>

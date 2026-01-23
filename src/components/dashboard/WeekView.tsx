@@ -48,7 +48,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
       {/* Header */}
       <div className="card-header">
         <h2 className="heading-sm flex items-center gap-2">
-          <CalendarBlank weight="duotone" color="#e7b58d" size={24} />
+          <CalendarBlank weight="duotone" className="text-[var(--ember-gold-400)]" size={24} />
           {format(weekStart, 'MMMM yyyy')}
         </h2>
         
@@ -60,8 +60,8 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
               className={cn(
                 "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
                 filterStudentId === null
-                  ? "bg-[var(--ember-500)] text-white shadow-sm"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  ? "bg-[var(--cosmic-rust-500)] text-white shadow-sm"
+                  : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)]"
               )}
             >
               All
@@ -73,8 +73,8 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
                 className={cn(
                   "px-3 py-1.5 text-xs font-medium rounded-full transition-all flex items-center gap-1.5",
                   filterStudentId === s.id
-                    ? "bg-[var(--ember-500)] text-white shadow-sm"
-                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    ? "bg-[var(--cosmic-rust-500)] text-white shadow-sm"
+                    : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)]"
                 )}
               >
                 <StudentAvatar name={s.name} className="w-5 h-5 text-[8px]" />
@@ -92,16 +92,16 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
             iconOnly
           />
           <button onClick={onPrevWeek} className="btn-icon-sm">
-            <CaretLeft size={24} weight="duotone" color="#b6e1d8" />
+            <CaretLeft size={24} weight="duotone" className="text-[var(--celestial-400)]" />
           </button>
           <button onClick={onNextWeek} className="btn-icon-sm">
-            <CaretRight size={24} weight="duotone" color="#b6e1d8" />
+            <CaretRight size={24} weight="duotone" className="text-[var(--celestial-400)]" />
           </button>
         </div>
       </div>
 
       {/* Days Strip */}
-      <div className="grid grid-cols-7 divide-x divide-gray-100 dark:divide-gray-700">
+      <div className="grid grid-cols-7 divide-x divide-[var(--border)]">
         {weekDays.map((day) => {
           const isSelected = selectedDate && isSameDay(day.date, selectedDate);
           const isToday = isSameDay(day.date, new Date());
@@ -111,14 +111,14 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
               key={day.dateStr}
               onClick={() => onSelectDate(day.date)}
               className={cn(
-                "flex flex-col items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors h-40 relative text-left",
-                isSelected ? "bg-[var(--ember-50)] dark:bg-[var(--ember-900)/20]" : ""
+                "flex flex-col items-center p-4 hover:bg-[var(--hover-overlay)] transition-colors h-40 relative text-left",
+                isSelected ? "bg-[var(--cosmic-rust-100)]" : ""
               )}
             >
-              <span className="text-xs font-medium text-gray-400 uppercase mb-1">{format(day.date, 'EEE')}</span>
+              <span className="text-xs font-medium text-muted uppercase mb-1">{format(day.date, 'EEE')}</span>
               <span className={cn(
                  "text-xl font-bold mb-3 flex items-center justify-center w-8 h-8 rounded-full",
-                 isToday ? "bg-[var(--ember-500)] text-white shadow-md" : "text-gray-900 dark:text-white"
+                 isToday ? "bg-[var(--cosmic-rust-500)] text-white shadow-md" : "text-heading"
               )}>
                 {format(day.date, 'd')}
               </span>
@@ -142,7 +142,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
                  )}
                  
                  {day.lessonCount > 0 && (
-                    <div className="badge-blue text-[10px] w-full truncate text-center">
+                    <div className="badge-celestial text-[10px] w-full truncate text-center">
                        {day.lessonCount} Lesson{day.lessonCount > 1 ? 's' : ''}
                     </div>
                  )}
@@ -157,8 +157,8 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
                     <div className={cn(
                        "text-[10px] w-full text-center font-semibold mt-1 py-0.5 rounded",
                        day.allComplete 
-                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" 
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+                          ? "bg-[var(--success-light)] text-[var(--success-dark)]" 
+                          : "bg-[var(--background-secondary)] text-muted"
                     )}>
                        {day.allComplete ? '✓ ' : ''}{day.completedCount}/{day.totalCount} done
                     </div>
@@ -170,7 +170,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
               </div>
               
               {isSelected && (
-                 <div className="absolute top-0 left-0 w-full h-1 bg-[var(--ember-500)]" />
+                 <div className="absolute top-0 left-0 w-full h-1 bg-[var(--cosmic-rust-500)]" />
               )}
             </button>
           );

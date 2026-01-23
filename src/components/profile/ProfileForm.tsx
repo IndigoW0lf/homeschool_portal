@@ -81,7 +81,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   if (!isEditing) {
     return (
       <div className="space-y-8 animate-in fade-in duration-300">
-        <div className="flex flex-col items-center pb-8 border-b border-gray-100 dark:border-gray-800">
+        <div className="flex flex-col items-center pb-8 border-b border-[var(--border)] dark:border-[var(--border)]">
           <div className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -89,30 +89,30 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               alt="Your avatar"
               width={120}
               height={120}
-              className="rounded-full bg-indigo-50 dark:bg-gray-800/50 shadow-lg ring-4 ring-white dark:ring-gray-800"
+              className="rounded-full bg-indigo-50 bg-[var(--background-secondary)]/50 shadow-lg ring-4 ring-white dark:ring-gray-800"
             />
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="mt-4 text-2xl font-bold text-heading">
             {displayName || 'Parent'}
           </h2>
-          <p className="text-gray-500 dark:text-gray-400">{profile.email}</p>
+          <p className="text-muted">{profile.email}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+          <div className="p-4 rounded-xl bg-[var(--background-secondary)]/50 border border-[var(--border)] dark:border-[var(--border)]">
+            <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-1">
               Timezone
             </h3>
-            <p className="font-medium text-gray-900 dark:text-white">
+            <p className="font-medium text-heading">
               {TIMEZONE_OPTIONS.find(tz => tz.value === timezone)?.label || timezone}
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800">
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+          <div className="p-4 rounded-xl bg-[var(--background-secondary)]/50 border border-[var(--border)] dark:border-[var(--border)]">
+            <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-1">
               Account Type
             </h3>
-            <p className="font-medium text-gray-900 dark:text-white">
+            <p className="font-medium text-heading">
               Parent / Admin
             </p>
           </div>
@@ -120,15 +120,15 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
         {/* Teaching Style Section */}
         <div className="rounded-xl border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/50 dark:bg-indigo-900/10 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-heading mb-2 flex items-center gap-2">
             🧑‍🏫 Teaching Style
           </h3>
           {teachingStyle ? (
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-heading dark:text-muted leading-relaxed">
               {teachingStyle}
             </p>
           ) : (
-            <p className="text-gray-500 italic">
+            <p className="text-muted italic">
               No teaching style set yet. Add one to help our AI customize lesson plans for you!
             </p>
           )}
@@ -137,7 +137,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         <div className="flex justify-end pt-4">
           <button
             onClick={() => setIsEditing(true)}
-            className="px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-sm"
+            className="px-6 py-2.5 bg-[var(--background-elevated)] border border-[var(--border)] text-heading dark:text-muted rounded-xl font-medium hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] transition-colors shadow-sm"
           >
             Edit Profile
           </button>
@@ -150,7 +150,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-300">
       {/* Avatar Section */}
-      <div className="flex flex-col items-center pb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col items-center pb-6 border-b border-[var(--border)]">
         <button
           type="button"
           onClick={() => setShowAvatarPicker(!showAvatarPicker)}
@@ -162,21 +162,21 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             alt="Your avatar"
             width={96}
             height={96}
-            className="rounded-full bg-gray-100 dark:bg-gray-700 ring-4 ring-white dark:ring-gray-800 shadow-md group-hover:ring-[var(--ember-300)] transition-all"
+            className="rounded-full bg-[var(--background-secondary)] ring-4 ring-white dark:ring-gray-800 shadow-md group-hover:ring-[var(--ember-300)] transition-all"
           />
           <span className="absolute bottom-0 right-0 bg-[var(--ember-500)] text-white text-xs px-2 py-1 rounded-full shadow-sm">
             Change
           </span>
         </button>
-        <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-3 text-sm text-muted">
           Click to pick a new avatar
         </p>
 
         {/* Avatar Picker with Tabs */}
         {showAvatarPicker && (
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl w-full animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="mt-4 p-4 bg-[var(--background-secondary)]/50 rounded-xl w-full animate-in fade-in slide-in-from-top-2 duration-200">
             {/* Category Tabs */}
-            <div className="flex gap-2 mb-4 border-b border-gray-200 dark:border-gray-700 pb-3">
+            <div className="flex gap-2 mb-4 border-b border-[var(--border)] pb-3">
               {AVATAR_CATEGORIES.map((cat) => (
                 <button
                   key={cat.id}
@@ -186,7 +186,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                     "px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
                     avatarCategory === cat.id
                       ? "bg-[var(--ember-500)] text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600"
+                      : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--moon-200)] dark:hover:bg-[var(--night-600)]"
                   )}
                 >
                   {cat.label}
@@ -212,7 +212,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                         "relative p-1 rounded-xl transition-all",
                         isSelected 
                           ? "ring-2 ring-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20" 
-                          : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                          : "hover:bg-[var(--hover-overlay)]"
                       )}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -244,7 +244,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         <div>
           <label 
             htmlFor="displayName"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-medium text-heading dark:text-muted mb-1"
           >
             Display Name
           </label>
@@ -254,7 +254,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             placeholder="Your name"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
           />
         </div>
 
@@ -262,7 +262,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         <div>
           <label 
             htmlFor="timezone"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            className="block text-sm font-medium text-heading dark:text-muted mb-1"
           >
             Timezone
           </label>
@@ -270,7 +270,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             id="timezone"
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
           >
             {TIMEZONE_OPTIONS.map(tz => (
               <option key={tz.value} value={tz.value}>
@@ -283,7 +283,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
       {/* Favorite Color */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
           Favorite Color
         </label>
         <div className="flex items-center gap-3">
@@ -291,7 +291,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             type="color"
             value={favoriteColor}
             onChange={(e) => setFavoriteColor(e.target.value)}
-            className="w-12 h-12 rounded-lg cursor-pointer border-2 border-gray-200 dark:border-gray-600"
+            className="w-12 h-12 rounded-lg cursor-pointer border-2 border-[var(--border)] dark:border-[var(--border)]"
           />
           <div 
             className="flex-1 h-12 rounded-lg flex items-center justify-center text-white font-medium"
@@ -299,7 +299,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           >
             {displayName || 'Preview'}
           </div>
-          <span className="text-xs text-gray-500 dark:text-gray-400">Just for fun! 🌈</span>
+          <span className="text-xs text-muted">Just for fun! 🌈</span>
         </div>
       </div>
       
@@ -307,7 +307,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       <div>
         <label 
           htmlFor="teachingStyle"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          className="block text-sm font-medium text-heading dark:text-muted mb-1"
         >
           Teaching Style & Goals
         </label>
@@ -317,15 +317,15 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           value={teachingStyle}
           onChange={(e) => setTeachingStyle(e.target.value)}
           placeholder="e.g., We follow a Montessori approach with a focus on self-directed learning. My goal is to foster curiosity..."
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all resize-none"
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all resize-none"
         />
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-muted">
           This helps our AI understand your preferences when suggesting lesson plans.
         </p>
       </div>
 
       {/* Buttons */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
         <button
           type="button"
           onClick={() => {
@@ -336,7 +336,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             setTeachingStyle(profile.teaching_style || '');
             setAvatarUrl(profile.avatar_url || getAvatarUrl('micah', 'luna'));
           }}
-          className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          className="px-6 py-2 bg-[var(--background-secondary)] text-heading dark:text-muted rounded-lg font-medium hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)] transition-colors"
         >
           Cancel
         </button>

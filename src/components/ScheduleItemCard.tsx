@@ -49,10 +49,10 @@ export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClic
       id={`today-item-${item.id}`}
       onClick={handleCardClick}
       className={cn(
-        "bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border transition-all",
+        "bg-[var(--background-elevated)] rounded-xl p-5 shadow-sm border transition-all",
         done 
           ? "border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-900/10" 
-          : "border-gray-100 dark:border-gray-700",
+          : "border-[var(--border)]",
         onClick && "cursor-pointer hover:shadow-md hover:border-[var(--ember-200)]"
       )}
     >
@@ -66,7 +66,7 @@ export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClic
               {item.type}
             </span>
             {item.estimatedMinutes && (
-              <span className="text-xs text-gray-400">~{item.estimatedMinutes} min</span>
+              <span className="text-xs text-muted">~{item.estimatedMinutes} min</span>
             )}
             {formattedDate && (
               <span className="text-xs text-[var(--ember-500)] font-medium flex items-center gap-1">
@@ -79,7 +79,7 @@ export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClic
             "font-semibold text-lg mb-1",
             done 
               ? "text-green-700 dark:text-green-400" 
-              : "text-gray-800 dark:text-white"
+              : "text-heading dark:text-white"
           )}>
             {item.title}
           </h3>

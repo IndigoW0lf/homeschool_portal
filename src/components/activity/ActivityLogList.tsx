@@ -42,9 +42,9 @@ const subjectColors: Record<string, string> = {
   'PE': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
   'Life Skills': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
   'Foreign Language': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
-  'Technology': 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300',
+  'Technology': 'bg-[var(--background-secondary)] text-heading dark:bg-[var(--background-secondary)]/50 dark:text-muted',
   'Field Trip': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-  'Other': 'bg-gray-100 text-gray-700 dark:bg-gray-700/50 dark:text-gray-300',
+  'Other': 'bg-[var(--background-secondary)] text-heading dark:bg-[var(--background-secondary)]/50 dark:text-muted',
 };
 
 function formatDuration(minutes: number | null): string {
@@ -67,7 +67,7 @@ export function ActivityLogList({
 
   if (entries.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+      <div className="text-center py-8 text-muted">
         <BookOpen size={48} className="mx-auto mb-2 opacity-30" />
         <p>No activities logged yet.</p>
         <p className="text-sm">Click "Log an Activity" to get started!</p>
@@ -104,11 +104,11 @@ export function ActivityLogList({
           <div key={date}>
             {/* Date header */}
             <div className="flex items-center gap-2 mb-3">
-              <Calendar size={16} className="text-gray-400" />
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <Calendar size={16} className="text-muted" />
+              <span className="text-sm font-medium text-muted">
                 {format(parseISO(date), 'EEEE, MMMM d, yyyy')}
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-muted">
                 ({dateEntries.length} {dateEntries.length === 1 ? 'entry' : 'entries'})
               </span>
             </div>
@@ -118,7 +118,7 @@ export function ActivityLogList({
               {dateEntries.map(entry => (
                 <div
                   key={entry.id}
-                  className="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 transition-colors group"
+                  className="flex items-start gap-3 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)] transition-colors group"
                 >
                   {/* Subject badge */}
                   <span className={`text-xs font-medium px-2 py-1 rounded-full whitespace-nowrap ${subjectColors[entry.subject] || subjectColors['Other']}`}>
@@ -129,11 +129,11 @@ export function ActivityLogList({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-gray-800 dark:text-white font-medium">
+                        <p className="text-heading dark:text-white font-medium">
                           {entry.title}
                         </p>
                         {entry.description && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                          <p className="text-sm text-muted mt-0.5">
                             {entry.description}
                           </p>
                         )}
@@ -144,7 +144,7 @@ export function ActivityLogList({
                         {onEdit && (
                           <button
                             onClick={() => onEdit(entry)}
-                            className="p-1.5 text-gray-400 hover:text-blue-500 rounded"
+                            className="p-1.5 text-muted hover:text-blue-500 rounded"
                             title="Edit"
                           >
                             <PencilSimple size={16} />
@@ -154,7 +154,7 @@ export function ActivityLogList({
                           <button
                             onClick={() => handleDelete(entry.id)}
                             disabled={deletingId === entry.id}
-                            className="p-1.5 text-gray-400 hover:text-red-500 rounded disabled:opacity-50"
+                            className="p-1.5 text-muted hover:text-red-500 rounded disabled:opacity-50"
                             title="Delete"
                           >
                             <Trash size={16} />
@@ -164,7 +164,7 @@ export function ActivityLogList({
                     </div>
 
                     {/* Meta info */}
-                    <div className="flex items-center gap-3 mt-1.5 text-xs text-gray-400">
+                    <div className="flex items-center gap-3 mt-1.5 text-xs text-muted">
                       {entry.durationMinutes && (
                         <span className="flex items-center gap-1">
                           <Clock size={12} />

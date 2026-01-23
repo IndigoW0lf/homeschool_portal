@@ -36,7 +36,7 @@ export function DemoDataManager() {
             Perfect for taking screenshots or testing the app logic.
           </p>
         </div>
-        <div className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <div className="p-3 bg-[var(--background-elevated)] rounded-lg shadow-sm">
           <Sparkle size={24} className="text-indigo-500" weight="fill" />
         </div>
       </div>

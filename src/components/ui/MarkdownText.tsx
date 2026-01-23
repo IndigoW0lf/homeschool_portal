@@ -32,7 +32,7 @@ export function MarkdownText({ content, className = '' }: MarkdownTextProps) {
         elements.push(
           <ul key={`list-${listKey}`} className="list-disc list-inside space-y-1 my-2">
             {listItems.map((item, i) => (
-              <li key={i} className="text-gray-700 dark:text-gray-300">
+              <li key={i} className="text-heading dark:text-muted">
                 {processInline(item)}
               </li>
             ))}
@@ -56,7 +56,7 @@ export function MarkdownText({ content, className = '' }: MarkdownTextProps) {
       if (line.startsWith('## ')) {
         flushList();
         elements.push(
-          <h2 key={i} className="text-lg font-bold text-gray-900 dark:text-white mt-4 mb-2">
+          <h2 key={i} className="text-lg font-bold text-heading mt-4 mb-2">
             {processInline(line.substring(3))}
           </h2>
         );
@@ -67,7 +67,7 @@ export function MarkdownText({ content, className = '' }: MarkdownTextProps) {
       if (line.startsWith('### ')) {
         flushList();
         elements.push(
-          <h3 key={i} className="text-md font-semibold text-gray-800 dark:text-gray-200 mt-3 mb-1">
+          <h3 key={i} className="text-md font-semibold text-heading dark:text-heading mt-3 mb-1">
             {processInline(line.substring(4))}
           </h3>
         );
@@ -79,7 +79,7 @@ export function MarkdownText({ content, className = '' }: MarkdownTextProps) {
         flushList();
         const headerText = line.slice(2, -2);
         elements.push(
-          <h3 key={i} className="text-md font-semibold text-gray-800 dark:text-gray-200 mt-4 mb-2 border-b border-gray-200 dark:border-gray-700 pb-1">
+          <h3 key={i} className="text-md font-semibold text-heading dark:text-heading mt-4 mb-2 border-b border-[var(--border)] pb-1">
             {headerText}
           </h3>
         );
@@ -95,7 +95,7 @@ export function MarkdownText({ content, className = '' }: MarkdownTextProps) {
       // Regular paragraph
       flushList();
       elements.push(
-        <p key={i} className="text-gray-700 dark:text-gray-300 mb-2 leading-relaxed">
+        <p key={i} className="text-heading dark:text-muted mb-2 leading-relaxed">
           {processInline(line)}
         </p>
       );
@@ -114,7 +114,7 @@ export function MarkdownText({ content, className = '' }: MarkdownTextProps) {
       // Bold text
       if (part.startsWith('**') && part.endsWith('**')) {
         return (
-          <strong key={i} className="font-semibold text-gray-900 dark:text-white">
+          <strong key={i} className="font-semibold text-heading">
             {part.slice(2, -2)}
           </strong>
         );

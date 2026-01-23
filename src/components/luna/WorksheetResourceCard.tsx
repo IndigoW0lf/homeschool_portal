@@ -22,14 +22,14 @@ export function WorksheetResourceCard({ worksheet }: WorksheetResourceCardProps)
         <Files size={18} weight="duotone" className="text-green-600 dark:text-green-400" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-green-600 dark:group-hover:text-green-400">
+        <p className="text-sm font-medium text-heading truncate group-hover:text-green-600 dark:group-hover:text-green-400">
           {worksheet.title}
         </p>
-        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+        <p className="text-xs text-muted truncate">
           {worksheet.source}
         </p>
       </div>
-      <ArrowSquareOut size={14} className="text-gray-400 group-hover:text-green-600 flex-shrink-0" />
+      <ArrowSquareOut size={14} className="text-muted group-hover:text-green-600 flex-shrink-0" />
     </a>
   );
 }

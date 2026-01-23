@@ -51,10 +51,10 @@ export function SubjectDonut({ subjects }: SubjectDonutProps) {
           }}
         >
           {/* Inner circle to make it a donut */}
-          <div className="absolute inset-3 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
+          <div className="absolute inset-3 bg-[var(--background-elevated)] rounded-full flex items-center justify-center">
             <div className="text-center">
-              <p className="text-lg font-bold text-gray-900 dark:text-white">{total}</p>
-              <p className="text-[10px] text-gray-500 uppercase">Items</p>
+              <p className="text-lg font-bold text-heading">{total}</p>
+              <p className="text-[10px] text-muted uppercase">Items</p>
             </div>
           </div>
         </div>
@@ -68,10 +68,10 @@ export function SubjectDonut({ subjects }: SubjectDonutProps) {
               className="w-2.5 h-2.5 rounded-full flex-shrink-0"
               style={{ backgroundColor: getSubjectColor(subject.subject) }}
             />
-            <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
+            <span className="text-xs text-muted truncate">
               {subject.subject}
             </span>
-            <span className="text-xs text-gray-400 ml-auto">
+            <span className="text-xs text-muted ml-auto">
               {subject.count}
             </span>
           </div>

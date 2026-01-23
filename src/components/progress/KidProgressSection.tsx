@@ -32,14 +32,14 @@ export function KidProgressSection({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+    <div className="bg-[var(--background-elevated)] rounded-xl shadow-sm border border-[var(--border)] overflow-hidden">
       {/* Kid Header - clickable to expand/collapse */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 flex items-center justify-between border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors"
+        className="w-full px-4 py-3 flex items-center justify-between border-b border-[var(--border)] bg-[var(--background-secondary)]/50 hover:bg-[var(--hover-overlay)]/50 transition-colors"
         style={{ borderLeftColor: favoriteColor || '#9c8fb8', borderLeftWidth: '4px' }}
       >
-        <h2 className="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+        <h2 className="text-lg font-bold text-heading dark:text-white flex items-center gap-2">
           🌙 {kidName}
         </h2>
         
@@ -64,7 +64,7 @@ export function KidProgressSection({
             "p-1.5 rounded-full transition-colors",
             isExpanded 
               ? "bg-[var(--ember-100)] dark:bg-[var(--ember-900)]/30 text-[var(--ember-600)]"
-              : "bg-gray-200 dark:bg-gray-700 text-gray-500"
+              : "bg-[var(--background-secondary)] text-muted"
           )}>
             {isExpanded ? (
               <CaretUp size={18} weight="bold" />

@@ -26,8 +26,8 @@ export function ResourceSection({ resources }: ResourceSectionProps) {
   return (
     <div className="space-y-4">
       {categories.map(category => (
-        <div key={category} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-          <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+        <div key={category} className="bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm">
+          <h3 className="font-semibold text-heading dark:text-white mb-3 flex items-center gap-2">
             <span>{categoryIcons[category]}</span>
             {categoryLabels[category]}
           </h3>
@@ -38,10 +38,10 @@ export function ResourceSection({ resources }: ResourceSectionProps) {
                 href={resource.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="inline-flex items-center gap-1 px-3 py-2 bg-[var(--background-secondary)] rounded-lg text-sm text-heading dark:text-heading hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)] transition-colors"
               >
                 {resource.label}
-                <span className="text-gray-400 dark:text-gray-500">↗</span>
+                <span className="text-muted">↗</span>
               </a>
             ))}
           </div>

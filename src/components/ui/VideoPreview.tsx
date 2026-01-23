@@ -43,7 +43,7 @@ export function VideoPreview({ url }: VideoPreviewProps) {
   if (!embedUrl) return null;
 
   return (
-    <div className="relative pt-[56.25%] overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-black mt-2">
+    <div className="relative pt-[56.25%] overflow-hidden rounded-lg border border-[var(--border)] bg-black mt-2">
       <iframe
         src={embedUrl}
         className="absolute top-0 left-0 w-full h-full"

@@ -85,7 +85,7 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
   if (isLoading) {
     return (
       <div className="text-center py-4">
-        <ArrowsClockwise size={20} className="animate-spin mx-auto text-gray-400" />
+        <ArrowsClockwise size={20} className="animate-spin mx-auto text-muted" />
       </div>
     );
   }
@@ -93,25 +93,25 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <Gift size={24} weight="fill" className="text-purple-500" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <Gift size={24} weight="fill" className="text-[var(--nebula-purple)]" />
+        <h3 className="heading-sm">
           Pending Rewards
         </h3>
         {redemptions.length > 0 && (
-          <span className="px-2 py-0.5 bg-purple-500 text-white text-xs font-bold rounded-full">
+          <span className="px-2 py-0.5 bg-[var(--nebula-purple)] text-white text-xs font-bold rounded-full">
             {redemptions.length}
           </span>
         )}
       </div>
 
       {message && (
-        <p className={`text-sm ${message.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+        <p className={`text-sm ${message.type === 'success' ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
           {message.text}
         </p>
       )}
 
       {redemptions.length === 0 ? (
-        <div className="text-center py-6 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-6 text-muted">
           <Clock size={32} className="mx-auto mb-2 opacity-50" />
           <p>No pending reward requests</p>
         </div>
@@ -120,20 +120,20 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
           {redemptions.map(redemption => (
             <div
               key={redemption.id}
-              className="flex items-center gap-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-800"
+              className="flex items-center gap-4 p-4 bg-gradient-taupe-pink rounded-xl border border-[var(--nebula-pink)]/30"
             >
               {/* Emoji */}
               <div className="text-3xl">{redemption.reward?.emoji || '🎁'}</div>
 
               {/* Details */}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 dark:text-white">
+                <p className="font-medium text-heading">
                   {redemption.reward?.name || 'Unknown Reward'}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-muted">
                   {getKidName(redemption.kid_id)} • {formatDistanceToNow(new Date(redemption.redeemed_at), { addSuffix: true })}
                 </p>
-                <p className="text-xs text-yellow-600">
+                <p className="text-xs text-[var(--ember-gold-400)]">
                   🌙 {redemption.reward?.moon_cost || 0} moons
                 </p>
               </div>
@@ -144,7 +144,7 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
                   // Shop items: just mark as fulfilled
                   <button
                     onClick={() => handleAction(redemption.id, 'fulfilled', 'shop')}
-                    className="px-3 py-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/30 transition-colors font-medium text-sm flex items-center gap-1"
+                    className="px-3 py-2 bg-[var(--success-light)] text-[var(--success)] rounded-lg hover:bg-[var(--success)]/20 transition-colors font-medium text-sm flex items-center gap-1"
                     title="Mark as fulfilled"
                   >
                     <Check size={16} weight="bold" />
@@ -155,14 +155,14 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
                   <>
                     <button
                       onClick={() => handleAction(redemption.id, 'approved')}
-                      className="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-800/30 transition-colors"
+                      className="p-2 bg-[var(--success-light)] text-[var(--success)] rounded-lg hover:bg-[var(--success)]/20 transition-colors"
                       title="Approve"
                     >
                       <Check size={20} weight="bold" />
                     </button>
                     <button
                       onClick={() => handleAction(redemption.id, 'denied')}
-                      className="p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800/30 transition-colors"
+                      className="p-2 bg-[var(--error-light)] text-[var(--error)] rounded-lg hover:bg-[var(--error)]/20 transition-colors"
                       title="Deny (refund moons)"
                     >
                       <X size={20} weight="bold" />

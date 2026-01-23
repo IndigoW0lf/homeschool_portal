@@ -92,13 +92,13 @@ export function RecentList({
                   onClick={() => onView?.(item.id)}
                 >
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
+                    <span className="font-medium text-sm text-heading dark:text-muted truncate">
                       {item.title}
                     </span>
                     {item.badge && (
                       <span className={cn(
                         "text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider",
-                        item.badgeColor || "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                        item.badgeColor || "bg-[var(--background-secondary)] text-muted dark:bg-[var(--background-secondary)] dark:text-muted"
                       )}>
                         {item.badge}
                       </span>
@@ -116,7 +116,7 @@ export function RecentList({
                   {onEdit && (
                     <button 
                       onClick={() => onEdit(item.id)}
-                      className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+                      className="p-1.5 text-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
                       title="Edit"
                     >
                       <PencilSimple size={18} weight="duotone" color="#caa2d8" />
@@ -125,7 +125,7 @@ export function RecentList({
                   {onDelete && (
                     <button 
                       onClick={() => onDelete(item.id)}
-                       className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
+                       className="p-1.5 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
                        title="Delete"
                     >
                       <Trash size={18} weight="duotone" color="#ffcdf6" />
@@ -136,7 +136,7 @@ export function RecentList({
             ))}
           </div>
         ) : (
-          <div className="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 py-8">
+          <div className="h-full flex flex-col items-center justify-center text-muted py-8">
             <p className="text-sm">{emptyMessage}</p>
           </div>
         )}
@@ -144,20 +144,20 @@ export function RecentList({
 
       {/* Footer / Pagination */}
       {totalPages > 1 && (
-         <div className="p-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+         <div className="p-3 border-t border-[var(--border)] flex items-center justify-between text-xs text-muted">
            <span>Page {currentPage} of {totalPages}</span>
            <div className="flex gap-1">
              <button 
                onClick={prevPage} 
                disabled={currentPage === 1}
-               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:hover:bg-transparent"
+               className="p-1 hover:bg-[var(--hover-overlay)] rounded disabled:opacity-30 disabled:hover:bg-transparent"
              >
                 <CaretLeft size={20} weight="duotone" color="#b6e1d8" />
              </button>
              <button 
                onClick={nextPage} 
                disabled={currentPage === totalPages}
-               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:hover:bg-transparent"
+               className="p-1 hover:bg-[var(--hover-overlay)] rounded disabled:opacity-30 disabled:hover:bg-transparent"
              >
                 <CaretRight size={20} weight="duotone" color="#b6e1d8" />
              </button>

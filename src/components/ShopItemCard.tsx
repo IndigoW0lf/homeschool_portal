@@ -55,12 +55,12 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
   return (
     <div
       className={`
-        bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border-2 transition-all
+        card p-5 border-2 transition-all
         ${purchased
-          ? 'border-green-500 dark:border-green-400'
+          ? 'border-[var(--success)] bg-[var(--success-light)]'
           : isLocked
-            ? 'border-gray-300 dark:border-gray-600 opacity-60'
-            : 'border-gray-200 dark:border-gray-700 hover:border-[var(--ember-500)]'}
+            ? 'border-[var(--border)] opacity-60'
+            : 'border-[var(--border)] hover:border-[var(--cosmic-rust-500)]'}
       `}
     >
       <div className="flex flex-col h-full">
@@ -70,7 +70,7 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
               {item.name}
             </h3>
             {purchased && (
-              <span className="badge-green text-xs">
+              <span className="badge-success text-xs">
                 Owned
               </span>
             )}
@@ -82,7 +82,7 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
           
           <div className="flex items-center gap-2 mb-4">
             <span className="text-2xl">🌙</span>
-            <span className="text-lg font-bold text-[var(--ember-500)]">{item.cost}</span>
+            <span className="text-lg font-bold text-[var(--ember-gold-500)]">{item.cost}</span>
           </div>
         </div>
 
@@ -92,10 +92,10 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
           className={`
             w-full py-2 px-4 rounded-lg font-medium transition-all
             ${purchased
-              ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+              ? 'bg-[var(--background-secondary)] text-muted cursor-not-allowed'
               : canAfford
-                ? 'bg-[var(--ember-500)] text-white hover:opacity-90'
-                : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'}
+                ? 'bg-gradient-rust-gold text-white hover:opacity-90'
+                : 'bg-[var(--background-secondary)] text-muted cursor-not-allowed'}
           `}
         >
           {purchased ? 'Owned' : canAfford ? (isPurchasing ? 'Purchasing...' : 'Buy') : 'Not enough moons'}
@@ -104,4 +104,3 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
     </div>
   );
 }
-

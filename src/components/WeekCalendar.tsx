@@ -37,8 +37,8 @@ export function WeekCalendar({ entries, selectedDate, onDateSelect, kidId }: Wee
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">This Week</h3>
+    <div className="bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm">
+      <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">This Week</h3>
       <div className="grid grid-cols-7 gap-2 h-[80px]">
         {DAYS.map((day, i) => {
           const date = weekDates[i];
@@ -49,7 +49,7 @@ export function WeekCalendar({ entries, selectedDate, onDateSelect, kidId }: Wee
           
           return (
             <div key={day} className="text-center">
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{day}</div>
+              <div className="text-xs text-muted mb-1">{day}</div>
               <button
                 onClick={() => handleDateClick(date)}
                 className={`
@@ -59,7 +59,7 @@ export function WeekCalendar({ entries, selectedDate, onDateSelect, kidId }: Wee
                     ? 'bg-blue-500 text-white font-bold' 
                     : isSelected
                       ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}
+                      : 'bg-[var(--background-secondary)] text-heading dark:text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'}
                 `}
               >
                 <span>{date.getDate()}</span>

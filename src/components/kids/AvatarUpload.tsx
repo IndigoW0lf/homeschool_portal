@@ -152,11 +152,11 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
           <img 
             src={currentAvatarUrl} 
             alt="Current avatar" 
-            className="w-full h-full rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+            className="w-full h-full rounded-full object-cover border-2 border-[var(--border)]"
           />
         ) : (
-          <div className="w-full h-full rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <Camera size={32} className="text-gray-400" />
+          <div className="w-full h-full rounded-full bg-[var(--background-secondary)] flex items-center justify-center">
+            <Camera size={32} className="text-muted" />
           </div>
         )}
         
@@ -186,7 +186,7 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
           <button
             onClick={handleCancel}
             disabled={isUploading}
-            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 text-sm font-medium text-muted dark:text-muted hover:bg-[var(--hover-overlay)] rounded-lg transition-colors flex items-center gap-1.5"
           >
             <X size={16} />
             Cancel
@@ -213,7 +213,7 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
       
       {/* Help text */}
       {!previewUrl && (
-        <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+        <p className="text-center text-xs text-muted">
           Click the camera to upload a custom photo
         </p>
       )}

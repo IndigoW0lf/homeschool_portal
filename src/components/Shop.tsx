@@ -95,7 +95,7 @@ interface ShopProps {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+      <div className="flex flex-wrap gap-2 border-b border-[var(--border)] pb-2">
         {filters.filter(f => f.show).map(({ key, label }) => (
           <button
             key={key}
@@ -104,7 +104,7 @@ interface ShopProps {
               px-4 py-2 font-medium transition-colors rounded-lg
               ${filter === key
                 ? 'bg-[var(--ember-500)] text-white'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'}
+                : 'bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)]'}
             `}
           >
             {label}

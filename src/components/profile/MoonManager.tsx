@@ -104,8 +104,8 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Moon size={24} weight="fill" className="text-yellow-500" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <Moon size={24} weight="fill" className="text-[var(--ember-gold-400)]" />
+        <h3 className="heading-sm">
           Moon Rewards
         </h3>
       </div>
@@ -113,13 +113,13 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
       {/* Kid Selector */}
       {!kidId && kids.length > 1 && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-muted mb-2">
             Select Kid
           </label>
           <select
             value={selectedKid}
             onChange={(e) => setSelectedKid(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+            className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)]"
           >
             {kids.map(kid => (
               <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -128,20 +128,20 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
         </div>
       )}
 
-      {/* Current Balance */}
-      <div className="bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl p-4 flex items-center gap-4">
-        <Moon size={32} weight="fill" className="text-yellow-500" />
+      {/* Current Balance - using altar-flame gradient */}
+      <div className="bg-gradient-altar-flame rounded-xl p-4 flex items-center gap-4">
+        <Moon size={32} weight="fill" className="text-white" />
         <div>
-          <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{totalMoons}</p>
-          <p className="text-sm text-yellow-700/70 dark:text-yellow-400/70">{selectedKidName}'s moons</p>
+          <p className="text-2xl font-bold text-white">{totalMoons}</p>
+          <p className="text-sm text-white/70">{selectedKidName}'s moons</p>
         </div>
       </div>
 
-      {/* Add Bonus Section */}
-      <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 space-y-3">
+      {/* Add Bonus Section - using nebula-purple styling */}
+      <div className="bg-[var(--nebula-purple-light)] rounded-xl p-4 space-y-3">
         <div className="flex items-center gap-2">
-          <Gift size={20} weight="fill" className="text-purple-500" />
-          <h4 className="font-medium text-purple-800 dark:text-purple-300">Give Bonus Moons</h4>
+          <Gift size={20} weight="fill" className="text-[var(--nebula-purple)]" />
+          <h4 className="font-medium text-[var(--nebula-purple)]">Give Bonus Moons</h4>
         </div>
         
         <div className="flex gap-3">
@@ -152,7 +152,7 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
               onChange={(e) => setBonusAmount(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
               min={1}
               max={100}
-              className="w-full px-3 py-2 rounded-lg border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-800"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--nebula-purple)]/30 bg-[var(--background-elevated)]"
               placeholder="Amount"
             />
           </div>
@@ -161,7 +161,7 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
               type="text"
               value={bonusNote}
               onChange={(e) => setBonusNote(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-800"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--nebula-purple)]/30 bg-[var(--background-elevated)]"
               placeholder="Optional note (e.g., 'Great job on your project!')"
             />
           </div>
@@ -170,7 +170,7 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
         <button
           onClick={sendBonus}
           disabled={isSending}
-          className="w-full py-2 px-4 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-2 px-4 bg-[var(--nebula-purple)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isSending ? (
             <ArrowsClockwise size={18} className="animate-spin" />
@@ -181,7 +181,7 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
         </button>
 
         {message && (
-          <p className={`text-sm ${message.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+          <p className={`text-sm ${message.type === 'success' ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
             {message.text}
           </p>
         )}
@@ -190,33 +190,33 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
       {/* Recent History */}
       <div>
         <div className="flex items-center gap-2 mb-3">
-          <Clock size={18} className="text-gray-400" />
-          <h4 className="font-medium text-gray-700 dark:text-gray-300">Last 30 Days</h4>
+          <Clock size={18} className="text-muted" />
+          <h4 className="font-medium text-muted">Last 30 Days</h4>
         </div>
 
         {isLoading ? (
-          <div className="text-center py-4 text-gray-500">
+          <div className="text-center py-4 text-muted">
             <ArrowsClockwise size={20} className="animate-spin mx-auto" />
           </div>
         ) : transactions.length === 0 ? (
-          <p className="text-sm text-gray-500 text-center py-4">No moon activity yet</p>
+          <p className="text-sm text-muted text-center py-4">No moon activity yet</p>
         ) : (
-          <div className="space-y-2 max-h-60 overflow-y-auto">
+          <div className="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
             {transactions.map(tx => (
               <div 
                 key={tx.id}
-                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                className="flex items-center justify-between p-3 bg-[var(--background-secondary)] rounded-lg"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <p className="text-sm font-medium text-heading">
                     {SOURCE_LABELS[tx.source] || tx.source}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted">
                     {format(parseISO(tx.awarded_at), 'MMM d, h:mm a')}
                     {tx.note && ` • ${tx.note}`}
                   </p>
                 </div>
-                <span className={`font-bold ${tx.stars_earned > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <span className={`font-bold ${tx.stars_earned > 0 ? 'text-[var(--success)]' : 'text-[var(--error)]'}`}>
                   {tx.stars_earned > 0 ? '+' : ''}{tx.stars_earned}
                 </span>
               </div>

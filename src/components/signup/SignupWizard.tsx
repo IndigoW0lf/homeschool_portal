@@ -194,7 +194,7 @@ export function SignupWizard() {
                       ? "bg-green-500 text-white"
                       : isActive
                       ? "bg-[var(--ember-500)] text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+                      : "bg-[var(--background-secondary)] text-muted"
                   )}
                 >
                   {isCompleted ? <Check size={16} weight="bold" /> : step.number}
@@ -202,7 +202,7 @@ export function SignupWizard() {
                 <span
                   className={cn(
                     "text-xs mt-1 hidden sm:block",
-                    isActive ? "text-gray-900 dark:text-white font-medium" : "text-gray-500 dark:text-gray-400"
+                    isActive ? "text-heading font-medium" : "text-muted"
                   )}
                 >
                   {step.label}
@@ -216,7 +216,7 @@ export function SignupWizard() {
                     "w-12 sm:w-16 h-0.5 mx-2",
                     index < currentStep
                       ? "bg-green-500"
-                      : "bg-gray-200 dark:bg-gray-700"
+                      : "bg-[var(--background-secondary)]"
                   )}
                 />
               )}

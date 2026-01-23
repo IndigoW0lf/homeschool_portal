@@ -66,7 +66,7 @@ export function LifeSkillsChart({ completedItems }: LifeSkillsChartProps) {
 
   if (total === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+      <div className="text-center py-8 text-muted">
         <p className="text-sm">No life skills activities completed yet.</p>
         <p className="text-xs mt-1">Assign lessons with these categories to track them!</p>
       </div>
@@ -104,14 +104,14 @@ export function LifeSkillsChart({ completedItems }: LifeSkillsChartProps) {
             <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: cat.color }} />
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                <span className="text-sm font-medium text-heading truncate">
                   {cat.key}
                 </span>
-                <span className="text-sm text-gray-500 ml-2">
+                <span className="text-sm text-muted ml-2">
                   {cat.count}
                 </span>
               </div>
-              <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-1">
+              <div className="w-full h-1.5 bg-[var(--background-secondary)] rounded-full overflow-hidden mt-1">
                 <div 
                   className="h-full rounded-full transition-all"
                   style={{ width: `${cat.percentage}%`, backgroundColor: cat.color }}

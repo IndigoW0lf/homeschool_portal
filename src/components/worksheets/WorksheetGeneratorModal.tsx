@@ -112,22 +112,22 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
       }}
     >
       <div 
-        className="bg-white dark:bg-gray-900 w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95"
+        className="bg-white dark:bg-[var(--night-900)] w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}  // Prevent clicks inside modal from closing it
       >
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg text-white">
               <MagicWand size={20} weight="fill" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-heading">
               AI Worksheet Generator
             </h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
-            <X size={24} className="text-gray-500" />
+          <button onClick={onClose} className="p-2 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-full">
+            <X size={24} className="text-muted" />
           </button>
         </div>
         
@@ -136,12 +136,12 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
           
           {/* Left Panel: Inputs (Hidden on mobile if reviewing?) */}
           <div className={`
-            w-full md:w-1/3 p-6 border-r border-gray-100 dark:border-gray-800 overflow-y-auto bg-gray-50 dark:bg-black/20
+            w-full md:w-1/3 p-6 border-r border-[var(--border)] dark:border-[var(--border)] overflow-y-auto bg-[var(--background-secondary)] dark:bg-black/20
             ${step === 'review' || step === 'success' ? 'hidden md:block' : 'block'}
           `}>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-heading dark:text-muted mb-2">
                   Topic / Subject
                 </label>
                 <input 
@@ -149,12 +149,12 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   placeholder="e.g. Multiplication Tables, Photosynthesis, Ancient Rome"
-                  className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 transition-all"
+                  className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-purple-500 transition-all"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-heading dark:text-muted mb-2">
                   Target Age / Grade (Optional)
                 </label>
                 <input 
@@ -162,12 +162,12 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                   value={age}
                   onChange={(e) => setAge(e.target.value)}
                   placeholder="e.g. 9 years old, 4th Grade"
-                  className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 transition-all"
+                  className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-purple-500 transition-all"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-semibold text-heading dark:text-muted mb-2">
                   Specific Instructions (Optional)
                 </label>
                 <textarea 
@@ -175,7 +175,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                   onChange={(e) => setInstructions(e.target.value)}
                   placeholder="e.g. Include 5 word problems. Make it fun and space-themed."
                   rows={4}
-                  className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 transition-all"
+                  className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-purple-500 transition-all"
                 />
               </div>
               
@@ -199,10 +199,10 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
               
               {/* Refinement Section - shown when reviewing */}
               {(step === 'review' || step === 'refining') && generatedData && (
-                <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div className="mt-6 pt-6 border-t border-[var(--border)]">
                   <div className="flex items-center gap-2 mb-3">
                     <PencilSimple size={18} className="text-purple-500" />
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <label className="text-sm font-semibold text-heading dark:text-muted">
                       Refine with AI
                     </label>
                   </div>
@@ -211,7 +211,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                     onChange={(e) => setRefinementFeedback(e.target.value)}
                     placeholder="Describe changes, e.g. 'Remove the word external from question 2' or 'Add actual blanks to the fill-in-the-blank questions'"
                     rows={3}
-                    className="w-full p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+                    className="w-full p-3 rounded-xl border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-purple-500 transition-all text-sm"
                   />
                   <button 
                     onClick={handleRefine}
@@ -230,7 +230,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                       </>
                     )}
                   </button>
-                  <p className="text-xs text-gray-400 mt-2 text-center">
+                  <p className="text-xs text-muted mt-2 text-center">
                     Or click directly on questions to edit them
                   </p>
                 </div>
@@ -257,7 +257,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                     </a>
                     <button 
                         onClick={handleReset}
-                        className="text-sm text-gray-500 hover:text-gray-700 underline"
+                        className="text-sm text-muted hover:text-heading underline"
                     >
                         Create Another
                     </button>
@@ -267,14 +267,14 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
           </div>
           
           {/* Right Panel: Preview */}
-          <div className="flex-1 bg-gray-100 dark:bg-black/50 p-4 md:p-8 overflow-y-auto">
+          <div className="flex-1 bg-[var(--background-secondary)] dark:bg-black/50 p-4 md:p-8 overflow-y-auto">
             {step === 'input' || step === 'generating' ? (
-              <div className="h-full flex flex-col items-center justify-center text-center text-gray-400 space-y-4">
-                <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                  <MagicWand size={48} weight="duotone" className="text-gray-400 dark:text-gray-600" />
+              <div className="h-full flex flex-col items-center justify-center text-center text-muted space-y-4">
+                <div className="w-24 h-24 rounded-full bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] flex items-center justify-center">
+                  <MagicWand size={48} weight="duotone" className="text-muted dark:text-muted" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">Ready to Create</h3>
+                  <h3 className="text-lg font-bold text-muted">Ready to Create</h3>
                   <p className="text-sm max-w-md mx-auto mt-2">
                     Enter a topic on the left to generate a custom printable worksheet tailored to your child's needs.
                   </p>
@@ -284,7 +284,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
               <div className="max-w-3xl mx-auto">
                 <div className="bg-white shadow-xl rounded-xl overflow-hidden mb-6">
                   {/* Worksheet Preview Header */}
-                  <div className="bg-gray-50 border-b border-gray-100 p-2 flex justify-between items-center text-xs text-gray-400">
+                  <div className="bg-[var(--background-secondary)] border-b border-[var(--border)] p-2 flex justify-between items-center text-xs text-muted">
                     <span className="flex items-center gap-1">
                       <PencilSimple size={12} />
                       Click any text to edit

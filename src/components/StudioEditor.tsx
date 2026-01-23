@@ -65,12 +65,12 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Art Studio</h2>
+      <div className="bg-[var(--background-elevated)] rounded-xl p-6 shadow-sm border border-[var(--border)]">
+        <h2 className="text-2xl font-bold text-heading dark:text-white mb-6">Art Studio</h2>
         
         {/* Template Selection */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Choose a Template</h3>
+          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Choose a Template</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {templates.templates.map(template => {
               const isSelected = state.selectedTemplate === template.id;
@@ -81,7 +81,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
                   className={`p-4 rounded-lg border-2 transition-all ${
                     isSelected
                       ? 'border-[var(--ember-500)] bg-[var(--paper-100)]'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      : 'border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)]'
                   }`}
                 >
                   <div className="w-full h-32 bg-[var(--paper-100)] rounded mb-2 flex items-center justify-center">
@@ -94,7 +94,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
                       }}
                     />
                   </div>
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 text-center">{template.label}</p>
+                  <p className="text-sm font-medium text-heading dark:text-muted text-center">{template.label}</p>
                 </button>
               );
             })}
@@ -103,7 +103,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
 
         {/* Preview */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Preview</h3>
+          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Preview</h3>
           <div className="flex justify-center">
             <div 
               className="relative w-64 h-64 rounded-lg flex items-center justify-center"
@@ -132,11 +132,11 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
 
         {/* Color Pickers */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Colors</h3>
+          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Colors</h3>
           <div className="space-y-4">
             {selectedTemplate.parts.map(part => (
               <div key={part.name}>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-heading dark:text-muted mb-2">
                   {part.label}
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -149,7 +149,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
                         className={`w-10 h-10 rounded-full border-2 transition-all ${
                           isSelected
                             ? 'border-[var(--ink-900)] scale-110'
-                            : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+                            : 'border-[var(--border)] dark:border-[var(--border)] hover:scale-105'
                         }`}
                         style={{ backgroundColor: color.color }}
                         title={color.label}

@@ -26,8 +26,8 @@ const themeColors: Record<string, { bg: string; text: string; Icon: Icon }> = {
 };
 
 const defaultTheme = {
-  bg: 'bg-gray-100 dark:bg-gray-800',
-  text: 'text-gray-800 dark:text-gray-200',
+  bg: 'bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)]',
+  text: 'text-heading dark:text-heading',
   Icon: CalendarBlank,
 };
 
@@ -38,7 +38,7 @@ export function ThemeCard({ theme }: ThemeCardProps) {
     <div className={`${themeStyle.bg} rounded-xl p-4 shadow-sm flex items-center gap-3`}>
       <themeStyle.Icon size={28} weight="duotone" className={themeStyle.text} />
       <div>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Today&apos;s Theme</p>
+        <p className="text-sm text-muted">Today&apos;s Theme</p>
         <p className={`font-semibold ${themeStyle.text}`}>{theme}</p>
       </div>
     </div>

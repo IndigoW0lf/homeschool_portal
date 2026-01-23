@@ -48,8 +48,8 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
         className={`
           relative p-3 rounded-xl border-2 transition-all text-center cursor-pointer
           ${isEarned 
-            ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md' 
-            : 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50 opacity-60'
+            ? 'bg-[var(--background-elevated)] border-[var(--border)] shadow-sm hover:shadow-md' 
+            : 'bg-[var(--background-secondary)] bg-[var(--background-secondary)]/50 border-[var(--border)]/50 opacity-60'
           }
           ${isFeatured ? 'ring-2 ring-purple-400 ring-offset-2 dark:ring-offset-gray-900' : ''}
         `}
@@ -58,7 +58,7 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
         {/* Lock overlay for unearned badges */}
         {!isEarned && (
           <div className="absolute top-1 right-1">
-            <Lock size={12} weight="fill" className="text-gray-400" />
+            <Lock size={12} weight="fill" className="text-muted" />
           </div>
         )}
         
@@ -74,20 +74,20 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
           w-10 h-10 mx-auto rounded-full flex items-center justify-center mb-2
           ${isEarned 
             ? 'bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30' 
-            : 'bg-gray-200 dark:bg-gray-700'
+            : 'bg-[var(--background-secondary)]'
           }
         `}>
           <Icon 
             size={24} 
             weight={isEarned ? 'fill' : 'regular'} 
-            className={isEarned ? badge.color : 'text-gray-400 dark:text-gray-500'} 
+            className={isEarned ? badge.color : 'text-muted'} 
           />
         </div>
         
         {/* Badge Name */}
         <p className={`
           text-xs font-medium truncate
-          ${isEarned ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}
+          ${isEarned ? 'text-heading dark:text-muted' : 'text-muted'}
         `}>
           {badge.name}
         </p>
@@ -95,18 +95,18 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
       
       {/* Tooltip */}
       {showTooltip && (
-        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-gray-900 dark:bg-gray-700 rounded-lg shadow-lg text-center">
+        <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-[var(--night-900)] dark:bg-[var(--background-secondary)] rounded-lg shadow-lg text-center">
           <p className="text-white text-sm font-semibold mb-1">{badge.name}</p>
-          <p className="text-gray-300 text-xs mb-2">{badge.description}</p>
+          <p className="text-muted text-xs mb-2">{badge.description}</p>
           {progress && !isEarned && (
             <div>
-              <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden mb-1">
+              <div className="h-1.5 bg-[var(--night-700)] rounded-full overflow-hidden mb-1">
                 <div 
                   className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
                   style={{ width: `${Math.min(100, (progress.current / progress.target) * 100)}%` }}
                 />
               </div>
-              <p className="text-gray-400 text-xs">{progress.current} / {progress.target}</p>
+              <p className="text-muted text-xs">{progress.current} / {progress.target}</p>
             </div>
           )}
           {isEarned && onToggleFeatured && (
@@ -114,7 +114,7 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
               {isFeatured ? 'Click to remove from featured' : 'Click to add to featured'}
             </p>
           )}
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 dark:bg-gray-700 rotate-45" />
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--night-900)] dark:bg-[var(--background-secondary)] rotate-45" />
         </div>
       )}
     </div>
@@ -134,7 +134,7 @@ interface BadgeSectionProps {
 function BadgeSection({ title, badges, earnedIds, featuredBadgeIds, onToggleFeatured, subjectCounts }: BadgeSectionProps) {
   return (
     <div className="mb-6">
-      <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+      <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
         {title}
       </h4>
       <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2">
@@ -301,14 +301,14 @@ export function BadgeGallery({
   const totalCount = ALL_BADGES.length;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
+    <div className="bg-[var(--background-elevated)] rounded-xl p-6 border border-[var(--border)] shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <h3 className="text-lg font-bold text-heading flex items-center gap-2">
           <Medal size={20} weight="duotone" className="text-amber-500" />
           My Badges
         </h3>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-sm text-muted">
           {isClient ? earnedCount : 0} / {totalCount} collected
         </span>
       </div>

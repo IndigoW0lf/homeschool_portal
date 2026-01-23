@@ -267,7 +267,7 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
       ref={containerRef}
       className={`
         relative overflow-hidden aspect-square max-w-md mx-auto
-        ${transparent ? '' : 'bg-[var(--paper-100)] rounded-xl border-2 border-gray-200 dark:border-gray-700'}
+        ${transparent ? '' : 'bg-[var(--paper-100)] rounded-xl border-2 border-[var(--border)]'}
       `}
     >
       {/* SVG Template Layer */}

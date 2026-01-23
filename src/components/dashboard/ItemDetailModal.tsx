@@ -129,12 +129,12 @@ export function ItemDetailModal({
       onClick={onClose}
     >
       <div 
-        className="bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-[var(--night-900)] w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--border)] dark:border-[var(--border)]">
           <div className="flex items-center gap-3">
             <div className={cn(
               "p-2 rounded-lg",
@@ -150,26 +150,26 @@ export function ItemDetailModal({
                 )}>
                   {item.type || (isLesson ? 'Lesson' : 'Assignment')}
                 </span>
-                <span className="text-xs text-gray-400 flex items-center gap-1">
+                <span className="text-xs text-muted flex items-center gap-1">
                   <Clock size={12} />
                   {isLesson ? lesson?.estimatedMinutes : assignment?.estimated_minutes || 15} min
                 </span>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold text-heading">
                 {item.title}
               </h2>
             </div>
           </div>
           <button 
             onClick={onClose} 
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            className="p-2 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-full transition-colors"
           >
-            <X size={24} className="text-gray-500" />
+            <X size={24} className="text-muted" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50 dark:bg-black/20">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[var(--background-secondary)]/50 dark:bg-black/20">
           
           {/* Lesson Details */}
           {isLesson && lesson && (
@@ -177,12 +177,12 @@ export function ItemDetailModal({
               {/* Description */}
               {lessonDetails.description && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                     Description
                   </h3>
                   <MarkdownText 
                     content={lessonDetails.description} 
-                    className="bg-white dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700"
+                    className="bg-[var(--background-elevated)]/50 p-4 rounded-xl border border-[var(--border)]"
                   />
                 </div>
               )}
@@ -190,7 +190,7 @@ export function ItemDetailModal({
               {/* Key Questions */}
               {lessonDetails.keyQuestions.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                     Key Questions
                   </h3>
                   <ul className="space-y-2">
@@ -198,7 +198,7 @@ export function ItemDetailModal({
                       // Handle both string and object formats
                       const questionText = typeof q === 'string' ? q : (q as { text?: string })?.text || '';
                       return questionText ? (
-                        <li key={i} className="flex gap-2 text-gray-700 dark:text-gray-300">
+                        <li key={i} className="flex gap-2 text-heading dark:text-muted">
                           <span className="text-blue-500">•</span>
                           {questionText}
                         </li>
@@ -211,12 +211,12 @@ export function ItemDetailModal({
               {/* Materials */}
               {lessonDetails.materials && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                     Materials
                   </h3>
                   <MarkdownText 
                     content={lessonDetails.materials} 
-                    className="text-gray-700 dark:text-gray-300"
+                    className="text-heading dark:text-muted"
                   />
                 </div>
               )}
@@ -224,7 +224,7 @@ export function ItemDetailModal({
               {/* Links */}
               {(lessonDetails.links?.length > 0) && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                     Resources
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -234,7 +234,7 @@ export function ItemDetailModal({
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--background-elevated)] border border-[var(--border)] rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                       >
                         <Link size={18} weight="duotone" color="#b6e1d8" />
                         {link.label}
@@ -247,12 +247,12 @@ export function ItemDetailModal({
               {/* Tags */}
               {lesson.tags?.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                     Tags
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {lesson.tags.map((tag, i) => (
-                      <span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded text-sm">
+                      <span key={i} className="px-2 py-1 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-muted rounded text-sm">
                         {tag}
                       </span>
                     ))}
@@ -267,14 +267,14 @@ export function ItemDetailModal({
             <>
               {/* Deliverable */}
               {assignment.deliverable && (
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-2">
                     <FileText size={16} className="text-blue-500" />
                     Expected Deliverable
                   </h3>
                   <MarkdownText 
                     content={assignment.deliverable} 
-                    className="text-gray-700 dark:text-gray-300 font-medium"
+                    className="text-heading dark:text-muted font-medium"
                   />
                 </div>
               )}
@@ -282,15 +282,15 @@ export function ItemDetailModal({
               {/* Steps */}
               {assignment.steps && Array.isArray(assignment.steps) && assignment.steps.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
                     Steps
                   </h3>
                   <div className="space-y-2">
                     {assignment.steps.map((step: { text?: string }, i: number) => (
                       step.text && (
-                        <div key={i} className="flex gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
-                          <span className="font-bold text-gray-400 w-6 text-right">{i + 1}.</span>
-                          <p className="text-gray-700 dark:text-gray-300 flex-1">{step.text}</p>
+                        <div key={i} className="flex gap-3 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)]">
+                          <span className="font-bold text-muted w-6 text-right">{i + 1}.</span>
+                          <p className="text-heading dark:text-muted flex-1">{step.text}</p>
                         </div>
                       )
                     ))}
@@ -301,15 +301,15 @@ export function ItemDetailModal({
               {/* Rubric */}
               {assignment.rubric && Array.isArray(assignment.rubric) && assignment.rubric.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
                     <CheckSquare size={16} className="text-green-500" />
                     Success Criteria
                   </h3>
                   <div className="space-y-2">
                     {assignment.rubric.map((item: { text?: string }, i: number) => (
                       item.text && (
-                        <div key={i} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                          <div className="w-4 h-4 rounded border-2 border-gray-300 dark:border-gray-600" />
+                        <div key={i} className="flex items-center gap-2 text-heading dark:text-muted">
+                          <div className="w-4 h-4 rounded border-2 border-[var(--border)] dark:border-[var(--border)]" />
                           <span>{item.text}</span>
                         </div>
                       )
@@ -334,7 +334,7 @@ export function ItemDetailModal({
               {/* Links */}
               {assignment.links && Array.isArray(assignment.links) && assignment.links.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                     Links
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -345,7 +345,7 @@ export function ItemDetailModal({
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--background-elevated)] border border-[var(--border)] rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
                         >
                           <Link size={18} weight="duotone" color="#b6e1d8" />
                           {link.label || 'Link'}
@@ -359,12 +359,12 @@ export function ItemDetailModal({
               {/* Tags */}
               {assignment.tags?.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                  <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                     Tags
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {assignment.tags.map((tag, i) => (
-                      <span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded text-sm">
+                      <span key={i} className="px-2 py-1 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-muted rounded text-sm">
                         {tag}
                       </span>
                     ))}
@@ -376,7 +376,7 @@ export function ItemDetailModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-gray-100 dark:border-gray-800 flex justify-between">
+        <div className="p-4 border-t border-[var(--border)] dark:border-[var(--border)] flex justify-between">
           <button
             onClick={handleDelete}
             className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2"
@@ -406,7 +406,7 @@ export function ItemDetailModal({
             )}
             <button
               onClick={onSchedule}
-              className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-muted dark:text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-lg transition-colors flex items-center gap-2"
             >
               <CalendarPlus size={18} weight="duotone" />
               Schedule

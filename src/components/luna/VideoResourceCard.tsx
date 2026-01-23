@@ -38,13 +38,13 @@ export function VideoResourceCard({ video, compact = false }: VideoResourceCardP
         href={video.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+        className="flex items-center gap-2 p-2 rounded-lg bg-[var(--background-secondary)]/50 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] transition-colors group"
       >
         <div className="w-8 h-8 rounded bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
           <YoutubeLogo size={18} weight="duotone" className="text-red-500" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-[var(--ember-500)]">
+          <p className="text-sm font-medium text-heading truncate group-hover:text-[var(--ember-500)]">
             {video.title}
           </p>
           <p className="text-xs text-muted truncate">{video.channelTitle}</p>
@@ -59,11 +59,11 @@ export function VideoResourceCard({ video, compact = false }: VideoResourceCardP
       href={video.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="block rounded-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all group"
+      className="block rounded-lg overflow-hidden bg-[var(--background-elevated)] border border-[var(--border)] hover:shadow-md transition-all group"
     >
       {/* Thumbnail */}
       {video.thumbnailUrl && (
-        <div className="relative aspect-video bg-gray-100 dark:bg-gray-700">
+        <div className="relative aspect-video bg-[var(--background-secondary)]">
           <img
             src={video.thumbnailUrl}
             alt={video.title}
@@ -86,7 +86,7 @@ export function VideoResourceCard({ video, compact = false }: VideoResourceCardP
 
       {/* Content */}
       <div className="p-3 space-y-1">
-        <h5 className="font-medium text-gray-900 dark:text-white text-sm line-clamp-2 group-hover:text-[var(--ember-500)] transition-colors">
+        <h5 className="font-medium text-heading text-sm line-clamp-2 group-hover:text-[var(--ember-500)] transition-colors">
           {video.title}
         </h5>
         <div className="flex items-center gap-2 text-xs text-muted">

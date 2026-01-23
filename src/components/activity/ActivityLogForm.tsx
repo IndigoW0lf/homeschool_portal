@@ -64,7 +64,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
     return (
       <button
         onClick={() => setIsExpanded(true)}
-        className="w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-[var(--ember-400)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 hover:text-[var(--ember-600)]"
+        className="w-full p-4 border-2 border-dashed border-[var(--border)] dark:border-[var(--border)] rounded-xl hover:border-[var(--ember-400)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all flex items-center justify-center gap-2 text-muted hover:text-[var(--ember-600)]"
       >
         <Plus size={20} weight="bold" />
         Log an Activity
@@ -73,16 +73,16 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
+    <form onSubmit={handleSubmit} className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-6 space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+        <h3 className="font-semibold text-heading dark:text-white flex items-center gap-2">
           <Book size={20} weight="duotone" className="text-[var(--ember-500)]" />
           Log Activity
         </h3>
         <button
           type="button"
           onClick={() => setIsExpanded(false)}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="text-muted hover:text-muted dark:hover:text-muted"
         >
           Cancel
         </button>
@@ -92,13 +92,13 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
         {/* Kid Selector */}
         {kids.length > 1 && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
               Student
             </label>
             <select
               value={kidId}
               onChange={(e) => setKidId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
             >
               {kids.map(kid => (
                 <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -109,7 +109,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
 
         {/* Date */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
             <Calendar size={16} className="inline mr-1" />
             Date
           </label>
@@ -117,20 +117,20 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
           />
         </div>
 
         {/* Subject */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
             Subject
           </label>
           <select
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
           >
             <option value="">Select subject...</option>
             {SUBJECTS.map(s => (
@@ -141,7 +141,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
 
         {/* Duration */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
             <Clock size={16} className="inline mr-1" />
             Duration
           </label>
@@ -153,9 +153,9 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
                 max="12"
                 value={hours}
                 onChange={(e) => setHours(parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
               />
-              <span className="text-xs text-gray-500">hours</span>
+              <span className="text-xs text-muted">hours</span>
             </div>
             <div className="flex-1">
               <input
@@ -165,9 +165,9 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
                 step="5"
                 value={minutes}
                 onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
               />
-              <span className="text-xs text-gray-500">minutes</span>
+              <span className="text-xs text-muted">minutes</span>
             </div>
           </div>
         </div>
@@ -175,7 +175,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
 
       {/* Title */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
           What was done?
         </label>
         <input
@@ -184,13 +184,13 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g., Practiced multiplication tables, Read chapter 5..."
           required
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
         />
       </div>
 
       {/* Description (optional) */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
           Notes (optional)
         </label>
         <textarea
@@ -198,7 +198,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
           placeholder="Additional details..."
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none"
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading resize-none"
         />
       </div>
 
@@ -207,7 +207,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
         <button
           type="button"
           onClick={() => setIsExpanded(false)}
-          className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+          className="px-4 py-2 text-muted hover:text-heading dark:hover:text-muted"
         >
           Cancel
         </button>

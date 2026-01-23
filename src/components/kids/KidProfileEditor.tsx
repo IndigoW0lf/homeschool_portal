@@ -201,8 +201,8 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
 
         {/* Favorite Color Display - Simple label with colored bar */}
         {formData.favoriteColor && (
-          <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+          <div className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
+            <p className="text-sm text-muted mb-2">
               My Profile Color
             </p>
             <div 
@@ -216,15 +216,15 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
 
         {/* Birthday Display */}
         {formData.birthday && (
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center">
               <Calendar size={24} weight="fill" className="text-white" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+              <p className="text-xs text-muted flex items-center gap-1">
                 🎂 My Birthday
               </p>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p className="font-medium text-heading">
                 {formatBirthday(formData.birthday as string)}
               </p>
             </div>
@@ -234,15 +234,15 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
 
         {/* Grade Display */}
         {(formData.grades?.length || formData.gradeBand) && (
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
               <GraduationCap size={24} weight="fill" className="text-white" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+              <p className="text-xs text-muted flex items-center gap-1">
                 📚 My Grade
               </p>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p className="font-medium text-heading">
                 Grade {formData.grades && formData.grades.length > 0 ? formData.grades.join(', ') : formData.gradeBand}
               </p>
             </div>
@@ -258,13 +258,13 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
             return (
               <div 
                 key={field.key}
-                className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
+                className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm"
               >
-                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-1">
+                <div className="flex items-center gap-2 text-xs text-muted mb-1">
                   {field.icon}
                   {field.label}
                 </div>
-                <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+                <p className="text-heading whitespace-pre-wrap">
                   {value}
                 </p>
               </div>
@@ -274,7 +274,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
 
         {/* Empty state */}
         {!hasProfileData(initialData) && (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <div className="text-center py-8 text-muted">
             <p>No profile info yet!</p>
             <button
               onClick={() => setIsEditing(true)}
@@ -293,12 +293,12 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
     <div className="space-y-6">
       {/* Edit Mode Header */}
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-gray-900 dark:text-white">
+        <h3 className="font-semibold text-heading">
           ✏️ Editing Profile
         </h3>
         <button
           onClick={handleCancel}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="flex items-center gap-1 text-sm text-muted hover:text-heading dark:text-muted dark:hover:text-muted"
         >
           <X size={16} />
           Cancel
@@ -306,8 +306,8 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       </div>
 
       {/* Color Picker */}
-      <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+      <div className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
+        <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-3">
           <Heart size={20} className="text-red-500" weight="fill" />
           Pick your profile color!
         </label>
@@ -315,7 +315,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           {/* Color Preview + Click to Change */}
           <label className="cursor-pointer group relative">
             <div 
-              className="w-16 h-16 rounded-full shadow-lg border-4 border-white dark:border-gray-600 transition-transform group-hover:scale-105"
+              className="w-16 h-16 rounded-full shadow-lg border-4 border-white dark:border-[var(--border)] transition-transform group-hover:scale-105"
               style={{ backgroundColor: formData.favoriteColor || '#ff6b6b' }}
             />
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -331,10 +331,10 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
             />
           </label>
           <div className="flex-1">
-            <p className="font-medium text-gray-800 dark:text-white">
+            <p className="font-medium text-heading dark:text-white">
               {formData.favoriteColor || 'Pick a color!'}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted">
               Click the circle to choose any color
             </p>
           </div>
@@ -342,8 +342,8 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       </div>
 
       {/* Birthday Picker */}
-      <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <div className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
+        <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-2">
           <Calendar size={20} className="text-pink-500" weight="fill" />
           When is your birthday? 🎂
         </label>
@@ -351,15 +351,15 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
           type="date"
           value={(formData.birthday as string) || ''}
           onChange={(e) => handleChange('birthday', e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+          className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--night-900)] outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
         />
       </div>
 
       {/* Grade Selector */}
-      <div className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <div className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
+        <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-2">
           <GraduationCap size={20} className="text-blue-500" weight="fill" />
-          What grade are you in? 📚 <span className="text-xs font-normal text-gray-400">(Multi-select!)</span>
+          What grade are you in? 📚 <span className="text-xs font-normal text-muted">(Multi-select!)</span>
         </label>
         <div className="grid grid-cols-5 gap-2">
            {INDIVIDUAL_GRADES.map((grade) => {
@@ -372,7 +372,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
                    px-2 py-2 rounded-lg text-sm font-medium border transition-all
                    ${isSelected 
                      ? "border-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20 text-[var(--ember-600)] dark:text-[var(--ember-400)] shadow-sm"
-                     : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-800"}
+                     : "border-[var(--border)] dark:border-[var(--border)] hover:border-[var(--border)] dark:hover:border-[var(--border)] bg-[var(--background-elevated)]"}
                  `}
                >
                  {grade}
@@ -387,9 +387,9 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
         {PROFILE_FIELDS.map(field => (
           <div 
             key={field.key}
-            className="p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
+            className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm"
           >
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-2">
               {field.icon}
               {field.label}
             </label>
@@ -399,7 +399,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
                 onChange={(e) => handleChange(field.key, e.target.value)}
                 placeholder={field.placeholder}
                 rows={3}
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 outline-none focus:ring-2 focus:ring-[var(--ember-500)] resize-none"
+                className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--night-900)] outline-none focus:ring-2 focus:ring-[var(--ember-500)] resize-none"
               />
             ) : (
               <input
@@ -407,7 +407,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
                 value={(formData[field.key] as string) || ''}
                 onChange={(e) => handleChange(field.key, e.target.value)}
                 placeholder={field.placeholder}
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+                className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--night-900)] outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
               />
             )}
           </div>
@@ -418,7 +418,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       <div className="flex justify-center gap-3 pt-4">
         <button
           onClick={handleCancel}
-          className="px-6 py-3 text-gray-600 dark:text-gray-400 rounded-xl font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="px-6 py-3 text-muted rounded-xl font-medium hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] transition-colors"
         >
           Cancel
         </button>

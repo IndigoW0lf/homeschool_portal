@@ -31,19 +31,19 @@ export function Modal({ isOpen, onClose, title, description, children, className
         
         {/* Header */}
         {(title || description) && (
-          <div className="flex-between p-6 border-b border-gray-100 dark:border-gray-800">
+          <div className="flex-between p-6 border-b border-[var(--border)]">
             <div>
                {title && <h2 className="heading-lg">{title}</h2>}
                {description && <p className="text-sm text-muted">{description}</p>}
             </div>
             <button onClick={onClose} className="btn-icon">
-              <X size={28} weight="duotone" color="#ffcdf6" />
+              <X size={28} weight="duotone" className="text-[var(--nebula-pink)]" />
             </button>
           </div>
         )}
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50 dark:bg-black/20">
+        <div className="flex-1 overflow-y-auto p-6 bg-[var(--background-secondary)]">
            {children}
         </div>
 

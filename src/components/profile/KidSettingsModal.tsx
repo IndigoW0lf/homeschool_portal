@@ -30,28 +30,28 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="w-full max-w-4xl bg-white dark:bg-[var(--night-900)] rounded-2xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-white dark:bg-gray-900 z-10">
+        <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)] flex items-center justify-between bg-white dark:bg-[var(--night-900)] z-10">
           <div className="flex items-center gap-3">
             {kid.avatarUrl ? (
-               <img src={kid.avatarUrl} alt={kid.name} className="w-10 h-10 rounded-full bg-gray-100" />
+               <img src={kid.avatarUrl} alt={kid.name} className="w-10 h-10 rounded-full bg-[var(--background-secondary)]" />
             ) : (
                <div className="w-10 h-10 rounded-full bg-[var(--ember-100)] dark:bg-[var(--ember-900)] flex items-center justify-center text-[var(--ember-600)] font-bold text-lg">
                  {kid.name[0]}
                </div>
             )}
             <div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold text-heading">
                 {kid.name}
               </h2>
-              <p className="text-sm text-gray-500">Settings & Preferences</p>
+              <p className="text-sm text-muted">Settings & Preferences</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 text-muted hover:text-muted dark:hover:text-muted rounded-full hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] transition-colors"
           >
             <X size={24} weight="bold" />
           </button>
@@ -59,7 +59,7 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
 
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar Tabs */}
-          <div className="w-64 border-r border-gray-100 dark:border-gray-800 p-4 bg-gray-50/50 dark:bg-gray-900/50 flex flex-col gap-2 overflow-y-auto">
+          <div className="w-64 border-r border-[var(--border)] dark:border-[var(--border)] p-4 bg-[var(--background-secondary)]/50 bg-[var(--background)] flex flex-col gap-2 overflow-y-auto">
             {tabs.map(tab => (
               <button
                 key={tab.id}
@@ -67,8 +67,8 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-left",
                   activeTab === tab.id
-                    ? "bg-white dark:bg-gray-800 text-[var(--ember-600)] shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "bg-[var(--background-elevated)] text-[var(--ember-600)] shadow-sm"
+                    : "text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)]"
                 )}
               >
                 <tab.icon size={20} weight={activeTab === tab.id ? 'fill' : 'regular'} />
@@ -78,10 +78,10 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-gray-900">
+          <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-[var(--night-900)]">
             {activeTab === 'profile' && (
               <div className="space-y-6">
-                <div className="flex items-center gap-2 text-gray-900 dark:text-white mb-4">
+                <div className="flex items-center gap-2 text-heading mb-4">
                   <User size={24} weight="fill" className="text-[var(--ember-500)]" />
                   <h3 className="text-lg font-semibold">Edit Profile</h3>
                 </div>
@@ -107,7 +107,7 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
                     <MoonManager kids={[kid]} kidId={kid.id} />
                  </section>
                  
-                 <hr className="border-gray-100 dark:border-gray-800" />
+                 <hr className="border-[var(--border)] dark:border-[var(--border)]" />
                  
                  <section className="space-y-4">
                     <RewardManager kids={[kid]} kidId={kid.id} />

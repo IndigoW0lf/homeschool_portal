@@ -107,7 +107,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <NotePencil size={24} weight="fill" className="text-pink-500" />
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-lg font-semibold text-heading">
           Journal Settings
         </h3>
       </div>
@@ -117,7 +117,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
         <select
           value={selectedKid}
           onChange={(e) => setSelectedKid(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+          className="w-full px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)]"
         >
           {kids.map(kid => (
             <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -127,15 +127,15 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
 
       {isLoading ? (
         <div className="text-center py-4">
-          <ArrowsClockwise size={20} className="animate-spin mx-auto text-gray-400" />
+          <ArrowsClockwise size={20} className="animate-spin mx-auto text-muted" />
         </div>
       ) : (
         <div className="space-y-4">
           {/* Enable/Disable Toggle */}
-          <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg cursor-pointer">
+          <label className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg cursor-pointer">
             <div>
-              <p className="font-medium text-gray-800 dark:text-white">Enable Daily Journal</p>
-              <p className="text-sm text-gray-500">Show journal prompt on {selectedKidName}'s home</p>
+              <p className="font-medium text-heading dark:text-white">Enable Daily Journal</p>
+              <p className="text-sm text-muted">Show journal prompt on {selectedKidName}'s home</p>
             </div>
             <input
               type="checkbox"
@@ -146,12 +146,12 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           </label>
 
           {/* Streak Display Toggle */}
-          <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg cursor-pointer">
+          <label className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg cursor-pointer">
             <div className="flex items-center gap-3">
               <Fire size={20} weight="fill" className="text-orange-500" />
               <div>
-                <p className="font-medium text-gray-800 dark:text-white">Show Streak Counter</p>
-                <p className="text-sm text-gray-500">Display current streak on {selectedKidName}'s home</p>
+                <p className="font-medium text-heading dark:text-white">Show Streak Counter</p>
+                <p className="text-sm text-muted">Display current streak on {selectedKidName}'s home</p>
               </div>
             </div>
             <input
@@ -163,10 +163,10 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           </label>
 
           {/* Allow Skip Toggle */}
-          <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg cursor-pointer">
+          <label className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg cursor-pointer">
             <div>
-              <p className="font-medium text-gray-800 dark:text-white">Allow Skip</p>
-              <p className="text-sm text-gray-500">Let {selectedKidName} skip the daily prompt</p>
+              <p className="font-medium text-heading dark:text-white">Allow Skip</p>
+              <p className="text-sm text-muted">Let {selectedKidName} skip the daily prompt</p>
             </div>
             <input
               type="checkbox"
@@ -178,8 +178,8 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
 
           {/* Prompt Types */}
           <div>
-            <p className="font-medium text-gray-800 dark:text-white mb-2">Prompt Types</p>
-            <p className="text-sm text-gray-500 mb-3">Select which types of prompts {selectedKidName} sees</p>
+            <p className="font-medium text-heading dark:text-white mb-2">Prompt Types</p>
+            <p className="text-sm text-muted mb-3">Select which types of prompts {selectedKidName} sees</p>
             <div className="grid grid-cols-2 gap-2">
               {PROMPT_TYPES.map(type => (
                 <button
@@ -188,11 +188,11 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
                   className={`p-3 rounded-lg text-left transition-all ${
                     settings.journalPromptTypes.includes(type.id)
                       ? 'bg-pink-100 dark:bg-pink-900/30 border-2 border-pink-500'
-                      : 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
+                      : 'bg-[var(--background-secondary)] border border-[var(--border)]'
                   }`}
                 >
                   <p className="font-medium text-sm">{type.label}</p>
-                  <p className="text-xs text-gray-500">{type.description}</p>
+                  <p className="text-xs text-muted">{type.description}</p>
                 </button>
               ))}
             </div>

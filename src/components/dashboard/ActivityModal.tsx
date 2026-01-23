@@ -241,7 +241,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create Activity</h2>
+          <h2 className="text-xl font-bold text-heading">Create Activity</h2>
         </div>
 
         {/* Type Toggle - Prominent */}
@@ -253,14 +253,14 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'lesson'
                 ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
-                : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
+                : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
-            <Books size={28} weight="duotone" className={form.activityType === 'lesson' ? "text-blue-500" : "text-gray-400"} />
-            <span className={cn("font-semibold", form.activityType === 'lesson' ? "text-blue-600 dark:text-blue-400" : "text-gray-600 dark:text-gray-400")}>
+            <Books size={28} weight="duotone" className={form.activityType === 'lesson' ? "text-blue-500" : "text-muted"} />
+            <span className={cn("font-semibold", form.activityType === 'lesson' ? "text-blue-600 dark:text-blue-400" : "text-muted")}>
               Lesson
             </span>
-            <span className="text-xs text-gray-500">Teaching content</span>
+            <span className="text-xs text-muted">Teaching content</span>
           </button>
           <button
             type="button"
@@ -269,14 +269,14 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'assignment'
                 ? "border-purple-500 bg-purple-50 dark:bg-purple-900/30"
-                : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
+                : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
-            <PencilSimple size={28} weight="duotone" className={form.activityType === 'assignment' ? "text-purple-500" : "text-gray-400"} />
-            <span className={cn("font-semibold", form.activityType === 'assignment' ? "text-purple-600 dark:text-purple-400" : "text-gray-600 dark:text-gray-400")}>
+            <PencilSimple size={28} weight="duotone" className={form.activityType === 'assignment' ? "text-purple-500" : "text-muted"} />
+            <span className={cn("font-semibold", form.activityType === 'assignment' ? "text-purple-600 dark:text-purple-400" : "text-muted")}>
               Assignment
             </span>
-            <span className="text-xs text-gray-500">Practice work</span>
+            <span className="text-xs text-muted">Practice work</span>
           </button>
           <button
             type="button"
@@ -285,14 +285,14 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'worksheet'
                 ? "border-green-500 bg-green-50 dark:bg-green-900/30"
-                : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
+                : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
-            <MagicWand size={28} weight="duotone" className={form.activityType === 'worksheet' ? "text-green-500" : "text-gray-400"} />
-            <span className={cn("font-semibold", form.activityType === 'worksheet' ? "text-green-600 dark:text-green-400" : "text-gray-600 dark:text-gray-400")}>
+            <MagicWand size={28} weight="duotone" className={form.activityType === 'worksheet' ? "text-green-500" : "text-muted"} />
+            <span className={cn("font-semibold", form.activityType === 'worksheet' ? "text-green-600 dark:text-green-400" : "text-muted")}>
               Worksheet
             </span>
-            <span className="text-xs text-gray-500">AI-generated</span>
+            <span className="text-xs text-muted">AI-generated</span>
           </button>
         </div>
 
@@ -304,7 +304,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               value={form.title}
               onChange={e => updateForm({ title: e.target.value })}
               placeholder="What are we learning today?"
-              className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[var(--ember-500)] focus:ring-0 py-2 px-0 placeholder:text-gray-400"
+              className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--ember-500)] focus:ring-0 py-2 px-0 placeholder:text-muted"
               autoFocus
             />
           </div>
@@ -314,7 +314,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             disabled={isGenerating || !form.title.trim()}
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition-all",
-              "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg",
+              "bg-gradient-sunset text-white shadow-lg",
               "hover:shadow-xl hover:scale-105",
               "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             )}
@@ -337,12 +337,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         <div className="flex gap-3">
           {/* Category Dropdown */}
           <div className="flex-1">
-            <label className="block text-xs font-medium text-gray-500 mb-1.5">Category</label>
+            <label className="block text-xs font-medium text-muted mb-1.5">Category</label>
             <div className="relative">
               <select
                 value={form.category}
                 onChange={e => updateForm({ category: e.target.value })}
-                className="w-full appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 pl-10 pr-8 text-sm font-medium focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent"
+                className="w-full appearance-none bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg py-2.5 pl-10 pr-8 text-sm font-medium focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent"
               >
                 <optgroup label="Academic">
                   {CATEGORIES.filter(c => c.group === 'Academic').map(c => (
@@ -360,13 +360,13 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                 weight="duotone" 
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--ember-500)]" 
               />
-              <CaretDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <CaretDown className="absolute right-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
             </div>
           </div>
 
           {/* Time Pills */}
           <div className="w-40">
-            <label className="block text-xs font-medium text-gray-500 mb-1.5 flex items-center gap-1">
+            <label className="block text-xs font-medium text-muted mb-1.5 flex items-center gap-1">
               <Clock size={12} /> Duration
             </label>
             <div className="flex flex-wrap gap-1">
@@ -379,7 +379,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                     "px-2 py-1 text-xs font-medium rounded-md transition-all",
                     form.estimatedMinutes === mins
                       ? "bg-[var(--ember-500)] text-white"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200"
+                      : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)]"
                   )}
                 >
                   {mins}m
@@ -391,12 +391,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
 
         {/* Description */}
         <div>
-          <label className="block text-xs font-medium text-gray-500 mb-1.5">Instructions</label>
+          <label className="block text-xs font-medium text-muted mb-1.5">Instructions</label>
           <textarea
             value={form.description}
             onChange={e => updateForm({ description: e.target.value })}
             placeholder="Describe what the student should do..."
-            className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent resize-none"
+            className="w-full bg-[var(--background-secondary)] border border-[var(--border)] rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent resize-none"
             rows={3}
           />
         </div>
@@ -404,13 +404,13 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         {/* Steps (Optional) */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-medium text-gray-500">Steps (optional)</label>
+            <label className="text-xs font-medium text-muted">Steps (optional)</label>
             <button type="button" onClick={addStep} className="text-xs text-[var(--ember-500)] hover:underline flex items-center gap-1">
               <Plus size={12} /> Add Step
             </button>
           </div>
           {form.steps.length > 0 && (
-            <div className="space-y-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
+            <div className="space-y-2 bg-[var(--background-secondary)]/50 rounded-lg p-3">
               {form.steps.map((step, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <span className="w-5 h-5 bg-[var(--ember-500)] text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
@@ -421,9 +421,9 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                     value={step}
                     onChange={e => updateStep(idx, e.target.value)}
                     placeholder={`Step ${idx + 1}...`}
-                    className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md py-1.5 px-2 text-sm"
+                    className="flex-1 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
                   />
-                  <button type="button" onClick={() => removeStep(idx)} className="text-gray-400 hover:text-red-500">
+                  <button type="button" onClick={() => removeStep(idx)} className="text-muted hover:text-red-500">
                     <Trash size={14} />
                   </button>
                 </div>
@@ -435,7 +435,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         {/* Links (Optional) */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-medium text-gray-500 flex items-center gap-1">
+            <label className="text-xs font-medium text-muted flex items-center gap-1">
               <LinkIcon size={12} /> Links (optional)
             </label>
             <button type="button" onClick={addLink} className="text-xs text-[var(--ember-500)] hover:underline flex items-center gap-1">
@@ -443,7 +443,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             </button>
           </div>
           {form.links.length > 0 && (
-            <div className="space-y-2 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
+            <div className="space-y-2 bg-[var(--background-secondary)]/50 rounded-lg p-3">
               {form.links.map((link, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <input
@@ -451,16 +451,16 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                     value={link.label}
                     onChange={e => updateLink(idx, 'label', e.target.value)}
                     placeholder="Label"
-                    className="w-24 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md py-1.5 px-2 text-sm"
+                    className="w-24 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
                   />
                   <input
                     type="url"
                     value={link.url}
                     onChange={e => updateLink(idx, 'url', e.target.value)}
                     placeholder="https://..."
-                    className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md py-1.5 px-2 text-sm"
+                    className="flex-1 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
                   />
-                  <button type="button" onClick={() => removeLink(idx)} className="text-gray-400 hover:text-red-500">
+                  <button type="button" onClick={() => removeLink(idx)} className="text-muted hover:text-red-500">
                     <Trash size={14} />
                   </button>
                 </div>
@@ -471,7 +471,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
 
         {/* Schedule Section - Card Style */}
         <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-800/50 rounded-xl p-4 space-y-4">
-          <h4 className="font-semibold text-gray-900 dark:text-white text-sm flex items-center gap-2">
+          <h4 className="font-semibold text-heading text-sm flex items-center gap-2">
             <CalendarBlank size={16} className="text-[var(--ember-500)]" />
             Schedule
           </h4>
@@ -479,7 +479,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
           <div className="flex flex-wrap items-center gap-4">
             {/* Kids */}
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">
+              <label className="block text-xs text-muted mb-1.5">
                 <Users size={12} className="inline mr-1" /> Assign to
               </label>
               <div className="flex gap-2">
@@ -492,7 +492,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                       "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
                       form.assignTo.includes(kid.id)
                         ? "bg-[var(--ember-500)] text-white shadow-sm"
-                        : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600"
+                        : "bg-white dark:bg-[var(--background-secondary)] text-muted border border-[var(--border)] dark:border-[var(--border)]"
                     )}
                   >
                     {kid.name}
@@ -503,12 +503,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
 
             {/* Date */}
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">Date</label>
+              <label className="block text-xs text-muted mb-1.5">Date</label>
               <input
                 type="date"
                 value={form.scheduleDate}
                 onChange={e => updateForm({ scheduleDate: e.target.value })}
-                className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg py-1.5 px-3 text-sm"
+                className="bg-white dark:bg-[var(--background-secondary)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg py-1.5 px-3 text-sm"
               />
             </div>
           </div>
@@ -536,14 +536,14 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         )}
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex justify-end gap-3 pt-4 border-t border-[var(--border)]">
           {/* Debug: Show why button might be disabled */}
           {!form.title.trim() && (
             <span className="text-xs text-red-400 self-center">
               Title required ({form.title.length} chars)
             </span>
           )}
-          <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+          <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-muted hover:text-heading dark:text-muted dark:hover:text-white">
             Cancel
           </button>
           <button

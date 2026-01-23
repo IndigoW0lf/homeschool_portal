@@ -19,10 +19,16 @@
   --night-500: #2F3542;
   
   /* Moon / Light Backgrounds */
-  --moon-50: #F8F6F3;
-  --moon-100: #EDE9E3;
-  --moon-200: #DED8CF;
-  --moon-300: #C9C1B5;
+  --moon-50: #F5F3F0;
+  --moon-100: #E8E4DF;
+  --moon-200: #D6D0C8;
+  --moon-300: #C0B8AD;
+  
+  /* Moonlit Altar Accent Colors */
+  --candle-cream: #F5DCC8;
+  --herbal-gold: #C8A86B;
+  --midnight-bloom: #6E8A8A;
+  --mystic-ember: #8B5A42;
   
   /* Celestial Teal - Primary Accent (from Moonlit Altar) */
   --celestial-100: #D4E8E9;
@@ -34,13 +40,13 @@
   --celestial-700: #2D595C;
   
   /* Ember Gold - Stars, Achievements, Moons currency (from Cosmic Wilderness) */
-  --ember-gold-100: #F5ECD4;
-  --ember-gold-200: #EBDAAA;
-  --ember-gold-300: #E1C87F;
-  --ember-gold-400: #D4A853;
-  --ember-gold-500: #C49842;
-  --ember-gold-600: #A67E35;
-  --ember-gold-700: #876528;
+  --ember-gold-100: #FFF4E0;
+  --ember-gold-200: #FFE8B8;
+  --ember-gold-300: #F5D98F;
+  --ember-gold-400: #E8C766;
+  --ember-gold-500: #D4A853;
+  --ember-gold-600: #B88F42;
+  --ember-gold-700: #9A7635;
   
   /* Cosmic Rust - CTAs, Energy, Warmth (from Cosmic Wilderness) */
   --cosmic-rust-100: #F2DDD5;
@@ -52,13 +58,13 @@
   --cosmic-rust-700: #8B4A32;
   
   /* Nebula Accents - Kid-friendly pops of color */
-  --nebula-pink: #D4A0B3;
-  --nebula-pink-light: #E8C9D5;
+  --nebula-pink: #E5A8C0;
+  --nebula-pink-light: #F5D3E0;
   --nebula-teal: #6BB8B8;
   --nebula-teal-light: #A8D8D8;
-  --nebula-purple: #9C8FB8;
-  --nebula-purple-light: #C4BBD6;
-  --nebula-peach: #E8C4A8;
+  --nebula-purple: #A896C8;
+  --nebula-purple-light: #D0C5E0;
+  --nebula-peach: #F0C9A8;
   
   /* Slate - Neutral tones (from Cosmic Wilderness) */
   --slate-100: #E8EAED;
@@ -73,9 +79,9 @@
   --success-light: #D1E7DD;
   --success: #6F8F73;
   --success-dark: #4E6B50;
-  --warning-light: #F5ECD4;
-  --warning: #D4A853;
-  --warning-dark: #A67E35;
+  --warning-light: #FFF4E0;
+  --warning: #E8C766;
+  --warning-dark: #B88F42;
   --error-light: #F2DDD5;
   --error: #D48A8A;
   --error-dark: #B86A6A;
@@ -83,7 +89,7 @@
   --info: #5B9B9E;
   --info-dark: #3B7073;
   
-  /* Gradients */
+  /* Gradients - Ombré Magic */
   --gradient-cosmic: linear-gradient(135deg, #1C2029 0%, #14171F 50%, #0D0F14 100%);
   --gradient-ember: linear-gradient(90deg, #B86A4B 0%, #D4A853 100%);
   --gradient-ember-reverse: linear-gradient(90deg, #D4A853 0%, #B86A4B 100%);
@@ -91,16 +97,35 @@
   --gradient-aurora: linear-gradient(180deg, #5B9B9E 0%, #6BB8B8 50%, #9C8FB8 100%);
   --gradient-gold-shimmer: linear-gradient(90deg, #C49842 0%, #D4A853 50%, #E1C87F 100%);
   
+  /* NEW: Full Cosmic Wilderness Ombré Gradients */
+  --gradient-sunset: linear-gradient(135deg, #B86A4B 0%, #D4A853 50%, #E5A8C0 100%);
+  --gradient-dusk: linear-gradient(135deg, #1C2029 0%, #4A5568 50%, #A896C8 100%);
+  --gradient-ocean: linear-gradient(135deg, #5B9B9E 0%, #6BB8B8 100%);
+  --gradient-forest: linear-gradient(135deg, #6F8F73 0%, #5B9B9E 100%);
+  --gradient-rust-gold: linear-gradient(45deg, #B86A4B 0%, #D4A853 100%);
+  --gradient-taupe-pink: linear-gradient(135deg, #A89B8C 0%, #E5A8C0 100%);
+  --gradient-teal-pink: linear-gradient(135deg, #6BB8B8 0%, #E5A8C0 100%);
+  --gradient-cosmic-glow: linear-gradient(135deg, #1C2029 0%, #2F3542 30%, #A896C8 100%);
+  --gradient-warm: linear-gradient(135deg, #D4A853 0%, #B86A4B 50%, #E5A8C0 100%);
+  --gradient-cool: linear-gradient(135deg, #5B9B9E 0%, #A896C8 50%, #E5A8C0 100%);
+  
+  /* Cross-palette: Moonlit Altar + Cosmic Wilderness */
+  --gradient-altar-flame: linear-gradient(135deg, #F5DCC8 0%, #C8A86B 40%, #8B5A42 100%);
+  --gradient-moonlit-dusk: linear-gradient(135deg, #6E8A8A 0%, #1C2029 100%);
+  --gradient-candle-teal: linear-gradient(135deg, #F5DCC8 0%, #5B9B9E 100%);
+  --gradient-herbal-bloom: linear-gradient(135deg, #C8A86B 0%, #6E8A8A 50%, #A896C8 100%);
+  --gradient-mystic-night: linear-gradient(180deg, #8B5A42 0%, #1C2029 100%);
+  
   /* Light Mode Semantic Mappings */
   --background: var(--moon-50);
   --background-secondary: var(--moon-100);
-  --background-elevated: #ffffff;
+  --background-elevated: var(--moon-100);
   --foreground: #2B2B2B;
-  --foreground-muted: var(--slate-400);
+  --foreground-muted: var(--slate-500);
   
   /* Border & Divider */
   --border: var(--moon-200);
-  --border-subtle: var(--moon-100);
+  --border-subtle: var(--celestial-200);
   --divider: var(--moon-200);
   
   /* Interactive states */

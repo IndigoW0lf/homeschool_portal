@@ -40,11 +40,11 @@ export function RewardItemCard({ item, canAfford, onPurchase }: RewardItemCardPr
       </div>
 
       {/* Name & Description */}
-      <h3 className="font-semibold text-gray-900 dark:text-white text-center mb-1">
+      <h3 className="font-semibold text-heading text-center mb-1">
         {item.name}
       </h3>
       {item.description && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-3">
+        <p className="text-xs text-muted text-center mb-3">
           {item.description}
         </p>
       )}
@@ -71,7 +71,7 @@ export function RewardItemCard({ item, canAfford, onPurchase }: RewardItemCardPr
             w-full py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2
             ${canAfford 
               ? 'bg-purple-500 text-white hover:bg-purple-600 active:scale-95' 
-              : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'}
+              : 'bg-[var(--background-secondary)] text-muted cursor-not-allowed'}
           `}
         >
           {isPurchasing ? (
