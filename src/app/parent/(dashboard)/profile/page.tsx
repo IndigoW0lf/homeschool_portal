@@ -32,7 +32,7 @@ export default async function ProfilePage() {
     if (!newProfile) {
       return (
         <div className="max-w-2xl mx-auto px-4 py-8">
-          <p className="text-red-500">Error loading profile. Please try again.</p>
+          <p className="text-error">Error loading profile. Please try again.</p>
         </div>
       );
     }
@@ -40,15 +40,15 @@ export default async function ProfilePage() {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="title-magical-lg title-gradient-sunset">
             Your Profile
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <p className="text-muted text-sm">
             Manage your account settings
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="card-elevated p-6">
           <ProfileForm profile={newProfile} />
         </div>
       </div>
@@ -58,15 +58,15 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="title-magical-lg title-gradient-sunset">
           Your Profile
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
+        <p className="text-muted text-sm">
           Manage your account settings
         </p>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+      <div className="card-elevated p-6">
         <ProfileForm profile={profile} />
       </div>
     </div>

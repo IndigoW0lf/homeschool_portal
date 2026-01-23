@@ -22,7 +22,7 @@ export default function LessonsPage() {
         className="max-w-3xl mx-auto cursor-default"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+        <div className="card-elevated p-6">
           <ActivityForm />
         </div>
       </div>

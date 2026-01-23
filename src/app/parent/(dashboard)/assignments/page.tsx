@@ -34,30 +34,30 @@ export default async function AssignmentsPage({ searchParams }: PageProps) {
             <div className="mb-6">
               <Link 
                 href="/parent/progress" 
-                className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mb-3 transition-colors"
+                className="inline-flex items-center gap-2 text-sm link mb-3 transition-colors"
               >
                 <ArrowLeft size={16} weight="bold" />
                 Back to Progress
               </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="title-magical-lg title-gradient-sunset">
                 {assignment.title}
               </h1>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+              <p className="text-muted text-sm mt-1">
                 Assignment Details
               </p>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <div className="card-elevated p-6">
               <AssignmentViewer assignment={assignment} />
             </div>
           </>
         ) : viewId ? (
           // Assignment not found
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400">Assignment not found</p>
+            <p className="text-muted">Assignment not found</p>
             <Link 
               href="/parent/progress"
-              className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 mt-2 inline-block"
+              className="link mt-2 inline-block"
             >
               Return to Progress
             </Link>
@@ -67,16 +67,16 @@ export default async function AssignmentsPage({ searchParams }: PageProps) {
           <>
             <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h1 className="title-magical-lg title-gradient-sunset">
                   Create Assignment
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                <p className="text-muted text-sm">
                   Assign new work to students manually or generate it.
                 </p>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <div className="card-elevated p-6">
               <AssignmentForm />
             </div>
           </>

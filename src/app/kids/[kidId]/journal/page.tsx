@@ -30,17 +30,17 @@ export default async function KidJournalPage({ params }: JournalPageProps) {
   return (
     <div className="min-h-screen">
       {/* Page Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div style={{backgroundColor: 'var(--background-elevated)', borderBottom: '1px solid var(--border)'}}>
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
               <NotePencil size={28} weight="duotone" className="text-purple-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="title-magical-lg title-gradient-sunset">
                 My Journal
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-muted">
                 {entries?.length || 0} entries
               </p>
             </div>

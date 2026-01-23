@@ -106,7 +106,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
       />
       
       {/* Page Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div style={{backgroundColor: 'var(--background-elevated)', borderBottom: '1px solid var(--border)'}}>
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
@@ -172,10 +172,10 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
         <section id={`date-${viewDateString}`}>
           <div className="mb-4">
             {isPast ? (
-                <div className="flex items-center gap-3 text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-3 text-muted">
                     <CheckCircle size={32} weight="duotone" className="text-green-500" />
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Completed on {viewDate.toLocaleDateString('en-US', { weekday: 'long' })}</h2>
+                        <h2 className="heading-lg">Completed on {viewDate.toLocaleDateString('en-US', { weekday: 'long' })}</h2>
                         <p className="text-sm opacity-80">{formattedDate}</p>
                     </div>
                 </div>
@@ -203,7 +203,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                 readOnly={isPast}
               />
             ) : (
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center text-gray-500 dark:text-gray-400">
+              <div className="card-elevated p-6 text-center text-muted">
                 {isPast ? "No assignments recorded on this day." : "No assignments scheduled for today! 🎉"}
               </div>
             )}
@@ -223,7 +223,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
         {/* Upcoming Items - HIDE if Past */}
         {!isPast && upcomingItems.length > 0 && (
           <section>
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="heading-lg mb-4 flex items-center gap-2">
               <Scroll size={24} weight="duotone" className="text-[var(--ember-400)]" />
               Coming Up This Week
             </h2>

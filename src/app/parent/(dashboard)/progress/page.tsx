@@ -72,11 +72,11 @@ export default async function ProgressPage() {
       {/* Header with Import Button */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <h1 className="title-magical-lg title-gradient-sunset flex items-center gap-2">
             <ChartLineUp size={28} weight="duotone" className="text-[var(--ember-500)]" />
             Student Progress
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+          <p className="text-muted text-sm mt-1">
             Track daily activity and subject mastery across all curricula
           </p>
         </div>
@@ -108,7 +108,7 @@ export default async function ProgressPage() {
 
             {/* Life Skills Section */}
             {Object.keys(stats.lifeSkillsCounts).length > 0 && (
-              <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+              <div className="pt-6 border-t" style={{borderColor: 'var(--border)'}}>
                 <div className="flex items-center gap-2 mb-4">
                   <Brain size={20} className="text-purple-500" />
                   <span className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full font-medium">
@@ -126,11 +126,11 @@ export default async function ProgressPage() {
             {/* Manual Activity Log + Unified Activity List */}
             <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 text-sm">
+                <h4 className="font-medium flex items-center gap-2 text-sm" style={{color: 'var(--foreground)'}}>
                   <Book size={16} weight="duotone" className="text-[var(--ember-500)]" />
                   Activity Log
                 </h4>
-                <span className="text-xs text-gray-400">{unifiedActivities.length} items</span>
+                <span className="text-xs text-muted">{unifiedActivities.length} items</span>
               </div>
               
               {/* Manual Activity Form */}
@@ -169,17 +169,17 @@ export default async function ProgressPage() {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                     {/* Subject Distribution Donut */}
                     <div className="bg-gray-50 dark:bg-gray-900/30 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Subject Distribution</h4>
+                      <h4 className="text-sm font-medium mb-3" style={{color: 'var(--foreground)'}}>Subject Distribution</h4>
                       <SubjectDonut subjects={kidExternal.stats.subjectAverages} />
                     </div>
 
                     {/* Subject Performance bars */}
                     <div className="bg-gray-50 dark:bg-gray-900/30 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Subject Performance</h4>
+                      <h4 className="text-sm font-medium mb-3" style={{color: 'var(--foreground)'}}>Subject Performance</h4>
                       <div className="space-y-2">
                         {kidExternal.stats.subjectAverages.map((subj) => (
                           <div key={subj.subject} className="flex items-center gap-3">
-                            <span className="w-28 text-sm text-gray-600 dark:text-gray-400 truncate">{subj.subject}</span>
+                            <span className="w-28 text-sm text-muted truncate">{subj.subject}</span>
                             <div className="flex-1 h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full transition-all ${subj.average >= 80 ? 'bg-green-500' :
@@ -226,8 +226,8 @@ export default async function ProgressPage() {
       })}
 
       {kidStats.length === 0 && (
-        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300">
-          <p className="text-gray-500">No students found. Add a kid in Settings to see stats!</p>
+        <div className="text-center py-12 card-elevated border-dashed">
+          <p className="text-muted">No students found. Add a kid in Settings to see stats!</p>
         </div>
       )}
     </div>
