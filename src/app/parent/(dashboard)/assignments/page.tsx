@@ -1,8 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { AssignmentViewer } from '@/components/assignments/AssignmentViewer';
 import { AssignmentForm } from '@/components/assignments/AssignmentForm';
-import { WorksheetGeneratorModal } from '@/components/worksheets/WorksheetGeneratorModal';
-import { MagicWand, ArrowLeft } from '@phosphor-icons/react/dist/ssr';
+import { ArrowLeft } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 
 interface PageProps {
@@ -39,7 +38,7 @@ export default async function AssignmentsPage({ searchParams }: PageProps) {
                 <ArrowLeft size={16} weight="bold" />
                 Back to Progress
               </Link>
-              <h1 className="title-magical-lg title-gradient-sunset">
+              <h1 className="heading-lg">
                 {assignment.title}
               </h1>
               <p className="text-muted text-sm mt-1">
@@ -67,7 +66,7 @@ export default async function AssignmentsPage({ searchParams }: PageProps) {
           <>
             <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h1 className="title-magical-lg title-gradient-sunset">
+                <h1 className="heading-lg">
                   Create Assignment
                 </h1>
                 <p className="text-muted text-sm">

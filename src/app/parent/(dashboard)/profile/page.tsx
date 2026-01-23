@@ -40,7 +40,7 @@ export default async function ProfilePage() {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <h1 className="title-magical-lg title-gradient-sunset">
+          <h1 className="heading-lg">
             Your Profile
           </h1>
           <p className="text-muted text-sm">
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="title-magical-lg title-gradient-sunset">
+        <h1 className="heading-lg">
           Your Profile
         </h1>
         <p className="text-muted text-sm">

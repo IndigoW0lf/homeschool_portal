@@ -1,13 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { House, GameController, UserCircle, Moon, Palette, List, X, Star, NotePencil, SignOut } from '@phosphor-icons/react';
+import { House, GameController, Moon, List, X, Star, NotePencil, SignOut } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { BlockyAvatar } from '@/components/BlockyAvatar';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
-import { LunaraTitle } from '@/components/ui/LunaraTitle';
 import { useState } from 'react';
 import { AvatarState } from '@/types';
 
@@ -110,12 +108,9 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
             >
               ← 
             </Link>
-            <LunaraTitle 
-              gradient="teal-pink" 
-              size="md"
-            >
+            <span className="heading-md text-white">
               Hello, {kidName}!
-            </LunaraTitle>
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <DarkModeToggle />

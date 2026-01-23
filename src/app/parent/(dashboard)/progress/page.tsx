@@ -72,7 +72,7 @@ export default async function ProgressPage() {
       {/* Header with Import Button */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="title-magical-lg title-gradient-sunset flex items-center gap-2">
+          <h1 className="heading-lg flex items-center gap-2">
             <ChartLineUp size={28} weight="duotone" className="text-[var(--ember-500)]" />
             Student Progress
           </h1>

@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
@@ -8,8 +7,7 @@ import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { JournalCard } from '@/components/kids/JournalCard';
 import { StreakDisplay } from '@/components/kids/StreakDisplay';
-import { LunaraTitle } from '@/components/ui/LunaraTitle';
-import { CaretLeft, CaretRight, CalendarBlank, Scroll, CheckCircle } from '@phosphor-icons/react/dist/ssr';
+import { Scroll, CheckCircle, CaretLeft, CaretRight } from '@phosphor-icons/react/dist/ssr';
 import { addWeeks, subWeeks, format, startOfWeek, endOfWeek } from 'date-fns';
 import { KidStateHydrator } from '@/components/KidStateHydrator';
 import { AvatarSetupRedirect } from '@/components/kids/AvatarSetupRedirect';
@@ -106,18 +104,14 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
       />
       
       {/* Page Header */}
-      <div style={{backgroundColor: 'var(--background-elevated)', borderBottom: '1px solid var(--border)'}}>
+      <div className="bg-[var(--background-elevated)] dark:bg-[var(--night-700)]/80 dark:backdrop-blur-sm border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <LunaraTitle 
-                gradient="teal-pink" 
-                size="lg" 
-                as="h1"
-              >
+              <h1 className="heading-xl text-[var(--foreground)]">
                 Hello, {kid.name}!
-              </LunaraTitle>
-              <p className="text-muted opacity-80">{formattedDate}</p>
+              </h1>
+              <p className="text-[var(--slate-400)]">{formattedDate}</p>
             </div>
             
             {/* Header Navigation Removed - Integrated into Calendar */}
@@ -181,12 +175,9 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                 </div>
             ) : (
                 <>
-                    <LunaraTitle 
-                      gradient="sunset" 
-                      size="lg"
-                    >
+                    <h2 className="heading-lg text-[var(--foreground)]">
                       Today&apos;s Quest
-                    </LunaraTitle>
+                    </h2>
                     {!isViewToday && (
                     <p className="text-sm text-muted mt-1">{formattedDate}</p>
                     )}
@@ -238,13 +229,9 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
 
         {/* Resources */}
         <section>
-          <LunaraTitle 
-            gradient="herbal-bloom" 
-            size="md"
-            className="mb-4"
-          >
+          <h2 className="heading-md text-[var(--foreground)] mb-4">
             Resources
-          </LunaraTitle>
+          </h2>
           <ResourceSection resources={resources} />
         </section>
       </div>
