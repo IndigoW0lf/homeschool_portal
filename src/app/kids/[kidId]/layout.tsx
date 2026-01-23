@@ -58,7 +58,7 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
       />
       
       {/* Main content area - offset for sidebar on desktop, header on mobile */}
-      <main className="pt-16 lg:pt-0 lg:pl-20 relative z-10">
+      <main className="pt-16 lg:pt-0 lg:pl-20">
         {children}
       </main>
 

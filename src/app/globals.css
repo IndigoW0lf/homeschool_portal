@@ -235,18 +235,22 @@ html.dark .bg-magical {
 /* Starfield pattern overlay - only shows in dark mode */
 .bg-starfield {
   position: relative;
+  isolation: isolate; /* Create stacking context without affecting children */
 }
 
 /* Light mode: subtle warm texture */
 .bg-starfield::before {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-image: 
     radial-gradient(ellipse at 30% 20%, rgba(200, 168, 107, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse at 70% 80%, rgba(91, 155, 158, 0.06) 0%, transparent 50%);
   pointer-events: none;
-  z-index: 0;
+  z-index: -1; /* Behind content instead of requiring children to have z-index */
 }
 
 /* Dark mode: starfield with sparkles */
@@ -265,10 +269,7 @@ html.dark .bg-starfield::before {
     radial-gradient(1px 1px at 85% 40%, rgba(255,255,255,0.3) 0%, transparent 100%);
 }
 
-.bg-starfield > * {
-  position: relative;
-  z-index: 1;
-}
+/* Removed the .bg-starfield > * rule that was forcing position:relative on children */
 
 /* Nebula glow effect */
 .bg-nebula-glow {

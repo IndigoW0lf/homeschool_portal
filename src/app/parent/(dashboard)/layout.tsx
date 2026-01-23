@@ -79,7 +79,7 @@ export default async function ParentLayout({
       <div className="min-h-screen bg-cosmic bg-starfield">
         <ParentNav user={user} kids={kidsWithMoons} />
         {/* Main content with left margin to account for sidebar */}
-        <main className="ml-56 min-h-screen relative z-10">
+        <main className="ml-56 min-h-screen">
           {children}
         </main>
       </div>
