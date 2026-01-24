@@ -120,6 +120,7 @@
   --background: var(--moon-50);           /* Warm cream page background */
   --background-secondary: var(--moon-100); /* Secondary sections */
   --background-elevated: #FDFCFA;          /* Cards - warm but not pure white */
+  --background-sidebar: var(--moon-100);   /* Sidebar in light mode */
   --foreground: #2B2B2B;
   --foreground-muted: var(--slate-400);    /* Use Slate for muted text */
   
@@ -153,18 +154,19 @@
 /* Dark mode - THE PRIMARY FOCUS */
 html.dark,
 .dark {
-  /* WARM PALETTE BACKGROUNDS - Not just black! */
-  --background: #12110F;                    /* Deep warm dark (Mystic Ember undertone) */
-  --background-secondary: #1A1714;          /* Warm secondary with Cosmic Rust hint */
-  --background-elevated: #252119;           /* Cards - warm with Oak undertone */
+  /* BEAUTIFUL PURPLE-PLUM BACKGROUNDS */
+  --background: #12110F;                    /* Deep warm dark page bg */
+  --background-secondary: #1A1714;          /* Secondary sections */
+  --background-elevated: #2D1F2D;           /* Modals/Cards - Rich purple-plum! */
+  --background-sidebar: #251B25;            /* Sidebar - Deep plum */
   --foreground: #e4d8c4;                    /* Candle Cream text */
   --foreground-muted: var(--slate-300);
   
   /* Border & Divider */
-  --border: #3D352A;                        /* Warm border with Mystic Ember */
-  --border-subtle: #2A241E;
+  --border: #4A3545;                        /* Purple-tinted border */
+  --border-subtle: #3A2838;
   --border-accent: var(--celestial-400);    /* Teal accent borders */
-  --divider: #3D352A;
+  --divider: #4A3545;
   
   /* Palette Accent Colors for UI elements */
   --accent-primary: var(--celestial-400);   /* Celestial Teal - primary actions */

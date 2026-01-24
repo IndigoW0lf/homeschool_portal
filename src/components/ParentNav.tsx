@@ -58,7 +58,7 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-56 bg-[var(--night-800)] flex flex-col z-30 border-r border-[var(--night-600)]">
+    <aside className="fixed left-0 top-0 h-full w-56 bg-[var(--background-sidebar)] flex flex-col z-30 border-r border-[var(--border)]">
       {/* Logo / Header */}
       <div className="p-4 border-b border-[var(--night-600)]">
         <Link href="/home" className="flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition-opacity">
