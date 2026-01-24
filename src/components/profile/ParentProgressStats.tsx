@@ -36,16 +36,16 @@ interface ParentProgressStatsProps {
 export function ParentProgressStats({ kidId, stats }: ParentProgressStatsProps) {
   const { subjectCounts, weeklyActivity } = stats;
 
-  // 8 subject categories split into 2 columns
-  const subjects: { key: string; label: string; color: string; Icon: Icon }[] = [
-    { key: 'reading', label: 'Reading', color: 'bg-amber-400', Icon: Books },
-    { key: 'writing', label: 'Writing', color: 'bg-blue-400', Icon: PencilSimple },
-    { key: 'math', label: 'Math & Logic', color: 'bg-purple-400', Icon: Calculator },
-    { key: 'science', label: 'Science', color: 'bg-green-400', Icon: Atom },
-    { key: 'social_studies', label: 'Social Studies', color: 'bg-orange-400', Icon: Globe },
-    { key: 'arts', label: 'Arts', color: 'bg-rose-400', Icon: Palette },
-    { key: 'life_skills', label: 'Life Skills', color: 'bg-pink-400', Icon: House },
-    { key: 'electives', label: 'Electives', color: 'bg-teal-400', Icon: Sparkle },
+  // 8 subject categories with Cosmic Wilderness + Moonlit Altar palette colors
+  const subjects: { key: string; label: string; colorVar: string; Icon: Icon }[] = [
+    { key: 'reading', label: 'Reading', colorVar: '--cosmic-rust-500', Icon: Books },
+    { key: 'writing', label: 'Writing', colorVar: '--slate-400', Icon: PencilSimple },
+    { key: 'math', label: 'Math & Logic', colorVar: '--celestial-500', Icon: Calculator },
+    { key: 'science', label: 'Science', colorVar: '--herbal-gold', Icon: Atom },
+    { key: 'social_studies', label: 'Social Studies', colorVar: '--midnight-bloom', Icon: Globe },
+    { key: 'arts', label: 'Arts', colorVar: '--nebula-pink', Icon: Palette },
+    { key: 'life_skills', label: 'Life Skills', colorVar: '--nebula-purple', Icon: House },
+    { key: 'electives', label: 'Electives', colorVar: '--nebula-teal', Icon: Sparkle },
   ];
 
   // Split into left and right columns
@@ -67,8 +67,8 @@ export function ParentProgressStats({ kidId, stats }: ParentProgressStatsProps) 
         </div>
         <div className="h-1.5 bg-[var(--background-secondary)] rounded-full overflow-hidden">
           <div 
-            className={`h-full ${subject.color} transition-all duration-500`}
-            style={{ width: `${progress}%` }}
+            className="h-full transition-all duration-500"
+            style={{ width: `${progress}%`, backgroundColor: `var(${subject.colorVar})` }}
           />
         </div>
       </div>

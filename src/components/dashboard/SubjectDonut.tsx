@@ -10,19 +10,20 @@ interface SubjectDonutProps {
   subjects: SubjectData[];
 }
 
-// Subject color mapping
+// Subject color mapping - using Cosmic Wilderness + Moonlit Altar palette
 const subjectColors: Record<string, string> = {
-  'Reading': '#f59e0b',
-  'Language Arts': '#10b981',
-  'Math': '#8b5cf6',
-  'Science': '#ef4444',
-  'History': '#3b82f6',
-  'Writing': '#06b6d4',
-  'Social Studies': '#ec4899',
+  'Reading': 'var(--cosmic-rust-500)',      // Cosmic Rust
+  'Language Arts': 'var(--herbal-gold)',    // Herbal Gold
+  'Math': 'var(--celestial-500)',           // Celestial Teal
+  'Science': 'var(--nebula-teal)',          // Nebula Teal
+  'History': 'var(--midnight-bloom)',       // Midnight Bloom
+  'Writing': 'var(--slate-400)',            // Slate
+  'Social Studies': 'var(--nebula-purple)', // Nebula Purple
+  'U.S. Government': 'var(--nebula-pink)',  // Nebula Pink
 };
 
 function getSubjectColor(subject: string): string {
-  return subjectColors[subject] || '#6b7280';
+  return subjectColors[subject] || 'var(--slate-500)';
 }
 
 export function SubjectDonut({ subjects }: SubjectDonutProps) {

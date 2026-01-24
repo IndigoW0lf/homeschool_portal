@@ -143,7 +143,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
       {/* Stats Summary */}
       <div className="flex gap-4 mb-4">
         <div className="flex items-center gap-2 text-sm">
-          <CalendarBlank size={16} className="text-indigo-500" />
+          <CalendarBlank size={16} className="text-[var(--celestial-500)]" />
           <span className="text-muted">{activeDays} active days</span>
         </div>
         <div className="text-sm text-muted">
@@ -182,13 +182,13 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                     <div 
                       className={`w-full max-w-[40px] rounded-t transition-all ${
                         day.count > 0 
-                          ? 'bg-indigo-500 dark:bg-indigo-400' 
+                          ? 'bg-[var(--celestial-400)]' 
                           : 'bg-[var(--background-secondary)]'
-                      } ${isToday ? 'ring-2 ring-indigo-300' : ''}`}
+                      } ${isToday ? 'ring-2 ring-[var(--celestial-300)]' : ''}`}
                       style={{ height: day.count > 0 ? `${Math.max(heightPercent, 8)}%` : '4px' }}
                     />
                   </div>
-                  <span className={`text-xs font-medium ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted'}`}>
+                  <span className={`text-xs font-medium ${isToday ? 'text-[var(--celestial-500)]' : 'text-muted'}`}>
                     {dayLabel}
                   </span>
                 </div>
@@ -214,7 +214,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                     <div 
                       className={`w-full rounded-t transition-all ${
                         week.count > 0 
-                          ? 'bg-indigo-500 dark:bg-indigo-400' 
+                          ? 'bg-[var(--celestial-400)]' 
                           : 'bg-[var(--background-secondary)]'
                       }`}
                       style={{ height: week.count > 0 ? `${Math.max(heightPercent, 8)}%` : '4px' }}

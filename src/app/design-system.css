@@ -204,6 +204,46 @@
   backdrop-filter: blur(8px);
 }
 
+/* Palette-accent card variants for colorful UI */
+.card-teal {
+  border-radius: 0.75rem;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--celestial-500);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-warm {
+  border-radius: 0.75rem;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--cosmic-rust-500);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-gold {
+  border-radius: 0.75rem;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--herbal-gold);
+  box-shadow: 0 2px 8px rgba(200, 168, 107, 0.15);
+}
+
+/* Section header with palette accent */
+.section-accent-teal {
+  border-left: 3px solid var(--celestial-500);
+  padding-left: 0.75rem;
+}
+
+.section-accent-warm {
+  border-left: 3px solid var(--cosmic-rust-500);
+  padding-left: 0.75rem;
+}
+
+.section-accent-gold {
+  border-left: 3px solid var(--herbal-gold);
+  padding-left: 0.75rem;
+}
+
 .card-section {
   padding: 1rem;
   border-bottom: 1px solid var(--border);
