@@ -70,7 +70,7 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
               <p className="text-sm text-muted mb-3">
                 Coming soon! We're working on an awesome avatar creator for you.
               </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[var(--background-secondary)] text-muted rounded-lg font-medium cursor-not-allowed">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--moon-200)] dark:bg-[var(--background-secondary)] text-muted rounded-lg font-medium cursor-not-allowed">
                 🚧 In Progress
               </div>
             </div>

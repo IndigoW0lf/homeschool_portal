@@ -58,13 +58,13 @@ export function WeekCalendar({ entries, selectedDate, onDateSelect, kidId }: Wee
                   ${isToday 
                     ? 'bg-[var(--celestial-500)] text-[var(--foreground)] font-bold' 
                     : isSelected
-                      ? 'bg-[var(--celestial-400)]/20 dark:bg-blue-900/50 text-[var(--celestial-500)] dark:text-blue-300'
+                      ? 'bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-900)]/50 text-[var(--celestial-500)] dark:text-[var(--celestial-300)]'
                       : 'bg-[var(--background-secondary)] text-heading dark:text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'}
                 `}
               >
                 <span>{date.getDate()}</span>
                 {hasEntries && (
-                  <span className="w-2 h-2 bg-green-400 rounded-full mt-1" title="Has assignments" />
+                  <span className="w-2 h-2 bg-[var(--herbal-400)] rounded-full mt-1" title="Has assignments" />
                 )}
               </button>
             </div>

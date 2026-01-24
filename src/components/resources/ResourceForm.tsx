@@ -183,14 +183,14 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
             <button 
                type="button" 
                onClick={() => setValue('isPinned', !isPinned)}
-               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", isPinned ? "bg-amber-50 border-amber-300 text-amber-700" : "border-[var(--border)] text-muted")}
+               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", isPinned ? "bg-[var(--solar-50)] border-[var(--solar-300)] text-[var(--solar-700)]" : "border-[var(--border)] text-muted")}
             >
                 <PushPin size={16} weight="duotone" color="#e7b58d" className={isPinned ? "fill-current" : ""} /> Pin to Top
             </button>
             <button 
                type="button" 
                onClick={() => setValue('showOnToday', !showOnToday)}
-               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", showOnToday ? "bg-blue-50 border-blue-300 text-[var(--celestial-500)]" : "border-[var(--border)] text-muted")}
+               className={cn("p-2 rounded-lg border transition-all flex items-center gap-2 text-sm font-medium", showOnToday ? "bg-[var(--celestial-50)] border-[var(--celestial-300)] text-[var(--celestial-600)]" : "border-[var(--border)] text-muted")}
             >
                 <CalendarBlank size={16} weight="duotone" color="#b6e1d8" /> Show on Today
             </button>
@@ -243,7 +243,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
       {/* 2. DYNAMIC METADATA */}
       {/* Video */}
       {type === 'video' && (
-         <div className="bg-[var(--nebula-purple)]/10 dark:bg-purple-900/10 p-6 rounded-xl border border-purple-100 dark:border-purple-900/30 animate-in slide-in-from-top-2">
+         <div className="bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/20 p-6 rounded-xl border border-[var(--nebula-purple)]/20 dark:border-[var(--nebula-purple)]/30 animate-in slide-in-from-top-2">
             <h3 className="text-sm font-bold text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] flex items-center gap-2 mb-4">
                <Television size={16} weight="duotone" color="#caa2d8" /> Video Details
             </h3>
@@ -266,8 +266,8 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
 
       {/* Book */}
       {type === 'book' && (
-         <div className="bg-amber-50 dark:bg-amber-900/10 p-6 rounded-xl border border-amber-100 dark:border-amber-900/30 animate-in slide-in-from-top-2">
-            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300 flex items-center gap-2 mb-4">
+         <div className="bg-[var(--solar-50)] dark:bg-[var(--solar-900)]/10 p-6 rounded-xl border border-[var(--solar-100)] dark:border-[var(--solar-900)]/30 animate-in slide-in-from-top-2">
+            <h3 className="text-sm font-bold text-[var(--solar-800)] dark:text-[var(--solar-300)] flex items-center gap-2 mb-4">
                <BookOpen size={16} /> Book Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -285,8 +285,8 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
 
       {/* Website */}
       {type === 'website' && (
-         <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-xl border border-blue-100 dark:border-blue-900/30 animate-in slide-in-from-top-2">
-            <h3 className="text-sm font-bold text-blue-800 dark:text-blue-300 flex items-center gap-2 mb-4">
+         <div className="bg-[var(--celestial-50)] dark:bg-[var(--celestial-900)]/10 p-6 rounded-xl border border-[var(--celestial-100)] dark:border-[var(--celestial-900)]/30 animate-in slide-in-from-top-2">
+            <h3 className="text-sm font-bold text-[var(--celestial-800)] dark:text-[var(--celestial-300)] flex items-center gap-2 mb-4">
                <Globe size={16} /> Website Details
             </h3>
             <div className="space-y-4">
@@ -370,9 +370,9 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
                     router.refresh();
                  }
               }}
-              className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2"
+              className="px-4 py-2 text-[var(--destructive)] hover:bg-[var(--destructive)]/10 dark:hover:bg-[var(--destructive)]/20 rounded-lg transition-colors flex items-center gap-2"
            >
-               <Trash size={16} weight="duotone" color="#ffcdf6" /> Delete
+               <Trash size={16} weight="duotone" color="var(--nebula-pink-light)" /> Delete
            </button>
          )}
          <div className="flex gap-2 ml-auto">

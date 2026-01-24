@@ -319,7 +319,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               Import External Curriculum
             </h2>
             {useAI && (
-              <span className="flex items-center gap-1 text-xs px-2 py-1 bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] rounded-full">
+              <span className="flex items-center gap-1 text-xs px-2 py-1 bg-gradient-to-r from-[var(--nebula-purple)]/10 to-[var(--nebula-pink)]/10 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] rounded-full">
                 <Sparkle size={12} weight="fill" />
                 Smart Import
               </span>
@@ -410,8 +410,8 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
           {step === 'parsing' && (
             <div className="text-center py-12">
               <div className="relative mx-auto w-16 h-16 mb-4">
-                <div className="absolute inset-0 rounded-full border-4 border-[var(--nebula-purple)]/30 dark:border-purple-900/50"></div>
-                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]/50"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[var(--nebula-purple)] animate-spin"></div>
                 <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-[var(--nebula-purple)] animate-pulse" />
               </div>
               <h3 className="text-lg font-semibold text-heading mb-2">
@@ -434,8 +434,8 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               {isParsing ? (
                 <div className="text-center py-12">
                   <div className="relative mx-auto w-16 h-16 mb-4">
-                    <div className="absolute inset-0 rounded-full border-4 border-[var(--nebula-purple)]/30 dark:border-purple-900/50"></div>
-                    <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]/50"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[var(--nebula-purple)] animate-spin"></div>
                     <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-[var(--nebula-purple)] animate-pulse" />
                   </div>
                   <h3 className="text-lg font-semibold text-heading mb-2">
@@ -469,7 +469,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                             type="checkbox"
                             checked={selectedRows.size === aiParsedData.length && aiParsedData.length > 0}
                             onChange={toggleAllRows}
-                            className="w-4 h-4 rounded border-[var(--border)] text-[var(--nebula-purple)] focus:ring-purple-500"
+                            className="w-4 h-4 rounded border-[var(--border)] text-[var(--nebula-purple)] focus:ring-[var(--nebula-purple)]"
                           />
                           <span className="text-sm text-muted">
                             {selectedRows.size > 0 ? `${selectedRows.size} selected` : 'Select all'}
@@ -488,7 +488,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                           </button>
                           <button
                             onClick={deleteSelectedRows}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50"
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-[var(--destructive)]/10 dark:bg-[var(--destructive)]/20 text-[var(--destructive)] rounded-lg hover:bg-[var(--destructive)]/20 dark:hover:bg-[var(--destructive)]/30"
                           >
                             <Trash size={14} />
                             Remove
@@ -596,7 +596,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                             </td>
                             {useAI && aiParsedData.length > 0 && (
                               <td className="px-3 py-2">
-                                <span className="text-xs px-2 py-0.5 bg-[var(--celestial-400)]/20 dark:bg-blue-900/30 text-[var(--celestial-500)] dark:text-blue-400 rounded">
+                                <span className="text-xs px-2 py-0.5 bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-900)]/30 text-[var(--celestial-500)] dark:text-[var(--celestial-400)] rounded">
                                   {(row as AIParsedItem).subject}
                                 </span>
                               </td>
@@ -651,7 +651,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                     <button
                       onClick={handleImport}
                       disabled={isImporting || displayData.length === 0}
-                      className="px-6 py-2 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                      className="px-6 py-2 bg-gradient-to-r from-[var(--nebula-purple)] to-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
                     >
                       {isImporting ? (
                         <>
@@ -672,8 +672,8 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
           {step === 'complete' && result && (
             <div className="text-center py-4">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check size={32} weight="bold" className="text-green-600 dark:text-green-400" />
+              <div className="w-16 h-16 bg-[var(--herbal-100)] dark:bg-[var(--herbal-900)]/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check size={32} weight="bold" className="text-[var(--herbal-500)] dark:text-[var(--herbal-400)]" />
               </div>
               <h3 className="text-xl font-bold text-heading mb-2">
                 Import Complete! 🎉
@@ -698,7 +698,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
               <button
                 onClick={handleClose}
-                className="px-6 py-2 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-[var(--foreground)] rounded-lg font-medium"
+                className="px-6 py-2 bg-gradient-to-r from-[var(--nebula-purple)] to-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium"
               >
                 Done
               </button>

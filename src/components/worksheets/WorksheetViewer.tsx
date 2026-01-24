@@ -159,7 +159,7 @@ function EditableText({ value, editable, onChange, className, inputClassName, pl
             autoFocus
             rows={3}
             className={cn(
-              "flex-1 p-2 border border-[var(--nebula-purple)]/40 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none",
+              "flex-1 p-2 border border-[var(--nebula-purple)]/40 rounded-lg focus:ring-2 focus:ring-[var(--nebula-purple)] focus:border-transparent resize-none",
               inputClassName
             )}
           />
@@ -172,7 +172,7 @@ function EditableText({ value, editable, onChange, className, inputClassName, pl
             onBlur={handleSave}
             autoFocus
             className={cn(
-              "flex-1 p-2 border border-[var(--nebula-purple)]/40 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent",
+              "flex-1 p-2 border border-[var(--nebula-purple)]/40 rounded-lg focus:ring-2 focus:ring-[var(--nebula-purple)] focus:border-transparent",
               inputClassName
             )}
           />
@@ -273,7 +273,7 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
         )}
         
         {item.type === 'drawing_space' && (
-          <div className="w-full h-64 border-2 border-[var(--border)] rounded-xl mt-2 bg-[var(--background-secondary)] print:bg-[var(--background-elevated)] print:border-gray-800">
+          <div className="w-full h-64 border-2 border-[var(--border)] rounded-xl mt-2 bg-[var(--background-secondary)] print:bg-[var(--background-elevated)] print:border-black">
             <div className="h-full flex items-center justify-center text-muted text-sm print:hidden">
               Drawing Space
             </div>

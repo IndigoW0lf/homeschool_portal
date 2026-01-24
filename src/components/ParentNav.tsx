@@ -86,7 +86,7 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
                   "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all",
                   isActive 
                     ? "bg-[var(--celestial-500)]/20 text-[var(--celestial-400)] border-l-2 border-[var(--celestial-400)]" 
-                    : "text-[var(--slate-300)] hover:text-[var(--foreground)] hover:bg-[var(--plum-700)]"
+                    : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--nebula-purple)]/20"
                 )}
               >
                 <Icon size={22} weight={isActive ? "fill" : "regular"} />

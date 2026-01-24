@@ -236,7 +236,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        <div className={cn(
                           "w-10 h-10 rounded-lg flex items-center justify-center",
                           itemType === 'lesson' 
-                             ? "bg-[var(--celestial-400)]/20 dark:bg-blue-900/30 text-[var(--celestial-500)]" 
+                             ? "bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-900)]/30 text-[var(--celestial-500)]" 
                              : "bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
                        )}>
                           <BookOpen size={22} weight="duotone" />
@@ -316,7 +316,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        {detailData.rubric && safeArray(detailData.rubric).length > 0 && (
                           <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
                              <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
-                                <CheckCircle size={18} weight="duotone" className="text-green-500" />
+                                <CheckCircle size={18} weight="duotone" className="text-[var(--herbal-500)]" />
                                 Success Criteria
                              </h3>
                              <ul className="space-y-2">
@@ -364,7 +364,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       <div className="w-8 h-8 rounded-lg bg-[var(--fabric-mint)]/20 text-[var(--fabric-mint)] flex items-center justify-center">
                                          <LinkSimple size={16} weight="bold" />
                                       </div>
-                                      <span className="flex-1 font-medium text-[var(--celestial-500)] dark:text-blue-400 group-hover:underline">
+                                      <span className="flex-1 font-medium text-[var(--celestial-500)] dark:text-[var(--celestial-400)] group-hover:underline">
                                          {link.label || link.url}
                                       </span>
                                       <ArrowSquareOut size={16} className="text-muted group-hover:text-[var(--celestial-500)]" />
@@ -394,9 +394,9 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        
                        {/* Parent Notes */}
                        {(detailData.parent_notes || detailData.parentNotes) && (
-                          <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-900/30 p-5">
-                             <h3 className="font-semibold text-amber-800 dark:text-amber-300 mb-2">🔒 Parent Notes</h3>
-                             <p className="text-amber-700 dark:text-amber-200 text-sm">{detailData.parent_notes || detailData.parentNotes}</p>
+                          <div className="bg-[var(--solar-50)] dark:bg-[var(--solar-900)]/20 rounded-xl border border-[var(--solar-100)] dark:border-[var(--solar-900)]/30 p-5">
+                             <h3 className="font-semibold text-[var(--solar-800)] dark:text-[var(--solar-300)] mb-2">🔒 Parent Notes</h3>
+                             <p className="text-[var(--solar-700)] dark:text-[var(--solar-200)] text-sm">{detailData.parent_notes || detailData.parentNotes}</p>
                           </div>
                        )}
                     </div>
@@ -553,7 +553,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       toast.error('Could not update status');
                                    }
                                 }} 
-                                className={cn("cursor-pointer transition-colors", item.status === 'completed' ? "text-green-500" : "text-muted hover:text-muted")}
+                                className={cn("cursor-pointer transition-colors", item.status === 'completed' ? "text-[var(--herbal-500)]" : "text-muted hover:text-muted")}
                              >
                                 {item.status === 'completed' ? <CheckCircle size={24} /> : <Circle size={24} />}
                              </div>
@@ -598,7 +598,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       e.stopPropagation();
                                       handleDeleteItem(item.id, e);
                                     }}
-                                    className="p-2 text-muted hover:text-red-500 hover:bg-red-50 rounded-lg"
+                                    className="p-2 text-muted hover:text-[var(--destructive)] hover:bg-[var(--destructive)]/10 rounded-lg"
                                     title="Remove from schedule"
                                 >
                                    <Trash size={22} weight="duotone" color="#ffcdf6" />
@@ -627,7 +627,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                       <div className="grid grid-cols-2 gap-4 animate-in fade-in zoom-in-95 duration-200">
                          <button 
                             onClick={() => handleAddItem('lesson')}
-                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-blue-100 bg-blue-50/50 hover:bg-[var(--celestial-400)]/20 hover:border-blue-300 transition-all text-[var(--celestial-500)]"
+                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-[var(--celestial-100)] bg-[var(--celestial-50)]/50 hover:bg-[var(--celestial-400)]/20 hover:border-[var(--celestial-300)] transition-all text-[var(--celestial-500)]"
                          >
                             <div className="w-10 h-10 rounded-full bg-[var(--background-elevated)] flex items-center justify-center shadow-sm">
                                <Plus size={20} />
@@ -637,7 +637,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                          </button>
                          <button 
                             onClick={() => handleAddItem('assignment')}
-                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-purple-100 bg-[var(--nebula-purple)]/10/50 hover:bg-[var(--nebula-purple)]/20 hover:border-[var(--nebula-purple)]/40 transition-all text-[var(--nebula-purple)]"
+                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-[var(--nebula-purple)]/20 bg-[var(--nebula-purple)]/10 hover:bg-[var(--nebula-purple)]/20 hover:border-[var(--nebula-purple)]/40 transition-all text-[var(--nebula-purple)]"
                          >
                             <div className="w-10 h-10 rounded-full bg-[var(--background-elevated)] flex items-center justify-center shadow-sm">
                                <Plus size={20} />

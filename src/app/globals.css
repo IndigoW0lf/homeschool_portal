@@ -65,6 +65,38 @@
   --nebula-purple: #A896C8;
   --nebula-purple-light: #D0C5E0;
   --nebula-peach: #F0C9A8;
+
+  /* Herbal (Green) Palette - Nature/Success */
+  --herbal-50: #F4F9F6;
+  --herbal-100: #E6F0EA;
+  --herbal-200: #C8DECFC;
+  --herbal-300: #A3C9AD;
+  --herbal-400: #7FB08C;
+  --herbal-500: #6F8F73; /* Matches --success */
+  --herbal-600: #557359;
+  --herbal-700: #3E5743;
+  --herbal-800: #2C3E30;
+  --herbal-900: #1D2920;
+
+  /* Ember (Orange/Gold) Short Alias */
+  --ember-50: var(--ember-gold-100); /* Use 100 as 50 is missing */
+  --ember-100: var(--ember-gold-100);
+  --ember-200: var(--ember-gold-200);
+  --ember-300: var(--ember-gold-300);
+  --ember-400: var(--ember-gold-400);
+  --ember-500: var(--ember-gold-500);
+  --ember-600: var(--ember-gold-600);
+  --ember-700: var(--ember-gold-700);
+
+  /* Solar (Bright Warmth) Alias to Ember Gold for now */
+  --solar-50: var(--ember-gold-100);
+  --solar-100: var(--ember-gold-100);
+  --solar-200: var(--ember-gold-200);
+  --solar-300: var(--ember-gold-300);
+  --solar-400: var(--ember-gold-400);
+  --solar-500: var(--ember-gold-500);
+  --solar-600: var(--ember-gold-600);
+  --solar-700: var(--ember-gold-700);
   
   /* Plum Scale - Rich purple-plum for mystical atmosphere */
   --plum-950: #1A0F1A;

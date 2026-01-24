@@ -62,14 +62,14 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
       href: `/kids/${kidId}/play`, 
       label: 'Play', 
       icon: GameController,
-      color: 'var(--cosmic-rust-400)',
+      color: 'var(--ember-400)',
       exactMatch: false
     },
     { 
       href: `/kids/${kidId}/profile`, 
       label: 'Me', 
       icon: Star,
-      color: 'var(--ember-gold-400)',
+      color: 'var(--solar-400)',
       exactMatch: false
     },
     { 

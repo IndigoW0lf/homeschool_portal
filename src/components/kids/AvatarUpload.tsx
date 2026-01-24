@@ -146,7 +146,7 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
           <img 
             src={previewUrl} 
             alt="Preview" 
-            className="w-full h-full rounded-full object-cover border-4 border-purple-500"
+            className="w-full h-full rounded-full object-cover border-4 border-[var(--nebula-purple)]"
           />
         ) : currentAvatarUrl ? (
           <img 
@@ -194,7 +194,7 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
           <button
             onClick={handleUpload}
             disabled={isUploading}
-            className="px-4 py-2 text-sm font-medium bg-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 text-sm font-medium bg-[var(--nebula-purple)] hover:bg-[var(--nebula-purple-dark)] text-[var(--foreground)] rounded-lg transition-colors flex items-center gap-1.5"
           >
             {isUploading ? (
               <>

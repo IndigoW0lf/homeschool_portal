@@ -6,9 +6,9 @@ interface KidSwitcherProps {
 }
 
 const gradeBandColors: Record<string, string> = {
-  '3-5': 'from-green-400 to-teal-500',
-  '6-8': 'from-blue-400 to-indigo-500',
-  default: 'from-purple-400 to-pink-500',
+  '3-5': 'from-[var(--herbal-400)] to-[var(--celestial-400)]',
+  '6-8': 'from-[var(--celestial-400)] to-[var(--nebula-purple)]',
+  default: 'from-[var(--nebula-purple)] to-[var(--nebula-pink)]',
 };
 
 export function KidSwitcher({ kids }: KidSwitcherProps) {

@@ -106,26 +106,26 @@ export default async function ParentKidProfilePage({ params }: Props) {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {/* Moons */}
-        <div className="bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 p-6 rounded-xl border border-yellow-200 dark:border-yellow-800/50">
+        <div className="bg-gradient-to-br from-[var(--solar-100)] to-[var(--ember-100)] dark:from-[var(--solar-900)]/30 dark:to-[var(--ember-900)]/30 p-6 rounded-xl border border-[var(--solar-200)] dark:border-[var(--solar-800)]/50">
           <div className="flex items-center gap-3 mb-2">
-            <Moon size={24} weight="fill" className="text-yellow-500" />
-            <span className="text-sm font-medium text-yellow-700 dark:text-yellow-400">Moons Balance</span>
+            <Moon size={24} weight="fill" className="text-[var(--solar-500)]" />
+            <span className="text-sm font-medium text-[var(--solar-700)] dark:text-[var(--solar-400)]">Moons Balance</span>
           </div>
-          <p className="text-4xl font-bold text-yellow-600 dark:text-yellow-400">{moons}</p>
+          <p className="text-4xl font-bold text-[var(--solar-600)] dark:text-[var(--solar-400)]">{moons}</p>
         </div>
 
         {/* Weekly Progress */}
-        <div className="bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-900/30 p-6 rounded-xl border border-teal-200 dark:border-teal-800/50">
+        <div className="bg-gradient-to-br from-[var(--celestial-100)] to-[var(--cyan-100)] dark:from-[var(--celestial-900)]/30 dark:to-[var(--cyan-900)]/30 p-6 rounded-xl border border-[var(--celestial-200)] dark:border-[var(--celestial-800)]/50">
           <div className="flex items-center gap-3 mb-2">
-            <CheckCircle size={24} weight="fill" className="text-teal-500" />
-            <span className="text-sm font-medium text-teal-700 dark:text-teal-400">This Week</span>
+            <CheckCircle size={24} weight="fill" className="text-[var(--celestial-500)]" />
+            <span className="text-sm font-medium text-[var(--celestial-700)] dark:text-[var(--celestial-400)]">This Week</span>
           </div>
-          <p className="text-4xl font-bold text-teal-600 dark:text-teal-400">
+          <p className="text-4xl font-bold text-[var(--celestial-600)] dark:text-[var(--celestial-400)]">
             {completedActivities}/{totalActivities}
           </p>
-          <div className="mt-2 h-2 bg-teal-200 dark:bg-teal-800 rounded-full overflow-hidden">
+          <div className="mt-2 h-2 bg-[var(--celestial-200)] dark:bg-[var(--celestial-800)] rounded-full overflow-hidden">
             <div 
-              className="h-full bg-teal-500 transition-all"
+              className="h-full bg-[var(--celestial-500)] transition-all"
               style={{ width: `${completionPercent}%` }}
             />
           </div>
@@ -201,25 +201,25 @@ export default async function ParentKidProfilePage({ params }: Props) {
         <div className="flex flex-wrap gap-3">
           <Link
             href={`/parent/kids/${kidId}/profile`}
-            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-gray-200 dark:hover:bg-[var(--background-secondary)] transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             Edit Profile
           </Link>
           <Link
             href={`/parent/kids/${kidId}/shop`}
-            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-gray-200 dark:hover:bg-[var(--background-secondary)] transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             View Shop
           </Link>
           <Link
             href={`/parent/kids/${kidId}/journal`}
-            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-gray-200 dark:hover:bg-[var(--background-secondary)] transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             View Journal
           </Link>
           <Link
             href="/parent/progress"
-            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-gray-200 dark:hover:bg-[var(--background-secondary)] transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             View Progress
           </Link>

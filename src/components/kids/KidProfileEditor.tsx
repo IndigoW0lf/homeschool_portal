@@ -43,7 +43,7 @@ const PROFILE_FIELDS: ProfileField[] = [
     key: 'favoriteShows',
     dbKey: 'favorite_shows',
     label: 'Favorite Shows & Movies',
-    icon: <FilmStrip size={20} className="text-pink-500" />,
+    icon: <FilmStrip size={20} className="text-[var(--nebula-pink)]" />,
     placeholder: 'What do you like to watch?',
   },
   {
@@ -57,14 +57,14 @@ const PROFILE_FIELDS: ProfileField[] = [
     key: 'favoriteFoods',
     dbKey: 'favorite_foods',
     label: 'Foods I Really Like',
-    icon: <Pizza size={20} className="text-orange-500" />,
+    icon: <Pizza size={20} className="text-[var(--ember-500)]" />,
     placeholder: 'Yummy foods you enjoy...',
   },
   {
     key: 'favoriteSubjects',
     dbKey: 'favorite_subjects',
     label: 'Favorite Subjects',
-    icon: <GraduationCap size={20} className="text-green-500" />,
+    icon: <GraduationCap size={20} className="text-[var(--herbal-500)]" />,
     placeholder: 'What do you love learning about?',
   },
   {
@@ -217,7 +217,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
         {/* Birthday Display */}
         {formData.birthday && (
           <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--nebula-pink)] to-[var(--nebula-purple)] flex items-center justify-center">
               <Calendar size={24} weight="fill" className="text-[var(--foreground)]" />
             </div>
             <div>
@@ -235,7 +235,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
         {/* Grade Display */}
         {(formData.grades?.length || formData.gradeBand) && (
           <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--celestial-400)] to-[var(--celestial-300)] flex items-center justify-center">
               <GraduationCap size={24} weight="fill" className="text-[var(--foreground)]" />
             </div>
             <div>
@@ -308,7 +308,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       {/* Color Picker */}
       <div className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
         <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-3">
-          <Heart size={20} className="text-red-500" weight="fill" />
+          <Heart size={20} className="text-[var(--nebula-pink)]" weight="fill" />
           Pick your profile color!
         </label>
         <div className="flex items-center gap-4">
@@ -344,7 +344,7 @@ export function KidProfileEditor({ kidId, initialData }: KidProfileEditorProps) 
       {/* Birthday Picker */}
       <div className="p-4 rounded-xl bg-[var(--background-elevated)] border border-[var(--border)] shadow-sm">
         <label className="flex items-center gap-2 text-sm font-medium text-heading dark:text-muted mb-2">
-          <Calendar size={20} className="text-pink-500" weight="fill" />
+          <Calendar size={20} className="text-[var(--nebula-pink-light)]" weight="fill" />
           When is your birthday? 🎂
         </label>
         <input

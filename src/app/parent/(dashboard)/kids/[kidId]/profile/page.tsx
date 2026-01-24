@@ -45,7 +45,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
   return (
     <div className="min-h-screen">
       {/* Parent View Banner */}
-      <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-blue-200 dark:border-blue-800/50">
+      <div className="bg-gradient-to-r from-[var(--celestial-500)]/10 to-[var(--nebula-purple)]/10 border-b border-[var(--celestial-200)] dark:border-[var(--celestial-800)]/50">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -94,7 +94,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
         <KidProfileEditor kidId={kidId} initialData={kid} />
         
         {/* Avatar Builder - Coming Soon */}
-        <div className="max-w-md mx-auto p-6 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
+        <div className="max-w-md mx-auto p-6 rounded-xl bg-gradient-to-r from-[var(--nebula-purple)]/10 to-[var(--nebula-pink)]/10 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
           <div className="flex flex-col items-center text-center gap-4">
             {/* Avatar preview */}
             <AvatarPreview 
@@ -110,7 +110,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
               <p className="text-sm text-muted mb-3">
                 Coming soon! We're working on an awesome avatar creator.
               </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[var(--background-secondary)] text-muted rounded-lg font-medium cursor-not-allowed">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--moon-200)] dark:bg-[var(--background-secondary)] text-muted rounded-lg font-medium cursor-not-allowed">
                 🚧 In Progress
               </div>
             </div>

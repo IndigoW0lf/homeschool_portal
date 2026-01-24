@@ -29,8 +29,8 @@ export default async function InvitePage({ params }: InvitePageProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--background-secondary)] dark:bg-[var(--background)] p-4">
         <div className="max-w-md w-full bg-[var(--background-elevated)] rounded-2xl shadow-xl p-8 text-center">
-          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Warning size={32} className="text-red-500" />
+          <div className="w-16 h-16 bg-[var(--destructive)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Warning size={32} className="text-[var(--destructive)]" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
             Invalid or Expired Invite
@@ -63,7 +63,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
   const inviterName = inviterProfile?.display_name || inviterProfile?.email?.split('@')[0] || 'Someone';
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--lavender-100)] to-[var(--ember-100)] dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--lavender-100)] to-[var(--ember-100)] dark:from-[var(--plum-950)] dark:to-[var(--background)] p-4">
       <div className="max-w-md w-full bg-[var(--background-elevated)] rounded-2xl shadow-xl p-8 text-center">
         <div className="w-16 h-16 bg-gradient-to-br from-[#9c8fb8] to-[#E27D60] rounded-full flex items-center justify-center mx-auto mb-4">
           <UserPlus size={32} className="text-[var(--foreground)]" />
@@ -79,8 +79,8 @@ export default async function InvitePage({ params }: InvitePageProps) {
         </p>
         
         {emailMismatch && (
-          <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
-            <p className="text-sm text-yellow-700 dark:text-yellow-300">
+          <div className="mb-6 p-4 bg-[var(--solar-100)] dark:bg-[var(--solar-900)]/20 rounded-xl border border-[var(--solar-200)] dark:border-[var(--solar-800)]">
+            <p className="text-sm text-[var(--solar-700)] dark:text-[var(--solar-300)]">
               This invite was sent to <strong>{invite.email}</strong>, but you're logged in as <strong>{user?.email}</strong>.
             </p>
           </div>
@@ -110,7 +110,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
             </Link>
             <Link
               href={`/signup?redirect=/invite/${code}&email=${encodeURIComponent(invite.email)}`}
-              className="block w-full py-3 px-6 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-[var(--foreground)] rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-center"
+              className="block w-full py-3 px-6 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--moon-200)] dark:hover:bg-[var(--moon-700)] transition-colors text-center"
             >
               Create Account
             </Link>

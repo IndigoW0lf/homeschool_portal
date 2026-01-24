@@ -83,7 +83,7 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
               strokeWidth="6"
               strokeDasharray={`${stats.percentage * 1.76} 176`}
               strokeLinecap="round"
-              className="text-[var(--success)] transition-all duration-500"
+              className="text-[var(--herbal-500)] transition-all duration-500"
             />
           </svg>
           {/* Center text */}
@@ -96,7 +96,7 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
         
         <div className="flex-1">
           <div className="flex items-center gap-2 text-sm font-medium text-heading">
-            <ChartBar size={16} className="text-[var(--success)]" />
+            <ChartBar size={16} className="text-[var(--herbal-500)]" />
             This Week
           </div>
           <p className="text-xs text-muted mt-1">
@@ -121,14 +121,14 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
                 <div
                   className={cn(
                     "h-full rounded-full transition-all duration-500",
-                    student.percentage === 100 ? "bg-[var(--success)]" : "bg-[var(--herbal-gold)]"
+                    student.percentage === 100 ? "bg-[var(--herbal-500)]" : "bg-[var(--ember-400)]"
                   )}
                   style={{ width: `${student.percentage}%` }}
                 />
               </div>
               <span className={cn(
                 "text-xs w-10 text-right font-medium",
-                student.percentage === 100 ? "text-[var(--success)]" : "text-[var(--herbal-gold)]"
+                student.percentage === 100 ? "text-[var(--herbal-500)]" : "text-[var(--ember-400)]"
               )}>
                 {student.completed}/{student.total}
               </span>
@@ -150,14 +150,14 @@ export function WeeklyProgressChart({ schedule, students }: WeeklyProgressChartP
                     className={cn(
                       "flex items-center gap-2 text-xs py-1 px-2 rounded",
                       item.status === 'completed'
-                        ? "bg-[var(--success-light)] text-[var(--success-dark)]"
-                        : "bg-[var(--warning-light)] text-[var(--warning-dark)]"
+                        ? "bg-[var(--herbal-100)] text-[var(--herbal-800)]"
+                        : "bg-[var(--solar-100)] text-[var(--solar-800)]"
                     )}
                   >
                     {item.status === 'completed' ? (
-                      <CheckCircle size={14} weight="fill" className="text-[var(--success)] flex-shrink-0" />
+                      <CheckCircle size={14} weight="fill" className="text-[var(--herbal-500)] flex-shrink-0" />
                     ) : (
-                      <Circle size={14} weight="duotone" className="text-[var(--herbal-gold)] flex-shrink-0" />
+                      <Circle size={14} weight="duotone" className="text-[var(--ember-500)] flex-shrink-0" />
                     )}
                     <span className="truncate flex-1">{item.title || 'Untitled'}</span>
                     <span className="text-muted text-[10px]">{item.date}</span>

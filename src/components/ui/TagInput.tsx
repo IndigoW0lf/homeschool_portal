@@ -65,7 +65,7 @@ export function TagInput({
         {value.map((tag) => (
           <span
             key={tag}
-            className="flex items-center gap-1 px-2 py-1 text-sm bg-[var(--paper-200)] dark:bg-[var(--night-600)] text-heading dark:text-heading rounded-md"
+            className="flex items-center gap-1 px-2 py-1 text-sm bg-[var(--celestial-100)] dark:bg-[var(--celestial-900)]/30 text-heading dark:text-heading rounded-md"
           >
             {tag}
             <button

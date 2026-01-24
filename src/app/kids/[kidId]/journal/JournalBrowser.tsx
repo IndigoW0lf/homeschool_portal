@@ -189,7 +189,7 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
             value={newEntryText}
             onChange={(e) => setNewEntryText(e.target.value)}
             placeholder="What's on your mind today?"
-            className="w-full p-3 rounded-lg border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] bg-[var(--background-elevated)] text-[var(--foreground)] dark:text-gray-200 resize-none"
+            className="w-full p-3 rounded-lg border border-[var(--border)]/30 dark:border-[var(--nebula-purple)] bg-[var(--background-elevated)] text-[var(--foreground)] resize-none"
             rows={4}
           />
           <div className="flex items-center justify-between mt-3">
@@ -262,7 +262,7 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search entries..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)] text-[var(--foreground)] dark:text-gray-200"
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)] text-[var(--foreground)]"
           />
         </div>
 
@@ -287,7 +287,7 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
               className={`px-3 py-1 rounded-full text-sm transition-colors ${
                 selectedTag === tag
                   ? 'bg-[var(--nebula-purple)] text-[var(--foreground)]'
-                  : 'bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-muted hover:bg-gray-200 dark:hover:bg-[var(--background-secondary)]'
+                  : 'bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-muted hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)]'
               }`}
             >
               {tag}
@@ -428,7 +428,7 @@ function JournalEntryCard({
           <textarea
             value={editedResponse}
             onChange={(e) => setEditedResponse(e.target.value)}
-            className="w-full p-2 rounded-lg border border-[var(--border)] bg-[var(--background-secondary)] text-[var(--foreground)] dark:text-gray-200 resize-none"
+            className="w-full p-2 rounded-lg border border-[var(--border)] bg-[var(--background-secondary)] text-[var(--foreground)] resize-none"
             rows={4}
           />
           <div className="flex justify-end gap-2">
@@ -447,7 +447,7 @@ function JournalEntryCard({
           </div>
         </div>
       ) : (
-        <p className="text-[var(--foreground)] dark:text-gray-200">
+        <p className="text-[var(--foreground)]">
           {entry.response}
         </p>
       )}

@@ -150,9 +150,9 @@ export function KidPortalWeekCalendar({
                 isViewDate 
                   ? "bg-[var(--ember-100)] border-2 border-[var(--ember-400)] shadow-sm scale-105 z-10" 
                   : isToday
-                    ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700"
+                    ? "bg-[var(--celestial-50)] dark:bg-[var(--celestial-900)]/20 border border-[var(--celestial-200)] dark:border-[var(--celestial-700)]"
                     : "hover:bg-[var(--hover-overlay)]/50",
-                allDone && !isViewDate && "bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/30"
+                allDone && !isViewDate && "bg-[var(--herbal-50)] dark:bg-[var(--herbal-900)]/20 border-[var(--herbal-100)] dark:border-[var(--herbal-800)]/30"
               )}
             >
               <div className="text-[10px] text-muted uppercase tracking-wide">
@@ -163,10 +163,10 @@ export function KidPortalWeekCalendar({
                 isViewDate 
                   ? "text-[var(--ember-600)]" 
                   : isToday
-                    ? "text-[var(--celestial-500)] dark:text-blue-400"
+                    ? "text-[var(--celestial-500)] dark:text-[var(--celestial-400)]"
                     : allDone 
                       ? "text-green-600 dark:text-green-400" 
-                      : "text-[var(--foreground)] dark:text-gray-200"
+                      : "text-[var(--foreground)]"
               )}>
                 {date.getDate()}
               </div>
@@ -182,7 +182,7 @@ export function KidPortalWeekCalendar({
                             "w-1 h-1 rounded-full",
                             i < completed 
                                 ? "bg-green-400" 
-                                : "bg-gray-200 dark:bg-gray-600"
+                                : "bg-[var(--moon-200)] dark:bg-[var(--moon-700)]"
                         )} />
                     ))}
                     {total > 3 && <span className="text-[8px] text-muted leading-none">+</span>}

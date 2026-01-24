@@ -89,7 +89,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               alt="Your avatar"
               width={120}
               height={120}
-              className="rounded-full bg-indigo-50 bg-[var(--background-secondary)]/50 shadow-lg ring-4 ring-white dark:ring-gray-800"
+              className="rounded-full bg-[var(--celestial-50)] bg-[var(--background-secondary)]/50 shadow-lg ring-4 ring-[var(--background-elevated)] dark:ring-gray-800"
             />
           </div>
           <h2 className="mt-4 text-2xl font-bold text-heading">
@@ -119,7 +119,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         </div>
 
         {/* Teaching Style Section */}
-        <div className="rounded-xl border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50/50 dark:bg-indigo-900/10 p-6">
+        <div className="rounded-xl border border-[var(--celestial-100)] dark:border-[var(--celestial-900)]/30 bg-[var(--celestial-50)]/50 dark:bg-[var(--celestial-900)]/10 p-6">
           <h3 className="text-lg font-semibold text-heading mb-2 flex items-center gap-2">
             🧑‍🏫 Teaching Style
           </h3>

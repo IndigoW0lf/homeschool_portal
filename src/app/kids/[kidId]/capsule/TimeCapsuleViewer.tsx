@@ -89,7 +89,7 @@ export function TimeCapsuleViewer({
     <div className="space-y-8">
       {/* Period Navigation */}
       <div className="flex items-center justify-center gap-4">
-        <button className="p-2 rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] hover:bg-gray-200 dark:hover:bg-[var(--background-secondary)]">
+        <button className="p-2 rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)]">
           <ArrowLeft size={20} />
         </button>
         <div className="flex gap-2">
@@ -98,7 +98,7 @@ export function TimeCapsuleViewer({
             className={`px-4 py-2 rounded-lg transition-colors ${
               currentPeriod === 'month'
                 ? 'bg-amber-500 text-[var(--foreground)]'
-                : 'bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] hover:bg-gray-200'
+                : 'bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] hover:bg-[var(--moon-200)]'
             }`}
           >
             Monthly
@@ -114,7 +114,7 @@ export function TimeCapsuleViewer({
             Yearly
           </Link>
         </div>
-        <button className="p-2 rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] hover:bg-gray-200 dark:hover:bg-[var(--background-secondary)]">
+        <button className="p-2 rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)]">
           <ArrowRight size={20} />
         </button>
       </div>
@@ -168,7 +168,7 @@ export function TimeCapsuleViewer({
         <div className="p-6 bg-[var(--background-elevated)] rounded-xl border border-[var(--border)]">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xl">💫</span>
-            <h3 className="font-semibold text-[var(--foreground)] dark:text-gray-200">Memory Highlight</h3>
+            <h3 className="font-semibold text-[var(--foreground)]">Memory Highlight</h3>
             <span className="text-sm text-muted">
               {format(parseISO(highlightEntry.date), 'MMMM d')}
             </span>

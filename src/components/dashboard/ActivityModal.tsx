@@ -252,12 +252,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'lesson'
-                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                ? "border-[var(--celestial-500)] bg-[var(--celestial-50)] dark:bg-[var(--celestial-900)]/30"
                 : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
             <Books size={28} weight="duotone" className={form.activityType === 'lesson' ? "text-[var(--celestial-500)]" : "text-muted"} />
-            <span className={cn("font-semibold", form.activityType === 'lesson' ? "text-[var(--celestial-500)] dark:text-blue-400" : "text-muted")}>
+            <span className={cn("font-semibold", form.activityType === 'lesson' ? "text-[var(--celestial-500)] dark:text-[var(--celestial-400)]" : "text-muted")}>
               Lesson
             </span>
             <span className="text-xs text-muted">Teaching content</span>
@@ -268,7 +268,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'assignment'
-                ? "border-purple-500 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/20"
+                ? "border-[var(--nebula-purple)] bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/20"
                 : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
@@ -284,12 +284,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'worksheet'
-                ? "border-green-500 bg-green-50 dark:bg-green-900/30"
+                ? "border-[var(--herbal-500)] bg-[var(--herbal-50)] dark:bg-[var(--herbal-900)]/30"
                 : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
-            <MagicWand size={28} weight="duotone" className={form.activityType === 'worksheet' ? "text-green-500" : "text-muted"} />
-            <span className={cn("font-semibold", form.activityType === 'worksheet' ? "text-green-600 dark:text-green-400" : "text-muted")}>
+            <MagicWand size={28} weight="duotone" className={form.activityType === 'worksheet' ? "text-[var(--herbal-500)]" : "text-muted"} />
+            <span className={cn("font-semibold", form.activityType === 'worksheet' ? "text-[var(--herbal-600)] dark:text-[var(--herbal-400)]" : "text-muted")}>
               Worksheet
             </span>
             <span className="text-xs text-muted">AI-generated</span>
@@ -460,7 +460,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                     placeholder="https://..."
                     className="flex-1 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
                   />
-                  <button type="button" onClick={() => removeLink(idx)} className="text-muted hover:text-red-500">
+                  <button type="button" onClick={() => removeLink(idx)} className="text-muted hover:text-[var(--destructive)]">
                     <Trash size={14} />
                   </button>
                 </div>
@@ -552,9 +552,9 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm",
               form.activityType === 'lesson'
-                ? "bg-[var(--celestial-500)] hover:bg-blue-600 text-[var(--foreground)]"
+                ? "bg-[var(--celestial-500)] hover:bg-[var(--celestial-600)] text-[var(--foreground)]"
                 : form.activityType === 'worksheet'
-                ? "bg-green-500 hover:bg-green-600 text-[var(--foreground)]"
+                ? "bg-[var(--herbal-500)] hover:bg-[var(--herbal-600)] text-[var(--foreground)]"
                 : "bg-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)] text-[var(--foreground)]",
               (isSubmitting || !form.title.trim()) && "opacity-50 cursor-not-allowed"
             )}
