@@ -174,9 +174,10 @@
 /* Dark mode - THE PRIMARY FOCUS */
 html.dark,
 .dark {
-  --background: var(--night-900);
-  --background-secondary: var(--night-800);
-  --background-elevated: var(--night-700);
+  /* MORE CONTRAST: deeper bg vs. warmer/lighter cards */
+  --background: #0D1117;                    /* Deeper dark for page (GitHub-style) */
+  --background-secondary: #161B22;          /* Slightly lighter secondary */
+  --background-elevated: #1C2430;           /* Cards - noticeably lighter with Slate tint */
   --foreground: #F0ECE6;
   --foreground-muted: var(--slate-300);
   
@@ -234,10 +235,17 @@ body {
   color: var(--foreground);
 }
 
-/* Dark mode: deep cosmic gradient */
+/* Dark mode: deep cosmic gradient with palette tints */
 .dark .bg-cosmic,
 html.dark .bg-cosmic {
-  background: var(--gradient-cosmic);
+  /* Adds subtle Midnight Bloom and Celestial Teal undertones */
+  background: linear-gradient(135deg, 
+    #0D1117 0%, 
+    #111820 30%, 
+    rgba(110, 138, 138, 0.05) 60%,  /* Midnight Bloom hint */
+    #0D1117 100%
+  );
+  background-attachment: fixed;
   color: #F0ECE6;
 }
 
