@@ -143,7 +143,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
       onClick={onClose}
     >
       <div 
-        className="bg-white dark:bg-[var(--night-900)] w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-[var(--background-elevated)] dark:bg-[var(--night-900)] w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -223,7 +223,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                              : `/parent/assignments/${itemId}`;
                           router.push(editPath);
                        }}
-                       className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white rounded-lg text-sm font-medium transition-colors"
+                       className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors"
                     >
                        <PencilSimple size={16} weight="bold" />
                        Edit
@@ -236,15 +236,15 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                        <div className={cn(
                           "w-10 h-10 rounded-lg flex items-center justify-center",
                           itemType === 'lesson' 
-                             ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600" 
-                             : "bg-purple-100 dark:bg-purple-900/30 text-purple-600"
+                             ? "bg-[var(--celestial-400)]/20 dark:bg-blue-900/30 text-[var(--celestial-500)]" 
+                             : "bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
                        )}>
                           <BookOpen size={22} weight="duotone" />
                        </div>
                        <div className="flex-1">
                           <span className={cn(
                              "text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mb-1 inline-block",
-                             itemType === 'lesson' ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                             itemType === 'lesson' ? "bg-[var(--celestial-400)]/20 text-[var(--celestial-500)]" : "bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
                           )}>
                              {detailData.type || viewingItem.type || itemType}
                           </span>
@@ -364,10 +364,10 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                       <div className="w-8 h-8 rounded-lg bg-[var(--fabric-mint)]/20 text-[var(--fabric-mint)] flex items-center justify-center">
                                          <LinkSimple size={16} weight="bold" />
                                       </div>
-                                      <span className="flex-1 font-medium text-blue-600 dark:text-blue-400 group-hover:underline">
+                                      <span className="flex-1 font-medium text-[var(--celestial-500)] dark:text-blue-400 group-hover:underline">
                                          {link.label || link.url}
                                       </span>
-                                      <ArrowSquareOut size={16} className="text-muted group-hover:text-blue-500" />
+                                      <ArrowSquareOut size={16} className="text-muted group-hover:text-[var(--celestial-500)]" />
                                    </a>
                                 ))}
                              </div>
@@ -507,7 +507,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                           className="w-full text-sm bg-transparent outline-none placeholder:text-muted"
                                        />
                                    </div>
-                                   <button onClick={() => applyVariation(item.id)} className="px-3 py-1 bg-[var(--ember-500)] text-white text-xs font-bold rounded-lg hover:opacity-90">
+                                   <button onClick={() => applyVariation(item.id)} className="px-3 py-1 bg-[var(--ember-500)] text-[var(--foreground)] text-xs font-bold rounded-lg hover:opacity-90">
                                       Save
                                    </button>
                                 </div>
@@ -565,7 +565,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                 <div className="flex items-center gap-2 mb-1">
                                    <span className={cn(
                                       "text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded",
-                                      item.type === 'lesson' ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                                      item.type === 'lesson' ? "bg-[var(--celestial-400)]/20 text-[var(--celestial-500)]" : "bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
                                    )}>
                                       {item.type}
                                    </span>
@@ -627,9 +627,9 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                       <div className="grid grid-cols-2 gap-4 animate-in fade-in zoom-in-95 duration-200">
                          <button 
                             onClick={() => handleAddItem('lesson')}
-                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-blue-100 bg-blue-50/50 hover:bg-blue-100 hover:border-blue-300 transition-all text-blue-700"
+                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-blue-100 bg-blue-50/50 hover:bg-[var(--celestial-400)]/20 hover:border-blue-300 transition-all text-[var(--celestial-500)]"
                          >
-                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            <div className="w-10 h-10 rounded-full bg-[var(--background-elevated)] flex items-center justify-center shadow-sm">
                                <Plus size={20} />
                             </div>
                             <span className="font-bold">Add Lesson</span>
@@ -637,9 +637,9 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                          </button>
                          <button 
                             onClick={() => handleAddItem('assignment')}
-                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-purple-100 bg-purple-50/50 hover:bg-purple-100 hover:border-purple-300 transition-all text-purple-700"
+                            className="flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-purple-100 bg-[var(--nebula-purple)]/10/50 hover:bg-[var(--nebula-purple)]/20 hover:border-[var(--nebula-purple)]/40 transition-all text-[var(--nebula-purple)]"
                          >
-                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
+                            <div className="w-10 h-10 rounded-full bg-[var(--background-elevated)] flex items-center justify-center shadow-sm">
                                <Plus size={20} />
                             </div>
                             <span className="font-bold">Add Assignment</span>

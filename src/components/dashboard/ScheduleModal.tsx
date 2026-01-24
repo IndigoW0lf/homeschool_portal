@@ -167,7 +167,7 @@ export function ScheduleModal({
                     onClick={() => setScheduleMode('single')}
                     className={cn(
                         "text-xs font-bold px-2 py-1 rounded transition-colors",
-                        scheduleMode === 'single' ? "bg-white dark:bg-[var(--night-600)] shadow-sm text-heading" : "text-muted"
+                        scheduleMode === 'single' ? "bg-[var(--background-elevated)] dark:bg-[var(--night-600)] shadow-sm text-heading" : "text-muted"
                     )}
                 >
                     One Day
@@ -176,7 +176,7 @@ export function ScheduleModal({
                     onClick={() => setScheduleMode('recurring')}
                     className={cn(
                         "text-xs font-bold px-2 py-1 rounded transition-colors",
-                        scheduleMode === 'recurring' ? "bg-white dark:bg-[var(--night-600)] shadow-sm text-heading" : "text-muted"
+                        scheduleMode === 'recurring' ? "bg-[var(--background-elevated)] dark:bg-[var(--night-600)] shadow-sm text-heading" : "text-muted"
                     )}
                 >
                     Repeat
@@ -196,7 +196,7 @@ export function ScheduleModal({
                         className={cn(
                             "px-3 py-1.5 text-sm rounded-lg font-medium transition-all",
                             selectedDate === dateStr
-                            ? "bg-[var(--ember-500)] text-white"
+                            ? "bg-[var(--ember-500)] text-[var(--foreground)]"
                             : "bg-[var(--background-secondary)] text-heading dark:text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]"
                         )}
                         >
@@ -210,7 +210,7 @@ export function ScheduleModal({
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)] text-heading"
+                    className="w-full px-4 py-2 rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
                 />
               </>
           ) : (
@@ -227,7 +227,7 @@ export function ScheduleModal({
                                     className={cn(
                                         "w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all",
                                         isSelected 
-                                            ? "bg-[var(--ember-500)] text-white" 
+                                            ? "bg-[var(--ember-500)] text-[var(--foreground)]" 
                                             : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)]"
                                     )}
                                 >
@@ -245,7 +245,7 @@ export function ScheduleModal({
                             type="date"
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
-                            className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]"
+                            className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)]"
                         />
                     </div>
                     <div>
@@ -257,7 +257,7 @@ export function ScheduleModal({
                                 max={52}
                                 value={repeatWeeks}
                                 onChange={(e) => setRepeatWeeks(Math.max(1, parseInt(e.target.value) || 1))}
-                                className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--background-secondary)]"
+                                className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)]"
                             />
                             <span className="text-sm text-muted">Weeks</span>
                         </div>
@@ -315,7 +315,7 @@ export function ScheduleModal({
           <button
             onClick={handleSchedule}
             disabled={isSubmitting || selectedStudents.length === 0}
-            className="flex-1 px-4 py-2.5 rounded-lg bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white font-medium transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2.5 rounded-lg bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-[var(--foreground)] font-medium transition-colors disabled:opacity-50"
           >
             {isSubmitting ? 'Scheduling...' : 'Schedule'}
           </button>

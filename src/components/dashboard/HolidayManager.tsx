@@ -318,7 +318,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
             </button>
             <button
               onClick={handleAdd}
-              className="px-3 py-1.5 text-sm bg-[var(--ember-500)] text-white rounded-lg hover:bg-[var(--ember-600)]"
+              className="px-3 py-1.5 text-sm bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg hover:bg-[var(--ember-600)]"
             >
               Add Holiday
             </button>
@@ -327,7 +327,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
       )}
 
       {/* Holiday List */}
-      <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-80 overflow-y-auto">
+      <div className="divide-y divide-[var(--border)] max-h-80 overflow-y-auto">
         {upcomingHolidays.length === 0 ? (
           <div className="p-6 text-center text-muted">
             {holidays.length > 0 
@@ -394,7 +394,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                 <>
                   <div className="w-8 h-8 flex items-center justify-center">{renderIcon(holiday.emoji, 28)}</div>
                   <div className="flex-1">
-                    <div className="font-medium text-heading dark:text-white">{holiday.name}</div>
+                    <div className="font-medium text-heading dark:text-[var(--foreground)]">{holiday.name}</div>
                     <div className="text-sm text-muted">
                       {formatDate(holiday.startDate)}
                       {holiday.endDate && holiday.endDate !== holiday.startDate && (
@@ -405,7 +405,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                   <div className="flex gap-1">
                     <button
                       onClick={() => startEdit(holiday)}
-                      className="p-1.5 text-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
+                      className="p-1.5 text-muted hover:text-[var(--celestial-500)] hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
                     >
                       <PencilSimple size={20} weight="duotone" color="#caa2d8" />
                     </button>

@@ -66,9 +66,9 @@ export default function StudentLoginPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-gradient-ember rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg glow-gold">
-              <Student size={32} weight="duotone" className="text-white" />
+              <Student size={32} weight="duotone" className="text-[var(--foreground)]" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-1">
+            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">
               Welcome Back!
             </h1>
             <p className="text-[var(--slate-300)] text-sm">
@@ -95,7 +95,7 @@ export default function StudentLoginPage() {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="Enter your first name"
-                className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all text-white placeholder-[var(--slate-500)]"
+                className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all text-[var(--foreground)] placeholder-[var(--slate-500)]"
                 required
                 autoComplete="given-name"
               />
@@ -109,7 +109,7 @@ export default function StudentLoginPage() {
               <select
                 value={lastInitial}
                 onChange={(e) => setLastInitial(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all text-white appearance-none cursor-pointer"
+                className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all text-[var(--foreground)] appearance-none cursor-pointer"
                 required
               >
                 <option value="" className="bg-[var(--night-800)]">Select...</option>
@@ -132,14 +132,14 @@ export default function StudentLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all pr-12 text-white placeholder-[var(--slate-500)]"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--night-600)] bg-[var(--night-700)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent transition-all pr-12 text-[var(--foreground)] placeholder-[var(--slate-500)]"
                   required
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--slate-400)] hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--slate-400)] hover:text-[var(--foreground)]"
                 >
                   {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
                 </button>
@@ -166,7 +166,7 @@ export default function StudentLoginPage() {
             <button
               type="submit"
               disabled={isLoading || !firstName || !lastInitial || !password}
-              className="w-full py-3.5 bg-gradient-ember text-white font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-gradient-ember text-[var(--foreground)] font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>

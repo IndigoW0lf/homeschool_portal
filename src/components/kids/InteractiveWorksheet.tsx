@@ -48,7 +48,7 @@ export function InteractiveWorksheet({ data, kidId, assignmentId, onComplete }: 
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <div className="w-24 h-24 mx-auto mb-6 bg-green-500 rounded-full flex items-center justify-center text-white">
+          <div className="w-24 h-24 mx-auto mb-6 bg-green-500 rounded-full flex items-center justify-center text-[var(--foreground)]">
             <Check size={48} weight="bold" />
           </div>
           <h1 className="text-3xl font-bold text-heading mb-4">
@@ -59,7 +59,7 @@ export function InteractiveWorksheet({ data, kidId, assignmentId, onComplete }: 
           </p>
           <Link
             href={`/kids/${kidId}`}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-green-500 text-[var(--foreground)] rounded-xl font-bold hover:bg-green-600 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to My Portal
@@ -72,7 +72,7 @@ export function InteractiveWorksheet({ data, kidId, assignmentId, onComplete }: 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white/90 dark:bg-[var(--background-secondary)]/90 backdrop-blur-sm border-b border-[var(--border)] px-4 py-3">
+      <header className="sticky top-0 z-10 bg-[var(--background-elevated)]/90 dark:bg-[var(--background-secondary)]/90 backdrop-blur-sm border-b border-[var(--border)] px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <Link
             href={`/kids/${kidId}`}
@@ -97,7 +97,7 @@ export function InteractiveWorksheet({ data, kidId, assignmentId, onComplete }: 
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || answeredQuestions === 0}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold disabled:opacity-50 hover:bg-green-600 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-green-500 text-[var(--foreground)] rounded-lg font-bold disabled:opacity-50 hover:bg-green-600 transition-colors flex items-center gap-2"
           >
             {isSubmitting ? 'Saving...' : 'Done!'}
           </button>
@@ -178,11 +178,11 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
               onClick={() => onChange(option)}
               className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                 value === option
-                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                  : 'border-[var(--border)] dark:border-[var(--border)] hover:border-purple-300'
+                  ? 'border-purple-500 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15'
+                  : 'border-[var(--border)] dark:border-[var(--border)] hover:border-[var(--nebula-purple)]/40'
               }`}
             >
-              <span className={`font-medium ${value === option ? 'text-purple-700 dark:text-purple-300' : 'text-heading dark:text-muted'}`}>
+              <span className={`font-medium ${value === option ? 'text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)]' : 'text-heading dark:text-muted'}`}>
                 {option}
               </span>
             </button>
@@ -239,8 +239,8 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
                 onClick={() => onChange(word)}
                 className={`px-4 py-2 rounded-full border transition-all ${
                   value === word
-                    ? 'bg-purple-500 text-white border-purple-500'
-                    : 'bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:bg-purple-100'
+                    ? 'bg-[var(--nebula-purple)] text-[var(--foreground)] border-purple-500'
+                    : 'bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:bg-[var(--nebula-purple)]/20'
                 }`}
               >
                 {word}
@@ -261,7 +261,7 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
             onClick={() => onChange('completed')}
             className={`px-4 py-2 rounded-lg border transition-all ${
               value === 'completed'
-                ? 'bg-green-500 text-white border-green-500'
+                ? 'bg-green-500 text-[var(--foreground)] border-green-500'
                 : 'bg-[var(--background-elevated)] border-[var(--border)] dark:border-[var(--border)] hover:bg-green-50'
             }`}
           >
@@ -279,8 +279,8 @@ function QuestionCard({ item, value, onChange }: QuestionCardProps) {
               onClick={() => onChange(option)}
               className={`w-full text-left p-3 rounded-lg border transition-all ${
                 value === option
-                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-                  : 'border-[var(--border)] dark:border-[var(--border)] hover:border-purple-300'
+                  ? 'border-purple-500 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15'
+                  : 'border-[var(--border)] dark:border-[var(--border)] hover:border-[var(--nebula-purple)]/40'
               }`}
             >
               {option}

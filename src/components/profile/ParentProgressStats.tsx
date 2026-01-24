@@ -79,7 +79,7 @@ export function ParentProgressStats({ kidId, stats }: ParentProgressStatsProps) 
     <div className="space-y-4">
       {/* Subject Mastery */}
       <div className="p-4 bg-[var(--background-elevated)] rounded-xl border border-[var(--border)]">
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 text-heading dark:text-white">
+        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2 text-heading dark:text-[var(--foreground)]">
           <BookOpen size={16} weight="duotone" /> Subject Mastery
         </h3>
         <div className="grid grid-cols-2 gap-x-6 gap-y-3">

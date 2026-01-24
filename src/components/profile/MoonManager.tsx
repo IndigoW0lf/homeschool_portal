@@ -130,10 +130,10 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
 
       {/* Current Balance - using altar-flame gradient */}
       <div className="bg-gradient-altar-flame rounded-xl p-4 flex items-center gap-4">
-        <Moon size={32} weight="fill" className="text-white" />
+        <Moon size={32} weight="fill" className="text-[var(--foreground)]" />
         <div>
-          <p className="text-2xl font-bold text-white">{totalMoons}</p>
-          <p className="text-sm text-white/70">{selectedKidName}'s moons</p>
+          <p className="text-2xl font-bold text-[var(--foreground)]">{totalMoons}</p>
+          <p className="text-sm text-[var(--foreground)]/70">{selectedKidName}'s moons</p>
         </div>
       </div>
 
@@ -170,7 +170,7 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
         <button
           onClick={sendBonus}
           disabled={isSending}
-          className="w-full py-2 px-4 bg-[var(--nebula-purple)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-2 px-4 bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isSending ? (
             <ArrowsClockwise size={18} className="animate-spin" />

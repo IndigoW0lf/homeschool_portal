@@ -14,13 +14,13 @@ const themeColors: Record<string, { bg: string; text: string; Icon: Icon }> = {
     Icon: Bank,
   },
   'Skill Day': {
-    bg: 'bg-blue-100 dark:bg-blue-900/30',
+    bg: 'bg-[var(--celestial-400)]/20 dark:bg-blue-900/30',
     text: 'text-blue-800 dark:text-blue-200',
     Icon: Wrench,
   },
   'Expression Day': {
-    bg: 'bg-purple-100 dark:bg-purple-900/30',
-    text: 'text-purple-800 dark:text-purple-200',
+    bg: 'bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20',
+    text: 'text-[var(--nebula-purple)] dark:text-purple-200',
     Icon: Palette,
   },
 };

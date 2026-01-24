@@ -25,7 +25,7 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
     <div className="space-y-6">
       {/* Header info */}
       <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
+        <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)] dark:bg-[var(--nebula-purple)]/20 dark:text-[var(--nebula-purple)]">
           {assignment.type}
         </span>
         {assignment.estimated_minutes && (
@@ -112,8 +112,8 @@ export function AssignmentViewer({ assignment }: AssignmentViewerProps) {
       )}
 
       {/* Info message */}
-      <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl text-center">
-        <p className="text-purple-600 dark:text-purple-400 font-medium flex items-center justify-center gap-2 text-sm">
+      <div className="bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 p-4 rounded-xl text-center">
+        <p className="text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] font-medium flex items-center justify-center gap-2 text-sm">
           <Sparkle size={18} weight="fill" className="text-yellow-500" />
           This is how students see this assignment
         </p>

@@ -100,7 +100,7 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
               value={data.displayName}
               onChange={(e) => updateData({ displayName: e.target.value })}
               placeholder="Your name"
-              className="w-full pl-10 pr-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
           </div>
         </div>
@@ -119,7 +119,7 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
               onChange={(e) => updateData({ email: e.target.value })}
               placeholder="you@example.com"
               required
-              className="w-full pl-10 pr-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
               placeholder="At least 6 characters"
               required
               minLength={6}
-              className="w-full pl-10 pr-12 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full pl-10 pr-12 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
             <button
               type="button"
@@ -173,7 +173,7 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
         <button
           onClick={handleCreateAccount}
           disabled={!canContinue || isLoading}
-          className="flex-1 py-2.5 px-4 bg-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="flex-1 py-2.5 px-4 bg-[var(--ember-500)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {isLoading ? 'Creating account...' : 'Continue'}
         </button>

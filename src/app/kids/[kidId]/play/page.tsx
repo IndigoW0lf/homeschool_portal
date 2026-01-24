@@ -20,17 +20,17 @@ export default async function PlayPage({ params }: PlayPageProps) {
   return (
     <div className="min-h-screen">
       {/* Page Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-[var(--background-elevated)] border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--ember-400)] to-[var(--ember-600)] text-white">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-[var(--ember-400)] to-[var(--ember-600)] text-[var(--foreground)]">
               <GameController size={28} weight="fill" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-[var(--foreground)]">
                 Play Zone
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-muted">
                 Time for adventure, {kid.name}!
               </p>
             </div>
@@ -41,10 +41,10 @@ export default async function PlayPage({ params }: PlayPageProps) {
       {/* Game Area */}
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Game Embed Placeholder */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sage-100)] via-[var(--lavender-100)] to-[var(--ember-100)] dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sage-100)] via-[var(--lavender-100)] to-[var(--ember-100)] dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 border-2 border-dashed border-[var(--border)]">
           <div className="aspect-video flex flex-col items-center justify-center p-8 text-center">
             <div className="relative mb-6">
-              <div className="w-24 h-24 rounded-full bg-white dark:bg-gray-700 shadow-lg flex items-center justify-center">
+              <div className="w-24 h-24 rounded-full bg-[var(--background-elevated)] shadow-lg flex items-center justify-center">
                 <Rocket size={48} weight="duotone" className="text-[var(--ember-500)]" />
               </div>
               <Sparkle 
@@ -60,10 +60,10 @@ export default async function PlayPage({ params }: PlayPageProps) {
               />
             </div>
             
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+            <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">
               🚀 Game Coming Soon!
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md">
+            <p className="text-muted max-w-md">
               This is where your adventure awaits. The Lunara Quest game will be embedded here soon!
             </p>
             
@@ -81,24 +81,24 @@ export default async function PlayPage({ params }: PlayPageProps) {
 
         {/* Game Tips Section */}
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm border border-[var(--border)]">
             <div className="text-2xl mb-2">🎯</div>
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-1">Complete Quests</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="font-semibold text-[var(--foreground)] mb-1">Complete Quests</h3>
+            <p className="text-sm text-muted">
               Finish your daily assignments to unlock new adventures!
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm border border-[var(--border)]">
             <div className="text-2xl mb-2">⭐</div>
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-1">Earn Stars</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="font-semibold text-[var(--foreground)] mb-1">Earn Stars</h3>
+            <p className="text-sm text-muted">
               Collect stars to spend in the Rewards Shop!
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm border border-[var(--border)]">
             <div className="text-2xl mb-2">🔥</div>
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-1">Keep Your Streak</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <h3 className="font-semibold text-[var(--foreground)] mb-1">Keep Your Streak</h3>
+            <p className="text-sm text-muted">
               Play every day to build your streak and unlock bonuses!
             </p>
           </div>

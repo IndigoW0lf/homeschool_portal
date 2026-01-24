@@ -71,7 +71,7 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
                 <select
                   value={selectedKid}
                   onChange={(e) => setSelectedKid(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="">All Students</option>
                   {kids.map(kid => (
@@ -88,7 +88,7 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
                 <select
                   value={days}
                   onChange={(e) => setDays(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="7">Last 7 Days</option>
                   <option value="30">Last 30 Days</option>
@@ -106,7 +106,7 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
                 <select
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                  className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="">All Sources</option>
                   <option value="lunara_quest">Lunara Quest</option>
@@ -118,7 +118,7 @@ export function PrintLogGenerator({ kids }: PrintLogGeneratorProps) {
               {/* Generate Button */}
               <button
                 onClick={handleGenerate}
-                className="w-full px-4 py-2.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full px-4 py-2.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-[var(--foreground)] font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <Printer size={18} weight="bold" />
                 Generate Printable Log

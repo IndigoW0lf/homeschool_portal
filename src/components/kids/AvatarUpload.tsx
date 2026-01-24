@@ -164,7 +164,7 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
         {!previewUrl && (
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-0 right-0 p-2 bg-purple-500 hover:bg-purple-600 text-white rounded-full shadow-lg transition-colors"
+            className="absolute bottom-0 right-0 p-2 bg-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-full shadow-lg transition-colors"
           >
             <Camera size={16} weight="fill" />
           </button>
@@ -194,7 +194,7 @@ export function AvatarUpload({ kidId, currentAvatarUrl, onUploadComplete }: Avat
           <button
             onClick={handleUpload}
             disabled={isUploading}
-            className="px-4 py-2 text-sm font-medium bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 text-sm font-medium bg-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg transition-colors flex items-center gap-1.5"
           >
             {isUploading ? (
               <>

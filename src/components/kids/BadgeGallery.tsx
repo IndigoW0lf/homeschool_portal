@@ -65,7 +65,7 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
         {/* Featured star */}
         {isFeatured && (
           <div className="absolute -top-1 -right-1">
-            <Sparkle size={16} weight="fill" className="text-purple-400" />
+            <Sparkle size={16} weight="fill" className="text-[var(--nebula-purple)]" />
           </div>
         )}
         
@@ -96,7 +96,7 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
       {/* Tooltip */}
       {showTooltip && (
         <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-3 bg-[var(--night-900)] dark:bg-[var(--background-secondary)] rounded-lg shadow-lg text-center">
-          <p className="text-white text-sm font-semibold mb-1">{badge.name}</p>
+          <p className="text-[var(--foreground)] text-sm font-semibold mb-1">{badge.name}</p>
           <p className="text-muted text-xs mb-2">{badge.description}</p>
           {progress && !isEarned && (
             <div>
@@ -110,7 +110,7 @@ function BadgeCard({ badge, isEarned, progress, isFeatured, onToggleFeatured }: 
             </div>
           )}
           {isEarned && onToggleFeatured && (
-            <p className="text-purple-400 text-xs mt-1">
+            <p className="text-[var(--nebula-purple)] text-xs mt-1">
               {isFeatured ? 'Click to remove from featured' : 'Click to add to featured'}
             </p>
           )}

@@ -373,7 +373,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
             <span className="font-semibold text-blue-800 dark:text-blue-300 flex items-center gap-2">
               <Question size={18} /> Teaching Content (Lesson)
             </span>
-            <span className="text-sm text-blue-600">{showTeaching ? '−' : '+'}</span>
+            <span className="text-sm text-[var(--celestial-500)]">{showTeaching ? '−' : '+'}</span>
           </button>
           
           {showTeaching && (
@@ -446,7 +446,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
             <div className="p-6 space-y-6">
               <div>
                 <label className="input-label flex items-center gap-2">
-                  <FileText size={16} className="text-blue-500" /> Expected Deliverable
+                  <FileText size={16} className="text-[var(--celestial-500)]" /> Expected Deliverable
                 </label>
                 <input
                   {...register('deliverable')}
@@ -458,7 +458,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <h4 className="text-sm font-medium flex items-center gap-2">
-                    <ListNumbers size={16} className="text-blue-500" /> Student Steps
+                    <ListNumbers size={16} className="text-[var(--celestial-500)]" /> Student Steps
                   </h4>
                   {stepFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2 items-start">
@@ -516,8 +516,8 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
         {/* WORKSHEETS */}
         <div className="card p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-heading dark:text-white flex items-center gap-2">
-              <MagicWand size={18} className="text-purple-500" /> Worksheets
+            <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
+              <MagicWand size={18} className="text-[var(--nebula-purple)]" /> Worksheets
             </h3>
             <button
               type="button"
@@ -529,19 +529,19 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           </div>
 
           {/* Auto-generate checkbox */}
-          <label className="flex items-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl cursor-pointer border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+          <label className="flex items-center gap-3 p-4 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-xl cursor-pointer border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/20 dark:hover:bg-[var(--nebula-purple)]/20 transition-colors">
             <input
               type="checkbox"
               checked={autoGenerateWorksheet}
               onChange={e => setAutoGenerateWorksheet(e.target.checked)}
-              className="w-5 h-5 rounded border-purple-300 text-purple-600 focus:ring-purple-500"
+              className="w-5 h-5 rounded border-[var(--nebula-purple)]/40 text-[var(--nebula-purple)] focus:ring-purple-500"
             />
             <div className="flex-1">
-              <span className="font-medium text-purple-700 dark:text-purple-300 flex items-center gap-2">
-                <Sparkle size={18} weight="fill" className="text-purple-500" />
+              <span className="font-medium text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] flex items-center gap-2">
+                <Sparkle size={18} weight="fill" className="text-[var(--nebula-purple)]" />
                 Auto-generate worksheet on save
               </span>
-              <p className="text-xs text-purple-600/70 dark:text-purple-400/70 mt-0.5">
+              <p className="text-xs text-[var(--nebula-purple)]/70 dark:text-[var(--nebula-purple)]/70 mt-0.5">
                 AI will create practice questions based on this activity
               </p>
             </div>
@@ -550,15 +550,15 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           {attachedWorksheets.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {attachedWorksheets.map((ws, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                  <File size={24} className="text-purple-500" />
+                <div key={idx} className="flex items-center gap-3 p-3 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-lg border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
+                  <File size={24} className="text-[var(--nebula-purple)]" />
                   <div className="flex-1">
-                    <p className="font-medium text-sm text-purple-800 dark:text-purple-300">{ws.title}</p>
-                    <p className="text-xs text-purple-600 dark:text-purple-400">
+                    <p className="font-medium text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)]">{ws.title}</p>
+                    <p className="text-xs text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]">
                       {ws.sections?.reduce((sum, s) => sum + (s.items?.length || 0), 0) || 0} questions
                     </p>
                   </div>
-                  <button type="button" onClick={() => removeWorksheet(idx)} className="text-purple-400 hover:text-red-500">
+                  <button type="button" onClick={() => removeWorksheet(idx)} className="text-[var(--nebula-purple)] hover:text-red-500">
                     <X size={18} />
                   </button>
                 </div>
@@ -571,7 +571,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
 
         {/* NOTES & LINKS */}
         <div className="card p-6 space-y-6">
-          <h3 className="font-semibold text-heading dark:text-white flex items-center gap-2">
+          <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
             <Stack size={18} className="text-amber-500" /> Resources & Notes
           </h3>
 
@@ -583,7 +583,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               <textarea
                 {...register('parentNotes')}
                 rows={3}
-                className="w-full text-sm p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-white/50 dark:bg-black/20 focus:ring-2 focus:ring-amber-400 outline-none resize-none"
+                className="w-full text-sm p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-[var(--background-elevated)]/50 dark:bg-black/20 focus:ring-2 focus:ring-amber-400 outline-none resize-none"
                 placeholder="Tips, tricky concepts, reminders..."
               />
             </div>

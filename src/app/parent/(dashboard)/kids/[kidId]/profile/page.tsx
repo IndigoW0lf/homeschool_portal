@@ -49,16 +49,16 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded-full">
+              <div className="px-3 py-1 bg-[var(--celestial-500)] text-[var(--foreground)] text-sm font-semibold rounded-full">
                 Parent View
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-muted">
                 Viewing {displayName}'s profile as admin
               </p>
             </div>
             <Link
               href={`/kids/${kidId}/profile`}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-[var(--background-elevated)] border border-[var(--border)] dark:border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover-overlay)] transition-colors"
             >
               <ArrowSquareOut size={16} />
               Open Kid Portal
@@ -68,7 +68,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
       </div>
 
       {/* Page Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-[var(--background-elevated)] border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
             <AvatarPreview 
@@ -78,10 +78,10 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
               fallbackColor={kid.favorite_color}
             />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-[var(--foreground)]">
                 {displayName}'s Profile
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-muted">
                 Manage profile information and settings
               </p>
             </div>
@@ -94,7 +94,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
         <KidProfileEditor kidId={kidId} initialData={kid} />
         
         {/* Avatar Builder - Coming Soon */}
-        <div className="max-w-md mx-auto p-6 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-200 dark:border-purple-800">
+        <div className="max-w-md mx-auto p-6 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
           <div className="flex flex-col items-center text-center gap-4">
             {/* Avatar preview */}
             <AvatarPreview 
@@ -104,13 +104,13 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
               fallbackColor={kid.favorite_color}
             />
             <div>
-              <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">
+              <h3 className="font-semibold text-lg text-[var(--foreground)] mb-1">
                 ✨ Avatar Builder
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              <p className="text-sm text-muted mb-3">
                 Coming soon! We're working on an awesome avatar creator.
               </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-lg font-medium cursor-not-allowed">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-[var(--background-secondary)] text-muted rounded-lg font-medium cursor-not-allowed">
                 🚧 In Progress
               </div>
             </div>

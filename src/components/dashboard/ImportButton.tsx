@@ -20,7 +20,7 @@ export function ImportButton({ kids }: ImportButtonProps) {
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
+        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-[var(--foreground)] rounded-lg font-medium text-sm hover:opacity-90 transition-opacity"
       >
         <Upload size={18} />
         Import Data

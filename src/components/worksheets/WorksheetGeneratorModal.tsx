@@ -112,14 +112,14 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
       }}
     >
       <div 
-        className="bg-white dark:bg-[var(--night-900)] w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95"
+        className="bg-[var(--background-elevated)] dark:bg-[var(--night-900)] w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}  // Prevent clicks inside modal from closing it
       >
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[var(--border)] dark:border-[var(--border)]">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg text-white">
+            <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg text-[var(--foreground)]">
               <MagicWand size={20} weight="fill" />
             </div>
             <h2 className="text-xl font-bold text-heading">
@@ -182,7 +182,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
               <button 
                 onClick={handleGenerate}
                 disabled={!topic || step === 'generating'}
-                className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-[var(--foreground)] rounded-xl font-bold shadow-lg shadow-purple-200 dark:shadow-none hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {step === 'generating' ? (
                   <>
@@ -201,7 +201,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
               {(step === 'review' || step === 'refining') && generatedData && (
                 <div className="mt-6 pt-6 border-t border-[var(--border)]">
                   <div className="flex items-center gap-2 mb-3">
-                    <PencilSimple size={18} className="text-purple-500" />
+                    <PencilSimple size={18} className="text-[var(--nebula-purple)]" />
                     <label className="text-sm font-semibold text-heading dark:text-muted">
                       Refine with AI
                     </label>
@@ -216,7 +216,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                   <button 
                     onClick={handleRefine}
                     disabled={!refinementFeedback.trim() || step === 'refining'}
-                    className="w-full mt-3 py-3 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-xl font-semibold hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full mt-3 py-3 bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] rounded-xl font-semibold hover:bg-[var(--nebula-purple)]/30 dark:hover:bg-[var(--nebula-purple)]/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {step === 'refining' ? (
                       <>
@@ -250,7 +250,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                     <a 
                         href={`/print/worksheet/${savedId}`} 
                         target="_blank"
-                        className="w-full py-2 bg-green-600 text-white rounded-lg font-bold text-center hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-2 bg-green-600 text-[var(--foreground)] rounded-lg font-bold text-center hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                     >
                         <Printer size={20} />
                         Print Now
@@ -282,7 +282,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
               </div>
             ) : generatedData ? (
               <div className="max-w-3xl mx-auto">
-                <div className="bg-white shadow-xl rounded-xl overflow-hidden mb-6">
+                <div className="bg-[var(--background-elevated)] shadow-xl rounded-xl overflow-hidden mb-6">
                   {/* Worksheet Preview Header */}
                   <div className="bg-[var(--background-secondary)] border-b border-[var(--border)] p-2 flex justify-between items-center text-xs text-muted">
                     <span className="flex items-center gap-1">
@@ -306,7 +306,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                         <button 
                             onClick={handleSave}
                             disabled={step === 'saving' || step === 'refining'}
-                            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50"
+                            className="px-8 py-3 bg-blue-600 text-[var(--foreground)] rounded-xl font-bold shadow-lg hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50"
                         >
                             {step === 'saving' ? <Spinner size={20} className="animate-spin" /> : <FloppyDisk size={20} weight="fill" />}
                             {onAttach ? 'Attach to Activity' : 'Save to Library'}

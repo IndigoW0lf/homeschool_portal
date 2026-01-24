@@ -146,11 +146,11 @@ export default function ParentLoginPage() {
         </div>
 
         <div className="glass-panel rounded-xl p-8 shadow-2xl max-w-md w-full text-center relative z-10">
-          <h1 className="text-2xl font-bold text-white mb-4">
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-4">
             Check your email
           </h1>
           <p className="text-[var(--slate-300)] mb-6">
-            We&apos;ve sent a magic link to <strong className="text-white">{email}</strong>.
+            We&apos;ve sent a magic link to <strong className="text-[var(--foreground)]">{email}</strong>.
             <br />
             Click the link in the email to sign in.
           </p>
@@ -179,7 +179,7 @@ export default function ParentLoginPage() {
 
       <div className="glass-panel rounded-2xl p-8 shadow-2xl max-w-md w-full relative z-10 border-t border-white/20">
         <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-3xl font-bold text-[var(--foreground)] mb-2">
             Parent Portal
             </h1>
             <p className="text-[var(--slate-400)]">
@@ -193,8 +193,8 @@ export default function ParentLoginPage() {
             onClick={() => { setAuthMethod('magic_link'); setMessage(null); }}
             className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
               authMethod === 'magic_link'
-                ? 'bg-[var(--celestial-500)] text-white shadow-md'
-                : 'text-[var(--slate-400)] hover:text-white'
+                ? 'bg-[var(--celestial-500)] text-[var(--foreground)] shadow-md'
+                : 'text-[var(--slate-400)] hover:text-[var(--foreground)]'
             }`}
           >
             Magic Link
@@ -203,8 +203,8 @@ export default function ParentLoginPage() {
             onClick={() => { setAuthMethod('password'); setMessage(null); }}
             className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-all ${
               authMethod === 'password'
-                ? 'bg-[var(--celestial-500)] text-white shadow-md'
-                : 'text-[var(--slate-400)] hover:text-white'
+                ? 'bg-[var(--celestial-500)] text-[var(--foreground)] shadow-md'
+                : 'text-[var(--slate-400)] hover:text-[var(--foreground)]'
             }`}
           >
             Password
@@ -237,7 +237,7 @@ export default function ParentLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 border border-[var(--night-600)] rounded-xl bg-[var(--night-700)] text-white placeholder-[var(--slate-500)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-3 border border-[var(--night-600)] rounded-xl bg-[var(--night-700)] text-[var(--foreground)] placeholder-[var(--slate-500)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent outline-none transition-all"
               placeholder="parent@example.com"
             />
           </div>
@@ -256,7 +256,7 @@ export default function ParentLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 border border-[var(--night-600)] rounded-xl bg-[var(--night-700)] text-white placeholder-[var(--slate-500)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-3 border border-[var(--night-600)] rounded-xl bg-[var(--night-700)] text-[var(--foreground)] placeholder-[var(--slate-500)] focus:ring-2 focus:ring-[var(--celestial-400)] focus:border-transparent outline-none transition-all"
                 placeholder="••••••••"
               />
               <button
@@ -281,7 +281,7 @@ export default function ParentLoginPage() {
           <button
             type="submit"
             disabled={isLoading || !email || (authMethod === 'password' && !password) || !isVerified}
-            className="w-full py-3.5 px-4 bg-gradient-ember text-white rounded-xl font-semibold shadow-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
+            className="w-full py-3.5 px-4 bg-gradient-ember text-[var(--foreground)] rounded-xl font-semibold shadow-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-[1.02]"
           >
             {isLoading
               ? 'Processing...'

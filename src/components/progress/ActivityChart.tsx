@@ -130,7 +130,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
               onClick={() => setSelectedRange(range.days as 7 | 30 | 90)}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                 selectedRange === range.days
-                  ? 'bg-white dark:bg-[var(--night-600)] text-heading shadow-sm'
+                  ? 'bg-[var(--background-elevated)] dark:bg-[var(--night-600)] text-heading shadow-sm'
                   : 'text-muted hover:text-heading dark:hover:text-muted'
               }`}
             >
@@ -175,7 +175,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                 <div key={day.date} className="flex flex-col items-center gap-1 flex-1 group">
                   <div className="relative w-full flex justify-center items-end h-24">
                     {/* Tooltip */}
-                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
+                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-[var(--foreground)] text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
                       {day.count} items
                     </div>
                     {/* Bar */}
@@ -207,7 +207,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                 <div key={week.weekStart} className="flex flex-col items-center gap-1 flex-1 min-w-[32px] max-w-[48px] group">
                   <div className="relative w-full flex justify-center items-end h-20">
                     {/* Tooltip */}
-                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
+                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-[var(--foreground)] text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
                       {week.count} items • {week.days} days active
                     </div>
                     {/* Bar */}

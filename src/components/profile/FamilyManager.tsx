@@ -175,8 +175,8 @@ export function FamilyManager() {
         <div className="space-y-6">
             {/* Pending Invitations to Current User */}
             {myInvites.length > 0 && (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800">
-                    <h3 className="text-sm font-semibold text-purple-700 dark:text-purple-300 mb-3 flex items-center gap-2">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
+                    <h3 className="text-sm font-semibold text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] mb-3 flex items-center gap-2">
                         <EnvelopeSimple size={18} weight="duotone" />
                         You&apos;ve Been Invited!
                     </h3>
@@ -194,7 +194,7 @@ export function FamilyManager() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => handleAcceptInvite(invite)}
-                                        className="px-3 py-1.5 text-sm bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 flex items-center gap-1"
+                                        className="px-3 py-1.5 text-sm bg-green-500 text-[var(--foreground)] rounded-lg font-medium hover:bg-green-600 flex items-center gap-1"
                                     >
                                         <Check size={14} weight="bold" /> Accept
                                     </button>
@@ -223,7 +223,7 @@ export function FamilyManager() {
                                 type="text"
                                 value={familyName}
                                 onChange={(e) => setFamilyName(e.target.value)}
-                                className="px-2 py-1 text-lg font-semibold border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                                className="px-2 py-1 text-lg font-semibold border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
                                 autoFocus
                             />
                             <button onClick={handleSaveFamilyName} className="p-1.5 text-green-500 hover:bg-green-50 dark:hover:bg-green-900/30 rounded">
@@ -279,7 +279,7 @@ export function FamilyManager() {
                                 value={inviteEmail}
                                 onChange={(e) => setInviteEmail(e.target.value)}
                                 placeholder="parent@example.com"
-                                className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
+                                className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] outline-none focus:ring-2 focus:ring-[var(--ember-500)]"
                             />
                         </div>
                         <div>
@@ -288,7 +288,7 @@ export function FamilyManager() {
                                 <select
                                     value={inviteRole}
                                     onChange={(e) => setInviteRole(e.target.value as 'admin' | 'member')}
-                                    className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] outline-none focus:ring-2 focus:ring-[var(--ember-500)] appearance-none"
+                                    className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] outline-none focus:ring-2 focus:ring-[var(--ember-500)] appearance-none"
                                 >
                                     <option value="member">Member (can view & interact)</option>
                                     <option value="admin">Admin (full control)</option>
@@ -308,7 +308,7 @@ export function FamilyManager() {
                         <button
                             onClick={handleInvite}
                             disabled={isInviting || !inviteEmail.trim()}
-                            className="px-4 py-1.5 text-sm bg-[var(--ember-500)] text-white rounded-lg font-medium hover:bg-[var(--ember-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            className="px-4 py-1.5 text-sm bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--ember-600)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
                             <EnvelopeSimple size={16} />
                             {isInviting ? 'Sending...' : 'Send Invite'}
@@ -346,7 +346,7 @@ export function FamilyManager() {
                                     </button>
                                     <button
                                         onClick={() => handleRemoveMember(member.id)}
-                                        className="px-2 py-1 text-xs text-white bg-red-500 hover:bg-red-600 rounded"
+                                        className="px-2 py-1 text-xs text-[var(--foreground)] bg-red-500 hover:bg-red-600 rounded"
                                     >
                                         Yes, Remove
                                     </button>

@@ -53,16 +53,16 @@ export default async function ParentViewKidJournalPage({ params }: Props) {
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded-full">
+              <div className="px-3 py-1 bg-[var(--celestial-500)] text-[var(--foreground)] text-sm font-semibold rounded-full">
                 Parent View
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-muted">
                 Viewing {displayName}'s journal as admin
               </p>
             </div>
             <Link
               href={`/kids/${kidId}/journal`}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm bg-[var(--background-elevated)] border border-[var(--border)] dark:border-[var(--border)] text-[var(--foreground)] rounded-lg hover:bg-[var(--hover-overlay)] transition-colors"
             >
               <ArrowSquareOut size={16} />
               Open Kid Portal
@@ -72,17 +72,17 @@ export default async function ParentViewKidJournalPage({ params }: Props) {
       </div>
 
       {/* Page Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-[var(--background-elevated)] border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-              <NotePencil size={28} weight="duotone" className="text-purple-600" />
+            <div className="p-2 rounded-lg bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20">
+              <NotePencil size={28} weight="duotone" className="text-[var(--nebula-purple)]" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-[var(--foreground)]">
                 {displayName}'s Journal
               </h1>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-muted">
                 {entries?.length || 0} entries
               </p>
             </div>

@@ -30,7 +30,7 @@ export function HowItWorks() {
         {/* Header */}
         <div className="text-center mb-16">
           <span className="text-[var(--celestial-400)] font-medium">HOW IT WORKS</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-[var(--foreground)] mt-3 mb-4">
             Get started in minutes
           </h2>
           <p className="text-xl text-[var(--slate-300)] max-w-2xl mx-auto">
@@ -54,7 +54,7 @@ export function HowItWorks() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-xl font-semibold text-white mb-3">
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                   {step.title}
                 </h3>
                 <p className="text-[var(--slate-300)] leading-relaxed">

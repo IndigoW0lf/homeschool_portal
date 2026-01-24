@@ -87,7 +87,7 @@ export function LunaPanel() {
         aria-modal="true"
         className={cn(
           "fixed right-0 top-0 z-50 h-full w-full max-w-md",
-          "bg-white dark:bg-[var(--night-900)] shadow-2xl",
+          "bg-[var(--background-elevated)] dark:bg-[var(--night-900)] shadow-2xl",
           "flex flex-col",
           "animate-in slide-in-from-right duration-300"
         )}
@@ -134,7 +134,7 @@ export function LunaPanel() {
                   clearMessages();
                   setShowNewChatConfirm(false);
                 }}
-                className="btn-sm bg-amber-600 hover:bg-amber-700 text-white"
+                className="btn-sm bg-amber-600 hover:bg-amber-700 text-[var(--foreground)]"
               >
                 Yes, start fresh
               </button>

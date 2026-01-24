@@ -94,7 +94,7 @@ export function ShopItemCard({ item, kidId, onPurchase }: ShopItemCardProps) {
             ${purchased
               ? 'bg-[var(--background-secondary)] text-muted cursor-not-allowed'
               : canAfford
-                ? 'bg-gradient-rust-gold text-white hover:opacity-90'
+                ? 'bg-gradient-rust-gold text-[var(--foreground)] hover:opacity-90'
                 : 'bg-[var(--background-secondary)] text-muted cursor-not-allowed'}
           `}
         >

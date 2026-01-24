@@ -20,10 +20,10 @@ export default async function SettingsPage() {
       {/* Password reset toast trigger */}
       <PasswordResetToast />
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">
           Settings
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
+        <p className="text-muted text-sm">
           Manage your account, family, and rewards
         </p>
       </div>

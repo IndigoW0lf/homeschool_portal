@@ -23,7 +23,7 @@ export default async function HomePage() {
 
   // Root always shows marketing for guests
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-[var(--background)]">
       <MarketingNav />
       <main>
         <Hero />

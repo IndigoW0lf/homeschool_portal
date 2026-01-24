@@ -116,7 +116,7 @@ export function RecentList({
                   {onEdit && (
                     <button 
                       onClick={() => onEdit(item.id)}
-                      className="p-1.5 text-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+                      className="p-1.5 text-muted hover:text-[var(--celestial-500)] hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
                       title="Edit"
                     >
                       <PencilSimple size={18} weight="duotone" color="#caa2d8" />

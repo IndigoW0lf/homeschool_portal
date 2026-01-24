@@ -31,13 +31,13 @@ export function DemoDataManager() {
           <h3 className="text-lg font-semibold text-indigo-900 dark:text-indigo-100 mb-2">
             Demo Data
           </h3>
-          <p className="text-sm text-indigo-600 dark:text-indigo-300 mb-4 max-w-md">
+          <p className="text-sm text-[var(--celestial-600)] dark:text-indigo-300 mb-4 max-w-md">
             Populate your account with example kids, lessons, schedule items, and journal entries. 
             Perfect for taking screenshots or testing the app logic.
           </p>
         </div>
         <div className="p-3 bg-[var(--background-elevated)] rounded-lg shadow-sm">
-          <Sparkle size={24} className="text-indigo-500" weight="fill" />
+          <Sparkle size={24} className="text-[var(--celestial-500)]" weight="fill" />
         </div>
       </div>
 
@@ -49,7 +49,7 @@ export function DemoDataManager() {
             ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
             : status === 'error'
             ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-            : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg'
+            : 'bg-[var(--celestial-600)] hover:bg-indigo-700 text-[var(--foreground)] shadow-md hover:shadow-lg'
         }`}
       >
         {status === 'loading' && (

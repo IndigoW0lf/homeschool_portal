@@ -11,10 +11,10 @@ export function CTA() {
 
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-ember mb-8 shadow-lg glow-gold">
-          <Sparkle size={40} weight="fill" className="text-white" />
+          <Sparkle size={40} weight="fill" className="text-[var(--foreground)]" />
         </div>
 
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+        <h2 className="text-4xl md:text-5xl font-bold text-[var(--foreground)] mb-6">
           Ready to make homeschooling magical?
         </h2>
         
@@ -26,7 +26,7 @@ export function CTA() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/signup"
-            className="group px-8 py-4 bg-gradient-ember text-white rounded-2xl font-semibold text-lg hover:opacity-90 transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
+            className="group px-8 py-4 bg-gradient-ember text-[var(--foreground)] rounded-2xl font-semibold text-lg hover:opacity-90 transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
           >
             Start Your Free Account
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

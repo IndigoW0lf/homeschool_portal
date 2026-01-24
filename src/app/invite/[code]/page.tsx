@@ -27,20 +27,20 @@ export default async function InvitePage({ params }: InvitePageProps) {
   if (error || !invite) {
     console.error('Invite lookup error:', error);
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background-secondary)] dark:bg-[var(--background)] p-4">
+        <div className="max-w-md w-full bg-[var(--background-elevated)] rounded-2xl shadow-xl p-8 text-center">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
             <Warning size={32} className="text-red-500" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
             Invalid or Expired Invite
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          <p className="text-muted mb-6">
             This invite link is no longer valid. It may have expired or already been used.
           </p>
           <Link 
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--ember-500)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 transition-opacity"
           >
             <House size={20} />
             Go Home
@@ -64,16 +64,16 @@ export default async function InvitePage({ params }: InvitePageProps) {
   
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--lavender-100)] to-[var(--ember-100)] dark:from-gray-900 dark:to-gray-800 p-4">
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
+      <div className="max-w-md w-full bg-[var(--background-elevated)] rounded-2xl shadow-xl p-8 text-center">
         <div className="w-16 h-16 bg-gradient-to-br from-[#9c8fb8] to-[#E27D60] rounded-full flex items-center justify-center mx-auto mb-4">
-          <UserPlus size={32} className="text-white" />
+          <UserPlus size={32} className="text-[var(--foreground)]" />
         </div>
         
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           You're Invited!
         </h1>
         
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
+        <p className="text-muted dark:text-[var(--foreground-muted)] mb-6">
           <span className="font-semibold">{inviterName}</span> has invited you to join{' '}
           <span className="font-semibold text-[var(--ember-500)]">{familyName}</span> on Lunara Quest.
         </p>
@@ -92,32 +92,32 @@ export default async function InvitePage({ params }: InvitePageProps) {
             <button
               type="submit"
               disabled={!!emailMismatch}
-              className="w-full py-3 px-6 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-xl font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-6 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-[var(--foreground)] rounded-xl font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Accept Invite
             </button>
           </form>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-muted">
               Sign in or create an account to accept this invite
             </p>
             <Link
               href={`/parent/login?redirect=/invite/${code}`}
-              className="block w-full py-3 px-6 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-xl font-bold text-lg hover:opacity-90 transition-opacity text-center"
+              className="block w-full py-3 px-6 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-[var(--foreground)] rounded-xl font-bold text-lg hover:opacity-90 transition-opacity text-center"
             >
               Sign In to Accept
             </Link>
             <Link
               href={`/signup?redirect=/invite/${code}&email=${encodeURIComponent(invite.email)}`}
-              className="block w-full py-3 px-6 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-center"
+              className="block w-full py-3 px-6 bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-[var(--foreground)] rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-center"
             >
               Create Account
             </Link>
           </div>
         )}
         
-        <p className="mt-6 text-xs text-gray-400 dark:text-gray-500">
+        <p className="mt-6 text-xs text-muted">
           By accepting, you'll be able to view and manage the family's homeschool activities.
         </p>
       </div>

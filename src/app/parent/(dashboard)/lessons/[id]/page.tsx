@@ -40,22 +40,22 @@ export default async function EditLessonPage({ params }: PageProps) {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <Link 
         href="/parent"
-        className="flex items-center gap-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mb-6 transition-colors"
+        className="flex items-center gap-1 text-muted hover:text-[var(--foreground)] dark:hover:text-[var(--foreground-muted)] mb-6 transition-colors"
       >
         <CaretLeft size={18} weight="bold" />
         <span className="text-sm font-medium">Back to Dashboard</span>
       </Link>
       
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-[var(--foreground)]">
           Edit Lesson
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
+        <p className="text-muted text-sm">
           Update lesson details and settings.
         </p>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+      <div className="bg-[var(--background-elevated)] rounded-xl shadow-sm border border-[var(--border)] p-6">
         <LessonForm initialData={formData} />
       </div>
     </div>

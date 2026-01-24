@@ -75,7 +75,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
   return (
     <form onSubmit={handleSubmit} className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-6 space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-heading dark:text-white flex items-center gap-2">
+        <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
           <Book size={20} weight="duotone" className="text-[var(--ember-500)]" />
           Log Activity
         </h3>
@@ -98,7 +98,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
             <select
               value={kidId}
               onChange={(e) => setKidId(e.target.value)}
-              className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+              className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
             >
               {kids.map(kid => (
                 <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -117,7 +117,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
           />
         </div>
 
@@ -130,7 +130,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
             required
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
           >
             <option value="">Select subject...</option>
             {SUBJECTS.map(s => (
@@ -153,7 +153,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
                 max="12"
                 value={hours}
                 onChange={(e) => setHours(parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
               />
               <span className="text-xs text-muted">hours</span>
             </div>
@@ -165,7 +165,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
                 step="5"
                 value={minutes}
                 onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
               />
               <span className="text-xs text-muted">minutes</span>
             </div>
@@ -184,7 +184,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g., Practiced multiplication tables, Read chapter 5..."
           required
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
         />
       </div>
 
@@ -198,7 +198,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
           placeholder="Additional details..."
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading resize-none"
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading resize-none"
         />
       </div>
 
@@ -214,7 +214,7 @@ export function ActivityLogForm({ kids, onSubmit }: ActivityLogFormProps) {
         <button
           type="submit"
           disabled={isSubmitting || !subject || !title}
-          className="px-6 py-2 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="px-6 py-2 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-[var(--foreground)] font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           {isSubmitting ? 'Saving...' : 'Log Activity'}
         </button>

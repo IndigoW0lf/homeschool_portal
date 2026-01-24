@@ -108,7 +108,7 @@ export function ContentLibrary({
                 className={cn(
                   "px-3 py-1 text-xs font-medium rounded-full transition-all capitalize",
                   filter === type
-                    ? "bg-[var(--celestial-500)] text-white shadow-md"
+                    ? "bg-[var(--celestial-500)] text-[var(--foreground)] shadow-md"
                     : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)] hover:text-[var(--foreground)]"
                 )}
               >

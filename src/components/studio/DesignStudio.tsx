@@ -288,7 +288,7 @@ export function DesignStudio({
           <button
             onClick={handleSave}
             disabled={isSaving || !designName.trim()}
-            className="flex items-center gap-2 px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
           >
             <FloppyDisk size={18} />
             {isSaving ? 'Saving...' : 'Save'}
@@ -304,7 +304,7 @@ export function DesignStudio({
             className={`
               px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
               ${view === 'create'
-                ? 'bg-white dark:bg-[var(--background-secondary)] shadow-sm text-heading'
+                ? 'bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] shadow-sm text-heading'
                 : 'text-muted hover:text-heading dark:hover:text-muted'
               }
             `}
@@ -317,7 +317,7 @@ export function DesignStudio({
             className={`
               px-6 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
               ${view === 'wardrobe'
-                ? 'bg-white dark:bg-[var(--background-secondary)] shadow-sm text-heading'
+                ? 'bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] shadow-sm text-heading'
                 : 'text-muted hover:text-heading dark:hover:text-muted'
               }
             `}
@@ -431,7 +431,7 @@ export function DesignStudio({
                         className={`
                           px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
                           ${isSelected
-                            ? 'bg-[var(--ember-500)] text-white shadow-sm'
+                            ? 'bg-[var(--ember-500)] text-[var(--foreground)] shadow-sm'
                             : 'bg-[var(--background-elevated)] text-heading dark:text-muted hover:bg-[var(--hover-overlay)] border border-[var(--border)]'
                           }
                         `}
@@ -449,7 +449,7 @@ export function DesignStudio({
             {/* Canvas Area */}
             <div className="md:col-span-2 relative">
               {showPreview && (
-                <div className="absolute inset-0 z-10 bg-white/95 dark:bg-[var(--night-900)]/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-[var(--border)] p-6">
+                <div className="absolute inset-0 z-10 bg-[var(--background-elevated)]/95 dark:bg-[var(--night-900)]/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-[var(--border)] p-6">
                   <div className="text-center flex flex-col items-center">
                     <div className="w-48 h-64 mb-4 rounded-xl overflow-hidden border border-[var(--border)] bg-gradient-to-b from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
                       <SyntyAvatarPreview 
@@ -463,7 +463,7 @@ export function DesignStudio({
                     </p>
                     <button 
                       onClick={() => setShowPreview(false)}
-                      className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors font-medium text-sm"
+                      className="mt-4 px-6 py-2 bg-[var(--celestial-500)] text-[var(--foreground)] rounded-lg hover:bg-[var(--celestial-600)] transition-colors font-medium text-sm"
                     >
                       Close Preview
                     </button>

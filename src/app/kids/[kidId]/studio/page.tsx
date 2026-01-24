@@ -48,7 +48,7 @@ export default async function StudioPage({ params }: StudioPageProps) {
     .order('created_at', { ascending: false });
 
   return (
-    <main className="min-h-screen bg-[var(--paper-50)] dark:bg-gray-900">
+    <main className="min-h-screen bg-[var(--paper-50)] dark:bg-[var(--background)]">
       <DesignStudio 
         kidId={kidId} 
         templates={templates}

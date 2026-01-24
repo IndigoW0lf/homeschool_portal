@@ -92,8 +92,8 @@ export function MiAcademyCard({ kidId, date, url, onDoneChange }: MiAcademyCardP
             flex-shrink-0 w-12 h-12 rounded-full border-2 flex items-center justify-center
             transition-all
             ${done
-              ? 'bg-green-500 border-green-600 dark:border-green-400 text-white'
-              : 'bg-white dark:bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:border-green-400 dark:hover:border-green-500 text-muted'}
+              ? 'bg-green-500 border-green-600 dark:border-green-400 text-[var(--foreground)]'
+              : 'bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:border-green-400 dark:hover:border-green-500 text-muted'}
           `}
           aria-label={done ? 'Mark as not done' : 'Mark as done'}
         >

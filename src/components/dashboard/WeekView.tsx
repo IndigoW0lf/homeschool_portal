@@ -60,7 +60,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
               className={cn(
                 "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
                 filterStudentId === null
-                  ? "bg-[var(--cosmic-rust-500)] text-white shadow-sm"
+                  ? "bg-[var(--cosmic-rust-500)] text-[var(--foreground)] shadow-sm"
                   : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)]"
               )}
             >
@@ -73,7 +73,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
                 className={cn(
                   "px-3 py-1.5 text-xs font-medium rounded-full transition-all flex items-center gap-1.5",
                   filterStudentId === s.id
-                    ? "bg-[var(--cosmic-rust-500)] text-white shadow-sm"
+                    ? "bg-[var(--cosmic-rust-500)] text-[var(--foreground)] shadow-sm"
                     : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)]"
                 )}
               >
@@ -118,7 +118,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
               <span className="text-xs font-medium text-muted uppercase mb-1">{format(day.date, 'EEE')}</span>
               <span className={cn(
                  "text-xl font-bold mb-3 flex items-center justify-center w-8 h-8 rounded-full",
-                 isToday ? "bg-[var(--cosmic-rust-500)] text-white shadow-md" : "text-heading"
+                 isToday ? "bg-[var(--cosmic-rust-500)] text-[var(--foreground)] shadow-md" : "text-heading"
               )}>
                 {format(day.date, 'd')}
               </span>

@@ -127,7 +127,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
               <button
                 type="submit"
                 disabled={isChangingEmail || !newEmail}
-                className="px-4 py-2 bg-[var(--cosmic-rust-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-[var(--cosmic-rust-500)] text-[var(--foreground)] text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {isChangingEmail ? 'Sending...' : 'Send Confirmation'}
               </button>
@@ -205,7 +205,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
               <button
                 type="submit"
                 disabled={isUpdatingPassword || !newPassword || !confirmPassword}
-                className="px-4 py-2 bg-[var(--cosmic-rust-500)] text-white text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-[var(--cosmic-rust-500)] text-[var(--foreground)] text-sm rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {isUpdatingPassword ? 'Updating...' : 'Update Password'}
               </button>

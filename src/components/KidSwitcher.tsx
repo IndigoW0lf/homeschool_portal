@@ -21,7 +21,7 @@ export function KidSwitcher({ kids }: KidSwitcherProps) {
           className={`
             relative overflow-hidden rounded-xl p-6 
             bg-gradient-to-br ${gradeBandColors[kid.gradeBand] || gradeBandColors.default}
-            text-white shadow-lg hover:shadow-xl transition-shadow
+            text-[var(--foreground)] shadow-lg hover:shadow-xl transition-shadow
             flex flex-col items-center justify-center h-[80px]
           `}
         >

@@ -54,11 +54,11 @@ export function IdeasList({ initialIdeas }: IdeasListProps) {
   if (ideas.length === 0) {
     return (
       <div className="text-center py-16">
-        <Lightbulb size={48} weight="duotone" className="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-        <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400 mb-2">
+        <Lightbulb size={48} weight="duotone" className="mx-auto mb-4 text-[var(--foreground-muted)] dark:text-muted" />
+        <h3 className="text-lg font-medium text-muted mb-2">
           No saved ideas yet
         </h3>
-        <p className="text-sm text-gray-400 dark:text-gray-500">
+        <p className="text-sm text-muted">
           When Luna shares a thought you like, click &quot;Save to my ideas&quot; to keep it here.
         </p>
       </div>
@@ -75,23 +75,23 @@ export function IdeasList({ initialIdeas }: IdeasListProps) {
           <div 
             key={idea.id}
             className={cn(
-              "bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden transition-all",
+              "bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] shadow-sm overflow-hidden transition-all",
               isDeleting && "opacity-50"
             )}
           >
             {/* Header - always visible */}
             <div 
-              className="flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+              className="flex items-center gap-3 p-4 cursor-pointer hover:bg-[var(--hover-overlay)]/50 transition-colors"
               onClick={() => setExpandedId(isExpanded ? null : idea.id)}
             >
               <div className="w-10 h-10 rounded-lg bg-[var(--fabric-lilac)]/10 flex items-center justify-center">
                 <Sparkle size={20} weight="duotone" className="text-[var(--fabric-lilac)]" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                <h3 className="font-semibold text-[var(--foreground)] truncate">
                   {idea.title}
                 </h3>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-muted">
                   Saved {formatDate(idea.created_at)}
                 </p>
               </div>
@@ -102,36 +102,36 @@ export function IdeasList({ initialIdeas }: IdeasListProps) {
                     handleDelete(idea.id);
                   }}
                   disabled={isDeleting}
-                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                  className="p-2 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                   title="Delete idea"
                 >
                   <Trash size={18} />
                 </button>
                 {isExpanded ? (
-                  <CaretUp size={18} className="text-gray-400" />
+                  <CaretUp size={18} className="text-muted" />
                 ) : (
-                  <CaretDown size={18} className="text-gray-400" />
+                  <CaretDown size={18} className="text-muted" />
                 )}
               </div>
             </div>
 
             {/* Expanded content */}
             {isExpanded && (
-              <div className="px-4 pb-4 pt-0 border-t border-gray-100 dark:border-gray-700">
+              <div className="px-4 pb-4 pt-0 border-t border-[var(--border)]">
                 {/* Show the original question for context */}
                 {idea.user_message && (
-                  <div className="pt-4 mb-4 pb-3 border-b border-gray-100 dark:border-gray-700">
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+                  <div className="pt-4 mb-4 pb-3 border-b border-[var(--border)]">
+                    <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1">
                       You asked
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                    <p className="text-sm text-muted italic">
                       "{idea.user_message}"
                     </p>
                   </div>
                 )}
                 <div className="pt-2 prose prose-sm dark:prose-invert max-w-none">
                   {idea.content.split('\n').map((line, i) => (
-                    <p key={i} className="mb-2 last:mb-0 text-gray-700 dark:text-gray-300">
+                    <p key={i} className="mb-2 last:mb-0 text-[var(--foreground)]">
                       {line}
                     </p>
                   ))}

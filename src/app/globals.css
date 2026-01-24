@@ -148,46 +148,25 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-glow: 0 0 20px rgba(212, 168, 83, 0.3);
-  
-  /* Legacy compatibility (phasing out) */
-  --paper-50: var(--moon-50);
-  --paper-100: var(--moon-100);
-  --ink-900: #2B2B2B;
-  --ink-700: #4A4A4A;
-  --brand-deep: var(--night-900);
-  --brand-dark: var(--night-800);
-  --brand-lilac: var(--nebula-purple);
-  --brand-coral: var(--cosmic-rust-500);
-  --brand-rose: var(--nebula-pink);
-  --brand-gold: var(--ember-gold-400);
-  --ember-500: var(--celestial-400);
-  --ember-600: var(--celestial-500);
-  --ember-400: var(--celestial-300);
-  --sky-400: var(--celestial-300);
-  --fabric-blue: #5E7FB8;
-  --fabric-green: var(--nebula-teal);
-  --fabric-gold: var(--ember-gold-400);
-  --fabric-rose: var(--nebula-pink);
-  --fabric-lilac: var(--nebula-purple);
 }
 
 /* Dark mode - THE PRIMARY FOCUS */
 html.dark,
 .dark {
-  /* MORE CONTRAST: deeper bg vs. warmer/lighter cards */
-  --background: #0D1117;                    /* Deeper dark for page (GitHub-style) */
-  --background-secondary: #161B22;          /* Slightly lighter secondary */
-  --background-elevated: #1C2430;           /* Cards - noticeably lighter with Slate tint */
-  --foreground: #F0ECE6;
+  /* WARM PALETTE BACKGROUNDS - Not just black! */
+  --background: #12110F;                    /* Deep warm dark (Mystic Ember undertone) */
+  --background-secondary: #1A1714;          /* Warm secondary with Cosmic Rust hint */
+  --background-elevated: #252119;           /* Cards - warm with Oak undertone */
+  --foreground: #e4d8c4;                    /* Candle Cream text */
   --foreground-muted: var(--slate-300);
   
   /* Border & Divider */
-  --border: var(--night-600);
-  --border-subtle: var(--night-700);
+  --border: #3D352A;                        /* Warm border with Mystic Ember */
+  --border-subtle: #2A241E;
   --border-accent: var(--celestial-400);    /* Teal accent borders */
-  --divider: var(--night-600);
+  --divider: #3D352A;
   
-  /* NEW: Palette Accent Colors for UI elements */
+  /* Palette Accent Colors for UI elements */
   --accent-primary: var(--celestial-400);   /* Celestial Teal - primary actions */
   --accent-secondary: var(--herbal-gold);   /* Herbal Gold - secondary accents */
   --accent-warm: var(--cosmic-rust-400);    /* Cosmic Rust - warm highlights */
@@ -200,17 +179,11 @@ html.dark,
   --btn-primary-hover: var(--cosmic-rust-400);
   --btn-secondary-bg: var(--celestial-400);    /* Celestial Teal secondary buttons */
   
-  /* Shadows in dark mode */
+  /* Shadows with warm glow */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px rgba(212, 168, 83, 0.4);
-  
-  /* Legacy compatibility */
-  --paper-50: var(--night-900);
-  --paper-100: var(--night-800);
-  --ink-900: #E5E5E5;
-  --ink-700: #B5B5B5;
+  --shadow-glow: 0 0 30px rgba(200, 168, 107, 0.3);  /* Herbal Gold glow */
 }
 
 /* =============================================================================
@@ -235,21 +208,22 @@ body {
   color: var(--foreground);
 }
 
-/* Dark mode: deep cosmic gradient with palette tints */
+/* Dark mode: WARM cosmic gradient with palette colors */
 .dark .bg-cosmic,
 html.dark .bg-cosmic {
-  /* Adds subtle Midnight Bloom and Celestial Teal undertones */
+  /* Warm palette gradient - Mystic Ember & Oak undertones */
   background: linear-gradient(135deg, 
-    #0D1117 0%, 
-    #111820 30%, 
-    rgba(110, 138, 138, 0.05) 60%,  /* Midnight Bloom hint */
-    #0D1117 100%
+    #12110F 0%,                            /* Warm deep dark */
+    #1A1510 30%,                           /* Oak undertone */
+    rgba(139, 90, 66, 0.08) 50%,           /* Mystic Ember hint */
+    rgba(110, 138, 138, 0.05) 70%,         /* Midnight Bloom hint */
+    #12110F 100%
   );
   background-attachment: fixed;
-  color: #F0ECE6;
+  color: var(--foreground);
 }
 
-/* Legacy magical background */
+/* Background with palette gradient (also for magical pages) */
 .bg-magical {
   background: linear-gradient(135deg, var(--moon-100) 0%, var(--moon-50) 100%);
   background-attachment: fixed;
@@ -258,8 +232,13 @@ html.dark .bg-cosmic {
 
 .dark .bg-magical,
 html.dark .bg-magical {
-  background: radial-gradient(circle at 50% 0%, var(--night-700) 0%, var(--night-900) 100%);
-  color: #F0ECE6;
+  /* Warm gradient with Mystic Ember & Cosmic Rust */
+  background: radial-gradient(ellipse at 30% 0%, 
+    rgba(139, 90, 66, 0.15) 0%,            /* Mystic Ember */
+    #12110F 50%,
+    #1A1510 100%
+  );
+  color: var(--foreground);
 }
 
 /* Starfield pattern overlay - only shows in dark mode */

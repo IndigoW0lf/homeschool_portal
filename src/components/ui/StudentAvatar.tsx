@@ -37,7 +37,7 @@ export function StudentAvatar({
         'border-2 border-[var(--border)] shadow-sm transition-transform hover:scale-105',
         sizeClasses[size],
         // Using celestial/midnight-bloom for avatar backgrounds
-        !avatarUrl && (color || 'bg-[var(--midnight-bloom)] text-white'),
+        !avatarUrl && (color || 'bg-[var(--midnight-bloom)] text-[var(--foreground)]'),
         className
       )}
     >

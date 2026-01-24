@@ -73,7 +73,7 @@ export function ActivityLogSection({ kids, initialEntries }: ActivityLogSectionP
     <div className="space-y-4">
       {/* Header with link to reports */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-heading dark:text-white flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
           <Book size={20} weight="duotone" className="text-[var(--ember-500)]" />
           Activity Log
         </h3>

@@ -19,10 +19,10 @@ export default function Error({ error, reset }: ErrorProps) {
       <div className="text-center max-w-md">
         <MagicWand size={80} weight="duotone" color="#caa2d8" className="mx-auto mb-4" />
         
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+        <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">
           Something mysterious happened...
         </h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">
+        <p className="text-muted mb-6">
           This page didn&apos;t load correctly. Let&apos;s try that again!
         </p>
         

@@ -69,7 +69,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
         {/* Header */}
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-br from-[#9c8fb8] to-[#E27D60] rounded-full flex items-center justify-center mx-auto mb-4">
-            <Sparkle size={32} weight="fill" className="text-white" />
+            <Sparkle size={32} weight="fill" className="text-[var(--foreground)]" />
           </div>
           <h2 className="text-2xl font-bold text-heading mb-2">
             Welcome to {familyName}!
@@ -92,7 +92,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="e.g., Mom, Dad, Alex..."
-              className="w-full px-4 py-3 border border-[var(--border)] dark:border-[var(--border)] rounded-xl bg-white dark:bg-[var(--background-secondary)] text-heading focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none text-lg"
+              className="w-full px-4 py-3 border border-[var(--border)] dark:border-[var(--border)] rounded-xl bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none text-lg"
               autoFocus
             />
           </div>
@@ -111,7 +111,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
                 className="w-12 h-12 rounded-lg cursor-pointer border-2 border-[var(--border)] dark:border-[var(--border)]"
               />
               <div 
-                className="flex-1 h-12 rounded-lg flex items-center justify-center text-white font-medium"
+                className="flex-1 h-12 rounded-lg flex items-center justify-center text-[var(--foreground)] font-medium"
                 style={{ backgroundColor: favoriteColor }}
               >
                 {displayName || 'Your name here'}
@@ -131,7 +131,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 py-3 px-4 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 py-3 px-4 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-[var(--foreground)] rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               'Saving...'

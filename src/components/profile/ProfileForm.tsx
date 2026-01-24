@@ -164,7 +164,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             height={96}
             className="rounded-full bg-[var(--background-secondary)] ring-4 ring-white dark:ring-gray-800 shadow-md group-hover:ring-[var(--ember-300)] transition-all"
           />
-          <span className="absolute bottom-0 right-0 bg-[var(--ember-500)] text-white text-xs px-2 py-1 rounded-full shadow-sm">
+          <span className="absolute bottom-0 right-0 bg-[var(--ember-500)] text-[var(--foreground)] text-xs px-2 py-1 rounded-full shadow-sm">
             Change
           </span>
         </button>
@@ -185,7 +185,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                   className={cn(
                     "px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
                     avatarCategory === cat.id
-                      ? "bg-[var(--ember-500)] text-white"
+                      ? "bg-[var(--ember-500)] text-[var(--foreground)]"
                       : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--moon-200)] dark:hover:bg-[var(--night-600)]"
                   )}
                 >
@@ -227,7 +227,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                         <Check 
                           size={14} 
                           weight="bold" 
-                          className="absolute -top-1 -right-1 text-white bg-[var(--ember-500)] rounded-full p-0.5"
+                          className="absolute -top-1 -right-1 text-[var(--foreground)] bg-[var(--ember-500)] rounded-full p-0.5"
                         />
                       )}
                     </button>
@@ -254,7 +254,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             placeholder="Your name"
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
           />
         </div>
 
@@ -270,7 +270,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             id="timezone"
             value={timezone}
             onChange={(e) => setTimezone(e.target.value)}
-            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
+            className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all"
           >
             {TIMEZONE_OPTIONS.map(tz => (
               <option key={tz.value} value={tz.value}>
@@ -294,7 +294,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             className="w-12 h-12 rounded-lg cursor-pointer border-2 border-[var(--border)] dark:border-[var(--border)]"
           />
           <div 
-            className="flex-1 h-12 rounded-lg flex items-center justify-center text-white font-medium"
+            className="flex-1 h-12 rounded-lg flex items-center justify-center text-[var(--foreground)] font-medium"
             style={{ backgroundColor: favoriteColor }}
           >
             {displayName || 'Preview'}
@@ -317,7 +317,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           value={teachingStyle}
           onChange={(e) => setTeachingStyle(e.target.value)}
           placeholder="e.g., We follow a Montessori approach with a focus on self-directed learning. My goal is to foster curiosity..."
-          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all resize-none"
+          className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none transition-all resize-none"
         />
         <p className="mt-1 text-xs text-muted">
           This helps our AI understand your preferences when suggesting lesson plans.
@@ -343,7 +343,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="px-6 py-2 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
+          className="px-6 py-2 bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
         >
           {isLoading ? 'Saving...' : 'Save Changes'}
         </button>

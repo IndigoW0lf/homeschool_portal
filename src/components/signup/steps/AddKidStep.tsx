@@ -132,7 +132,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
               onChange={(e) => updateData({ kidName: e.target.value })}
               placeholder="First Name"
               required
-              className="w-full px-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full px-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
           </div>
           <div>
@@ -146,7 +146,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Last Name"
               required
-              className="w-full px-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading dark:text-white focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
+              className="w-full px-3 py-2.5 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading dark:text-[var(--foreground)] focus:ring-2 focus:ring-[var(--ember-500)] focus:border-transparent outline-none"
             />
             <p className="text-[10px] text-muted mt-1">Needed for login (Initial only)</p>
           </div>
@@ -239,7 +239,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
                     <Check
                       size={14}
                       weight="bold"
-                      className="absolute -top-1 -right-1 text-white bg-[var(--ember-500)] rounded-full p-0.5"
+                      className="absolute -top-1 -right-1 text-[var(--foreground)] bg-[var(--ember-500)] rounded-full p-0.5"
                     />
                   )}
                 </button>
@@ -268,7 +268,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
         <button
           onClick={handleAddKid}
           disabled={!canContinue || isLoading}
-          className="flex-1 py-2.5 px-4 bg-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="flex-1 py-2.5 px-4 bg-[var(--ember-500)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {isLoading ? 'Adding...' : 'Add Kid & Continue'}
         </button>

@@ -33,7 +33,7 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
       {/* Welcome Header */}
       <div className="text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[var(--lavender-400)] to-[var(--ember-400)] mb-4">
-          <Sparkle size={32} weight="fill" className="text-white" />
+          <Sparkle size={32} weight="fill" className="text-[var(--foreground)]" />
         </div>
         <h2 className="text-2xl font-bold text-heading mb-2">
           Welcome to Lunara Quest!
@@ -111,7 +111,7 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
       <button
         onClick={onNext}
         disabled={!canContinue}
-        className="w-full py-3 px-4 bg-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        className="w-full py-3 px-4 bg-[var(--ember-500)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
       >
         Get Started
       </button>

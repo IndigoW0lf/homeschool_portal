@@ -133,17 +133,17 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
             <div className="flex items-center gap-3 flex-wrap">
               <div className={cn(
                 "p-2 rounded-lg",
-                isLesson ? "bg-blue-100" : "bg-purple-100"
+                isLesson ? "bg-[var(--celestial-400)]/20" : "bg-[var(--nebula-purple)]/20"
               )}>
                 {isLesson ? <BookOpen size={28} weight="duotone" color="#b6e1d8" /> : <Pencil size={28} weight="duotone" color="#caa2d8" />}
               </div>
               <span className={cn(
                 "text-xs font-bold uppercase tracking-wider px-2 py-1 rounded",
-                isLesson ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                isLesson ? "bg-[var(--celestial-400)]/20 text-[var(--celestial-500)]" : "bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
               )}>
                 {selectedItem.type}
               </span>
-              <span className="text-sm text-gray-500 flex items-center gap-1">
+              <span className="text-sm text-muted flex items-center gap-1">
                 <Clock size={18} weight="duotone" color="#e7b58d" />
                 {selectedItem.estimatedMinutes || 20} min
               </span>
@@ -154,7 +154,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
               <>
                 {lessonDetails.description && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                       What You'll Learn
                     </h4>
                     <MarkdownText content={lessonDetails.description} />
@@ -163,7 +163,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
 
                 {lessonDetails.keyQuestions.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                       Key Questions
                     </h4>
                     <ul className="space-y-2">
@@ -171,8 +171,8 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                         // Handle both string and object formats
                         const questionText = typeof q === 'string' ? q : (q as { text?: string })?.text || '';
                         return questionText ? (
-                          <li key={i} className="flex gap-2 text-gray-700 dark:text-gray-300">
-                            <Question size={18} weight="duotone" className="text-blue-500 flex-shrink-0 mt-0.5" />
+                          <li key={i} className="flex gap-2 text-[var(--foreground)]">
+                            <Question size={18} weight="duotone" className="text-[var(--celestial-500)] flex-shrink-0 mt-0.5" />
                             {questionText}
                           </li>
                         ) : null;
@@ -183,10 +183,10 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
 
                 {lessonDetails.materials && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
                       Materials Needed
                     </h4>
-                    <p className="text-gray-700 dark:text-gray-300">
+                    <p className="text-[var(--foreground)]">
                       {lessonDetails.materials}
                     </p>
                   </div>
@@ -195,7 +195,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                 {/* Links - clicking auto-marks as done */}
                 {lessonLinks.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-2">
                       <LinkIcon size={20} weight="duotone" color="#caa2d8" />
                       Resources & Links
                     </h4>
@@ -207,13 +207,13 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={handleLinkClick}
-                          className="flex items-center gap-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
+                          className="flex items-center gap-2 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)] hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
                         >
                           <LinkSimple size={18} weight="duotone" className="text-[var(--ember-500)]" />
-                          <span className="text-gray-700 dark:text-gray-300 flex-1 group-hover:text-[var(--ember-600)]">
+                          <span className="text-[var(--foreground)] flex-1 group-hover:text-[var(--ember-600)]">
                             {link.label || link.url}
                           </span>
-                          <span className="text-xs text-gray-400 flex items-center gap-1">
+                          <span className="text-xs text-muted flex items-center gap-1">
                             Opens link <Check size={12} weight="bold" />
                           </span>
                         </a>
@@ -229,12 +229,12 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
               <>
                 {/* Deliverable */}
                 {selectedItem.details.deliverable && (
-                  <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-2">
                       <FileText size={24} weight="duotone" color="#b6e1d8" />
                       What to Turn In
                     </h4>
-                    <p className="text-gray-700 dark:text-gray-300 font-medium">
+                    <p className="text-[var(--foreground)] font-medium">
                       {selectedItem.details.deliverable}
                     </p>
                   </div>
@@ -243,15 +243,15 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                 {/* Steps */}
                 {selectedItem.details.steps && selectedItem.details.steps.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3">
                       Steps to Complete
                     </h4>
                     <div className="space-y-2">
                       {selectedItem.details.steps.map((step, i) => (
                         step.text && (
-                          <div key={i} className="flex gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                          <div key={i} className="flex gap-3 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)]">
                             <span className="font-bold text-[var(--ember-500)] w-6 text-right">{i + 1}.</span>
-                            <p className="text-gray-700 dark:text-gray-300 flex-1">{step.text}</p>
+                            <p className="text-[var(--foreground)] flex-1">{step.text}</p>
                           </div>
                         )
                       ))}
@@ -262,15 +262,15 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                 {/* Rubric / Success Criteria */}
                 {selectedItem.details.rubric && selectedItem.details.rubric.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
                       <CheckSquare size={24} weight="duotone" color="#b6e1d8" />
                       Success Criteria
                     </h4>
                     <div className="space-y-2">
                       {selectedItem.details.rubric.map((item, i) => (
                         item.text && (
-                          <div key={i} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                            <div className="w-4 h-4 rounded border-2 border-gray-300 dark:border-gray-600" />
+                          <div key={i} className="flex items-center gap-2 text-[var(--foreground)]">
+                            <div className="w-4 h-4 rounded border-2 border-[var(--border)]" />
                             <span>{item.text}</span>
                           </div>
                         )
@@ -282,7 +282,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                 {/* Assignment Links */}
                 {selectedItem.details.links && selectedItem.details.links.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-2">
                       <LinkIcon size={20} weight="duotone" color="#caa2d8" />
                       Resources & Links
                     </h4>
@@ -294,13 +294,13 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={handleLinkClick}
-                          className="flex items-center gap-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
+                          className="flex items-center gap-2 p-3 bg-[var(--background-elevated)] rounded-lg border border-[var(--border)] hover:border-[var(--ember-300)] hover:bg-[var(--ember-50)] dark:hover:bg-[var(--ember-900)/20] transition-all group"
                         >
                           <LinkSimple size={18} weight="duotone" className="text-[var(--ember-500)]" />
-                          <span className="text-gray-700 dark:text-gray-300 flex-1 group-hover:text-[var(--ember-600)]">
+                          <span className="text-[var(--foreground)] flex-1 group-hover:text-[var(--ember-600)]">
                             {link.label || link.url}
                           </span>
-                          <span className="text-xs text-gray-400 flex items-center gap-1">
+                          <span className="text-xs text-muted flex items-center gap-1">
                             Go! <Check size={12} weight="bold" />
                           </span>
                         </a>
@@ -315,7 +315,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
             {!isLesson && selectedItem?.hasWorksheet && selectedItem?.assignmentId && (
               <Link
                 href={`/kids/${kidId}/worksheet/${selectedItem.assignmentId}`}
-                className="block w-full p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold text-center hover:opacity-90 transition-opacity shadow-lg"
+                className="block w-full p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-[var(--foreground)] rounded-xl font-bold text-center hover:opacity-90 transition-opacity shadow-lg"
               >
                 <div className="flex items-center justify-center gap-2">
                   <Notebook size={24} weight="duotone" />

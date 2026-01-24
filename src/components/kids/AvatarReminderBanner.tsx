@@ -57,10 +57,10 @@ export function AvatarReminderBanner({ kidId, hasAvatarState, kidName }: AvatarR
   }
 
   return (
-    <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-300 dark:border-purple-700 rounded-xl p-4 mb-6">
+    <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-[var(--nebula-purple)]/40 dark:border-[var(--nebula-purple)] rounded-xl p-4 mb-6">
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 mt-0.5">
-          <Sparkle size={24} weight="duotone" className="text-purple-600 dark:text-purple-400" />
+          <Sparkle size={24} weight="duotone" className="text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]" />
         </div>
         <div className="flex-1">
           <h3 className="font-semibold text-heading mb-1">
@@ -71,7 +71,7 @@ export function AvatarReminderBanner({ kidId, hasAvatarState, kidName }: AvatarR
           </p>
           <Link
             href={`/kids/${kidId}/avatar`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--nebula-purple)] transition-colors text-sm"
           >
             <Sparkle size={16} weight="fill" />
             Build Avatar

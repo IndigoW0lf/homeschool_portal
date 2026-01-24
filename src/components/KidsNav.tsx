@@ -103,12 +103,12 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
           <div className="flex items-center gap-3">
             <Link 
               href="/"
-              className="text-[var(--slate-400)] hover:text-white"
+              className="text-[var(--slate-400)] hover:text-[var(--foreground)]"
               aria-label="Back to Dashboard"
             >
               ← 
             </Link>
-            <span className="heading-md text-white">
+            <span className="heading-md text-[var(--foreground)]">
               Hello, {kidName}!
             </span>
           </div>
@@ -153,7 +153,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
                       color={active ? tab.color : undefined}
                       className={active ? '' : 'text-[var(--slate-400)]'}
                     />
-                    <span className={`font-medium ${active ? 'text-white' : 'text-[var(--slate-300)]'}`}>
+                    <span className={`font-medium ${active ? 'text-[var(--foreground)]' : 'text-[var(--slate-300)]'}`}>
                       {tab.label}
                     </span>
                   </Link>
@@ -173,25 +173,37 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
         )}
       </header>
 
-      {/* Desktop Sidebar */}
+      {/* Desktop Sidebar - Kid's color is more prominent */}
       <aside 
-        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col border-r border-[var(--night-600)] z-20 transition-colors bg-[var(--night-800)]"
+        className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 flex-col border-r z-20 transition-colors"
         style={{ 
           '--kid-accent': kidFavoriteColor,
+          backgroundColor: kidFavoriteColor 
+            ? `color-mix(in srgb, ${kidFavoriteColor} 20%, var(--night-800) 80%)` 
+            : 'var(--night-800)',
+          borderColor: kidFavoriteColor 
+            ? `color-mix(in srgb, ${kidFavoriteColor} 30%, var(--night-600) 70%)`
+            : 'var(--night-600)',
         } as React.CSSProperties}
       >
-        {/* Color Tint Overlay */}
+        {/* Gradient overlay using kid's color */}
         {kidFavoriteColor && (
           <div 
-            className="absolute inset-0 pointer-events-none opacity-10"
-            style={{ backgroundColor: 'var(--kid-accent)' }}
+            className="absolute inset-0 pointer-events-none"
+            style={{ 
+              background: `linear-gradient(180deg, 
+                color-mix(in srgb, ${kidFavoriteColor} 30%, transparent 70%) 0%, 
+                transparent 50%,
+                color-mix(in srgb, ${kidFavoriteColor} 15%, transparent 85%) 100%
+              )` 
+            }}
           />
         )}
         {/* Top Section */}
         <div className="flex flex-col items-center py-6 border-b border-[var(--night-600)] relative z-10">
           <Link 
             href="/"
-            className="mb-4 text-[var(--slate-400)] hover:text-white text-sm"
+            className="mb-4 text-[var(--slate-400)] hover:text-[var(--foreground)] text-sm"
             aria-label="Back to Dashboard"
           >
             ←
@@ -240,7 +252,7 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
                     color={active ? tab.color : undefined}
                     className={active ? '' : 'text-[var(--slate-400)] group-hover:text-[var(--slate-200)]'}
                   />
-                  <span className={`text-[10px] mt-1 font-medium ${active ? 'text-white' : 'text-[var(--slate-400)]'}`}>
+                  <span className={`text-[10px] mt-1 font-medium ${active ? 'text-[var(--foreground)]' : 'text-[var(--slate-400)]'}`}>
                     {tab.label}
                   </span>
                   {active && (

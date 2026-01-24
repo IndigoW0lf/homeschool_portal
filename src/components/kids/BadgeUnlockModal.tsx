@@ -46,7 +46,7 @@ export function BadgeUnlockModal({ badgeId, onClose }: BadgeUnlockModalProps) {
         {/* Close button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-purple-300 hover:text-white transition-colors"
+          className="absolute top-4 right-4 p-2 text-[var(--nebula-purple-light)] hover:text-[var(--foreground)] transition-colors"
         >
           <X size={20} />
         </button>
@@ -59,7 +59,7 @@ export function BadgeUnlockModal({ badgeId, onClose }: BadgeUnlockModalProps) {
           <Star size={16} weight="fill" className="text-yellow-300" />
         </div>
         <div className="absolute top-12 right-12 animate-pulse delay-300">
-          <Sparkle size={14} weight="fill" className="text-purple-300" />
+          <Sparkle size={14} weight="fill" className="text-[var(--nebula-purple-light)]" />
         </div>
         <div className="absolute bottom-12 left-8 animate-pulse delay-500">
           <Star size={12} weight="fill" className="text-pink-400" />
@@ -93,7 +93,7 @@ export function BadgeUnlockModal({ badgeId, onClose }: BadgeUnlockModalProps) {
         </div>
         
         {/* Badge Name */}
-        <h2 className="text-2xl font-bold text-white mb-2">
+        <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
           {badge.name}
         </h2>
         
@@ -103,7 +103,7 @@ export function BadgeUnlockModal({ badgeId, onClose }: BadgeUnlockModalProps) {
         </p>
         
         {/* Category tag */}
-        <div className="inline-block px-3 py-1 rounded-full bg-purple-800/50 text-purple-300 text-xs font-medium mb-6">
+        <div className="inline-block px-3 py-1 rounded-full bg-[var(--nebula-purple)]/50 text-[var(--nebula-purple-light)] text-xs font-medium mb-6">
           {badge.category === 'milestone' && '🏆 Milestone Achievement'}
           {badge.category === 'subject' && '📚 Subject Mastery'}
           {badge.category === 'special' && '🌟 Special Achievement'}
