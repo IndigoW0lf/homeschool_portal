@@ -66,6 +66,81 @@
   --nebula-purple-light: #D0C5E0;
   --nebula-peach: #F0C9A8;
   
+  /* Plum Scale - Rich purple-plum for mystical atmosphere */
+  --plum-950: #1A0F1A;
+  --plum-900: #251B25;
+  --plum-850: #2D1F2D;
+  --plum-800: #3A2838;
+  --plum-700: #4A3545;
+  --plum-600: #5C4355;
+  
+  /* =============================================================================
+     OMBRÉ SURFACES — Plum → Teal (Moonlit Hearth)
+     Use: large surfaces only (page/hero/sidebar/quest panels)
+     ============================================================================= */
+
+  /* Subtle page wash (works in light mode too) */
+  --surface-wash: radial-gradient(
+    ellipse at 20% 10%,
+    rgba(91, 155, 158, 0.10) 0%,
+    transparent 55%
+  ),
+  radial-gradient(
+    ellipse at 80% 90%,
+    rgba(168, 150, 200, 0.10) 0%,
+    transparent 55%
+  ),
+  linear-gradient(
+    135deg,
+    var(--moon-50) 0%,
+    var(--moon-100) 60%,
+    var(--moon-200) 100%
+  );
+
+  /* Dark hero / header: plum core with teal lift */
+  --surface-hero: radial-gradient(
+    ellipse at 25% 0%,
+    rgba(91, 155, 158, 0.22) 0%,
+    transparent 55%
+  ),
+  radial-gradient(
+    ellipse at 80% 80%,
+    rgba(168, 150, 200, 0.18) 0%,
+    transparent 60%
+  ),
+  linear-gradient(
+    135deg,
+    var(--plum-950) 0%,
+    var(--plum-850) 45%,
+    rgba(91, 155, 158, 0.14) 100%
+  );
+
+  /* Dark "quest panel": a touch warmer but still plum→teal */
+  --surface-quest: radial-gradient(
+    ellipse at 30% 10%,
+    rgba(184, 106, 75, 0.14) 0%,
+    transparent 55%
+  ),
+  radial-gradient(
+    ellipse at 75% 85%,
+    rgba(91, 155, 158, 0.18) 0%,
+    transparent 60%
+  ),
+  linear-gradient(
+    135deg,
+    var(--plum-900) 0%,
+    var(--plum-800) 55%,
+    rgba(91, 155, 158, 0.12) 100%
+  );
+
+  /* Rewards: warm gold shimmer (use for streaks/level ups) */
+  --surface-reward: linear-gradient(
+    90deg,
+    rgba(200, 168, 107, 0.30) 0%,
+    rgba(212, 168, 83, 0.30) 50%,
+    rgba(225, 200, 127, 0.30) 100%
+  );
+  
   /* Slate - Neutral tones (from Cosmic Wilderness) */
   --slate-100: #E8EAED;
   --slate-200: #D1D5DB;
@@ -203,43 +278,29 @@ body {
    ============================================================================= */
 
 /* Cosmic gradient background for immersive pages */
-/* Light mode: warm moon/beige gradient */
 .bg-cosmic {
-  background: linear-gradient(135deg, var(--moon-50) 0%, var(--moon-100) 50%, var(--moon-200) 100%);
+  background: var(--surface-wash);
   background-attachment: fixed;
   color: var(--foreground);
 }
 
-/* Dark mode: WARM cosmic gradient with palette colors */
 .dark .bg-cosmic,
 html.dark .bg-cosmic {
-  /* Warm palette gradient - Mystic Ember & Oak undertones */
-  background: linear-gradient(135deg, 
-    #12110F 0%,                            /* Warm deep dark */
-    #1A1510 30%,                           /* Oak undertone */
-    rgba(139, 90, 66, 0.08) 50%,           /* Mystic Ember hint */
-    rgba(110, 138, 138, 0.05) 70%,         /* Midnight Bloom hint */
-    #12110F 100%
-  );
+  background: var(--surface-hero);
   background-attachment: fixed;
   color: var(--foreground);
 }
 
 /* Background with palette gradient (also for magical pages) */
 .bg-magical {
-  background: linear-gradient(135deg, var(--moon-100) 0%, var(--moon-50) 100%);
+  background: var(--surface-wash);
   background-attachment: fixed;
   color: var(--foreground);
 }
 
 .dark .bg-magical,
 html.dark .bg-magical {
-  /* Warm gradient with Mystic Ember & Cosmic Rust */
-  background: radial-gradient(ellipse at 30% 0%, 
-    rgba(139, 90, 66, 0.15) 0%,            /* Mystic Ember */
-    #12110F 50%,
-    #1A1510 100%
-  );
+  background: var(--surface-quest);
   color: var(--foreground);
 }
 
@@ -350,7 +411,9 @@ html.dark .bg-starfield::before {
 }
 
 .glow-celestial {
-  box-shadow: 0 0 20px rgba(91, 155, 158, 0.4);
+  box-shadow:
+    0 0 18px rgba(91, 155, 158, 0.28),
+    0 0 42px rgba(91, 155, 158, 0.12);
 }
 
 .glow-nebula {
