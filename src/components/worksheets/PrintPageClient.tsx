@@ -9,11 +9,12 @@ interface PrintPageClientProps {
 
 export function PrintPageClient({ data }: PrintPageClientProps) {
   return (
-    <div className="bg-[var(--background-elevated)] min-h-screen">
+    <div className="bg-[var(--background-elevated)] min-h-screen print:bg-white print:text-black">
        <style jsx global>{`
         @media print {
           @page { margin: 0.5in; }
-          body { -webkit-print-color-adjust: exact; }
+          body { background: white !important; color: black !important; }
+          * { background: transparent !important; color: black !important; }
           .no-print { display: none !important; }
         }
       `}</style>

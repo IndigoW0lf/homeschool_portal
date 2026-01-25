@@ -261,19 +261,19 @@
 /* Dark mode - THE PRIMARY FOCUS */
 html.dark,
 .dark {
-  /* BEAUTIFUL PURPLE-PLUM BACKGROUNDS */
+  /* BEAUTIFUL PURPLE-PLUM BACKGROUNDS - Softened for better contrast */
   --background: #12110F;                    /* Deep warm dark page bg */
-  --background-secondary: #1A1714;          /* Secondary sections */
-  --background-elevated: #2D1F2D;           /* Modals/Cards - Rich purple-plum! */
-  --background-sidebar: #251B25;            /* Sidebar - Deep plum */
+  --background-secondary: #1C1918;          /* Secondary sections - lighter */
+  --background-elevated: #2A2228;           /* Modals/Cards - Softer plum */
+  --background-sidebar: #221E22;            /* Sidebar - Softer plum */
   --foreground: #e4d8c4;                    /* Candle Cream text */
   --foreground-muted: var(--slate-300);
   
-  /* Border & Divider */
-  --border: #4A3545;                        /* Purple-tinted border */
-  --border-subtle: #3A2838;
+  /* Border & Divider - Softened */
+  --border: #3E3039;                        /* Softer purple-tinted border */
+  --border-subtle: #322A30;
   --border-accent: var(--celestial-400);    /* Teal accent borders */
-  --divider: #4A3545;
+  --divider: #3E3039;
   
   /* Palette Accent Colors for UI elements */
   --accent-primary: var(--celestial-400);   /* Celestial Teal - primary actions */

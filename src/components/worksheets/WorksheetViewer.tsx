@@ -43,9 +43,9 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
   };
 
   return (
-    <div className={cn("max-w-4xl mx-auto bg-[var(--background-elevated)] p-8 print:p-0 min-h-screen", className)}>
+    <div className={cn("max-w-4xl mx-auto bg-[var(--background-elevated)] p-8 print:p-0 min-h-screen print:bg-white print:text-black", className)}>
       {/* Header */}
-      <div className="border-b-2 border-[var(--night-900)] pb-4 mb-8">
+      <div className="border-b-2 border-[var(--night-900)] print:border-black pb-4 mb-8">
         <EditableText
           value={data.title}
           editable={editable}
@@ -61,7 +61,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
 
       {/* Instructions */}
       {(data.instructions || editable) && (
-        <div className="mb-8 p-4 bg-[var(--background-secondary)] rounded-lg print:border print:border-[var(--border)] print:bg-[var(--background-elevated)]">
+        <div className="mb-8 p-4 bg-[var(--background-secondary)] rounded-lg print:border print:border-black print:bg-white">
           <h3 className="font-bold text-heading mb-1 uppercase tracking-wider text-xs">Instructions:</h3>
           <EditableText
             value={data.instructions || ''}
@@ -82,7 +82,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
                 value={section.title || ''}
                 editable={editable}
                 onChange={(title) => updateSection(sIdx, { title })}
-                className="text-xl font-bold text-heading border-b border-[var(--border)] pb-2 mb-4"
+                className="text-xl font-bold text-heading border-b border-[var(--border)] print:border-black pb-2 mb-4"
                 placeholder="Section Title"
               />
             )}
@@ -105,7 +105,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
       </div>
       
       {/* Footer / Branding */}
-      <div className="mt-16 pt-4 border-t border-[var(--border)] text-center text-xs text-muted print:fixed print:bottom-4 print:left-0 print:w-full">
+      <div className="mt-16 pt-4 border-t border-[var(--border)] print:border-black text-center text-xs text-muted print:text-black print:fixed print:bottom-4 print:left-0 print:w-full">
         Created with Lunara Quest
       </div>
     </div>
@@ -237,7 +237,7 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
             {item.options.map((opt, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full border-2 border-[var(--border)] flex-shrink-0"></div>
+                <div className="w-6 h-6 rounded-full border-2 border-[var(--border)] print:border-black flex-shrink-0"></div>
                 <EditableText
                   value={opt}
                   editable={editable}
@@ -251,23 +251,23 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
 
         {item.type === 'text' && (
           <div 
-            className="w-full mt-2 border-b border-[var(--border)]" 
+            className="w-full mt-2 border-b border-[var(--border)] print:border-black" 
             style={{ height: `${(item.space_lines || 3) * 2}rem` }}
           >
             {/* Visual lines for writing */}
             {Array.from({ length: item.space_lines || 3 }).map((_, i) => (
-              <div key={i} className="border-b border-[var(--border)] h-8 w-full"></div>
+              <div key={i} className="border-b border-[var(--border)] print:border-black h-8 w-full"></div>
             ))}
           </div>
         )}
 
         {item.type === 'fill_in_blank' && (
           <div 
-            className="w-full mt-2 border-b border-[var(--border)]" 
+            className="w-full mt-2 border-b border-[var(--border)] print:border-black" 
             style={{ height: `${(item.space_lines || 2) * 2}rem` }}
           >
             {Array.from({ length: item.space_lines || 2 }).map((_, i) => (
-              <div key={i} className="border-b border-[var(--border)] h-8 w-full"></div>
+              <div key={i} className="border-b border-[var(--border)] print:border-black h-8 w-full"></div>
             ))}
           </div>
         )}
