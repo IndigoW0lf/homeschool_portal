@@ -36,8 +36,10 @@ export function StudentAvatar({
         'relative rounded-full flex items-center justify-center font-bold overflow-hidden',
         'border-2 border-[var(--border)] shadow-sm transition-transform hover:scale-105',
         sizeClasses[size],
-        // Using celestial/midnight-bloom for avatar backgrounds
-        !avatarUrl && (color || 'bg-[var(--midnight-bloom)] text-[var(--foreground)]'),
+        // Using celestial/midnight-bloom for avatar backgrounds with darker text
+        !avatarUrl && (color || 'bg-[var(--midnight-bloom)] text-[var(--foreground)] dark:text-[var(--foreground)]'),
+        // Light mode: use darker text for better contrast on light backgrounds
+        !avatarUrl && !color && 'text-[#5A5A5A] dark:text-[var(--foreground)]',
         className
       )}
     >

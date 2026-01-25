@@ -44,7 +44,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
   });
 
   return (
-    <div className="card overflow-hidden">
+    <div className="card overflow-hidden pb-4">
       {/* Header */}
       <div className="card-header">
         <h2 className="heading-sm flex items-center gap-2">

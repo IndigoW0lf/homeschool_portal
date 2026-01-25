@@ -226,7 +226,7 @@
   /* Light Mode Semantic Mappings */
   --background: var(--moon-50);           /* Warm cream page background */
   --background-secondary: var(--moon-100); /* Secondary sections */
-  --background-elevated: #FDFCFA;          /* Cards - warm but not pure white */
+  --background-elevated: #F9F8F6;          /* Cards - softer off-white instead of #FDFCFA */
   --background-sidebar: var(--moon-100);   /* Sidebar in light mode */
   --foreground: #2B2B2B;
   --foreground-muted: var(--slate-400);    /* Use Slate for muted text */

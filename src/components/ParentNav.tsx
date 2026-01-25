@@ -116,7 +116,7 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
                       "flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-all",
                       isActive 
                         ? "bg-[var(--night-600)] text-[var(--foreground)]" 
-                        : "text-[var(--slate-300)] hover:text-[var(--foreground)] hover:bg-[var(--night-700)]"
+                        : "text-[var(--foreground-muted)] dark:text-[var(--slate-300)] hover:text-[var(--foreground)] hover:bg-[var(--night-700)]"
                     )}
                   >
                     <AvatarPreview 
