@@ -15,6 +15,7 @@ import { assignItemToSchedule } from '@/lib/supabase/mutations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
+import { CurriculumTopicSelector } from './CurriculumTopicSelector';
 
 const LESSON_TYPES = [
   // Academic
@@ -387,6 +388,44 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
             )}
           </button>
         </div>
+      )}
+
+      {/* Import from Curriculum - shown when creating new lesson */}
+      {!initialData?.id && (
+        <CurriculumTopicSelector
+          kidId={assignedTo?.[0]}
+          onSelectTopic={(topic) => {
+            // Pre-fill form with topic info
+            setValue('title', `${topic.topic} Practice`);
+            
+            // Map subject to lesson type
+            const subjectToType: Record<string, string> = {
+              'Math': 'Math',
+              'Reading': 'Language Arts',
+              'Science': 'Science',
+              'Writing': 'Language Arts',
+              'History': 'History',
+              'Social Studies': 'History',
+              'U.S. Government': 'History',
+            };
+            const lessonType = subjectToType[topic.subject] || topic.subject;
+            if (LESSON_TYPES.includes(lessonType)) {
+              setValue('type', lessonType as typeof LESSON_TYPES[number]);
+            }
+            
+            // Add context in parent notes
+            const scoreNote = topic.latestScore !== null 
+              ? `Previous score: ${topic.latestScore}% (${topic.masteryStatus})` 
+              : '';
+            setValue('parentNotes', `Extra practice for ${topic.topic} from ${topic.course}. ${scoreNote}`.trim());
+            
+            // Add suggested key question
+            setValue('keyQuestions', [
+              { text: `What do you remember about ${topic.topic}?` },
+              { text: '' },
+            ]);
+          }}
+        />
       )}
 
       {/* 1. CORE INFO */}
