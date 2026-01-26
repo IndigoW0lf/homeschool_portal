@@ -149,6 +149,40 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     setStep('parsing');
     setSelectedRows(new Set());
 
+    // Check if it's a PDF - use server-side extraction
+    if (file.name.toLowerCase().endsWith('.pdf')) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch('/api/parse-pdf', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to extract PDF text');
+        }
+        
+        const { text } = await response.json();
+        setRawText(text);
+        
+        if (useAI) {
+          await parseWithAI(text);
+        } else {
+          const rows = parseCSVManual(text);
+          setParsedData(rows);
+        }
+        setStep('preview');
+      } catch (err) {
+        console.error('PDF extraction error:', err);
+        toast.error('Could not read PDF. Try copying the text and pasting instead.');
+        setStep('upload');
+      }
+      return;
+    }
+
+    // For non-PDF files, use FileReader
     const reader = new FileReader();
     reader.onload = async (event) => {
       const text = event.target?.result as string;
@@ -391,7 +425,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                     Browse Files
                     <input
                       type="file"
-                      accept=".csv,.tsv,.txt"
+                      accept=".csv,.tsv,.txt,.pdf"
                       onChange={handleFileSelect}
                       className="hidden"
                     />

@@ -39,9 +39,99 @@ Output ONLY valid JSON: { "categories": [ { "subject": "...", "itemType": "..." 
 The output array MUST have the same length as the input array, in the same order.`;
 
 /**
+ * Check if text looks like MiAcademy PDF report format
+ * Example lines:
+ * "1/22/2026 Subtract Decimals 1 | Practice: Levels 7 - 9"
+ * "1/21/2026 Add Decimals 1 | Assessment: Quiz Assessment 100%"
+ */
+function isMiAcademyReportFormat(rawText: string): boolean {
+  const lines = rawText.split('\n');
+  // Check if we have lines starting with dates in MM/DD/YYYY format followed by text
+  const reportLines = lines.filter(l => 
+    /^\d{1,2}\/\d{1,2}\/\d{4}\s+\w+/.test(l.trim())
+  );
+  // If more than 3 lines match this pattern, it's likely PDF report format
+  return reportLines.length > 3;
+}
+
+/**
+ * Parse MiAcademy PDF report format (not CSV!)
+ * Format: "DATE TOPIC_NAME | ACTIVITY_TYPE: DESCRIPTION SCORE%"
+ */
+function parseMiAcademyReport(rawText: string): ManuallyParsedRow[] {
+  const lines = rawText.split('\n');
+  const rows: ManuallyParsedRow[] = [];
+  
+  // Track current course (subject section from headers like "Math: Level E")
+  let currentCourse = 'Unknown Course';
+  
+  // Patterns to identify course headers
+  const courseHeaderPatterns = [
+    /^Math:?\s*/i,
+    /^Reading\s*Comprehension/i,
+    /^Survivor'?s?\s*Quest/i,
+    /^Science/i,
+    /^Writing/i,
+    /^History/i,
+    /^U\.?S\.?\s*Government/i,
+    /^Social\s*Studies/i,
+    /^Language\s*Arts/i,
+  ];
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    
+    // Check if this is a course header line
+    for (const pattern of courseHeaderPatterns) {
+      if (pattern.test(trimmed)) {
+        // Extract course name (everything before Study Time or newline)
+        currentCourse = trimmed.split(/Course Study Time|Overall Grade/i)[0].trim();
+        break;
+      }
+    }
+    
+    // Try to parse data row: "DATE TASK_NAME | ACTIVITY: DESCRIPTION SCORE%"
+    // Pattern: date at start, followed by task info
+    const dateMatch = trimmed.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s+(.+)$/);
+    if (dateMatch) {
+      const dateStr = dateMatch[1];
+      const restOfLine = dateMatch[2];
+      
+      // Parse the rest: "Topic Name | Activity: Description Score%"
+      const taskName = restOfLine.trim();
+      
+      // Extract score if present (e.g., "100%", "85%")
+      const scoreMatch = taskName.match(/(\d+)%\s*$/);
+      const score = scoreMatch ? parseInt(scoreMatch[1], 10) : null;
+      
+      // Parse date
+      const date = parseDate(dateStr);
+      if (date && taskName) {
+        rows.push({
+          taskName: taskName,
+          course: currentCourse,
+          date: date,
+          score: score,
+        });
+      }
+    }
+  }
+  
+  return rows;
+}
+
+/**
  * Parse CSV manually - extract basic fields without AI
  */
 function parseCSVManually(rawText: string): ManuallyParsedRow[] {
+  // First check if this is MiAcademy PDF report format
+  if (isMiAcademyReportFormat(rawText)) {
+    console.log('Detected MiAcademy PDF report format, using specialized parser');
+    return parseMiAcademyReport(rawText);
+  }
+  
+  // Otherwise, use CSV parsing
   const lines = rawText.trim().split('\n');
   const rows: ManuallyParsedRow[] = [];
 
