@@ -55,6 +55,7 @@ interface FormData {
   assignTo: string[];
   scheduleDate: string;
   generateWorksheet: boolean;
+  searchYouTube: boolean;
 }
 
 export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
@@ -75,6 +76,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
     assignTo: kids.map(k => k.id),
     scheduleDate: new Date().toISOString().split('T')[0],
     generateWorksheet: false,
+    searchYouTube: false,
   });
 
   const updateForm = (updates: Partial<FormData>) => {
@@ -198,7 +200,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         assignTo: form.assignTo,
         scheduleDate: form.scheduleDate,
         generateWorksheet: form.generateWorksheet,
-        searchYouTube: true,  // Enable YouTube video search
+        searchYouTube: form.searchYouTube,
       };
       
       const res = await fetch('/api/activities', {
@@ -327,7 +329,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             ) : (
               <>
                 <MagicWand size={18} weight="fill" />
-                <span>Generate with AI</span>
+                <span>Generate</span>
               </>
             )}
           </button>
@@ -514,25 +516,47 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
           </div>
         </div>
 
-        {/* AI Worksheet Toggle - only show for lessons/assignments */}
+        {/* Additional Enrichment - show for lessons/assignments */}
         {form.activityType !== 'worksheet' && (
-          <label className="flex items-center gap-3 p-4 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-xl cursor-pointer border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/20 dark:hover:bg-[var(--nebula-purple)]/20 transition-colors">
-            <input
-              type="checkbox"
-              checked={form.generateWorksheet}
-              onChange={e => updateForm({ generateWorksheet: e.target.checked })}
-              className="w-5 h-5 rounded border-[var(--nebula-purple)]/40 text-[var(--nebula-purple)] focus:ring-purple-500"
-            />
-            <div className="flex-1">
-              <span className="font-medium text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] flex items-center gap-2">
-                <Sparkle size={18} weight="fill" className="text-[var(--nebula-purple)]" />
-                Auto-generate worksheet
-              </span>
-              <p className="text-xs text-[var(--nebula-purple)]/70 dark:text-[var(--nebula-purple)]/70 mt-0.5">
-                AI will create practice questions based on this activity
-              </p>
-            </div>
-          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Auto-generate worksheet */}
+            <label className="flex items-center gap-3 p-4 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-xl cursor-pointer border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/20 dark:hover:bg-[var(--nebula-purple)]/20 transition-colors">
+              <input
+                type="checkbox"
+                checked={form.generateWorksheet}
+                onChange={e => updateForm({ generateWorksheet: e.target.checked })}
+                className="w-5 h-5 rounded border-[var(--nebula-purple)]/40 text-[var(--nebula-purple)] focus:ring-purple-500"
+              />
+              <div className="flex-1">
+                <span className="font-medium text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] flex items-center gap-2">
+                  <Sparkle size={18} weight="fill" className="text-[var(--nebula-purple)]" />
+                  Generate worksheet
+                </span>
+                <p className="text-xs text-[var(--nebula-purple)]/70 dark:text-[var(--nebula-purple)]/70 mt-0.5">
+                  AI creates practice questions
+                </p>
+              </div>
+            </label>
+
+            {/* Find YouTube videos */}
+            <label className="flex items-center gap-3 p-4 bg-red-500/10 dark:bg-red-500/15 rounded-xl cursor-pointer border border-red-500/30 dark:border-red-500/50 hover:bg-red-500/20 dark:hover:bg-red-500/20 transition-colors">
+              <input
+                type="checkbox"
+                checked={form.searchYouTube}
+                onChange={e => updateForm({ searchYouTube: e.target.checked })}
+                className="w-5 h-5 rounded border-red-500/40 text-red-500 focus:ring-red-500"
+              />
+              <div className="flex-1">
+                <span className="font-medium text-red-600 dark:text-red-400 flex items-center gap-2">
+                  <LinkIcon size={18} weight="bold" className="text-red-500" />
+                  Find YouTube videos
+                </span>
+                <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-0.5">
+                  AI searches for relevant videos
+                </p>
+              </div>
+            </label>
+          </div>
         )}
 
         {/* Footer */}

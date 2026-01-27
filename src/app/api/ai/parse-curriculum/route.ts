@@ -57,64 +57,102 @@ function isMiAcademyReportFormat(rawText: string): boolean {
 /**
  * Parse MiAcademy PDF report format (not CSV!)
  * Format: "DATE TOPIC_NAME | ACTIVITY_TYPE: DESCRIPTION SCORE%"
+ * 
+ * The PDF extraction can produce messy text - this parser handles:
+ * - Course headers like "Math: Level E (Edition 1)"
+ * - Data rows like "1/22/2026 Topic Name | Practice: Level 1"
+ * - Concatenated dates from PDF column extraction issues
  */
 function parseMiAcademyReport(rawText: string): ManuallyParsedRow[] {
   const lines = rawText.split('\n');
   const rows: ManuallyParsedRow[] = [];
   
-  // Track current course (subject section from headers like "Math: Level E")
+  // Track current course (from section headers)
   let currentCourse = 'Unknown Course';
   
-  // Patterns to identify course headers
-  const courseHeaderPatterns = [
-    /^Math:?\s*/i,
-    /^Reading\s*Comprehension/i,
-    /^Survivor'?s?\s*Quest/i,
-    /^Science/i,
-    /^Writing/i,
-    /^History/i,
-    /^U\.?S\.?\s*Government/i,
-    /^Social\s*Studies/i,
-    /^Language\s*Arts/i,
+  // Course header patterns - these indicate a new subject section
+  // The pattern matches the start of a line and captures the course name
+  const courseHeaderPatterns: [RegExp, string][] = [
+    [/^Math:?\s*(Level\s*\w+)?/i, 'Math'],
+    [/^Reading\s*Comprehension/i, 'Reading'],
+    [/^Survivor'?s?\s*Quest/i, 'Survivor\'s Quest'],  // Its own course, not Reading
+    [/^Science/i, 'Science'],
+    [/^Writing/i, 'Writing'],
+    [/^History/i, 'History'],
+    [/^U\.?S\.?\s*Government/i, 'U.S. Government'],
+    [/^Social\s*Studies/i, 'Social Studies'],
+    [/^Language\s*Arts/i, 'Language Arts'],
+    [/^Art\b/i, 'Art'],
+    [/^Music/i, 'Music'],
+    [/^Logic/i, 'Logic'],
+    [/^Beliefs/i, 'Social-Emotional'],
+    [/^Self-?Management/i, 'Social-Emotional'],
+    [/^Growth\s*Mindset/i, 'Social-Emotional'],
+    [/^Critical\s*Thinking/i, 'Logic'],
   ];
   
   for (const line of lines) {
     const trimmed = line.trim();
-    if (!trimmed) continue;
+    if (!trimmed || trimmed.length < 3) continue;
+    
+    // Skip page numbers, headers, disclaimers
+    if (/^Student Skill Assessments/i.test(trimmed)) continue;
+    if (/^Report Card/i.test(trimmed)) continue;
+    if (/^Progress$/i.test(trimmed)) continue;
+    if (/^Date\s+Name\s+Score$/i.test(trimmed)) continue;
+    if (/^\d+$/.test(trimmed)) continue; // Just a page number
     
     // Check if this is a course header line
-    for (const pattern of courseHeaderPatterns) {
+    let matchedCourse = false;
+    for (const [pattern, courseName] of courseHeaderPatterns) {
       if (pattern.test(trimmed)) {
-        // Extract course name (everything before Study Time or newline)
-        currentCourse = trimmed.split(/Course Study Time|Overall Grade/i)[0].trim();
+        // Get the full course name from the line (e.g., "Math: Level E (Edition 1)")
+        const fullName = trimmed.split(/Course Study Time|Overall Grade/i)[0].trim();
+        currentCourse = fullName || courseName;
+        matchedCourse = true;
         break;
       }
     }
+    if (matchedCourse) continue;
     
-    // Try to parse data row: "DATE TASK_NAME | ACTIVITY: DESCRIPTION SCORE%"
-    // Pattern: date at start, followed by task info
-    const dateMatch = trimmed.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s+(.+)$/);
-    if (dateMatch) {
-      const dateStr = dateMatch[1];
-      const restOfLine = dateMatch[2];
+    // Skip lines that look like grade summaries
+    if (/^Grade for Selected|^Overall Grade|^Course Study Time/i.test(trimmed)) continue;
+    
+    // Try to parse data row: starts with a single date, then task info
+    // Pattern: MM/DD/YYYY followed by actual content (not another date)
+    const singleDateMatch = trimmed.match(/^(\d{1,2}\/\d{1,2}\/\d{4})\s+([A-Za-z].*)$/);
+    
+    if (singleDateMatch) {
+      const dateStr = singleDateMatch[1];
+      let restOfLine = singleDateMatch[2].trim();
       
-      // Parse the rest: "Topic Name | Activity: Description Score%"
-      const taskName = restOfLine.trim();
+      // Check if this is just more dates concatenated (PDF extraction issue)
+      // If the "content" starts with another date, skip this row
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(restOfLine)) {
+        continue; // Skip rows that are just concatenated dates
+      }
+      
+      // Check that we have a real task name (not just a date fragment)
+      if (restOfLine.length < 5) continue;
       
       // Extract score if present (e.g., "100%", "85%")
-      const scoreMatch = taskName.match(/(\d+)%\s*$/);
+      const scoreMatch = restOfLine.match(/(\d+)%\s*$/);
       const score = scoreMatch ? parseInt(scoreMatch[1], 10) : null;
       
       // Parse date
       const date = parseDate(dateStr);
-      if (date && taskName) {
+      if (date && restOfLine) {
         rows.push({
-          taskName: taskName,
+          taskName: restOfLine,
           course: currentCourse,
           date: date,
           score: score,
         });
       }
+    }
+    // Also check for lines that are JUST multiple concatenated dates - skip those
+    else if (/^\d{1,2}\/\d{1,2}\/\d{4}(\s+\d{1,2}\/\d{1,2}\/\d{4})+/.test(trimmed)) {
+      continue; // This is a line of just dates with no content
     }
   }
   
