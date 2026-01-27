@@ -3,16 +3,15 @@ import { getKidsFromDB } from '@/lib/supabase/data';
 import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity, getLifeSkillsCounts, getActivityLogStats, getUnifiedActivities } from '@/lib/supabase/progressData';
 import { getExternalCurriculumStats } from '@/app/actions/import';
 import { getWorksheetResponsesForKids } from '@/lib/supabase/worksheetData';
-import { ParentProgressStats } from '@/components/profile/ParentProgressStats';
 import { ImportButton } from '@/components/dashboard/ImportButton';
-import { SubjectDonut } from '@/components/dashboard/SubjectDonut';
 import { ExternalCurriculumList } from '@/components/dashboard/ExternalCurriculumList';
 import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetResponseViewer';
 import { LifeSkillsChart } from '@/components/dashboard/LifeSkillsChart';
 import { redirect } from 'next/navigation';
 import { ChartLineUp, GraduationCap, Notebook, Brain, Book } from '@phosphor-icons/react/dist/ssr';
-import { KidProgressSection, UnifiedActivityList, PrintLogGenerator } from '@/components/progress';
+import { KidProgressSection, UnifiedActivityList, PrintLogGenerator, SubjectOverview, SubjectMasteryBadges, ActivityChart } from '@/components/progress';
 import { ActivityLogWrapper } from '@/components/activity';
+
 
 export default async function ProgressPage() {
   const supabase = await createServerClient();
@@ -103,8 +102,28 @@ export default async function ProgressPage() {
             currentStreak={stats.currentStreak}
             streakEnabled={stats.streakEnabled}
           >
-            {/* Activity Chart + Subject Mastery */}
-            <ParentProgressStats kidId={kid.id} kidName={kid.name} stats={stats} />
+            {/* Subject Overview with Pie Chart + Filter Tabs */}
+            <SubjectOverview
+              lunaraSubjects={Object.entries(stats.subjectCounts).map(([subject, count]) => ({
+                subject,
+                count,
+              }))}
+              manualSubjects={Object.entries(stats.activityLogStats?.subjectCounts || {}).map(([subject, count]) => ({
+                subject,
+                count,
+              }))}
+              externalSubjects={kidExternal?.stats.subjectAverages.map(s => ({
+                subject: s.subject,
+                count: s.count,
+                average: s.average,
+              })) || []}
+            />
+
+            {/* Subject Mastery Badge Grid */}
+            <SubjectMasteryBadges subjectCounts={stats.subjectCounts} />
+
+            {/* Activity Chart */}
+            <ActivityChart initialData={stats.weeklyActivity} kidId={kid.id} />
 
             {/* Life Skills Section */}
             {Object.keys(stats.lifeSkillsCounts).length > 0 && (
@@ -164,46 +183,7 @@ export default async function ProgressPage() {
                   )}
                 </div>
 
-                {/* Two-column layout: Donut + Performance bars */}
-                {kidExternal.stats.subjectAverages.length > 0 && (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-                    {/* Subject Distribution Donut */}
-                    <div className="bg-[var(--background-secondary)] rounded-lg p-4">
-                      <h4 className="text-sm font-medium mb-3" style={{color: 'var(--foreground)'}}>Subject Distribution</h4>
-                      <SubjectDonut subjects={kidExternal.stats.subjectAverages} />
-                    </div>
-
-                    {/* Subject Performance bars */}
-                    <div className="bg-[var(--background-secondary)] rounded-lg p-4">
-                      <h4 className="text-sm font-medium mb-3" style={{color: 'var(--foreground)'}}>Subject Performance</h4>
-                      <div className="space-y-2">
-                        {kidExternal.stats.subjectAverages.map((subj) => (
-                          <div key={subj.subject} className="flex items-center gap-3">
-                            <span className="w-28 text-sm text-muted truncate">{subj.subject}</span>
-                            <div className="flex-1 h-2.5 bg-[var(--background-elevated)] rounded-full overflow-hidden">
-                              <div
-                                className="h-full rounded-full transition-all"
-                                style={{ 
-                                  width: `${subj.average}%`,
-                                  backgroundColor: subj.average >= 80 ? 'var(--celestial-500)' :
-                                    subj.average >= 60 ? 'var(--herbal-gold)' : 'var(--cosmic-rust-500)'
-                                }}
-                              />
-                            </div>
-                            <span className={`text-sm font-medium w-10 text-right ${subj.average >= 80 ? 'text-[var(--celestial-500)]' :
-                                subj.average >= 60 ? 'text-[var(--herbal-gold)]' : 'text-[var(--cosmic-rust-500)]'
-                              }`}>
-                              {subj.average}%
-                            </span>
-                            <span className="text-xs text-muted w-10">({subj.count})</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Recent Activity */}
+                {/* Recent Activity from MiAcademy */}
                 <ExternalCurriculumList
                   items={kidExternal.items}
                   kidName={kid.name}

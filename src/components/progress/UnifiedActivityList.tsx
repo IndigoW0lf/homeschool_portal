@@ -47,7 +47,6 @@ function extractItemId(activityId: string): string | null {
 
 export function UnifiedActivityList({ 
   activities, 
-  kidId,
   itemsPerPage = 10,
   isPrintView = false
 }: UnifiedActivityListProps) {
