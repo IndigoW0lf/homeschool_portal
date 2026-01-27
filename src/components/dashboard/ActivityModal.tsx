@@ -10,6 +10,8 @@ import {
   PersonSimpleRun, Code, Brain, Lightbulb, Lightning, Handshake, Heart, Globe
 } from '@phosphor-icons/react';
 import { Modal } from '@/components/ui/Modal';
+import { TagInput } from '@/components/ui/TagInput';
+import { TAGS } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -52,6 +54,7 @@ interface FormData {
   keyQuestions: string[];
   materials: string;
   links: LinkItem[];
+  tags: string[];
   assignTo: string[];
   scheduleDate: string;
   generateWorksheet: boolean;
@@ -73,6 +76,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
     keyQuestions: [],
     materials: '',
     links: [],
+    tags: [],
     assignTo: kids.map(k => k.id),
     scheduleDate: new Date().toISOString().split('T')[0],
     generateWorksheet: false,
@@ -195,7 +199,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         deliverable: '',  // Not collected in modal
         rubric: [],  // Not collected in modal
         parentNotes: '',  // Not collected in modal
-        tags: [form.category],
+        tags: form.tags.length > 0 ? form.tags : [form.category],
         links: form.links.filter(l => l.label && l.url),
         assignTo: form.assignTo,
         scheduleDate: form.scheduleDate,
@@ -469,6 +473,17 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label className="block text-xs font-medium text-muted mb-1.5">Tags (optional)</label>
+          <TagInput
+            value={form.tags}
+            onChange={(newTags: string[]) => updateForm({ tags: newTags })}
+            placeholder="Add tags..."
+            suggestions={TAGS}
+          />
         </div>
 
         {/* Schedule Section - Card Style */}

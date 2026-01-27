@@ -61,7 +61,7 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
     <aside className="fixed left-0 top-0 h-full w-56 bg-[var(--background-sidebar)] flex flex-col z-30 border-r border-[var(--border)]">
       {/* Logo / Header */}
       <div className="p-4 border-b border-[var(--night-600)]">
-        <Link href="/home" className="flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition-opacity">
+        <Link href="/parent" className="flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition-opacity">
           <div className="p-1.5 rounded-lg bg-gradient-ember">
             <Sparkle size={18} weight="fill" className="text-[var(--foreground)]" />
           </div>

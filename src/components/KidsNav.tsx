@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { House, GameController, Moon, List, X, Star, NotePencil, SignOut } from '@phosphor-icons/react';
+import { House, GameController, Moon, List, X, Star, NotePencil, SignOut, ArrowLeft } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { BlockyAvatar } from '@/components/BlockyAvatar';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
@@ -102,11 +102,12 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
             <Link 
-              href="/"
-              className="text-[var(--slate-400)] hover:text-[var(--foreground)]"
-              aria-label="Back to Dashboard"
+              href="/parent"
+              className="flex items-center gap-1.5 text-[var(--slate-400)] hover:text-[var(--foreground)] text-sm"
+              aria-label="Back to Parent Dashboard"
             >
-              ← 
+              <ArrowLeft size={16} weight="bold" />
+              <span className="hidden sm:inline">Parent</span>
             </Link>
             <span className="heading-md text-[var(--foreground)]">
               Hello, {kidName}!
@@ -202,11 +203,12 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
         {/* Top Section */}
         <div className="flex flex-col items-center py-6 border-b border-[var(--night-600)] relative z-10">
           <Link 
-            href="/"
-            className="mb-4 text-[var(--slate-400)] hover:text-[var(--foreground)] text-sm"
-            aria-label="Back to Dashboard"
+            href="/parent"
+            className="mb-3 flex flex-col items-center gap-0.5 text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
+            aria-label="Back to Parent Dashboard"
           >
-            ←
+            <ArrowLeft size={18} weight="bold" />
+            <span className="text-[10px] font-medium">Parent</span>
           </Link>
           <BlockyAvatar 
             className="w-20 h-20 mb-2"

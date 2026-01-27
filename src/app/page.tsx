@@ -16,9 +16,9 @@ export default async function HomePage() {
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Logged-in users go to family home
+  // Logged-in users go to parent dashboard
   if (user) {
-    redirect('/home');
+    redirect('/parent');
   }
 
   // Root always shows marketing for guests

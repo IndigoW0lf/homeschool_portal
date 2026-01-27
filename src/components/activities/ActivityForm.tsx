@@ -7,17 +7,16 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { 
   Sparkle, Clock, Link as LinkIcon, Plus, X, EyeClosed, Stack, Users, 
-  ListNumbers, MagicWand, File, Books, PencilSimple
+  ListNumbers, MagicWand, Books, PencilSimple
 } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { cn } from '@/lib/utils';
-import { Kid, WorksheetData } from '@/types';
+import { Kid } from '@/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
-import { WorksheetGeneratorModal } from '@/components/worksheets/WorksheetGeneratorModal';
 
 // Merged types from both Lesson and Assignment
 const ACTIVITY_TYPES = [
@@ -72,8 +71,6 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
   // State
   const [students, setStudents] = useState<Kid[]>([]);
   const [studentsLoading, setStudentsLoading] = useState(true);
-  const [worksheetModalOpen, setWorksheetModalOpen] = useState(false);
-  const [attachedWorksheets, setAttachedWorksheets] = useState<WorksheetData[]>([]);
   const [autoGenerateWorksheet, setAutoGenerateWorksheet] = useState(false);
   const [autoSearchYouTube, setAutoSearchYouTube] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -188,17 +185,6 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
     }
   };
 
-  // Handle worksheet attachment
-  const handleWorksheetAttach = (worksheet: WorksheetData) => {
-    setAttachedWorksheets(prev => [...prev, worksheet]);
-    setWorksheetModalOpen(false);
-    toast.success('Worksheet attached! 📝');
-  };
-
-  const removeWorksheet = (index: number) => {
-    setAttachedWorksheets(prev => prev.filter((_, i) => i !== index));
-  };
-
   const onSubmit = async (data: ActivityFormData) => {
     try {
       setIsSubmitting(true);
@@ -227,7 +213,6 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
         scheduleDate: data.date,
         // AI enrichment options (user-controlled)
         generateWorksheet: autoGenerateWorksheet,
-        attachedWorksheets: attachedWorksheets,
         searchYouTube: autoSearchYouTube,
       };
       
@@ -467,55 +452,13 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               </div>
             )}
           </div>
-
-          {/* LINKS (Optional - expandable) */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-medium text-muted flex items-center gap-1">
-                <LinkIcon size={12} /> Links (optional)
-              </label>
-              <button type="button" onClick={() => appendLink({ url: '', label: '' })} className="text-xs text-[var(--ember-500)] hover:underline flex items-center gap-1">
-                <Plus size={12} /> Add Link
-              </button>
-            </div>
-            {linkFields.length > 0 && (
-              <div className="space-y-2 bg-[var(--background-secondary)]/50 rounded-lg p-3">
-                {linkFields.map((field, index) => (
-                  <div key={field.id} className="flex items-center gap-2">
-                    <input
-                      {...register(`links.${index}.label`)}
-                      placeholder="Label"
-                      className="w-24 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
-                    />
-                    <input
-                      {...register(`links.${index}.url`)}
-                      placeholder="https://..."
-                      className="flex-1 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
-                    />
-                    <button type="button" onClick={() => removeLink(index)} className="text-muted hover:text-red-500">
-                      <X size={14} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* WORKSHEETS */}
         <div className="card p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
-              <MagicWand size={18} className="text-[var(--nebula-purple)]" /> Worksheets
-            </h3>
-            <button
-              type="button"
-              onClick={() => setWorksheetModalOpen(true)}
-              className="btn-secondary text-sm flex items-center gap-2"
-            >
-              <MagicWand size={16} /> Generate Worksheet
-            </button>
-          </div>
+          <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
+            <MagicWand size={18} className="text-[var(--nebula-purple)]" /> Additional Enrichment (optional)
+          </h3>
 
           {/* Additional enrichment options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -557,27 +500,6 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               </div>
             </label>
           </div>
-          
-          {attachedWorksheets.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {attachedWorksheets.map((ws, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-lg border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
-                  <File size={24} className="text-[var(--nebula-purple)]" />
-                  <div className="flex-1">
-                    <p className="font-medium text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)]">{ws.title}</p>
-                    <p className="text-xs text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]">
-                      {ws.sections?.reduce((sum, s) => sum + (s.items?.length || 0), 0) || 0} questions
-                    </p>
-                  </div>
-                  <button type="button" onClick={() => removeWorksheet(idx)} className="text-[var(--nebula-purple)] hover:text-red-500">
-                    <X size={18} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted">Or click "Generate Worksheet" to customize one yourself!</p>
-          )}
         </div>
 
         {/* NOTES & LINKS */}
@@ -644,14 +566,6 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           </button>
         </div>
       </form>
-
-      {/* Worksheet Generator Modal */}
-      <WorksheetGeneratorModal
-        isOpen={worksheetModalOpen}
-        onClose={() => setWorksheetModalOpen(false)}
-        contextTopic={`${title} (${type})`}
-        onAttach={handleWorksheetAttach}
-      />
     </>
   );
 }

@@ -47,7 +47,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
       toast.success('Welcome to the family! 🎉');
       setIsOpen(false);
       // Remove the query param
-      router.replace('/home');
+      router.replace('/parent');
     } catch (err) {
       console.error(err);
       toast.error('Failed to save profile');
@@ -58,7 +58,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
 
   const handleSkip = () => {
     setIsOpen(false);
-    router.replace('/home');
+    router.replace('/parent');
   };
 
   if (!isOpen) return null;
