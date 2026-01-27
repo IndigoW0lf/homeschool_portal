@@ -303,7 +303,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         </div>
 
         {/* Title + AI Generate Button */}
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-4 items-center">
           <div className="flex-1">
             <input
               type="text"
