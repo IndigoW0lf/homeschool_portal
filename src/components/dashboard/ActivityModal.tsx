@@ -310,7 +310,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               value={form.title}
               onChange={e => updateForm({ title: e.target.value })}
               placeholder="What are we learning today?"
-              className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--ember-500)] focus:ring-0 py-2 px-0 placeholder:text-muted"
+              className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--ember-500)] focus:ring-0 py-2 px-2 placeholder:text-muted"
               autoFocus
             />
           </div>
@@ -375,14 +375,14 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             <label className="block text-xs font-medium text-muted mb-1.5 flex items-center gap-1">
               <Clock size={12} /> Duration
             </label>
-            <div className="flex flex-wrap gap-1">
+            <div className="grid grid-cols-2 gap-1.5 w-full">
               {[15, 30, 45, 60].map(mins => (
                 <button
                   key={mins}
                   type="button"
                   onClick={() => updateForm({ estimatedMinutes: mins })}
                   className={cn(
-                    "px-2 py-1 text-xs font-medium rounded-md transition-all",
+                    "px-2 py-1.5 text-xs font-medium rounded-md transition-all text-center",
                     form.estimatedMinutes === mins
                       ? "bg-[var(--ember-500)] text-[var(--foreground)]"
                       : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)]"

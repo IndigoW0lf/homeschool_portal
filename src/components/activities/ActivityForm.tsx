@@ -7,7 +7,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { 
   Sparkle, Clock, Link as LinkIcon, Plus, X, EyeClosed, Stack, Users, 
-  ListNumbers, MagicWand, Books, PencilSimple
+  ListNumbers, MagicWand, Books, PencilSimple, Spinner
 } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS } from '@/lib/mock-data';
@@ -74,6 +74,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
   const [autoGenerateWorksheet, setAutoGenerateWorksheet] = useState(false);
   const [autoSearchYouTube, setAutoSearchYouTube] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const [activityType, setActivityType] = useState<'lesson' | 'assignment' | 'worksheet'>('lesson');
   const hasFetchedRef = React.useRef(false);
   
@@ -173,8 +174,6 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
 
   const tags = watch('tags');
   const assignedTo = watch('assignTo');
-  const title = watch('title');
-  const type = watch('type');
 
   const toggleStudent = (studentId: string) => {
     const current = assignedTo || [];
@@ -182,6 +181,63 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
       setValue('assignTo', current.filter(id => id !== studentId));
     } else {
       setValue('assignTo', [...current, studentId]);
+    }
+  };
+
+  // AI Generate from title
+  const handleGenerateFromTitle = async () => {
+    const titleValue = watch('title');
+    if (!titleValue?.trim()) {
+      toast.error('Please enter a title first');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const selectedStudents = students.filter(s => assignedTo?.includes(s.id));
+      const kidNames = selectedStudents.map(s => s.name);
+      const gradeLevels = selectedStudents
+        .map(s => s.gradeBand)
+        .filter((g): g is string => !!g);
+      const derivedGradeLevel = [...new Set(gradeLevels)].join(', ');
+
+      const res = await fetch('/api/generate-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: titleValue,
+          category: watch('type'),
+          activityType: activityType,
+          description: watch('description'),
+          kidNames,
+          gradeLevel: derivedGradeLevel || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to generate');
+      }
+
+      const { data } = await res.json();
+      
+      // Populate form with generated content
+      if (data.description) setValue('description', data.description);
+      if (data.steps?.length) {
+        // Clear existing and add new
+        while (stepFields.length > 0) removeStep(0);
+        data.steps.forEach((step: string) => appendStep({ text: step }));
+      }
+      if (data.materials) setValue('materials', data.materials);
+      if (data.estimatedMinutes) setValue('estimatedMinutes', data.estimatedMinutes);
+
+      toast.success('Activity generated!', {
+        description: 'Review and edit the content below.',
+      });
+    } catch (error) {
+      console.error('Generation error:', error);
+      toast.error('Failed to generate activity. Please try again.');
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -279,82 +335,116 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
 
         {/* CORE INFO */}
         <div className="card p-6 space-y-6">
-          <div>
-            <label className="input-label">Title</label>
-            <input
-              {...register('title')}
-              placeholder="e.g. Introduction to Fractions"
-              className="w-full text-lg p-2 border-b-2 border-[var(--border)] bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-muted"
-            />
-            {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
+          {/* Title + Generate Row */}
+          <div className="flex gap-3 items-end">
+            <div className="flex-1">
+              <label className="input-label">Title</label>
+              <input
+                {...register('title')}
+                placeholder="e.g. Introduction to Fractions"
+                className="w-full text-lg p-2 border-b-2 border-[var(--border)] bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-muted"
+              />
+              {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
+            </div>
+            <button
+              type="button"
+              onClick={handleGenerateFromTitle}
+              disabled={isGenerating || !watch('title')}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition-all mb-1",
+                "bg-gradient-sunset text-[var(--foreground)] shadow-lg",
+                "hover:shadow-xl hover:scale-105",
+                "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              )}
+            >
+              {isGenerating ? (
+                <>
+                  <Spinner size={18} className="animate-spin" />
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <MagicWand size={18} weight="fill" />
+                  <span>Generate</span>
+                </>
+              )}
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="input-label mb-2">Subject / Type</label>
-              <select {...register('type')} className="select">
-                {ACTIVITY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
-            
-            <div>
-              <label className="input-label mb-2">Schedule Date</label>
-              <input type="date" {...register('date')} className="input" />
-            </div>
-
-            <div>
-              <label className="input-label mb-2 flex items-center gap-1">
-                <Clock size={14} /> Duration
-              </label>
-              <div className="flex flex-wrap gap-1">
-                {[15, 30, 45, 60].map(mins => (
-                  <button
-                    key={mins}
-                    type="button"
-                    onClick={() => setValue('estimatedMinutes', mins)}
-                    className={cn(
-                      "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
-                      watch('estimatedMinutes') === mins
-                        ? "bg-[var(--ember-500)] text-[var(--foreground)]"
-                        : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)]"
-                    )}
-                  >
-                    {mins}m
-                  </button>
-                ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left Col: Subject & Date */}
+            <div className="space-y-4">
+              <div>
+                <label className="input-label mb-2">Subject / Type</label>
+                <select {...register('type')} className="select w-full">
+                  {ACTIVITY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              
+              <div>
+                <label className="input-label mb-2">Schedule Date</label>
+                <input type="date" {...register('date')} className="input w-full" />
               </div>
             </div>
-          </div>
 
-          {/* Students Selection */}
-          <div>
-            <label className="input-label mb-2 flex items-center gap-1">
-              <Users size={14} className="text-[var(--ember-500)]" /> Assign To
-            </label>
-            {studentsLoading ? (
-              <div className="text-sm text-muted">Loading kids...</div>
-            ) : students.length === 0 ? (
-              <div className="text-sm text-muted italic">
-                No kids added yet. <a href="/parent/settings" className="text-[var(--ember-500)] underline">Add a kid</a> to assign activities.
+            {/* Right Col: Duration & Assign To */}
+            <div className="space-y-4">
+              {/* Duration */}
+              <div>
+                <label className="input-label mb-2 flex items-center gap-1">
+                  <Clock size={14} /> Duration
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[15, 30, 45, 60].map(mins => (
+                    <button
+                      key={mins}
+                      type="button"
+                      onClick={() => setValue('estimatedMinutes', mins)}
+                      className={cn(
+                        "px-4 py-2 text-sm font-medium rounded-lg transition-all border",
+                        watch('estimatedMinutes') === mins
+                          ? "bg-[var(--ember-500)] text-[var(--foreground)] border-[var(--ember-500)]"
+                          : "bg-[var(--background-secondary)] text-muted border-transparent hover:border-[var(--border)]"
+                      )}
+                    >
+                      {mins}m
+                    </button>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <div className="flex gap-2">
-                {students.map(student => (
-                  <div 
-                    key={student.id} 
-                    onClick={() => toggleStudent(student.id)}
-                    className={cn(
-                      "cursor-pointer p-1 rounded-full border-2 transition-all",
-                      assignedTo?.includes(student.id) 
-                        ? "border-[var(--ember-500)] ring-2 ring-[var(--ember-500)]/20" 
-                        : "border-transparent opacity-50 hover:opacity-100"
-                    )}
-                  >
-                    <StudentAvatar name={student.name} className="w-10 h-10" />
+
+              {/* Assign To */}
+              <div>
+                <label className="input-label mb-2 flex items-center gap-1">
+                  <Users size={14} className="text-[var(--ember-500)]" /> Assign To
+                </label>
+                {studentsLoading ? (
+                  <div className="text-sm text-muted">Loading kids...</div>
+                ) : students.length === 0 ? (
+                  <div className="text-sm text-muted italic">
+                    No kids added yet. <a href="/parent/settings" className="text-[var(--ember-500)] underline">Add a kid</a> to assign activities.
                   </div>
-                ))}
+                ) : (
+                  <div className="flex gap-2">
+                    {students.map(student => (
+                      <div 
+                        key={student.id} 
+                        onClick={() => toggleStudent(student.id)}
+                        className={cn(
+                          "cursor-pointer p-1 rounded-full border-2 transition-all",
+                          assignedTo?.includes(student.id) 
+                            ? "border-[var(--ember-500)] ring-2 ring-[var(--ember-500)]/20" 
+                            : "border-transparent opacity-50 hover:opacity-100"
+                        )}
+                        title={student.name}
+                      >
+                        <StudentAvatar name={student.name} className="w-10 h-10" />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
