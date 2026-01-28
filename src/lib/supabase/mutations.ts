@@ -16,6 +16,33 @@ export async function createLesson(lesson: Omit<LessonRow, 'id' | 'created_at'>)
     .insert({ ...lesson, user_id: user.id })
     .select()
     .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateLessonOrder(items: { id: string; display_order: number }[]) {
+  const supabase = await createServerClient();
+  
+  // Parallel updates for order
+  const updates = items.map(item => 
+    supabase
+      .from('lessons')
+      .update({ display_order: item.display_order })
+      .eq('id', item.id)
+  );
+
+  await Promise.all(updates);
+  return true;
+}
+
+export async function togglePinLesson(id: string, is_pinned: boolean) {
+  const supabase = await createServerClient();
+  const { data, error } = await supabase
+    .from('lessons')
+    .update({ is_pinned })
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) throw error;
   return data;
@@ -603,4 +630,32 @@ export async function deleteHoliday(id: string) {
 
   if (error) throw error;
   return true;
+}
+
+export async function updateAssignmentOrder(items: { id: string; display_order: number }[]) {
+  const supabase = await createServerClient();
+  
+  // Parallel updates for order
+  const updates = items.map(item => 
+    supabase
+      .from('assignment_items')
+      .update({ display_order: item.display_order })
+      .eq('id', item.id)
+  );
+
+  await Promise.all(updates);
+  return true;
+}
+
+export async function togglePinAssignment(id: string, is_pinned: boolean) {
+  const supabase = await createServerClient();
+  const { data, error } = await supabase
+    .from('assignment_items')
+    .update({ is_pinned })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
 }

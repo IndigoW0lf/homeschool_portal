@@ -408,6 +408,10 @@ export interface AssignmentItemRow {
   created_at: string;
   worksheet_data: WorksheetData | null;
   embed_url?: string | null; // Optional URL for embedded content
+
+  // New fields
+  is_pinned?: boolean;
+  display_order?: number;
 }
 
 export interface DayPlanRow {

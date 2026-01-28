@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link, Printer, MagicWand } from '@phosphor-icons/react';
+import { X, PencilSimple, Trash, CalendarPlus, Clock, BookOpen, Pencil, CheckSquare, FileText, Link, Printer, MagicWand, ClockCounterClockwise } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow, WorksheetData } from '@/types';
 import { MarkdownText } from '@/components/ui/MarkdownText';
 import { WorksheetGeneratorModal } from '@/components/worksheets/WorksheetGeneratorModal';
 import { saveWorksheetAssignmentAction } from '@/lib/actions/worksheet';
 import { attachWorksheetToLessonAction } from '@/lib/actions/lesson';
+import { getLessonHistory, HistoryItem } from '@/lib/actions/history';
 import { toast } from 'sonner';
 
 interface ItemDetailModalProps {
@@ -32,12 +33,26 @@ export function ItemDetailModal({
 }: ItemDetailModalProps) {
   const router = useRouter();
   const [worksheetModalOpen, setWorksheetModalOpen] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
   
-  if (!isOpen || !item) return null;
-
   const isLesson = itemType === 'lesson';
   const lesson = isLesson ? (item as Lesson) : null;
   const assignment = !isLesson ? (item as AssignmentItemRow) : null;
+
+  useEffect(() => {
+    if (isOpen && item && isLesson) {
+      setLoadingHistory(true);
+      getLessonHistory(item.id).then(data => {
+        setHistory(data);
+        setLoadingHistory(false);
+      });
+    } else {
+      setHistory([]);
+    }
+  }, [isOpen, item, isLesson]);
+  
+  if (!isOpen || !item) return null;
 
   // Build lessonDetails from DIRECT lesson properties, with JSON parsing as fallback
   let lessonDetails = { 
@@ -171,6 +186,38 @@ export function ItemDetailModal({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[var(--background-secondary)]/50 dark:bg-black/20">
           
+          {/* Activity History - Pinned to top if viewing detail */}
+          {isLesson && (
+             <div className="bg-[var(--surface)] p-4 rounded-xl border border-[var(--border)] shadow-sm">
+                <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-2">
+                   <ClockCounterClockwise size={16} />
+                   Activity History
+                </h3>
+                {loadingHistory ? (
+                   <div className="text-sm text-muted animate-pulse">Loading history...</div>
+                ) : history.length === 0 ? (
+                   <p className="text-sm text-muted italic">Never assigned</p>
+                ) : (
+                   <ul className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
+                      {history.map(h => (
+                         <li key={h.id} className="text-sm flex justify-between items-center border-b border-[var(--border)] last:border-0 pb-1">
+                            <span className="text-heading font-medium">{h.student.name}</span>
+                            <div className="flex flex-col items-end">
+                               <span className="text-muted">{h.date}</span>
+                               <span className={cn(
+                                  "text-[10px] uppercase font-bold",
+                                  h.status === 'completed' ? "text-green-500" : "text-amber-500"
+                               )}>
+                                  {h.status}
+                               </span>
+                            </div>
+                         </li>
+                      ))}
+                   </ul>
+                )}
+             </div>
+          )}
+
           {/* Lesson Details */}
           {isLesson && lesson && (
             <>

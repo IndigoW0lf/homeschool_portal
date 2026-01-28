@@ -233,6 +233,8 @@ export async function getLessonsFromDB(): Promise<Lesson[]> {
       links,
       attachments: attachmentsByLesson[lesson.id] || [],
       parentNotes: lesson.parent_notes || undefined,
+      is_pinned: lesson.is_pinned,
+      display_order: lesson.display_order,
     };
   });
 }
