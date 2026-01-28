@@ -116,7 +116,7 @@ export function RecentList({
                   {onEdit && (
                     <button 
                       onClick={() => onEdit(item.id)}
-                      className="p-1.5 text-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+                      className="p-1.5 text-muted hover:text-[var(--celestial-500)] hover:bg-[var(--celestial-50)] dark:hover:bg-[var(--celestial-900)]/30 rounded-md transition-colors"
                       title="Edit"
                     >
                       <PencilSimple size={18} weight="duotone" color="#caa2d8" />
@@ -125,7 +125,7 @@ export function RecentList({
                   {onDelete && (
                     <button 
                       onClick={() => onDelete(item.id)}
-                       className="p-1.5 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
+                       className="p-1.5 text-muted hover:text-[var(--destructive)] hover:bg-[var(--destructive)]/10 dark:hover:bg-[var(--destructive)]/20 rounded-md transition-colors"
                        title="Delete"
                     >
                       <Trash size={18} weight="duotone" color="#ffcdf6" />

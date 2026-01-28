@@ -61,7 +61,7 @@ export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClic
           <div className="flex items-center gap-2 mb-2">
             <span className={cn(
               "text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded",
-              item.type === 'lesson' ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+              item.type === 'lesson' ? "bg-[var(--celestial-400)]/20 text-[var(--celestial-500)]" : "bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
             )}>
               {item.type}
             </span>
@@ -79,7 +79,7 @@ export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClic
             "font-semibold text-lg mb-1",
             done 
               ? "text-green-700 dark:text-green-400" 
-              : "text-heading dark:text-white"
+              : "text-heading dark:text-[var(--foreground)]"
           )}>
             {item.title}
           </h3>

@@ -62,7 +62,7 @@ export default async function AvatarPage({ params }: AvatarPageProps) {
   initialShoesUrl = await fetchDesignUrl(avatarState.shoesId);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-12">
+    <div className="min-h-screen bg-[var(--background-secondary)] dark:bg-[var(--background)] pb-12">
       <SyntyAvatarBuilder
         kidId={kidId}
         kidName={kid.nickname || kid.name}

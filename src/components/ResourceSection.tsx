@@ -27,7 +27,7 @@ export function ResourceSection({ resources }: ResourceSectionProps) {
     <div className="space-y-4">
       {categories.map(category => (
         <div key={category} className="bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm">
-          <h3 className="font-semibold text-heading dark:text-white mb-3 flex items-center gap-2">
+          <h3 className="font-semibold text-heading dark:text-[var(--foreground)] mb-3 flex items-center gap-2">
             <span>{categoryIcons[category]}</span>
             {categoryLabels[category]}
           </h3>

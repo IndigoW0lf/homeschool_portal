@@ -36,7 +36,7 @@ export function AvatarPreview({
     const initials = fallbackName.slice(0, 1).toUpperCase();
     return (
       <div 
-        className={`${container} rounded-full flex items-center justify-center text-white font-bold ${text} ${className}`}
+        className={`${container} rounded-full flex items-center justify-center text-[var(--foreground)] font-bold ${text} ${className}`}
         style={{ 
           background: fallbackColor 
             ? `linear-gradient(135deg, ${fallbackColor}, ${fallbackColor}88)`

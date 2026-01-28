@@ -30,10 +30,10 @@ interface ActivityLogListProps {
 
 // Subject to color mapping
 const subjectColors: Record<string, string> = {
-  'Math': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  'Math': 'bg-[var(--celestial-400)]/20 text-[var(--celestial-500)] dark:bg-blue-900/30 dark:text-blue-400',
   'Reading': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  'Writing': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-  'Language Arts': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+  'Writing': 'bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)] dark:bg-[var(--nebula-purple)]/20 dark:text-[var(--nebula-purple)]',
+  'Language Arts': 'bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)] dark:bg-[var(--nebula-purple)]/20 dark:text-[var(--nebula-purple)]',
   'Science': 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
   'Social Studies': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   'History': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
@@ -41,7 +41,7 @@ const subjectColors: Record<string, string> = {
   'Music': 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
   'PE': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
   'Life Skills': 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
-  'Foreign Language': 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+  'Foreign Language': 'bg-[var(--celestial-400)]/20 text-[var(--celestial-500)] dark:bg-[var(--celestial-500)]/20 dark:text-[var(--celestial-400)]',
   'Technology': 'bg-[var(--background-secondary)] text-heading dark:bg-[var(--background-secondary)]/50 dark:text-muted',
   'Field Trip': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
   'Other': 'bg-[var(--background-secondary)] text-heading dark:bg-[var(--background-secondary)]/50 dark:text-muted',
@@ -129,7 +129,7 @@ export function ActivityLogList({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-heading dark:text-white font-medium">
+                        <p className="text-heading dark:text-[var(--foreground)] font-medium">
                           {entry.title}
                         </p>
                         {entry.description && (
@@ -144,7 +144,7 @@ export function ActivityLogList({
                         {onEdit && (
                           <button
                             onClick={() => onEdit(entry)}
-                            className="p-1.5 text-muted hover:text-blue-500 rounded"
+                            className="p-1.5 text-muted hover:text-[var(--celestial-500)] rounded"
                             title="Edit"
                           >
                             <PencilSimple size={16} />
@@ -175,7 +175,7 @@ export function ActivityLogList({
                         <span>• {kidMap[entry.kidId]}</span>
                       )}
                       {entry.source !== 'manual' && (
-                        <span className="text-indigo-400">• via {entry.source}</span>
+                        <span className="text-[var(--celestial-400)]">• via {entry.source}</span>
                       )}
                     </div>
                   </div>

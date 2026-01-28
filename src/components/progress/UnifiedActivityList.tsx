@@ -18,14 +18,14 @@ interface UnifiedActivityListProps {
 // Source badge colors and icons
 const SOURCE_STYLES = {
   lunara_quest: {
-    bg: 'bg-purple-100 dark:bg-purple-900/30',
-    text: 'text-purple-700 dark:text-purple-400',
+    bg: 'bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20',
+    text: 'text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]',
     icon: Sparkle,
     label: 'Lunara Quest'
   },
   miacademy: {
-    bg: 'bg-blue-100 dark:bg-blue-900/30',
-    text: 'text-blue-700 dark:text-blue-400',
+    bg: 'bg-[var(--celestial-400)]/20 dark:bg-blue-900/30',
+    text: 'text-[var(--celestial-500)] dark:text-blue-400',
     icon: GraduationCap,
     label: 'MiAcademy'
   },
@@ -47,7 +47,6 @@ function extractItemId(activityId: string): string | null {
 
 export function UnifiedActivityList({ 
   activities, 
-  kidId,
   itemsPerPage = 10,
   isPrintView = false
 }: UnifiedActivityListProps) {
@@ -98,7 +97,7 @@ export function UnifiedActivityList({
             <div key={dateStr} className="space-y-2">
               {/* Date Header */}
               <div className="flex items-center gap-2 text-sm text-muted font-medium">
-                <Calendar size={16} weight="duotone" className="text-indigo-400" />
+                <Calendar size={16} weight="duotone" className="text-[var(--celestial-400)]" />
                 <span>{formattedDate}</span>
                 <span className="text-xs opacity-60 font-normal">({dayActivities.length})</span>
               </div>
@@ -254,7 +253,7 @@ export function UnifiedActivityList({
                         onClick={() => setCurrentPage(page)}
                         className={`min-w-[28px] h-7 px-2 rounded text-sm font-medium transition-colors ${
                           page === currentPage
-                            ? 'bg-indigo-500 text-white'
+                            ? 'bg-[var(--celestial-500)] text-[var(--foreground)]'
                             : 'hover:bg-[var(--hover-overlay)] text-muted dark:text-muted'
                         }`}
                       >

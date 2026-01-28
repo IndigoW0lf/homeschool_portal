@@ -272,7 +272,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
 
             <div>
                    <label className="input-label mb-2 flex items-center gap-2">
-                   <FileText size={16} className="text-blue-500" /> Expected Deliverable
+                   <FileText size={16} className="text-[var(--celestial-500)]" /> Expected Deliverable
                 </label>
                 <input
                    {...register('deliverable')}
@@ -353,7 +353,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                 <textarea
                    {...register('parentNotes')}
                    rows={2}
-                   className="w-full text-sm p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-white/50 dark:bg-black/20 focus:ring-2 focus:ring-amber-400 outline-none resize-none"
+                   className="w-full text-sm p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-[var(--background-elevated)]/50 dark:bg-black/20 focus:ring-2 focus:ring-amber-400 outline-none resize-none"
                    placeholder="How to support them..."
                 />
              </div>

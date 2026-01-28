@@ -51,7 +51,7 @@ export default async function FamilyHomePage() {
   return (
     <div className="min-h-screen bg-[var(--moon-50)] dark:bg-[var(--night-900)]">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-[var(--night-800)]/80 backdrop-blur-sm border-b border-[var(--moon-200)] dark:border-[var(--night-700)]">
+      <header className="bg-[var(--background-elevated)]/80 dark:bg-[var(--night-800)]/80 backdrop-blur-sm border-b border-[var(--moon-200)] dark:border-[var(--night-700)]">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
@@ -68,7 +68,7 @@ export default async function FamilyHomePage() {
               <DarkModeToggle />
               <Link 
                 href="/parent"
-                className="px-4 py-2.5 bg-gradient-ember text-white rounded-xl hover:opacity-90 transition-all font-bold text-base uppercase tracking-wide shadow-lg"
+                className="px-4 py-2.5 bg-gradient-ember text-[var(--foreground)] rounded-xl hover:opacity-90 transition-all font-bold text-base uppercase tracking-wide shadow-lg"
                 aria-label="Parent Dashboard"
               >
                 {displayName}
@@ -122,7 +122,7 @@ export default async function FamilyHomePage() {
               </p>
               <Link 
                 href="/parent/settings"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--celestial-400)] text-white rounded-lg font-medium hover:bg-[var(--celestial-500)] transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--celestial-400)] text-[var(--foreground)] rounded-lg font-medium hover:bg-[var(--celestial-500)] transition-all"
               >
                 Add Your First Kid
               </Link>

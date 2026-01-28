@@ -116,7 +116,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Storefront size={24} weight="fill" className="text-purple-500" />
+        <Storefront size={24} weight="fill" className="text-[var(--nebula-purple)]" />
         <h3 className="text-lg font-semibold text-heading">
           Shop Rewards
         </h3>
@@ -145,7 +145,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
       {/* Add from Templates Button */}
       <button
         onClick={() => setShowTemplates(!showTemplates)}
-        className="w-full py-3 px-4 rounded-lg border-2 border-dashed border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 flex items-center justify-center gap-2"
+        className="w-full py-3 px-4 rounded-lg border-2 border-dashed border-[var(--nebula-purple)]/40 dark:border-[var(--nebula-purple)] text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/10 dark:hover:bg-[var(--nebula-purple)]/15 flex items-center justify-center gap-2"
       >
         <Plus size={20} weight="bold" />
         Add Reward from Templates
@@ -153,9 +153,9 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
 
       {/* Template Picker */}
       {showTemplates && (
-        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 space-y-4">
+        <div className="bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-xl p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium text-purple-800 dark:text-purple-300">
+            <h4 className="font-medium text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)]">
               Choose a Reward Template
             </h4>
             <button 
@@ -174,7 +174,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-1 rounded-full text-sm transition-colors ${
                   selectedCategory === cat
-                    ? 'bg-purple-500 text-white'
+                    ? 'bg-[var(--nebula-purple)] text-[var(--foreground)]'
                     : 'bg-[var(--background-elevated)] text-muted hover:bg-[var(--background-secondary)]'
                 }`}
               >
@@ -269,7 +269,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
                         setEditingId(reward.id);
                         setEditCost(reward.moon_cost);
                       }}
-                      className="p-1 text-muted hover:text-purple-600 hover:bg-purple-100 rounded"
+                      className="p-1 text-muted hover:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/20 rounded"
                       title="Edit cost"
                     >
                       <Pencil size={16} />

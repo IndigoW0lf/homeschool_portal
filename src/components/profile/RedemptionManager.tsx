@@ -98,7 +98,7 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
           Pending Rewards
         </h3>
         {redemptions.length > 0 && (
-          <span className="px-2 py-0.5 bg-[var(--nebula-purple)] text-white text-xs font-bold rounded-full">
+          <span className="px-2 py-0.5 bg-[var(--nebula-purple)] text-[var(--foreground)] text-xs font-bold rounded-full">
             {redemptions.length}
           </span>
         )}

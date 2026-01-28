@@ -15,9 +15,9 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
       {/* Celebration Icon */}
       <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 mb-2">
         {joiningFamily ? (
-          <UsersThree size={40} weight="fill" className="text-white" />
+          <UsersThree size={40} weight="fill" className="text-[var(--foreground)]" />
         ) : (
-          <Confetti size={40} weight="fill" className="text-white" />
+          <Confetti size={40} weight="fill" className="text-[var(--foreground)]" />
         )}
       </div>
 
@@ -95,7 +95,7 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
       {/* Action */}
       <button
         onClick={onComplete}
-        className="w-full py-3 px-4 bg-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
+        className="w-full py-3 px-4 bg-[var(--ember-500)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2"
       >
         <RocketLaunch size={20} weight="fill" />
         Go to Dashboard

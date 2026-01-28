@@ -31,7 +31,7 @@ export function KidShowcase() {
           {/* Content */}
           <div>
             <span className="text-[var(--cosmic-rust-400)] font-medium">FOR THE KIDS</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-[var(--foreground)] mt-3 mb-6">
               Learning that feels like playing
             </h2>
             <p className="text-xl text-[var(--slate-300)] mb-10">
@@ -48,7 +48,7 @@ export function KidShowcase() {
                     <feature.icon size={24} weight="fill" className="text-[var(--cosmic-rust-400)]" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-white">{feature.title}</h4>
+                    <h4 className="font-medium text-[var(--foreground)]">{feature.title}</h4>
                     <p className="text-sm text-[var(--slate-400)]">{feature.description}</p>
                   </div>
                 </div>
@@ -70,7 +70,7 @@ export function KidShowcase() {
                     🚀
                   </div>
                   <div>
-                    <h4 className="font-semibold text-white">Welcome back, Atlas!</h4>
+                    <h4 className="font-semibold text-[var(--foreground)]">Welcome back, Atlas!</h4>
                     <p className="text-sm text-[var(--slate-400)]">5 quests today</p>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export function KidShowcase() {
                     📖
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-white">Reading: Chapter 5</p>
+                    <p className="font-medium text-[var(--foreground)]">Reading: Chapter 5</p>
                     <p className="text-sm text-[var(--slate-400)]">20 moons reward</p>
                   </div>
                   <div className="px-3 py-1 rounded-full bg-[var(--success)]/20 text-[var(--success)] text-sm font-medium">
@@ -100,7 +100,7 @@ export function KidShowcase() {
                     🧮
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-white">Math: Fractions</p>
+                    <p className="font-medium text-[var(--foreground)]">Math: Fractions</p>
                     <p className="text-sm text-[var(--slate-400)]">25 moons reward</p>
                   </div>
                   <div className="w-5 h-5 rounded-full border-2 border-[var(--slate-400)]" />
@@ -111,7 +111,7 @@ export function KidShowcase() {
                     🎨
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium text-white">Art: Nature Sketch</p>
+                    <p className="font-medium text-[var(--foreground)]">Art: Nature Sketch</p>
                     <p className="text-sm text-[var(--slate-400)]">15 moons reward</p>
                   </div>
                   <div className="w-5 h-5 rounded-full border-2 border-[var(--slate-400)]" />

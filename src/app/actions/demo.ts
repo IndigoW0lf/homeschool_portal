@@ -236,7 +236,6 @@ export async function seedDemoData() {
     if (journalError) throw journalError;
 
     revalidatePath('/parent');
-    revalidatePath('/home');
     revalidatePath('/parent/settings');
     console.log('Seed completed successfully!');
 

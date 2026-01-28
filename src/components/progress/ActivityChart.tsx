@@ -130,7 +130,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
               onClick={() => setSelectedRange(range.days as 7 | 30 | 90)}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                 selectedRange === range.days
-                  ? 'bg-white dark:bg-[var(--night-600)] text-heading shadow-sm'
+                  ? 'bg-[var(--background-elevated)] dark:bg-[var(--night-600)] text-heading shadow-sm'
                   : 'text-muted hover:text-heading dark:hover:text-muted'
               }`}
             >
@@ -143,7 +143,7 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
       {/* Stats Summary */}
       <div className="flex gap-4 mb-4">
         <div className="flex items-center gap-2 text-sm">
-          <CalendarBlank size={16} className="text-indigo-500" />
+          <CalendarBlank size={16} className="text-[var(--celestial-500)]" />
           <span className="text-muted">{activeDays} active days</span>
         </div>
         <div className="text-sm text-muted">
@@ -175,20 +175,20 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                 <div key={day.date} className="flex flex-col items-center gap-1 flex-1 group">
                   <div className="relative w-full flex justify-center items-end h-24">
                     {/* Tooltip */}
-                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
+                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-[var(--foreground)] text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
                       {day.count} items
                     </div>
                     {/* Bar */}
                     <div 
                       className={`w-full max-w-[40px] rounded-t transition-all ${
                         day.count > 0 
-                          ? 'bg-indigo-500 dark:bg-indigo-400' 
+                          ? 'bg-[var(--celestial-400)]' 
                           : 'bg-[var(--background-secondary)]'
-                      } ${isToday ? 'ring-2 ring-indigo-300' : ''}`}
+                      } ${isToday ? 'ring-2 ring-[var(--celestial-300)]' : ''}`}
                       style={{ height: day.count > 0 ? `${Math.max(heightPercent, 8)}%` : '4px' }}
                     />
                   </div>
-                  <span className={`text-xs font-medium ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-muted'}`}>
+                  <span className={`text-xs font-medium ${isToday ? 'text-[var(--celestial-500)]' : 'text-muted'}`}>
                     {dayLabel}
                   </span>
                 </div>
@@ -207,14 +207,14 @@ export function ActivityChart({ kidId, initialData }: ActivityChartProps) {
                 <div key={week.weekStart} className="flex flex-col items-center gap-1 flex-1 min-w-[32px] max-w-[48px] group">
                   <div className="relative w-full flex justify-center items-end h-20">
                     {/* Tooltip */}
-                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-white text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
+                    <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--night-900)] text-[var(--foreground)] text-xs py-1 px-2 rounded pointer-events-none whitespace-nowrap z-10">
                       {week.count} items • {week.days} days active
                     </div>
                     {/* Bar */}
                     <div 
                       className={`w-full rounded-t transition-all ${
                         week.count > 0 
-                          ? 'bg-indigo-500 dark:bg-indigo-400' 
+                          ? 'bg-[var(--celestial-400)]' 
                           : 'bg-[var(--background-secondary)]'
                       }`}
                       style={{ height: week.count > 0 ? `${Math.max(heightPercent, 8)}%` : '4px' }}

@@ -72,12 +72,12 @@ export function VideoResourceCard({ video, compact = false }: VideoResourceCardP
           {/* Play overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-colors">
             <div className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity shadow-lg">
-              <Play size={20} weight="fill" className="text-white ml-0.5" />
+              <Play size={20} weight="fill" className="text-[var(--foreground)] ml-0.5" />
             </div>
           </div>
           {/* Duration badge */}
           {video.durationMinutes && (
-            <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-white text-xs font-medium">
+            <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-[var(--foreground)] text-xs font-medium">
               {formatDuration(video.durationMinutes)}
             </div>
           )}

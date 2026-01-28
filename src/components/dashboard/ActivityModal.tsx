@@ -10,6 +10,8 @@ import {
   PersonSimpleRun, Code, Brain, Lightbulb, Lightning, Handshake, Heart, Globe
 } from '@phosphor-icons/react';
 import { Modal } from '@/components/ui/Modal';
+import { TagInput } from '@/components/ui/TagInput';
+import { TAGS } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -52,9 +54,11 @@ interface FormData {
   keyQuestions: string[];
   materials: string;
   links: LinkItem[];
+  tags: string[];
   assignTo: string[];
   scheduleDate: string;
   generateWorksheet: boolean;
+  searchYouTube: boolean;
 }
 
 export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
@@ -72,9 +76,11 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
     keyQuestions: [],
     materials: '',
     links: [],
+    tags: [],
     assignTo: kids.map(k => k.id),
     scheduleDate: new Date().toISOString().split('T')[0],
     generateWorksheet: false,
+    searchYouTube: false,
   });
 
   const updateForm = (updates: Partial<FormData>) => {
@@ -193,12 +199,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         deliverable: '',  // Not collected in modal
         rubric: [],  // Not collected in modal
         parentNotes: '',  // Not collected in modal
-        tags: [form.category],
+        tags: form.tags.length > 0 ? form.tags : [form.category],
         links: form.links.filter(l => l.label && l.url),
         assignTo: form.assignTo,
         scheduleDate: form.scheduleDate,
         generateWorksheet: form.generateWorksheet,
-        searchYouTube: true,  // Enable YouTube video search
+        searchYouTube: form.searchYouTube,
       };
       
       const res = await fetch('/api/activities', {
@@ -252,12 +258,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'lesson'
-                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                ? "border-[var(--celestial-500)] bg-[var(--celestial-50)] dark:bg-[var(--celestial-900)]/30"
                 : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
-            <Books size={28} weight="duotone" className={form.activityType === 'lesson' ? "text-blue-500" : "text-muted"} />
-            <span className={cn("font-semibold", form.activityType === 'lesson' ? "text-blue-600 dark:text-blue-400" : "text-muted")}>
+            <Books size={28} weight="duotone" className={form.activityType === 'lesson' ? "text-[var(--celestial-500)]" : "text-muted"} />
+            <span className={cn("font-semibold", form.activityType === 'lesson' ? "text-[var(--celestial-500)] dark:text-[var(--celestial-400)]" : "text-muted")}>
               Lesson
             </span>
             <span className="text-xs text-muted">Teaching content</span>
@@ -268,12 +274,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'assignment'
-                ? "border-purple-500 bg-purple-50 dark:bg-purple-900/30"
+                ? "border-[var(--nebula-purple)] bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/20"
                 : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
-            <PencilSimple size={28} weight="duotone" className={form.activityType === 'assignment' ? "text-purple-500" : "text-muted"} />
-            <span className={cn("font-semibold", form.activityType === 'assignment' ? "text-purple-600 dark:text-purple-400" : "text-muted")}>
+            <PencilSimple size={28} weight="duotone" className={form.activityType === 'assignment' ? "text-[var(--nebula-purple)]" : "text-muted"} />
+            <span className={cn("font-semibold", form.activityType === 'assignment' ? "text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]" : "text-muted")}>
               Assignment
             </span>
             <span className="text-xs text-muted">Practice work</span>
@@ -284,12 +290,12 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all",
               form.activityType === 'worksheet'
-                ? "border-green-500 bg-green-50 dark:bg-green-900/30"
+                ? "border-[var(--herbal-500)] bg-[var(--herbal-50)] dark:bg-[var(--herbal-900)]/30"
                 : "border-[var(--border)] hover:border-[var(--border)]"
             )}
           >
-            <MagicWand size={28} weight="duotone" className={form.activityType === 'worksheet' ? "text-green-500" : "text-muted"} />
-            <span className={cn("font-semibold", form.activityType === 'worksheet' ? "text-green-600 dark:text-green-400" : "text-muted")}>
+            <MagicWand size={28} weight="duotone" className={form.activityType === 'worksheet' ? "text-[var(--herbal-500)]" : "text-muted"} />
+            <span className={cn("font-semibold", form.activityType === 'worksheet' ? "text-[var(--herbal-600)] dark:text-[var(--herbal-400)]" : "text-muted")}>
               Worksheet
             </span>
             <span className="text-xs text-muted">AI-generated</span>
@@ -297,14 +303,14 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
         </div>
 
         {/* Title + AI Generate Button */}
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-4 items-center">
           <div className="flex-1">
             <input
               type="text"
               value={form.title}
               onChange={e => updateForm({ title: e.target.value })}
               placeholder="What are we learning today?"
-              className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--ember-500)] focus:ring-0 py-2 px-0 placeholder:text-muted"
+              className="w-full text-lg font-medium bg-transparent border-0 border-b-2 border-[var(--border)] focus:border-[var(--ember-500)] focus:ring-0 py-2 px-2 placeholder:text-muted"
               autoFocus
             />
           </div>
@@ -314,7 +320,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             disabled={isGenerating || !form.title.trim()}
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition-all",
-              "bg-gradient-sunset text-white shadow-lg",
+              "bg-gradient-sunset text-[var(--foreground)] shadow-lg",
               "hover:shadow-xl hover:scale-105",
               "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             )}
@@ -327,7 +333,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             ) : (
               <>
                 <MagicWand size={18} weight="fill" />
-                <span>Generate with AI</span>
+                <span>Generate</span>
               </>
             )}
           </button>
@@ -369,16 +375,16 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             <label className="block text-xs font-medium text-muted mb-1.5 flex items-center gap-1">
               <Clock size={12} /> Duration
             </label>
-            <div className="flex flex-wrap gap-1">
+            <div className="grid grid-cols-2 gap-1.5 w-full">
               {[15, 30, 45, 60].map(mins => (
                 <button
                   key={mins}
                   type="button"
                   onClick={() => updateForm({ estimatedMinutes: mins })}
                   className={cn(
-                    "px-2 py-1 text-xs font-medium rounded-md transition-all",
+                    "px-2 py-1.5 text-xs font-medium rounded-md transition-all text-center",
                     form.estimatedMinutes === mins
-                      ? "bg-[var(--ember-500)] text-white"
+                      ? "bg-[var(--ember-500)] text-[var(--foreground)]"
                       : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)]"
                   )}
                 >
@@ -413,7 +419,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             <div className="space-y-2 bg-[var(--background-secondary)]/50 rounded-lg p-3">
               {form.steps.map((step, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <span className="w-5 h-5 bg-[var(--ember-500)] text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="w-5 h-5 bg-[var(--ember-500)] text-[var(--foreground)] text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
                     {idx + 1}
                   </span>
                   <input
@@ -460,13 +466,24 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                     placeholder="https://..."
                     className="flex-1 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
                   />
-                  <button type="button" onClick={() => removeLink(idx)} className="text-muted hover:text-red-500">
+                  <button type="button" onClick={() => removeLink(idx)} className="text-muted hover:text-[var(--destructive)]">
                     <Trash size={14} />
                   </button>
                 </div>
               ))}
             </div>
           )}
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label className="block text-xs font-medium text-muted mb-1.5">Tags (optional)</label>
+          <TagInput
+            value={form.tags}
+            onChange={(newTags: string[]) => updateForm({ tags: newTags })}
+            placeholder="Add tags..."
+            suggestions={TAGS}
+          />
         </div>
 
         {/* Schedule Section - Card Style */}
@@ -491,8 +508,8 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                     className={cn(
                       "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
                       form.assignTo.includes(kid.id)
-                        ? "bg-[var(--ember-500)] text-white shadow-sm"
-                        : "bg-white dark:bg-[var(--background-secondary)] text-muted border border-[var(--border)] dark:border-[var(--border)]"
+                        ? "bg-[var(--ember-500)] text-[var(--foreground)] shadow-sm"
+                        : "bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-muted border border-[var(--border)] dark:border-[var(--border)]"
                     )}
                   >
                     {kid.name}
@@ -508,31 +525,53 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
                 type="date"
                 value={form.scheduleDate}
                 onChange={e => updateForm({ scheduleDate: e.target.value })}
-                className="bg-white dark:bg-[var(--background-secondary)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg py-1.5 px-3 text-sm"
+                className="bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg py-1.5 px-3 text-sm"
               />
             </div>
           </div>
         </div>
 
-        {/* AI Worksheet Toggle - only show for lessons/assignments */}
+        {/* Additional Enrichment - show for lessons/assignments */}
         {form.activityType !== 'worksheet' && (
-          <label className="flex items-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl cursor-pointer border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
-            <input
-              type="checkbox"
-              checked={form.generateWorksheet}
-              onChange={e => updateForm({ generateWorksheet: e.target.checked })}
-              className="w-5 h-5 rounded border-purple-300 text-purple-600 focus:ring-purple-500"
-            />
-            <div className="flex-1">
-              <span className="font-medium text-purple-700 dark:text-purple-300 flex items-center gap-2">
-                <Sparkle size={18} weight="fill" className="text-purple-500" />
-                Auto-generate worksheet
-              </span>
-              <p className="text-xs text-purple-600/70 dark:text-purple-400/70 mt-0.5">
-                AI will create practice questions based on this activity
-              </p>
-            </div>
-          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Auto-generate worksheet */}
+            <label className="flex items-center gap-3 p-4 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-xl cursor-pointer border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/20 dark:hover:bg-[var(--nebula-purple)]/20 transition-colors">
+              <input
+                type="checkbox"
+                checked={form.generateWorksheet}
+                onChange={e => updateForm({ generateWorksheet: e.target.checked })}
+                className="w-5 h-5 rounded border-[var(--nebula-purple)]/40 text-[var(--nebula-purple)] focus:ring-purple-500"
+              />
+              <div className="flex-1">
+                <span className="font-medium text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] flex items-center gap-2">
+                  <Sparkle size={18} weight="fill" className="text-[var(--nebula-purple)]" />
+                  Generate worksheet
+                </span>
+                <p className="text-xs text-[var(--nebula-purple)]/70 dark:text-[var(--nebula-purple)]/70 mt-0.5">
+                  AI creates practice questions
+                </p>
+              </div>
+            </label>
+
+            {/* Find YouTube videos */}
+            <label className="flex items-center gap-3 p-4 bg-red-500/10 dark:bg-red-500/15 rounded-xl cursor-pointer border border-red-500/30 dark:border-red-500/50 hover:bg-red-500/20 dark:hover:bg-red-500/20 transition-colors">
+              <input
+                type="checkbox"
+                checked={form.searchYouTube}
+                onChange={e => updateForm({ searchYouTube: e.target.checked })}
+                className="w-5 h-5 rounded border-red-500/40 text-red-500 focus:ring-red-500"
+              />
+              <div className="flex-1">
+                <span className="font-medium text-red-600 dark:text-red-400 flex items-center gap-2">
+                  <LinkIcon size={18} weight="bold" className="text-red-500" />
+                  Find YouTube videos
+                </span>
+                <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-0.5">
+                  AI searches for relevant videos
+                </p>
+              </div>
+            </label>
+          </div>
         )}
 
         {/* Footer */}
@@ -543,7 +582,7 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
               Title required ({form.title.length} chars)
             </span>
           )}
-          <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-muted hover:text-heading dark:text-muted dark:hover:text-white">
+          <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-muted hover:text-heading dark:text-muted dark:hover:text-[var(--foreground)]">
             Cancel
           </button>
           <button
@@ -552,10 +591,10 @@ export function ActivityModal({ isOpen, onClose, kids }: ActivityModalProps) {
             className={cn(
               "px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm",
               form.activityType === 'lesson'
-                ? "bg-blue-500 hover:bg-blue-600 text-white"
+                ? "bg-[var(--celestial-500)] hover:bg-[var(--celestial-600)] text-[var(--foreground)]"
                 : form.activityType === 'worksheet'
-                ? "bg-green-500 hover:bg-green-600 text-white"
-                : "bg-purple-500 hover:bg-purple-600 text-white",
+                ? "bg-[var(--herbal-500)] hover:bg-[var(--herbal-600)] text-[var(--foreground)]"
+                : "bg-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)] text-[var(--foreground)]",
               (isSubmitting || !form.title.trim()) && "opacity-50 cursor-not-allowed"
             )}
           >

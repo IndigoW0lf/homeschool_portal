@@ -9,18 +9,18 @@ interface ThemeCardProps {
 
 const themeColors: Record<string, { bg: string; text: string; Icon: Icon }> = {
   'Foundation Day': {
-    bg: 'bg-amber-100 dark:bg-amber-900/30',
-    text: 'text-amber-800 dark:text-amber-200',
+    bg: 'bg-[var(--solar-100)] dark:bg-[var(--solar-900)]/30',
+    text: 'text-[var(--solar-800)] dark:text-[var(--solar-200)]',
     Icon: Bank,
   },
   'Skill Day': {
-    bg: 'bg-blue-100 dark:bg-blue-900/30',
-    text: 'text-blue-800 dark:text-blue-200',
+    bg: 'bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-900)]/30',
+    text: 'text-[var(--celestial-800)] dark:text-[var(--celestial-200)]',
     Icon: Wrench,
   },
   'Expression Day': {
-    bg: 'bg-purple-100 dark:bg-purple-900/30',
-    text: 'text-purple-800 dark:text-purple-200',
+    bg: 'bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20',
+    text: 'text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)]',
     Icon: Palette,
   },
 };

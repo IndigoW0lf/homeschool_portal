@@ -15,6 +15,7 @@ import { assignItemToSchedule } from '@/lib/supabase/mutations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LunaTriggerButton } from '@/components/luna';
 import { supabase } from '@/lib/supabase/browser';
+import { CurriculumTopicSelector } from './CurriculumTopicSelector';
 
 const LESSON_TYPES = [
   // Academic
@@ -354,10 +355,10 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
 
       {/* AI Refinement Section - shown when editing */}
       {initialData?.id && (
-        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-xl border border-purple-200 dark:border-purple-800">
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-xl border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
           <div className="flex items-center gap-2 mb-3">
-            <MagicWand size={18} weight="fill" className="text-purple-500" />
-            <label className="text-sm font-semibold text-purple-700 dark:text-purple-300">
+            <MagicWand size={18} weight="fill" className="text-[var(--nebula-purple)]" />
+            <label className="text-sm font-semibold text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)]">
               Refine with AI
             </label>
           </div>
@@ -366,13 +367,13 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
             onChange={(e) => setRefinementFeedback(e.target.value)}
             placeholder="Describe changes, e.g., 'Add a video about photosynthesis' or 'Include more hands-on activities' or 'Add 2 more discussion questions'"
             rows={2}
-            className="w-full p-3 rounded-lg border border-purple-200 dark:border-purple-700 bg-[var(--background-elevated)] focus:ring-2 focus:ring-purple-500 transition-all text-sm"
+            className="w-full p-3 rounded-lg border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-purple-500 transition-all text-sm"
           />
           <button 
             type="button"
             onClick={handleRefine}
             disabled={!refinementFeedback.trim() || isRefining}
-            className="mt-2 px-4 py-2 bg-purple-500 text-white rounded-lg font-semibold text-sm hover:bg-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="mt-2 px-4 py-2 bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg font-semibold text-sm hover:bg-[var(--nebula-purple)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isRefining ? (
               <>
@@ -387,6 +388,44 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
             )}
           </button>
         </div>
+      )}
+
+      {/* Import from Curriculum - shown when creating new lesson */}
+      {!initialData?.id && (
+        <CurriculumTopicSelector
+          kidId={assignedTo?.[0]}
+          onSelectTopic={(topic) => {
+            // Pre-fill form with topic info
+            setValue('title', `${topic.topic} Practice`);
+            
+            // Map subject to lesson type
+            const subjectToType: Record<string, string> = {
+              'Math': 'Math',
+              'Reading': 'Language Arts',
+              'Science': 'Science',
+              'Writing': 'Language Arts',
+              'History': 'History',
+              'Social Studies': 'History',
+              'U.S. Government': 'History',
+            };
+            const lessonType = subjectToType[topic.subject] || topic.subject;
+            if (LESSON_TYPES.includes(lessonType)) {
+              setValue('type', lessonType as typeof LESSON_TYPES[number]);
+            }
+            
+            // Add context in parent notes
+            const scoreNote = topic.latestScore !== null 
+              ? `Previous score: ${topic.latestScore}% (${topic.masteryStatus})` 
+              : '';
+            setValue('parentNotes', `Extra practice for ${topic.topic} from ${topic.course}. ${scoreNote}`.trim());
+            
+            // Add suggested key question
+            setValue('keyQuestions', [
+              { text: `What do you remember about ${topic.topic}?` },
+              { text: '' },
+            ]);
+          }}
+        />
       )}
 
       {/* 1. CORE INFO */}
@@ -498,7 +537,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
                 <textarea
                    {...register('parentNotes')}
                    rows={3}
-                   className="w-full text-sm p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-white/50 dark:bg-black/20 focus:ring-2 focus:ring-amber-400 outline-none resize-none"
+                   className="w-full text-sm p-3 rounded-lg border border-amber-200 dark:border-amber-900/50 bg-[var(--background-elevated)]/50 dark:bg-black/20 focus:ring-2 focus:ring-amber-400 outline-none resize-none"
                    placeholder="Tips, tricky concepts, reminders..."
                 />
              </div>
@@ -517,7 +556,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
 
       {/* 3. LOGISTICS & LINKS */}
        <div className="card p-6 space-y-6">
-         <h3 className="font-semibold text-heading dark:text-white flex items-center gap-2">
+         <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
              <Stack size={18} weight="duotone" color="#e7b58d" /> Resources & Tags
          </h3>
 

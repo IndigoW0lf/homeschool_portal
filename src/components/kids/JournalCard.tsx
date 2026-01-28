@@ -154,14 +154,14 @@ export function JournalCard({
     return (
       <div className="card p-4 bg-gradient-forest border-[var(--success)]">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-white/20">
-            <Check size={24} weight="bold" className="text-white" />
+          <div className="p-2 rounded-lg bg-[var(--background-elevated)]/20">
+            <Check size={24} weight="bold" className="text-[var(--foreground)]" />
           </div>
           <div>
-            <h3 className="font-semibold text-white">
+            <h3 className="font-semibold text-[var(--foreground)]">
               Journal Complete! ✨
             </h3>
-            <p className="text-sm text-white/80">
+            <p className="text-sm text-[var(--foreground)]/80">
               Great job reflecting today
             </p>
           </div>
@@ -174,7 +174,7 @@ export function JournalCard({
     <div className="card p-4 bg-gradient-teal-pink border-[var(--nebula-purple)]/30">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-lg bg-white/20">
+        <div className="p-2 rounded-lg bg-[var(--background-elevated)]/20">
           <NotePencil size={24} weight="duotone" className="text-[var(--nebula-purple)]" />
         </div>
         <div className="flex-1">
@@ -241,7 +241,7 @@ export function JournalCard({
               className={cn(
                 "flex-1 py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2",
                 response.trim()
-                  ? "bg-[var(--nebula-purple)] text-white hover:opacity-90"
+                  ? "bg-[var(--nebula-purple)] text-[var(--foreground)] hover:opacity-90"
                   : "bg-[var(--background-secondary)] text-muted cursor-not-allowed"
               )}
             >

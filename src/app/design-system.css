@@ -82,6 +82,37 @@
   background-color: var(--error-dark);
 }
 
+/* Quest buttons - Warm adventure CTAs (Start, Generate, Submit, Begin Week) */
+.btn-quest {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  background: var(--cosmic-rust-500);
+  color: #1A0E0A;
+  box-shadow: 0 0 22px rgba(184, 106, 75, 0.28);
+  transition: all 0.2s;
+}
+
+.btn-quest:hover {
+  background: var(--cosmic-rust-400);
+  box-shadow: 0 0 28px rgba(184, 106, 75, 0.35);
+  transform: translateY(-1px);
+}
+
+.dark .btn-quest,
+html.dark .btn-quest {
+  background: var(--cosmic-rust-400);
+  box-shadow: 0 0 26px rgba(184, 106, 75, 0.22);
+}
+
+.dark .btn-quest:hover,
+html.dark .btn-quest:hover {
+  background: var(--cosmic-rust-300);
+}
+
 .btn-sm {
   display: inline-flex;
   align-items: center;
@@ -202,6 +233,46 @@
   background: var(--gradient-nebula);
   border: 1px solid var(--border-subtle);
   backdrop-filter: blur(8px);
+}
+
+/* Palette-accent card variants for colorful UI */
+.card-teal {
+  border-radius: 0.75rem;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--celestial-500);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-warm {
+  border-radius: 0.75rem;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--cosmic-rust-500);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-gold {
+  border-radius: 0.75rem;
+  background-color: var(--background-elevated);
+  border: 1px solid var(--herbal-gold);
+  box-shadow: 0 2px 8px rgba(200, 168, 107, 0.15);
+}
+
+/* Section header with palette accent */
+.section-accent-teal {
+  border-left: 3px solid var(--celestial-500);
+  padding-left: 0.75rem;
+}
+
+.section-accent-warm {
+  border-left: 3px solid var(--cosmic-rust-500);
+  padding-left: 0.75rem;
+}
+
+.section-accent-gold {
+  border-left: 3px solid var(--herbal-gold);
+  padding-left: 0.75rem;
 }
 
 .card-section {

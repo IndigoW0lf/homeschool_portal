@@ -8,20 +8,20 @@ export function MarketingNav() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <div className="p-2 rounded-xl bg-gradient-ember group-hover:scale-105 transition-transform">
-            <Sparkle size={24} weight="fill" className="text-white" />
+            <Sparkle size={24} weight="fill" className="text-[var(--foreground)]" />
           </div>
-          <span className="text-xl font-bold text-white">Lunara Quest</span>
+          <span className="text-xl font-bold text-[var(--foreground)]">Lunara Quest</span>
         </Link>
 
         {/* Nav Links */}
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#features" className="text-[var(--slate-300)] hover:text-white transition-colors">
+          <a href="#features" className="text-[var(--slate-300)] hover:text-[var(--foreground)] transition-colors">
             Features
           </a>
-          <a href="#how-it-works" className="text-[var(--slate-300)] hover:text-white transition-colors">
+          <a href="#how-it-works" className="text-[var(--slate-300)] hover:text-[var(--foreground)] transition-colors">
             How It Works
           </a>
-          <a href="#pricing" className="text-[var(--slate-300)] hover:text-white transition-colors">
+          <a href="#pricing" className="text-[var(--slate-300)] hover:text-[var(--foreground)] transition-colors">
             Pricing
           </a>
         </nav>
@@ -30,13 +30,13 @@ export function MarketingNav() {
         <div className="flex items-center gap-4">
           <Link 
             href="/parent/login"
-            className="text-[var(--slate-300)] hover:text-white transition-colors hidden sm:block"
+            className="text-[var(--slate-300)] hover:text-[var(--foreground)] transition-colors hidden sm:block"
           >
             Sign In
           </Link>
           <Link
             href="/signup"
-            className="px-5 py-2.5 bg-gradient-ember text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-md"
+            className="px-5 py-2.5 bg-gradient-ember text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 transition-opacity shadow-md"
           >
             Get Started
           </Link>

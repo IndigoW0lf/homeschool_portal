@@ -7,28 +7,28 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-[var(--background-secondary)] dark:bg-[var(--background)]">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <Link 
           href="/signup"
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-8"
+          className="inline-flex items-center gap-1 text-sm text-muted hover:text-[var(--foreground)] dark:text-muted dark:hover:text-[var(--foreground-muted)] mb-8"
         >
           <ArrowLeft size={16} />
           Back to Signup
         </Link>
 
         <div className="card p-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-6">
             Privacy Policy
           </h1>
 
-          <div className="prose prose-gray dark:prose-invert max-w-none space-y-6 text-gray-600 dark:text-gray-400">
-            <p className="text-sm text-gray-500 dark:text-gray-500">
+          <div className="prose prose-gray dark:prose-invert max-w-none space-y-6 text-muted">
+            <p className="text-sm text-muted dark:text-muted">
               Last updated: January 2026
             </p>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 1. Information We Collect
               </h2>
               <p>
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 2. How We Use Your Information
               </h2>
               <p>
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 3. Children's Privacy
               </h2>
               <p>
@@ -55,7 +55,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 4. Data Security
               </h2>
               <p>
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 5. Data Retention
               </h2>
               <p>
@@ -73,7 +73,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 6. Your Rights
               </h2>
               <p>
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 7. Contact
               </h2>
               <p>

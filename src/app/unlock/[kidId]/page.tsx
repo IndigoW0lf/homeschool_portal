@@ -129,14 +129,14 @@ export default function UnlockPage({ params }: UnlockPageProps) {
   if (isLockedOut) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 dark:from-gray-900 dark:to-red-950 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg max-w-sm w-full text-center">
+        <div className="bg-[var(--background-elevated)] rounded-2xl p-8 shadow-lg max-w-sm w-full text-center">
           <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mx-auto mb-4">
             <Warning size={32} weight="fill" className="text-red-500" />
           </div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-xl font-bold text-[var(--foreground)] mb-2">
             Too Many Attempts
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-muted mb-4">
             Try again in {LOCKOUT_MINUTES} minutes, or ask a parent to unlock.
           </p>
           <button
@@ -152,11 +152,11 @@ export default function UnlockPage({ params }: UnlockPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-purple-950 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg max-w-sm w-full">
+      <div className="bg-[var(--background-elevated)] rounded-2xl p-8 shadow-lg max-w-sm w-full">
         {/* Header */}
         <button
           onClick={() => router.push('/')}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 mb-6"
+          className="flex items-center gap-1 text-sm text-muted hover:text-[var(--foreground)] dark:text-muted dark:hover:text-[var(--foreground-muted)] mb-6"
         >
           <ArrowLeft size={16} />
           Back
@@ -166,10 +166,10 @@ export default function UnlockPage({ params }: UnlockPageProps) {
           <div className="w-16 h-16 rounded-full bg-[var(--lavender-100)] dark:bg-[var(--lavender-900)]/30 flex items-center justify-center mx-auto mb-4">
             <Lock size={32} weight="duotone" className="text-[var(--lavender-500)]" />
           </div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+          <h1 className="text-xl font-bold text-[var(--foreground)] mb-1">
             Hi, {kidName || 'friend'}!
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-muted">
             Enter your secret code to continue
           </p>
         </div>
@@ -187,7 +187,7 @@ export default function UnlockPage({ params }: UnlockPageProps) {
               onChange={(e) => handleInputChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               disabled={isLoading}
-              className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:border-[var(--lavender-500)] focus:ring-2 focus:ring-[var(--lavender-500)]/20 outline-none transition-all"
+              className="w-14 h-14 text-center text-2xl font-bold border-2 border-[var(--border)] rounded-xl bg-[var(--background-secondary)] text-[var(--foreground)] focus:border-[var(--lavender-500)] focus:ring-2 focus:ring-[var(--lavender-500)]/20 outline-none transition-all"
             />
           ))}
         </div>
@@ -197,7 +197,7 @@ export default function UnlockPage({ params }: UnlockPageProps) {
           <div className="text-center mb-4">
             <p className="text-red-500 text-sm">{error}</p>
             {attempts > 0 && (
-              <p className="text-gray-500 text-xs mt-1">
+              <p className="text-muted text-xs mt-1">
                 {MAX_ATTEMPTS - attempts} attempts remaining
               </p>
             )}
@@ -206,13 +206,13 @@ export default function UnlockPage({ params }: UnlockPageProps) {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="text-center text-gray-500">
+          <div className="text-center text-muted">
             Checking...
           </div>
         )}
 
         {/* Help Text */}
-        <p className="text-center text-xs text-gray-400 mt-8">
+        <p className="text-center text-xs text-muted mt-8">
           Forgot your code? Ask a parent to help.
         </p>
       </div>

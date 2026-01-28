@@ -43,9 +43,9 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
   };
 
   return (
-    <div className={cn("max-w-4xl mx-auto bg-white p-8 print:p-0 min-h-screen", className)}>
+    <div className={cn("max-w-4xl mx-auto bg-[var(--background-elevated)] p-8 print:p-0 min-h-screen print:bg-white print:text-black", className)}>
       {/* Header */}
-      <div className="border-b-2 border-[var(--night-900)] pb-4 mb-8">
+      <div className="border-b-2 border-[var(--night-900)] print:border-black pb-4 mb-8">
         <EditableText
           value={data.title}
           editable={editable}
@@ -61,7 +61,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
 
       {/* Instructions */}
       {(data.instructions || editable) && (
-        <div className="mb-8 p-4 bg-[var(--background-secondary)] rounded-lg print:border print:border-[var(--border)] print:bg-white">
+        <div className="mb-8 p-4 bg-[var(--background-secondary)] rounded-lg print:border print:border-black print:bg-white">
           <h3 className="font-bold text-heading mb-1 uppercase tracking-wider text-xs">Instructions:</h3>
           <EditableText
             value={data.instructions || ''}
@@ -82,7 +82,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
                 value={section.title || ''}
                 editable={editable}
                 onChange={(title) => updateSection(sIdx, { title })}
-                className="text-xl font-bold text-heading border-b border-[var(--border)] pb-2 mb-4"
+                className="text-xl font-bold text-heading border-b border-[var(--border)] print:border-black pb-2 mb-4"
                 placeholder="Section Title"
               />
             )}
@@ -105,7 +105,7 @@ export function WorksheetViewer({ data, className, editable = false, onDataChang
       </div>
       
       {/* Footer / Branding */}
-      <div className="mt-16 pt-4 border-t border-[var(--border)] text-center text-xs text-muted print:fixed print:bottom-4 print:left-0 print:w-full">
+      <div className="mt-16 pt-4 border-t border-[var(--border)] print:border-black text-center text-xs text-muted print:text-black print:fixed print:bottom-4 print:left-0 print:w-full">
         Created with Lunara Quest
       </div>
     </div>
@@ -159,7 +159,7 @@ function EditableText({ value, editable, onChange, className, inputClassName, pl
             autoFocus
             rows={3}
             className={cn(
-              "flex-1 p-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none",
+              "flex-1 p-2 border border-[var(--nebula-purple)]/40 rounded-lg focus:ring-2 focus:ring-[var(--nebula-purple)] focus:border-transparent resize-none",
               inputClassName
             )}
           />
@@ -172,14 +172,14 @@ function EditableText({ value, editable, onChange, className, inputClassName, pl
             onBlur={handleSave}
             autoFocus
             className={cn(
-              "flex-1 p-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent",
+              "flex-1 p-2 border border-[var(--nebula-purple)]/40 rounded-lg focus:ring-2 focus:ring-[var(--nebula-purple)] focus:border-transparent",
               inputClassName
             )}
           />
         )}
         <button
           onClick={handleSave}
-          className="p-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+          className="p-2 bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg hover:bg-[var(--nebula-purple)] transition-colors"
         >
           <Check size={16} weight="bold" />
         </button>
@@ -195,13 +195,13 @@ function EditableText({ value, editable, onChange, className, inputClassName, pl
       }}
       className={cn(
         className,
-        "cursor-pointer hover:bg-purple-50 hover:outline hover:outline-2 hover:outline-purple-200 rounded px-1 -mx-1 transition-colors group relative"
+        "cursor-pointer hover:bg-[var(--nebula-purple)]/10 hover:outline hover:outline-2 hover:outline-[var(--nebula-purple)]/30 rounded px-1 -mx-1 transition-colors group relative"
       )}
     >
       {value || <span className="text-muted italic">{placeholder || 'Click to edit'}</span>}
       <PencilSimple 
         size={14} 
-        className="absolute -right-5 top-1/2 -translate-y-1/2 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" 
+        className="absolute -right-5 top-1/2 -translate-y-1/2 text-[var(--nebula-purple)] opacity-0 group-hover:opacity-100 transition-opacity" 
       />
     </div>
   );
@@ -237,7 +237,7 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
             {item.options.map((opt, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full border-2 border-[var(--border)] flex-shrink-0"></div>
+                <div className="w-6 h-6 rounded-full border-2 border-[var(--border)] print:border-black flex-shrink-0"></div>
                 <EditableText
                   value={opt}
                   editable={editable}
@@ -251,29 +251,29 @@ function WorksheetQuestionItem({ item, index, editable = false, onQuestionChange
 
         {item.type === 'text' && (
           <div 
-            className="w-full mt-2 border-b border-[var(--border)]" 
+            className="w-full mt-2 border-b border-[var(--border)] print:border-black" 
             style={{ height: `${(item.space_lines || 3) * 2}rem` }}
           >
             {/* Visual lines for writing */}
             {Array.from({ length: item.space_lines || 3 }).map((_, i) => (
-              <div key={i} className="border-b border-[var(--border)] h-8 w-full"></div>
+              <div key={i} className="border-b border-[var(--border)] print:border-black h-8 w-full"></div>
             ))}
           </div>
         )}
 
         {item.type === 'fill_in_blank' && (
           <div 
-            className="w-full mt-2 border-b border-[var(--border)]" 
+            className="w-full mt-2 border-b border-[var(--border)] print:border-black" 
             style={{ height: `${(item.space_lines || 2) * 2}rem` }}
           >
             {Array.from({ length: item.space_lines || 2 }).map((_, i) => (
-              <div key={i} className="border-b border-[var(--border)] h-8 w-full"></div>
+              <div key={i} className="border-b border-[var(--border)] print:border-black h-8 w-full"></div>
             ))}
           </div>
         )}
         
         {item.type === 'drawing_space' && (
-          <div className="w-full h-64 border-2 border-[var(--border)] rounded-xl mt-2 bg-[var(--background-secondary)] print:bg-white print:border-gray-800">
+          <div className="w-full h-64 border-2 border-[var(--border)] rounded-xl mt-2 bg-[var(--background-secondary)] print:bg-[var(--background-elevated)] print:border-black">
             <div className="h-full flex items-center justify-center text-muted text-sm print:hidden">
               Drawing Space
             </div>

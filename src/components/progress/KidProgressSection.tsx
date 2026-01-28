@@ -39,7 +39,7 @@ export function KidProgressSection({
         className="w-full px-4 py-3 flex items-center justify-between border-b border-[var(--border)] bg-[var(--background-secondary)]/50 hover:bg-[var(--hover-overlay)]/50 transition-colors"
         style={{ borderLeftColor: favoriteColor || '#9c8fb8', borderLeftWidth: '4px' }}
       >
-        <h2 className="text-lg font-bold text-heading dark:text-white flex items-center gap-2">
+        <h2 className="text-lg font-bold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
           🌙 {kidName}
         </h2>
         
@@ -54,9 +54,9 @@ export function KidProgressSection({
           )}
           
           {/* Moons */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-indigo-100 dark:bg-indigo-900/30 rounded-full">
-            <Moon size={16} weight="fill" className="text-indigo-500" />
-            <span className="text-sm font-bold text-indigo-700 dark:text-indigo-400">{totalMoons}</span>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-500)]/20 rounded-full">
+            <Moon size={16} weight="fill" className="text-[var(--celestial-500)]" />
+            <span className="text-sm font-bold text-[var(--celestial-500)] dark:text-[var(--celestial-400)]">{totalMoons}</span>
           </div>
           
           {/* Expand/Collapse */}

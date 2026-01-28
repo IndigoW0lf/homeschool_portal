@@ -92,7 +92,7 @@ export default async function ShopPage({ params }: ShopPageProps) {
       <div className="bg-[var(--background-elevated)] dark:bg-[var(--night-700)]/80 dark:backdrop-blur-sm border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 text-white">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-600 text-[var(--foreground)]">
               <Moon size={28} weight="fill" />
             </div>
             <div>

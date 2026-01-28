@@ -102,11 +102,11 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
     return (
       <div className="bg-[var(--background-elevated)] rounded-xl p-6 border border-[var(--border)] shadow-sm">
         <h3 className="text-lg font-bold text-heading flex items-center gap-2 mb-4">
-          <Users size={24} weight="duotone" className="text-purple-500" />
+          <Users size={24} weight="duotone" className="text-[var(--nebula-purple)]" />
           My Family
         </h3>
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--nebula-purple)]"></div>
         </div>
       </div>
     );
@@ -137,9 +137,9 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
               {parents.map((parent) => (
                 <div
                   key={parent.userId}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-100 dark:border-purple-800/50"
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-[var(--nebula-purple)]/10 to-[var(--nebula-pink)]/10 border border-[var(--nebula-purple)]/30"
                 >
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--nebula-purple)] to-[var(--nebula-pink)] flex items-center justify-center text-[var(--foreground)] text-xl font-bold shadow-lg">
                     {parent.avatarUrl ? (
                       <img 
                         src={parent.avatarUrl} 
@@ -154,7 +154,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
                     {parent.displayName}
                   </span>
                   {parent.role === 'admin' && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--solar-100)] text-[var(--solar-700)] dark:bg-[var(--solar-900)]/30 dark:text-[var(--solar-400)]">
                       ⭐ Admin
                     </span>
                   )}
@@ -168,7 +168,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
         {siblings.length > 0 && (
           <div>
             <p className="text-xs font-medium text-muted uppercase tracking-wider mb-3 flex items-center gap-1">
-              <Users size={14} weight="fill" className="text-blue-500" />
+              <Users size={14} weight="fill" className="text-[var(--celestial-500)]" />
               Siblings
             </p>
             <div className="flex flex-wrap gap-4">
@@ -177,7 +177,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
                   key={sibling.id}
                   href={`/kids/${sibling.id}/profile`}
                   onClick={(e) => handleSiblingClick(e, sibling.id)}
-                  className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/20 dark:to-teal-900/20 border border-blue-100 dark:border-blue-800/50 hover:shadow-md hover:scale-105 transition-all"
+                  className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-[var(--celestial-50)] to-[var(--cyan-50)] dark:from-[var(--celestial-900)]/20 dark:to-[var(--cyan-900)]/20 border border-[var(--celestial-100)] dark:border-[var(--celestial-800)]/50 hover:shadow-md hover:scale-105 transition-all"
                 >
                   <AvatarPreview
                     avatarState={sibling.avatarState}
@@ -185,7 +185,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
                     fallbackName={sibling.nickname || sibling.name}
                     fallbackColor={sibling.favoriteColor}
                   />
-                  <span className="text-sm font-medium text-heading dark:text-muted group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                  <span className="text-sm font-medium text-heading dark:text-muted group-hover:text-[var(--celestial-500)] dark:group-hover:text-[var(--celestial-400)]">
                     {sibling.nickname || sibling.name}
                   </span>
                   <span className="text-[10px] text-muted">

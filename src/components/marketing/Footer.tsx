@@ -10,9 +10,9 @@ export function Footer() {
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="p-2 rounded-xl bg-gradient-ember">
-                <Sparkle size={24} weight="fill" className="text-white" />
+                <Sparkle size={24} weight="fill" className="text-[var(--foreground)]" />
               </div>
-              <span className="text-xl font-bold text-white">Lunara Quest</span>
+              <span className="text-xl font-bold text-[var(--foreground)]">Lunara Quest</span>
             </Link>
             <p className="text-[var(--slate-400)] max-w-sm">
               Your magical homeschool companion. Making learning organized, 
@@ -22,20 +22,20 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Product</h4>
+            <h4 className="text-[var(--foreground)] font-semibold mb-4">Product</h4>
             <ul className="space-y-3">
               <li>
-                <a href="#features" className="text-[var(--slate-400)] hover:text-white transition-colors">
+                <a href="#features" className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="text-[var(--slate-400)] hover:text-white transition-colors">
+                <a href="#pricing" className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors">
                   Pricing
                 </a>
               </li>
               <li>
-                <Link href="/signup" className="text-[var(--slate-400)] hover:text-white transition-colors">
+                <Link href="/signup" className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors">
                   Get Started
                 </Link>
               </li>
@@ -44,15 +44,15 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Legal</h4>
+            <h4 className="text-[var(--foreground)] font-semibold mb-4">Legal</h4>
             <ul className="space-y-3">
               <li>
-                <Link href="/legal/privacy" className="text-[var(--slate-400)] hover:text-white transition-colors">
+                <Link href="/legal/privacy" className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/legal/terms" className="text-[var(--slate-400)] hover:text-white transition-colors">
+                <Link href="/legal/terms" className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors">
                   Terms of Service
                 </Link>
               </li>
@@ -68,21 +68,21 @@ export function Footer() {
           <div className="flex items-center gap-4">
             <a 
               href="mailto:hello@lunara.quest" 
-              className="text-[var(--slate-400)] hover:text-white transition-colors"
+              className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
               aria-label="Email"
             >
               <EnvelopeSimple size={20} />
             </a>
             <a 
               href="#" 
-              className="text-[var(--slate-400)] hover:text-white transition-colors"
+              className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
               aria-label="Twitter"
             >
               <TwitterLogo size={20} />
             </a>
             <a 
               href="#" 
-              className="text-[var(--slate-400)] hover:text-white transition-colors"
+              className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
               aria-label="Instagram"
             >
               <InstagramLogo size={20} />

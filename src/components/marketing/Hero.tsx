@@ -16,13 +16,13 @@ export function Hero() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--background-elevated)]/10 backdrop-blur-sm border border-white/10 mb-8">
           <span className="text-[var(--ember-gold-400)]">✨</span>
           <span className="text-sm text-[var(--slate-300)]">Made for homeschool families</span>
         </div>
 
         {/* Headline */}
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+        <h1 className="text-5xl md:text-7xl font-bold text-[var(--foreground)] mb-6 leading-tight">
           Your Magical
           <br />
           <span className="bg-gradient-to-r from-[var(--nebula-purple)] via-[var(--nebula-purple-light)] to-[var(--cosmic-rust-400)] bg-clip-text text-transparent">
@@ -40,14 +40,14 @@ export function Hero() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/signup"
-            className="group px-8 py-4 bg-gradient-ember text-white rounded-2xl font-semibold text-lg hover:opacity-90 transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
+            className="group px-8 py-4 bg-gradient-ember text-[var(--foreground)] rounded-2xl font-semibold text-lg hover:opacity-90 transition-all hover:scale-105 flex items-center gap-2 shadow-lg"
           >
             Get Started Free
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </Link>
           <a
             href="#how-it-works"
-            className="px-8 py-4 glass-panel text-white rounded-2xl font-medium text-lg hover:bg-white/20 transition-all flex items-center gap-2"
+            className="px-8 py-4 glass-panel text-[var(--foreground)] rounded-2xl font-medium text-lg hover:bg-[var(--background-elevated)]/20 transition-all flex items-center gap-2"
           >
             <Play size={20} weight="fill" />
             See How It Works

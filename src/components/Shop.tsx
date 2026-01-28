@@ -103,7 +103,7 @@ interface ShopProps {
             className={`
               px-4 py-2 font-medium transition-colors rounded-lg
               ${filter === key
-                ? 'bg-[var(--ember-500)] text-white'
+                ? 'bg-[var(--ember-500)] text-[var(--foreground)]'
                 : 'bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)]'}
             `}
           >

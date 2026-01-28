@@ -58,14 +58,14 @@ export function TagInput({
     <div className="relative">
       <div
         className={cn(
-          'flex flex-wrap gap-2 p-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] focus-within:ring-2 focus-within:ring-[var(--ember-500)] focus-within:border-transparent transition-all',
+          'flex flex-wrap gap-2 p-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] focus-within:ring-2 focus-within:ring-[var(--ember-500)] focus-within:border-transparent transition-all',
           className
         )}
       >
         {value.map((tag) => (
           <span
             key={tag}
-            className="flex items-center gap-1 px-2 py-1 text-sm bg-[var(--paper-200)] dark:bg-[var(--night-600)] text-heading dark:text-heading rounded-md"
+            className="flex items-center gap-1 px-2 py-1 text-sm bg-[var(--celestial-100)] dark:bg-[var(--celestial-900)]/30 text-heading dark:text-heading rounded-md"
           >
             {tag}
             <button
@@ -88,13 +88,13 @@ export function TagInput({
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // Delay to allow click
           onKeyDown={handleKeyDown}
           placeholder={value.length === 0 ? placeholder : ''}
-          className="flex-1 min-w-[120px] bg-transparent outline-none text-heading dark:text-white placeholder:text-muted"
+          className="flex-1 min-w-[120px] bg-transparent outline-none text-heading dark:text-[var(--foreground)] placeholder:text-muted"
         />
       </div>
 
       {/* Suggestions Dropdown */}
       {showSuggestions && input && filteredSuggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[var(--background-secondary)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] border border-[var(--border)] dark:border-[var(--border)] rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
           {filteredSuggestions.map((suggestion) => (
             <button
               key={suggestion}

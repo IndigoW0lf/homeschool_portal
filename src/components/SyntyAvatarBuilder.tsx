@@ -146,7 +146,7 @@ export function SyntyAvatarBuilder({
           </div>
           <Link
             href={`/kids/${kidId}/studio`}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-xl font-bold hover:scale-105 transition-all shadow-lg shadow-purple-500/20 active:scale-95 text-sm"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-[var(--foreground)] rounded-xl font-bold hover:scale-105 transition-all shadow-lg shadow-purple-500/20 active:scale-95 text-sm"
           >
             🎨 Design New Items
           </Link>
@@ -164,7 +164,7 @@ export function SyntyAvatarBuilder({
                 shoesUrl={selectedShoesUrl}
                 skinColor={selectedSkinColor}
               />
-              <div className="absolute top-4 left-4 bg-white/80 dark:bg-[var(--background-secondary)]/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/30 uppercase tracking-widest shadow-sm">
+              <div className="absolute top-4 left-4 bg-[var(--background-elevated)]/80 dark:bg-[var(--background-secondary)]/80 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-[var(--celestial-600)] dark:text-[var(--celestial-400)] border border-indigo-100 dark:border-indigo-900/30 uppercase tracking-widest shadow-sm">
                 3D Life Preview
               </div>
             </div>
@@ -180,8 +180,8 @@ export function SyntyAvatarBuilder({
                   onClick={() => setActiveCategory(cat.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
                     activeCategory === cat.id
-                      ? 'bg-[var(--background-elevated)] text-indigo-600 dark:text-indigo-400 shadow-sm border border-indigo-100/50 dark:border-indigo-900/30'
-                      : 'text-muted hover:text-heading dark:hover:text-muted hover:bg-white/50 dark:hover:bg-[var(--night-800)]/30'
+                      ? 'bg-[var(--background-elevated)] text-[var(--celestial-600)] dark:text-[var(--celestial-400)] shadow-sm border border-indigo-100/50 dark:border-indigo-900/30'
+                      : 'text-muted hover:text-heading dark:hover:text-muted hover:bg-[var(--background-elevated)]/50 dark:hover:bg-[var(--night-800)]/30'
                   }`}
                 >
                   <span>{cat.icon}</span>
@@ -199,7 +199,7 @@ export function SyntyAvatarBuilder({
                       onClick={() => setSelectedSkinColor(color)}
                       className={`aspect-square rounded-full border-4 transition-all hover:scale-110 active:scale-95 ${
                         selectedSkinColor === color
-                          ? 'border-indigo-500 shadow-lg shadow-indigo-500/20'
+                          ? 'border-[var(--celestial-500)] shadow-lg shadow-indigo-500/20'
                           : 'border-white dark:border-[var(--border)]'
                       }`}
                       style={{ backgroundColor: color }}
@@ -216,7 +216,7 @@ export function SyntyAvatarBuilder({
                   </p>
                   <Link
                     href={`/kids/${kidId}/studio`}
-                    className="mt-4 px-6 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg text-xs font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+                    className="mt-4 px-6 py-2 bg-indigo-50 dark:bg-[var(--celestial-500)]/20 text-[var(--celestial-600)] dark:text-[var(--celestial-400)] rounded-lg text-xs font-bold hover:bg-[var(--celestial-400)]/20 dark:hover:bg-indigo-900/50 transition-colors"
                   >
                     Go to Design Studio
                   </Link>
@@ -246,7 +246,7 @@ export function SyntyAvatarBuilder({
                         (activeCategory === 'top' && !selectedTopUrl) ||
                         (activeCategory === 'bottom' && !selectedBottomUrl) ||
                         (activeCategory === 'shoes' && !selectedShoesUrl)
-                          ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                          ? 'border-[var(--celestial-500)] bg-indigo-50/50 dark:bg-indigo-900/20 text-[var(--celestial-600)] dark:text-[var(--celestial-400)]'
                           : 'border-dashed border-[var(--border)] dark:border-[var(--border)] text-muted'
                       }`}
                     >
@@ -268,7 +268,7 @@ export function SyntyAvatarBuilder({
                           onClick={() => handleSelectDesign(design)}
                           className={`aspect-square rounded-xl border-2 overflow-hidden transition-all hover:scale-102 active:scale-98 relative ${
                             isSelected
-                              ? 'border-indigo-500 shadow-lg shadow-indigo-500/10'
+                              ? 'border-[var(--celestial-500)] shadow-lg shadow-indigo-500/10'
                               : 'border-transparent bg-[var(--background-elevated)] shadow-sm hover:shadow-md'
                           }`}
                         >
@@ -283,9 +283,9 @@ export function SyntyAvatarBuilder({
                               🖼️
                             </div>
                           )}
-                          <div className={`absolute inset-0 bg-indigo-500/10 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
+                          <div className={`absolute inset-0 bg-[var(--celestial-500)]/10 transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0'}`} />
                           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                            <p className="text-[10px] font-bold text-white truncate text-left">
+                            <p className="text-[10px] font-bold text-[var(--foreground)] truncate text-left">
                               {design.name || 'Untitled'}
                             </p>
                           </div>
@@ -308,7 +308,7 @@ export function SyntyAvatarBuilder({
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="flex-[3] py-4 px-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-black shadow-lg shadow-emerald-500/20 hover:scale-102 transition-all active:scale-98 disabled:opacity-50 disabled:grayscale uppercase tracking-wider"
+                className="flex-[3] py-4 px-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-[var(--foreground)] rounded-xl font-black shadow-lg shadow-emerald-500/20 hover:scale-102 transition-all active:scale-98 disabled:opacity-50 disabled:grayscale uppercase tracking-wider"
               >
                 {isSaving ? 'Saving Changes...' : 'Save My Legend 🌟'}
               </button>

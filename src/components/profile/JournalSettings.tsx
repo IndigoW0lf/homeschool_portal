@@ -134,7 +134,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           {/* Enable/Disable Toggle */}
           <label className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg cursor-pointer">
             <div>
-              <p className="font-medium text-heading dark:text-white">Enable Daily Journal</p>
+              <p className="font-medium text-heading dark:text-[var(--foreground)]">Enable Daily Journal</p>
               <p className="text-sm text-muted">Show journal prompt on {selectedKidName}'s home</p>
             </div>
             <input
@@ -150,7 +150,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
             <div className="flex items-center gap-3">
               <Fire size={20} weight="fill" className="text-orange-500" />
               <div>
-                <p className="font-medium text-heading dark:text-white">Show Streak Counter</p>
+                <p className="font-medium text-heading dark:text-[var(--foreground)]">Show Streak Counter</p>
                 <p className="text-sm text-muted">Display current streak on {selectedKidName}'s home</p>
               </div>
             </div>
@@ -165,7 +165,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           {/* Allow Skip Toggle */}
           <label className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg cursor-pointer">
             <div>
-              <p className="font-medium text-heading dark:text-white">Allow Skip</p>
+              <p className="font-medium text-heading dark:text-[var(--foreground)]">Allow Skip</p>
               <p className="text-sm text-muted">Let {selectedKidName} skip the daily prompt</p>
             </div>
             <input
@@ -178,7 +178,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
 
           {/* Prompt Types */}
           <div>
-            <p className="font-medium text-heading dark:text-white mb-2">Prompt Types</p>
+            <p className="font-medium text-heading dark:text-[var(--foreground)] mb-2">Prompt Types</p>
             <p className="text-sm text-muted mb-3">Select which types of prompts {selectedKidName} sees</p>
             <div className="grid grid-cols-2 gap-2">
               {PROMPT_TYPES.map(type => (
@@ -202,7 +202,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           <button
             onClick={saveSettings}
             disabled={isSaving}
-            className="w-full py-2 px-4 bg-pink-500 text-white rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-2 px-4 bg-pink-500 text-[var(--foreground)] rounded-lg font-medium hover:bg-pink-600 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSaving ? (
               <ArrowsClockwise size={18} className="animate-spin" />

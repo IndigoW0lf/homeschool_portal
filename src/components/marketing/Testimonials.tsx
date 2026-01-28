@@ -28,7 +28,7 @@ export function Testimonials() {
         {/* Header */}
         <div className="text-center mb-16">
           <span className="text-[var(--celestial-400)] font-medium">TESTIMONIALS</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-[var(--foreground)] mt-3 mb-4">
             Loved by homeschool families
           </h2>
         </div>
@@ -56,7 +56,7 @@ export function Testimonials() {
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{testimonial.avatar}</span>
                 <div>
-                  <p className="font-medium text-white">{testimonial.author}</p>
+                  <p className="font-medium text-[var(--foreground)]">{testimonial.author}</p>
                   <p className="text-sm text-[var(--slate-400)]">{testimonial.role}</p>
                 </div>
               </div>

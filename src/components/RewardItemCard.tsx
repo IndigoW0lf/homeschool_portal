@@ -31,7 +31,7 @@ export function RewardItemCard({ item, canAfford, onPurchase }: RewardItemCardPr
       relative rounded-xl p-4 transition-all
       ${isPurchased 
         ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-300 dark:border-green-700'
-        : 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800'
+        : 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]'
       }
     `}>
       {/* Emoji Icon */}
@@ -70,7 +70,7 @@ export function RewardItemCard({ item, canAfford, onPurchase }: RewardItemCardPr
           className={`
             w-full py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2
             ${canAfford 
-              ? 'bg-purple-500 text-white hover:bg-purple-600 active:scale-95' 
+              ? 'bg-[var(--nebula-purple)] text-[var(--foreground)] hover:bg-[var(--nebula-purple)] active:scale-95' 
               : 'bg-[var(--background-secondary)] text-muted cursor-not-allowed'}
           `}
         >
@@ -88,7 +88,7 @@ export function RewardItemCard({ item, canAfford, onPurchase }: RewardItemCardPr
       )}
 
       {/* Reward Tag */}
-      <div className="absolute top-2 right-2 px-2 py-0.5 bg-purple-500 text-white text-xs font-medium rounded-full">
+      <div className="absolute top-2 right-2 px-2 py-0.5 bg-[var(--nebula-purple)] text-[var(--foreground)] text-xs font-medium rounded-full">
         Reward
       </div>
     </div>

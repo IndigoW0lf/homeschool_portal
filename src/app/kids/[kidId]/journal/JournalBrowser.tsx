@@ -172,7 +172,7 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
       {!showNewEntryForm && (
         <button
           onClick={() => setShowNewEntryForm(true)}
-          className="w-full p-4 rounded-xl border-2 border-dashed border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors flex items-center justify-center gap-2"
+          className="w-full p-4 rounded-xl border-2 border-dashed border-[var(--nebula-purple)]/40 dark:border-[var(--nebula-purple)] text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/10 dark:hover:bg-[var(--nebula-purple)]/15 transition-colors flex items-center justify-center gap-2"
         >
           <Plus size={20} weight="bold" />
           Write a New Entry
@@ -181,28 +181,28 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
 
       {/* New Entry Form */}
       {showNewEntryForm && (
-        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
-          <h3 className="font-semibold text-purple-800 dark:text-purple-300 mb-3">
+        <div className="p-4 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-xl border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
+          <h3 className="font-semibold text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] mb-3">
             New Journal Entry
           </h3>
           <textarea
             value={newEntryText}
             onChange={(e) => setNewEntryText(e.target.value)}
             placeholder="What's on your mind today?"
-            className="w-full p-3 rounded-lg border border-purple-200 dark:border-purple-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 resize-none"
+            className="w-full p-3 rounded-lg border border-[var(--border)]/30 dark:border-[var(--nebula-purple)] bg-[var(--background-elevated)] text-[var(--foreground)] resize-none"
             rows={4}
           />
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Mood:</span>
+              <span className="text-sm text-muted">Mood:</span>
               {Object.entries(MOOD_EMOJIS).map(([mood, emoji]) => (
                 <button
                   key={mood}
                   onClick={() => setNewEntryMood(newEntryMood === mood ? null : mood)}
                   className={`text-xl p-1 rounded transition-all ${
                     newEntryMood === mood
-                      ? 'bg-purple-200 dark:bg-purple-800 scale-110'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                      ? 'bg-[var(--nebula-purple)]/30 dark:bg-[var(--nebula-purple)] scale-110'
+                      : 'hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--background-elevated)]'
                   }`}
                 >
                   {emoji}
@@ -216,14 +216,14 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
                   setNewEntryText('');
                   setNewEntryMood(null);
                 }}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="px-4 py-2 text-muted hover:text-[var(--foreground)]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleNewEntry}
                 disabled={!newEntryText.trim() || isSubmitting}
-                className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-4 py-2 bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg hover:bg-[var(--nebula-purple)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isSubmitting ? 'Saving...' : 'Save Entry'}
               </button>
@@ -255,21 +255,21 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
         <div className="relative flex-1 min-w-[200px]">
           <MagnifyingGlass 
             size={18} 
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" 
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" 
           />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search entries..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)] text-[var(--foreground)]"
           />
         </div>
 
         {/* Random button */}
         <button
           onClick={pickRandomEntry}
-          className="px-4 py-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-800/30 transition-colors flex items-center gap-2"
+          className="px-4 py-2 rounded-lg bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/30 dark:hover:bg-[var(--nebula-purple)]/30 transition-colors flex items-center gap-2"
         >
           <Shuffle size={18} />
           Random Memory
@@ -279,15 +279,15 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
       {/* Tag Filter */}
       {allTags.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          <Tag size={16} className="text-gray-400 mt-1" />
+          <Tag size={16} className="text-muted mt-1" />
           {allTags.map(tag => (
             <button
               key={tag}
               onClick={() => setSelectedTag(selectedTag === tag ? null : tag as JournalTag)}
               className={`px-3 py-1 rounded-full text-sm transition-colors ${
                 selectedTag === tag
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  ? 'bg-[var(--nebula-purple)] text-[var(--foreground)]'
+                  : 'bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-muted hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)]'
               }`}
             >
               {tag}
@@ -298,15 +298,15 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
 
       {/* Mood Filter */}
       <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-500">Filter by mood:</span>
+        <span className="text-sm text-muted">Filter by mood:</span>
         {Object.entries(MOOD_EMOJIS).map(([mood, emoji]) => (
           <button
             key={mood}
             onClick={() => setSelectedMood(selectedMood === mood ? null : mood)}
             className={`text-xl p-1 rounded-lg transition-all ${
               selectedMood === mood
-                ? 'bg-purple-200 dark:bg-purple-800 scale-110'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                ? 'bg-[var(--nebula-purple)]/30 dark:bg-[var(--nebula-purple)] scale-110'
+                : 'hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--background-elevated)]'
             }`}
             title={mood}
           >
@@ -316,7 +316,7 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
         {(searchQuery || selectedTag || selectedMood) && (
           <button
             onClick={clearFilters}
-            className="ml-2 text-sm text-gray-500 hover:text-gray-700 underline"
+            className="ml-2 text-sm text-muted hover:text-[var(--foreground)] underline"
           >
             Clear filters
           </button>
@@ -324,7 +324,7 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
       </div>
 
       {/* Results count */}
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-muted">
         Showing {visibleEntries.length} of {filteredEntries.length} entries
       </p>
 
@@ -332,10 +332,10 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
       {entries.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">📔</div>
-          <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <h3 className="text-xl font-semibold text-[var(--foreground)] mb-2">
             No journal entries yet
           </h3>
-          <p className="text-gray-500 dark:text-gray-400">
+          <p className="text-muted">
             Write your first journal entry above!
           </p>
         </div>
@@ -355,7 +355,7 @@ export function JournalBrowser({ entries: initialEntries, kidName, kidId }: Jour
       {hasMore && (
         <button
           onClick={loadMore}
-          className="w-full py-3 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
+          className="w-full py-3 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/10 dark:hover:bg-[var(--nebula-purple)]/15 rounded-lg transition-colors"
         >
           Load More ({filteredEntries.length - visibleCount} remaining)
         </button>
@@ -388,13 +388,13 @@ function JournalEntryCard({
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+    <div className="p-4 bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] shadow-sm">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-2 text-sm text-muted">
           <Calendar size={14} />
           <span>{formattedDate}</span>
-          <span className="text-gray-300 dark:text-gray-600">•</span>
+          <span className="text-[var(--foreground-muted)] dark:text-muted">•</span>
           <span>{relativeDate}</span>
         </div>
         <div className="flex items-center gap-2">
@@ -406,7 +406,7 @@ function JournalEntryCard({
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="p-1 text-gray-400 hover:text-purple-500 transition-colors"
+              className="p-1 text-muted hover:text-[var(--nebula-purple)] transition-colors"
               title="Edit entry"
             >
               <PencilSimple size={16} />
@@ -417,7 +417,7 @@ function JournalEntryCard({
 
       {/* Prompt */}
       {entry.prompt !== 'Free writing' && (
-        <p className="text-sm text-purple-600 dark:text-purple-400 mb-2 italic">
+        <p className="text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] mb-2 italic">
           "{entry.prompt}"
         </p>
       )}
@@ -428,13 +428,13 @@ function JournalEntryCard({
           <textarea
             value={editedResponse}
             onChange={(e) => setEditedResponse(e.target.value)}
-            className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 resize-none"
+            className="w-full p-2 rounded-lg border border-[var(--border)] bg-[var(--background-secondary)] text-[var(--foreground)] resize-none"
             rows={4}
           />
           <div className="flex justify-end gap-2">
             <button
               onClick={handleCancel}
-              className="p-2 text-gray-500 hover:text-gray-700"
+              className="p-2 text-muted hover:text-[var(--foreground)]"
             >
               <X size={18} />
             </button>
@@ -447,7 +447,7 @@ function JournalEntryCard({
           </div>
         </div>
       ) : (
-        <p className="text-gray-800 dark:text-gray-200">
+        <p className="text-[var(--foreground)]">
           {entry.response}
         </p>
       )}
@@ -458,7 +458,7 @@ function JournalEntryCard({
           {entry.tags.map(tag => (
             <span 
               key={tag}
-              className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-xs text-gray-600 dark:text-gray-400"
+              className="px-2 py-0.5 rounded-full bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-xs text-muted"
             >
               #{tag}
             </span>

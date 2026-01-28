@@ -3,15 +3,15 @@
 import React from 'react';
 
 export type TitleGradient = 
-  | 'sunset'      // cosmic-rust → ember-gold → nebula-pink
-  | 'altar-flame' // candle-cream → herbal-gold → mystic-ember
-  | 'ocean'       // celestial-teal
-  | 'teal-pink'   // teal → pink
-  | 'gold'        // ember-gold shimmer
-  | 'dusk'        // deep-night → nebula-purple
-  | 'herbal-bloom'// herbal-gold → midnight-bloom
-  | 'cosmic'      // night → purple → pink
-  | 'moonlit';    // cream → teal
+  | 'sunset'      // Cosmic Rust
+  | 'altar-flame' // Herbal Gold
+  | 'ocean'       // Celestial Teal
+  | 'teal-pink'   // Celestial Teal
+  | 'gold'        // Herbal Gold
+  | 'dusk'        // Slate
+  | 'herbal-bloom'// Herbal Gold
+  | 'cosmic'      // Foreground
+  | 'moonlit';    // Celestial Teal
 
 export type TitleSize = 'sm' | 'md' | 'lg' | 'xl' | 'hero';
 
@@ -31,16 +31,17 @@ const sizeClasses: Record<TitleSize, string> = {
   hero: 'text-5xl md:text-6xl lg:text-7xl',
 };
 
-const gradientClasses: Record<TitleGradient, string> = {
-  sunset: 'bg-gradient-sunset',
-  'altar-flame': 'bg-gradient-altar-flame',
-  ocean: 'bg-gradient-ocean',
-  'teal-pink': 'bg-gradient-teal-pink',
-  gold: 'bg-gradient-rust-gold',
-  dusk: 'bg-gradient-dusk',
-  'herbal-bloom': 'bg-gradient-herbal-bloom',
-  cosmic: 'bg-gradient-cosmic',
-  moonlit: 'bg-gradient-candle-teal',
+// Using solid palette colors for reliable display
+const colorClasses: Record<TitleGradient, string> = {
+  sunset: 'text-[var(--cosmic-rust-500)]',
+  'altar-flame': 'text-[var(--herbal-gold)]',
+  ocean: 'text-[var(--celestial-500)]',
+  'teal-pink': 'text-[var(--celestial-400)]',
+  gold: 'text-[var(--herbal-gold)]',
+  dusk: 'text-[var(--slate-400)]',
+  'herbal-bloom': 'text-[var(--herbal-gold)]',
+  cosmic: 'text-[var(--foreground)]',
+  moonlit: 'text-[var(--celestial-400)]',
 };
 
 export function LunaraTitle({
@@ -53,10 +54,9 @@ export function LunaraTitle({
   return (
     <Component
       className={`
-        font-magical font-normal tracking-wide
+        font-bold tracking-wide
         ${sizeClasses[size]}
-        ${gradientClasses[gradient]}
-        bg-clip-text text-transparent
+        ${colorClasses[gradient]}
         ${className}
       `}
     >
@@ -64,3 +64,4 @@ export function LunaraTitle({
     </Component>
   );
 }
+

@@ -50,7 +50,50 @@ function parseItemType(taskName: string): string {
   if (lowerTask.includes('supplemental')) {
     return 'supplemental';
   }
+  if (lowerTask.includes('video')) {
+    return 'video';
+  }
   return 'lesson';
+}
+
+/**
+ * Parse topic name from task name
+ * Input: "Subtract Decimals 1 | Practice: Levels 7 - 9"
+ * Output: "Subtract Decimals 1"
+ */
+function parseTopicFromTask(taskName: string): string {
+  if (taskName.includes('|')) {
+  }
+  return taskName.trim();
+}
+
+/**
+ * Parse practice level from task name if present
+ * Input: "Subtract Decimals 1 | Practice: Levels 7 - 9"
+ * Output: "Levels 7-9"
+ */
+function parseLevelFromTask(taskName: string): string | null {
+  const lowerTask = taskName.toLowerCase();
+  // Match patterns like "Levels 7 - 9", "Level 4", "Levels 1-3"
+  const levelMatch = taskName.match(/Levels?\s*[\d]+\s*[-–]?\s*[\d]*/i);
+  if (levelMatch) {
+    return levelMatch[0].replace(/\s+/g, ' ').trim();
+  }
+  return null;
+}
+
+/**
+ * Calculate mastery status from score
+ * - weak: <80%
+ * - developing: 80-89%
+ * - mastered: >=90%
+ * - in_progress: no score (practice/video)
+ */
+function calculateMasteryStatus(score: number | null): string {
+  if (score === null) return 'in_progress';
+  if (score >= 90) return 'mastered';
+  if (score >= 80) return 'developing';
+  return 'weak';
 }
 
 function parseScore(scoreStr: string | null): number | null {
@@ -100,6 +143,8 @@ export async function importExternalCurriculum(
         return null;
       }
 
+      const score = parseScore(row.score);
+      
       return {
         kid_id: kidId,
         source: source || 'miacademy',
@@ -107,8 +152,12 @@ export async function importExternalCurriculum(
         course: row.course,
         subject: parseSubjectFromCourse(row.course),
         date: date,
-        score: parseScore(row.score),
+        score: score,
         item_type: parseItemType(row.taskName),
+        // Enhanced fields for practice generation
+        topic: parseTopicFromTask(row.taskName),
+        level: parseLevelFromTask(row.taskName),
+        mastery_status: calculateMasteryStatus(score),
       };
     } catch (err) {
       errors.push(`Row ${idx + 1}: ${err instanceof Error ? err.message : 'Parse error'}`);

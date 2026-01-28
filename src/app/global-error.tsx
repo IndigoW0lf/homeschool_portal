@@ -26,17 +26,17 @@ export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
             {/* Friendly illustration */}
             <div className="text-8xl mb-6">🌧️</div>
             
-            <h1 className="text-2xl font-bold text-white mb-2">
+            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
               Oops! Something went wrong
             </h1>
-            <p className="text-gray-400 mb-6">
+            <p className="text-muted mb-6">
               Don&apos;t worry, it&apos;s not your fault! Our magical portal had a little hiccup.
             </p>
             
             <div className="space-y-3">
               <button
                 onClick={reset}
-                className="w-full px-6 py-3 text-white rounded-xl font-medium hover:opacity-90 transition-opacity"
+                className="w-full px-6 py-3 text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 transition-opacity"
                 style={{
                   background: 'linear-gradient(90deg, #B86A4B 0%, #D4A853 100%)',
                 }}
@@ -46,7 +46,7 @@ export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
               
               <a
                 href="/"
-                className="block w-full px-6 py-3 bg-white/10 text-white rounded-xl font-medium hover:bg-white/20 transition-colors border border-white/10"
+                className="block w-full px-6 py-3 bg-[var(--background-elevated)]/10 text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--background-elevated)]/20 transition-colors border border-white/10"
               >
                 🏠 Go Home
               </a>
@@ -55,7 +55,7 @@ export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
             {/* Debug info for development */}
             {process.env.NODE_ENV === 'development' && (
               <details className="mt-8 text-left bg-black/30 rounded-lg p-4 border border-white/10">
-                <summary className="cursor-pointer text-sm font-medium text-gray-400">
+                <summary className="cursor-pointer text-sm font-medium text-muted">
                   🔧 Error Details (Dev Only)
                 </summary>
                 <pre className="mt-2 text-xs text-red-400 overflow-auto">

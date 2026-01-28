@@ -23,17 +23,17 @@ export default async function WorksheetPage({ params }: WorksheetPageProps) {
 
   if (!assignment.worksheet_data) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center p-8 bg-[var(--background-secondary)] dark:bg-[var(--background)]">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          <h1 className="text-2xl font-bold text-[var(--foreground)] mb-4">
             No Worksheet Available
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
+          <p className="text-muted mb-8">
             This assignment doesn&apos;t have an interactive worksheet.
           </p>
           <a 
             href={`/kids/${kidId}`}
-            className="text-purple-600 hover:underline"
+            className="text-[var(--nebula-purple)] hover:underline"
           >
             Back to Portal
           </a>

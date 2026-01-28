@@ -88,7 +88,7 @@ export default async function KidTimeCapsulePage({ params, searchParams }: TimeC
               <Package size={28} weight="duotone" className="text-amber-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-[var(--foreground)]">
                 Time Capsule
               </h1>
               <p className="text-amber-600 dark:text-amber-400">

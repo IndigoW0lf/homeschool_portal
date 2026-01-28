@@ -105,7 +105,7 @@ export function ExternalCurriculumList({ items: initialItems, kidName }: Externa
             {hasMore && (
                 <button
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="w-full mt-2 py-2 text-sm text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors flex items-center justify-center gap-1"
+                    className="w-full mt-2 py-2 text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/10 dark:hover:bg-[var(--nebula-purple)]/15 rounded-lg transition-colors flex items-center justify-center gap-1"
                 >
                     {isExpanded ? (
                         <>
@@ -148,7 +148,7 @@ export function ExternalCurriculumList({ items: initialItems, kidName }: Externa
                             <button
                                 onClick={confirmDelete}
                                 disabled={isPending}
-                                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
+                                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-[var(--foreground)] rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
                             >
                                 {isPending ? (
                                     <>Deleting...</>

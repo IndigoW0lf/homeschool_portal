@@ -296,7 +296,7 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
       
       {/* Tool indicator */}
       {!readonly && (
-        <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-white text-xs rounded capitalize">
+        <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 text-[var(--foreground)] text-xs rounded capitalize">
           {tool} Mode
         </div>
       )}

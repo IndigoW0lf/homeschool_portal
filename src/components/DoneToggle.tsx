@@ -19,8 +19,8 @@ export function DoneToggle({ kidId, date, lessonId }: DoneToggleProps) {
         flex-shrink-0 w-12 h-12 rounded-full border-2 flex items-center justify-center
         transition-all duration-200 cursor-pointer
         ${done 
-          ? 'bg-green-500 border-green-500 text-white scale-110' 
-          : 'bg-white dark:bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:border-green-400 dark:hover:border-green-500'}
+          ? 'bg-green-500 border-green-500 text-[var(--foreground)] scale-110' 
+          : 'bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] border-[var(--border)] dark:border-[var(--border)] hover:border-green-400 dark:hover:border-green-500'}
         ${!isLoaded ? 'opacity-50' : ''}
       `}
       aria-label={done ? 'Mark as not done' : 'Mark as done'}

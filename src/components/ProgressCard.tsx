@@ -112,7 +112,7 @@ export function ProgressCard({
             </h4>
             <Link
               href={`/kids/${kidId}/profile#badges`}
-              className="text-xs text-purple-600 dark:text-purple-400 hover:underline"
+              className="text-xs text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:underline"
             >
               Manage
             </Link>
@@ -126,7 +126,7 @@ export function ProgressCard({
               return (
                 <div
                   key={badge.id}
-                  className="group relative p-3 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 hover:shadow-md transition-all"
+                  className="group relative p-3 rounded-xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] hover:shadow-md transition-all"
                 >
                   <div className="flex items-start gap-3">
                     {/* Badge Icon */}
@@ -151,7 +151,7 @@ export function ProgressCard({
                   
                   {/* Hover tooltip for full description */}
                   <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-[var(--night-900)] dark:bg-[var(--background-secondary)] rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <p className="text-white text-sm font-semibold mb-1">{badge.name}</p>
+                    <p className="text-[var(--foreground)] text-sm font-semibold mb-1">{badge.name}</p>
                     <p className="text-muted text-xs">{badge.description}</p>
                     <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--night-900)] dark:bg-[var(--background-secondary)] rotate-45" />
                   </div>

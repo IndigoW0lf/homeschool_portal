@@ -15,28 +15,28 @@ import { format } from 'date-fns';
 
 // Curated list of holiday/break-appropriate icons
 const HOLIDAY_ICONS = [
-  { id: 'sun', label: 'Summer/Sunny', Icon: Sun, color: '#e7b58d' },
-  { id: 'snowflake', label: 'Winter', Icon: Snowflake, color: '#b6e1d8' },
-  { id: 'tree', label: 'Christmas', Icon: Tree, color: '#b6e1d8' },
-  { id: 'gift', label: 'Gifts/Birthday', Icon: Gift, color: '#ffcdf6' },
-  { id: 'heart', label: 'Valentine\'s', Icon: Heart, color: '#ffcdf6' },
-  { id: 'star', label: 'Special Day', Icon: Star, color: '#e7b58d' },
-  { id: 'sparkle', label: 'Celebration', Icon: Sparkle, color: '#caa2d8' },
-  { id: 'confetti', label: 'Party', Icon: Confetti, color: '#ffcdf6' },
-  { id: 'umbrella', label: 'Rainy Day', Icon: Umbrella, color: '#b6e1d8' },
-  { id: 'flower', label: 'Spring', Icon: Flower, color: '#ffcdf6' },
-  { id: 'moon', label: 'Night/Rest', Icon: Moon, color: '#caa2d8' },
-  { id: 'campfire', label: 'Camping', Icon: Campfire, color: '#e7b58d' },
-  { id: 'airplane', label: 'Travel', Icon: Airplane, color: '#b6e1d8' },
-  { id: 'house', label: 'Home Day', Icon: House, color: '#e7b58d' },
-  { id: 'balloon', label: 'Birthday', Icon: Balloon, color: '#ffcdf6' },
-  { id: 'cake', label: 'Birthday Cake', Icon: Cake, color: '#ffcdf6' },
-  { id: 'coffee', label: 'Break', Icon: Coffee, color: '#e7b58d' },
-  { id: 'book', label: 'Reading Day', Icon: BookOpen, color: '#b6e1d8' },
-  { id: 'music', label: 'Music Day', Icon: MusicNote, color: '#caa2d8' },
-  { id: 'game', label: 'Game Day', Icon: GameController, color: '#caa2d8' },
-  { id: 'bed', label: 'Sleep In', Icon: Bed, color: '#b6e1d8' },
-  { id: 'alarm', label: 'Early Out', Icon: Alarm, color: '#e7b58d' },
+  { id: 'sun', label: 'Summer/Sunny', Icon: Sun, color: 'var(--ember-400)' },
+  { id: 'snowflake', label: 'Winter', Icon: Snowflake, color: 'var(--celestial-300)' },
+  { id: 'tree', label: 'Christmas', Icon: Tree, color: 'var(--herbal-400)' },
+  { id: 'gift', label: 'Gifts/Birthday', Icon: Gift, color: 'var(--nebula-pink-light)' },
+  { id: 'heart', label: 'Valentine\'s', Icon: Heart, color: 'var(--nebula-pink)' },
+  { id: 'star', label: 'Special Day', Icon: Star, color: 'var(--solar-400)' },
+  { id: 'sparkle', label: 'Celebration', Icon: Sparkle, color: 'var(--nebula-purple-light)' },
+  { id: 'confetti', label: 'Party', Icon: Confetti, color: 'var(--nebula-pink)' },
+  { id: 'umbrella', label: 'Rainy Day', Icon: Umbrella, color: 'var(--celestial-300)' },
+  { id: 'flower', label: 'Spring', Icon: Flower, color: 'var(--herbal-300)' },
+  { id: 'moon', label: 'Night/Rest', Icon: Moon, color: 'var(--nebula-purple-light)' },
+  { id: 'campfire', label: 'Camping', Icon: Campfire, color: 'var(--ember-500)' },
+  { id: 'airplane', label: 'Travel', Icon: Airplane, color: 'var(--celestial-400)' },
+  { id: 'house', label: 'Home Day', Icon: House, color: 'var(--ember-400)' },
+  { id: 'balloon', label: 'Birthday', Icon: Balloon, color: 'var(--nebula-pink)' },
+  { id: 'cake', label: 'Birthday Cake', Icon: Cake, color: 'var(--nebula-pink)' },
+  { id: 'coffee', label: 'Break', Icon: Coffee, color: 'var(--ember-400)' },
+  { id: 'book', label: 'Reading Day', Icon: BookOpen, color: 'var(--celestial-300)' },
+  { id: 'music', label: 'Music Day', Icon: MusicNote, color: 'var(--nebula-purple-light)' },
+  { id: 'game', label: 'Game Day', Icon: GameController, color: 'var(--nebula-purple)' },
+  { id: 'bed', label: 'Sleep In', Icon: Bed, color: 'var(--celestial-200)' },
+  { id: 'alarm', label: 'Early Out', Icon: Alarm, color: 'var(--ember-500)' },
 ];
 
 interface Holiday {
@@ -318,7 +318,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
             </button>
             <button
               onClick={handleAdd}
-              className="px-3 py-1.5 text-sm bg-[var(--ember-500)] text-white rounded-lg hover:bg-[var(--ember-600)]"
+              className="px-3 py-1.5 text-sm bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg hover:bg-[var(--ember-600)]"
             >
               Add Holiday
             </button>
@@ -327,7 +327,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
       )}
 
       {/* Holiday List */}
-      <div className="divide-y divide-gray-100 dark:divide-gray-700 max-h-80 overflow-y-auto">
+      <div className="divide-y divide-[var(--border)] max-h-80 overflow-y-auto">
         {upcomingHolidays.length === 0 ? (
           <div className="p-6 text-center text-muted">
             {holidays.length > 0 
@@ -383,7 +383,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                     </button>
                     <button
                       onClick={() => handleUpdate(holiday.id)}
-                      className="p-1 text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded"
+                      className="p-1 text-[var(--herbal-500)] hover:text-[var(--herbal-600)] hover:bg-[var(--herbal-50)] dark:hover:bg-[var(--herbal-900)]/30 rounded"
                     >
                       <Check size={16} />
                     </button>
@@ -394,7 +394,7 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                 <>
                   <div className="w-8 h-8 flex items-center justify-center">{renderIcon(holiday.emoji, 28)}</div>
                   <div className="flex-1">
-                    <div className="font-medium text-heading dark:text-white">{holiday.name}</div>
+                    <div className="font-medium text-heading dark:text-[var(--foreground)]">{holiday.name}</div>
                     <div className="text-sm text-muted">
                       {formatDate(holiday.startDate)}
                       {holiday.endDate && holiday.endDate !== holiday.startDate && (
@@ -405,15 +405,15 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
                   <div className="flex gap-1">
                     <button
                       onClick={() => startEdit(holiday)}
-                      className="p-1.5 text-muted hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
+                      className="p-1.5 text-muted hover:text-[var(--celestial-500)] hover:bg-[var(--celestial-50)] dark:hover:bg-[var(--celestial-900)]/30 rounded"
                     >
-                      <PencilSimple size={20} weight="duotone" color="#caa2d8" />
+                      <PencilSimple size={20} weight="duotone" color="var(--celestial-300)" />
                     </button>
                     <button
                       onClick={() => handleDelete(holiday.id)}
-                      className="p-1.5 text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+                      className="p-1.5 text-muted hover:text-[var(--destructive)] hover:bg-[var(--destructive)]/10 dark:hover:bg-[var(--destructive)]/20 rounded"
                     >
-                      <Trash size={20} weight="duotone" color="#ffcdf6" />
+                      <Trash size={20} weight="duotone" color="var(--nebula-pink-light)" />
                     </button>
                   </div>
                 </>

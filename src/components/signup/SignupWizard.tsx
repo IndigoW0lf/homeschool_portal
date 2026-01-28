@@ -191,9 +191,9 @@ export function SignupWizard() {
                   className={cn(
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all",
                     isCompleted
-                      ? "bg-green-500 text-white"
+                      ? "bg-green-500 text-[var(--foreground)]"
                       : isActive
-                      ? "bg-[var(--ember-500)] text-white"
+                      ? "bg-[var(--ember-500)] text-[var(--foreground)]"
                       : "bg-[var(--background-secondary)] text-muted"
                   )}
                 >

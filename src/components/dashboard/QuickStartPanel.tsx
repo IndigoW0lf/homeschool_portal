@@ -93,15 +93,15 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-              <Lightning size={20} weight="fill" className="text-white" />
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--nebula-purple)] to-[var(--nebula-pink)] flex items-center justify-center">
+              <Lightning size={20} weight="fill" className="text-[var(--foreground)]" />
             </div>
             <div className="text-left">
               <h3 className="font-semibold text-heading">Quick Start</h3>
               <p className="text-sm text-muted">One-click lesson starters</p>
             </div>
           </div>
-          <CaretDown size={20} className="text-muted group-hover:text-purple-500 transition-colors" />
+          <CaretDown size={20} className="text-muted group-hover:text-[var(--nebula-purple)] transition-colors" />
         </div>
       </button>
     );
@@ -110,11 +110,11 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
   return (
     <div className="card overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-[var(--border)] bg-gradient-to-r from-purple-500/5 to-pink-500/5">
+      <div className="p-4 border-b border-[var(--border)] bg-gradient-to-r from-[var(--nebula-purple)]/5 to-[var(--nebula-pink)]/5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-              <Lightning size={20} weight="fill" className="text-white" />
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--nebula-purple)] to-[var(--nebula-pink)] flex items-center justify-center">
+              <Lightning size={20} weight="fill" className="text-[var(--foreground)]" />
             </div>
             <div>
               <h3 className="font-semibold text-heading">Quick Start</h3>
@@ -137,7 +137,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
             <select
               value={selectedKid}
               onChange={(e) => setSelectedKid(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+              className="w-full px-3 py-2 text-sm border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
             >
               {kids.map(kid => (
                 <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -150,7 +150,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
         <div className="flex gap-2 mt-3">
           <button
             onClick={handleSurpriseMe}
-            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium bg-gradient-to-r from-[var(--nebula-purple)] to-[var(--nebula-pink)] text-[var(--foreground)] rounded-lg hover:opacity-90 transition-opacity"
           >
             <Shuffle size={16} />
             Surprise Me!
@@ -176,7 +176,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
               className={cn(
                 "px-3 py-1.5 text-xs font-medium rounded-full whitespace-nowrap transition-colors flex items-center gap-1",
                 category === cat
-                  ? "bg-purple-500 text-white"
+                  ? "bg-[var(--nebula-purple)] text-[var(--foreground)]"
                   : "bg-[var(--background-elevated)] text-muted hover:bg-[var(--hover-overlay)]"
               )}
             >
@@ -201,8 +201,8 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
               className={cn(
                 "flex items-center gap-3 p-3 text-left rounded-lg border transition-all",
                 isScheduled
-                  ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-                  : "bg-[var(--background-elevated)] border-[var(--border)] hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-sm",
+                  ? "bg-[var(--herbal-50)] dark:bg-[var(--herbal-900)]/20 border-[var(--herbal-200)] dark:border-[var(--herbal-800)]"
+                  : "bg-[var(--background-elevated)] border-[var(--border)] hover:border-[var(--nebula-purple)]/40 dark:hover:border-[var(--nebula-purple)] hover:shadow-sm",
                 isScheduling && "opacity-50"
               )}
             >
@@ -213,7 +213,7 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
                     {template.title}
                   </h4>
                   {isScheduled && (
-                    <CheckCircle size={16} weight="fill" className="text-green-500 flex-shrink-0" />
+                    <CheckCircle size={16} weight="fill" className="text-[var(--herbal-500)] flex-shrink-0" />
                   )}
                 </div>
                 <p className="text-xs text-muted truncate">
@@ -224,13 +224,13 @@ export function QuickStartPanel({ kids, onSchedule, compact = false }: QuickStar
                     <Clock size={12} />
                     {template.duration} min
                   </span>
-                  <span className="text-xs text-purple-500 dark:text-purple-400">
+                  <span className="text-xs text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]">
                     {template.subject}
                   </span>
                 </div>
               </div>
               {!isScheduled && (
-                <Play size={18} weight="fill" className="text-purple-500 flex-shrink-0" />
+                <Play size={18} weight="fill" className="text-[var(--nebula-purple)] flex-shrink-0" />
               )}
             </button>
           );

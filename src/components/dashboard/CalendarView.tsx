@@ -97,7 +97,7 @@ export function CalendarView() {
             >
               <span className={cn(
                 "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full",
-                isTodayDate ? "bg-[var(--cosmic-rust-500)] text-white" : "text-heading"
+                isTodayDate ? "bg-[var(--cosmic-rust-500)] text-[var(--foreground)]" : "text-heading"
               )}>
                 {format(day, 'd')}
               </span>

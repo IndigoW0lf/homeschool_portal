@@ -38,7 +38,7 @@ export function WeekCalendar({ entries, selectedDate, onDateSelect, kidId }: Wee
 
   return (
     <div className="bg-[var(--background-elevated)] rounded-xl p-4 shadow-sm">
-      <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">This Week</h3>
+      <h3 className="text-lg font-semibold text-heading dark:text-[var(--foreground)] mb-4">This Week</h3>
       <div className="grid grid-cols-7 gap-2 h-[80px]">
         {DAYS.map((day, i) => {
           const date = weekDates[i];
@@ -56,15 +56,15 @@ export function WeekCalendar({ entries, selectedDate, onDateSelect, kidId }: Wee
                   w-full aspect-square rounded-lg flex flex-col items-center justify-center text-sm
                   transition-colors cursor-pointer h-[60px]
                   ${isToday 
-                    ? 'bg-blue-500 text-white font-bold' 
+                    ? 'bg-[var(--celestial-500)] text-[var(--foreground)] font-bold' 
                     : isSelected
-                      ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300'
+                      ? 'bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-900)]/50 text-[var(--celestial-500)] dark:text-[var(--celestial-300)]'
                       : 'bg-[var(--background-secondary)] text-heading dark:text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'}
                 `}
               >
                 <span>{date.getDate()}</span>
                 {hasEntries && (
-                  <span className="w-2 h-2 bg-green-400 rounded-full mt-1" title="Has assignments" />
+                  <span className="w-2 h-2 bg-[var(--herbal-400)] rounded-full mt-1" title="Has assignments" />
                 )}
               </button>
             </div>

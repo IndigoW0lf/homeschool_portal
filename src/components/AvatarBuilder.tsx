@@ -125,10 +125,10 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
       {/* ... (Header) ... */}
       <div className="bg-[var(--background-elevated)] rounded-xl p-6 shadow-sm border border-[var(--border)]">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-heading dark:text-white">Avatar Builder</h2>
+          <h2 className="text-2xl font-bold text-heading dark:text-[var(--foreground)]">Avatar Builder</h2>
           <Link 
             href={`/kids/${kidId}/studio`}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 transition-opacity text-sm"
           >
             🎨 Design Studio
           </Link>
@@ -212,7 +212,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
 
         {/* Asset Selection */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">
+          <h3 className="text-lg font-semibold text-heading dark:text-[var(--foreground)] mb-4">
             Select {
               activeTab === 'skin' ? 'Skin Tone' : 
               activeTab === 'face' ? 'Face' : 
@@ -461,7 +461,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
         {/* Color Picker */}
         {activeTab === 'outfit' && colorableParts.length > 0 && (
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Colors</h3>
+            <h3 className="text-lg font-semibold text-heading dark:text-[var(--foreground)] mb-4">Colors</h3>
             <div className="space-y-4">
               {colorableParts.map(part => (
                 <div key={part}>
@@ -496,7 +496,7 @@ export function AvatarBuilder({ kidId, assets, initialAvatarState }: AvatarBuild
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="w-full py-3 px-6 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="w-full py-3 px-6 bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {isSaving ? 'Saving...' : 'Save Avatar'}
         </button>

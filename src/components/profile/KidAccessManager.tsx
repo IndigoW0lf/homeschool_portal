@@ -77,7 +77,7 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
         "p-5 rounded-xl border-2 transition-all",
         isSetup 
           ? "border-[var(--lavender-200)] bg-[var(--lavender-50)] dark:bg-[var(--lavender-900)]/10 dark:border-[var(--lavender-800)]"
-          : "border-[var(--border)] dark:border-[var(--border)] bg-white dark:bg-[var(--night-900)]"
+          : "border-[var(--border)] dark:border-[var(--border)] bg-[var(--background-elevated)] dark:bg-[var(--night-900)]"
       )}>
         <div className="flex items-start gap-3 mb-6">
           <div className={cn(
@@ -154,8 +154,8 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
               className={cn(
                 "w-full py-2.5 rounded-lg font-medium transition-all shadow-sm",
                 isSetup
-                  ? "bg-[var(--lavender-500)] text-white hover:bg-[var(--lavender-600)]"
-                  : "bg-white border border-[var(--border)] text-heading hover:bg-[var(--background-secondary)] dark:border-[var(--border)] dark:text-heading"
+                  ? "bg-[var(--lavender-500)] text-[var(--foreground)] hover:bg-[var(--lavender-600)]"
+                  : "bg-[var(--background-elevated)] border border-[var(--border)] text-heading hover:bg-[var(--background-secondary)] dark:border-[var(--border)] dark:text-heading"
               )}
             >
               {isSaving ? 'Saving...' : (isSetup ? 'Enable Login' : 'Update Credentials')}

@@ -149,6 +149,40 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     setStep('parsing');
     setSelectedRows(new Set());
 
+    // Check if it's a PDF - use server-side extraction
+    if (file.name.toLowerCase().endsWith('.pdf')) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch('/api/parse-pdf', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to extract PDF text');
+        }
+        
+        const { text } = await response.json();
+        setRawText(text);
+        
+        if (useAI) {
+          await parseWithAI(text);
+        } else {
+          const rows = parseCSVManual(text);
+          setParsedData(rows);
+        }
+        setStep('preview');
+      } catch (err) {
+        console.error('PDF extraction error:', err);
+        toast.error('Could not read PDF. Try copying the text and pasting instead.');
+        setStep('upload');
+      }
+      return;
+    }
+
+    // For non-PDF files, use FileReader
     const reader = new FileReader();
     reader.onload = async (event) => {
       const text = event.target?.result as string;
@@ -319,7 +353,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               Import External Curriculum
             </h2>
             {useAI && (
-              <span className="flex items-center gap-1 text-xs px-2 py-1 bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-600 dark:text-purple-400 rounded-full">
+              <span className="flex items-center gap-1 text-xs px-2 py-1 bg-gradient-to-r from-[var(--nebula-purple)]/10 to-[var(--nebula-pink)]/10 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] rounded-full">
                 <Sparkle size={12} weight="fill" />
                 Smart Import
               </span>
@@ -344,7 +378,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                 <select
                   value={selectedKidId}
                   onChange={(e) => setSelectedKidId(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                  className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
                 >
                   {kids.map(kid => (
                     <option key={kid.id} value={kid.id}>{kid.name}</option>
@@ -360,7 +394,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                 <select
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
-                  className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading"
+                  className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading"
                 >
                   <option value="miacademy">MiAcademy</option>
                   <option value="khan">Khan Academy</option>
@@ -369,8 +403,8 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               </div>
 
               {/* Smart Import Info */}
-              <div className="flex items-center gap-2 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                <Sparkle size={18} weight="fill" className="text-purple-500" />
+              <div className="flex items-center gap-2 p-3 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-lg">
+                <Sparkle size={18} weight="fill" className="text-[var(--nebula-purple)]" />
                 <span className="text-sm text-muted">
                   We&apos;ll automatically organize everything by subject ✨
                 </span>
@@ -387,11 +421,11 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                   Drag & drop a file here, or
                 </p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  <label className="inline-block px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg font-medium cursor-pointer hover:opacity-90">
+                  <label className="inline-block px-4 py-2 bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium cursor-pointer hover:opacity-90">
                     Browse Files
                     <input
                       type="file"
-                      accept=".csv,.tsv,.txt"
+                      accept=".csv,.tsv,.txt,.pdf"
                       onChange={handleFileSelect}
                       className="hidden"
                     />
@@ -410,9 +444,9 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
           {step === 'parsing' && (
             <div className="text-center py-12">
               <div className="relative mx-auto w-16 h-16 mb-4">
-                <div className="absolute inset-0 rounded-full border-4 border-purple-200 dark:border-purple-900/50"></div>
-                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
-                <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-purple-500 animate-pulse" />
+                <div className="absolute inset-0 rounded-full border-4 border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]/50"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[var(--nebula-purple)] animate-spin"></div>
+                <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-[var(--nebula-purple)] animate-pulse" />
               </div>
               <h3 className="text-lg font-semibold text-heading mb-2">
                 Reading Your File... 📚
@@ -434,9 +468,9 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
               {isParsing ? (
                 <div className="text-center py-12">
                   <div className="relative mx-auto w-16 h-16 mb-4">
-                    <div className="absolute inset-0 rounded-full border-4 border-purple-200 dark:border-purple-900/50"></div>
-                    <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
-                    <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-purple-500 animate-pulse" />
+                    <div className="absolute inset-0 rounded-full border-4 border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]/50"></div>
+                    <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[var(--nebula-purple)] animate-spin"></div>
+                    <Sparkle size={24} weight="fill" className="absolute inset-0 m-auto text-[var(--nebula-purple)] animate-pulse" />
                   </div>
                   <h3 className="text-lg font-semibold text-heading mb-2">
                     Organizing by subject... 🎨
@@ -453,7 +487,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                       <span className="text-muted">• {displayData.length} items</span>
                     </div>
                     {useAI && aiParsedData.length > 0 && (
-                      <span className="flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400">
+                      <span className="flex items-center gap-1 text-xs text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]">
                         <Sparkle size={12} />
                         Organized by subject
                       </span>
@@ -469,7 +503,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                             type="checkbox"
                             checked={selectedRows.size === aiParsedData.length && aiParsedData.length > 0}
                             onChange={toggleAllRows}
-                            className="w-4 h-4 rounded border-[var(--border)] text-purple-600 focus:ring-purple-500"
+                            className="w-4 h-4 rounded border-[var(--border)] text-[var(--nebula-purple)] focus:ring-[var(--nebula-purple)]"
                           />
                           <span className="text-sm text-muted">
                             {selectedRows.size > 0 ? `${selectedRows.size} selected` : 'Select all'}
@@ -481,14 +515,14 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setShowBulkEdit(!showBulkEdit)}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50"
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] rounded-lg hover:bg-[var(--nebula-purple)]/30 dark:hover:bg-[var(--nebula-purple)]/40"
                           >
                             <PencilSimple size={14} />
                             Change Subject
                           </button>
                           <button
                             onClick={deleteSelectedRows}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50"
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-[var(--destructive)]/10 dark:bg-[var(--destructive)]/20 text-[var(--destructive)] rounded-lg hover:bg-[var(--destructive)]/20 dark:hover:bg-[var(--destructive)]/30"
                           >
                             <Trash size={14} />
                             Remove
@@ -500,7 +534,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
                   {/* Bulk edit panel */}
                   {showBulkEdit && selectedRows.size > 0 && (
-                    <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg space-y-3">
+                    <div className="p-4 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-lg space-y-3">
                       <p className="text-sm font-medium text-heading dark:text-muted">
                         Change subject for {selectedRows.size} selected items:
                       </p>
@@ -508,7 +542,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                         <select
                           value={bulkSubject}
                           onChange={(e) => setBulkSubject(e.target.value)}
-                          className="flex-1 min-w-[150px] px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading text-sm"
+                          className="flex-1 min-w-[150px] px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading text-sm"
                         >
                           <option value="">Choose a subject...</option>
                           {SUBJECT_OPTIONS.map(s => (
@@ -522,13 +556,13 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                             placeholder="Enter custom subject"
                             value={customSubject}
                             onChange={(e) => setCustomSubject(e.target.value)}
-                            className="flex-1 min-w-[150px] px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading text-sm"
+                            className="flex-1 min-w-[150px] px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading text-sm"
                           />
                         )}
                         <button
                           onClick={applyBulkSubject}
                           disabled={!bulkSubject || (bulkSubject === 'custom' && !customSubject)}
-                          className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50"
+                          className="px-4 py-2 bg-[var(--nebula-purple)] text-[var(--foreground)] rounded-lg text-sm font-medium hover:bg-[var(--nebula-purple)] disabled:opacity-50"
                         >
                           Apply
                         </button>
@@ -571,12 +605,12 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                           <th className="px-3 py-2 text-left font-medium text-muted">Score</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                      <tbody className="divide-y divide-[var(--border)]">
                         {(isPreviewExpanded ? displayData : displayData.slice(0, 15)).map((row, idx) => (
                           <tr 
                             key={idx} 
                             className={`hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)]/50 cursor-pointer ${
-                              selectedRows.has(idx) ? 'bg-purple-50 dark:bg-purple-900/20' : ''
+                              selectedRows.has(idx) ? 'bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15' : ''
                             }`}
                             onClick={() => aiParsedData.length > 0 && toggleRowSelection(idx)}
                           >
@@ -587,7 +621,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                                   checked={selectedRows.has(idx)}
                                   onChange={() => toggleRowSelection(idx)}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="w-4 h-4 rounded border-[var(--border)] text-purple-600 focus:ring-purple-500"
+                                  className="w-4 h-4 rounded border-[var(--border)] text-[var(--nebula-purple)] focus:ring-purple-500"
                                 />
                               </td>
                             )}
@@ -596,7 +630,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                             </td>
                             {useAI && aiParsedData.length > 0 && (
                               <td className="px-3 py-2">
-                                <span className="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded">
+                                <span className="text-xs px-2 py-0.5 bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-900)]/30 text-[var(--celestial-500)] dark:text-[var(--celestial-400)] rounded">
                                   {(row as AIParsedItem).subject}
                                 </span>
                               </td>
@@ -620,7 +654,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                   {displayData.length > 15 && (
                     <button
                       onClick={() => setIsPreviewExpanded(!isPreviewExpanded)}
-                      className="w-full py-2 text-sm text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors flex items-center justify-center gap-1"
+                      className="w-full py-2 text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/10 dark:hover:bg-[var(--nebula-purple)]/15 rounded-lg transition-colors flex items-center justify-center gap-1"
                     >
                       {isPreviewExpanded ? (
                         <>
@@ -651,7 +685,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                     <button
                       onClick={handleImport}
                       disabled={isImporting || displayData.length === 0}
-                      className="px-6 py-2 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
+                      className="px-6 py-2 bg-gradient-to-r from-[var(--nebula-purple)] to-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
                     >
                       {isImporting ? (
                         <>
@@ -672,8 +706,8 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
           {step === 'complete' && result && (
             <div className="text-center py-4">
-              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check size={32} weight="bold" className="text-green-600 dark:text-green-400" />
+              <div className="w-16 h-16 bg-[var(--herbal-100)] dark:bg-[var(--herbal-900)]/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check size={32} weight="bold" className="text-[var(--herbal-500)] dark:text-[var(--herbal-400)]" />
               </div>
               <h3 className="text-xl font-bold text-heading mb-2">
                 Import Complete! 🎉
@@ -698,7 +732,7 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
 
               <button
                 onClick={handleClose}
-                className="px-6 py-2 bg-gradient-to-r from-[#9c8fb8] to-[#E27D60] text-white rounded-lg font-medium"
+                className="px-6 py-2 bg-gradient-to-r from-[var(--nebula-purple)] to-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium"
               >
                 Done
               </button>

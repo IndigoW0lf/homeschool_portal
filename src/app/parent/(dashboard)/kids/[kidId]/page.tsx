@@ -84,19 +84,19 @@ export default async function ParentKidProfilePage({ params }: Props) {
           fallbackColor={kid.favorite_color}
         />
         <div className="flex-1">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-[var(--foreground)]">
             {displayName}
           </h1>
           {kid.nickname && kid.name !== kid.nickname && (
-            <p className="text-gray-500 dark:text-gray-400">{kid.name}</p>
+            <p className="text-muted">{kid.name}</p>
           )}
           {kid.bio && (
-            <p className="mt-2 text-gray-600 dark:text-gray-300">{kid.bio}</p>
+            <p className="mt-2 text-muted dark:text-[var(--foreground-muted)]">{kid.bio}</p>
           )}
         </div>
         <Link
           href={`/kids/${kidId}`}
-          className="flex items-center gap-2 px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg hover:bg-[var(--ember-600)] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg hover:bg-[var(--ember-600)] transition-colors"
         >
           <ArrowSquareOut size={18} />
           Kid Portal
@@ -106,50 +106,50 @@ export default async function ParentKidProfilePage({ params }: Props) {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {/* Moons */}
-        <div className="bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 p-6 rounded-xl border border-yellow-200 dark:border-yellow-800/50">
+        <div className="bg-gradient-to-br from-[var(--solar-100)] to-[var(--ember-100)] dark:from-[var(--solar-900)]/30 dark:to-[var(--ember-900)]/30 p-6 rounded-xl border border-[var(--solar-200)] dark:border-[var(--solar-800)]/50">
           <div className="flex items-center gap-3 mb-2">
-            <Moon size={24} weight="fill" className="text-yellow-500" />
-            <span className="text-sm font-medium text-yellow-700 dark:text-yellow-400">Moons Balance</span>
+            <Moon size={24} weight="fill" className="text-[var(--solar-500)]" />
+            <span className="text-sm font-medium text-[var(--solar-700)] dark:text-[var(--solar-400)]">Moons Balance</span>
           </div>
-          <p className="text-4xl font-bold text-yellow-600 dark:text-yellow-400">{moons}</p>
+          <p className="text-4xl font-bold text-[var(--solar-600)] dark:text-[var(--solar-400)]">{moons}</p>
         </div>
 
         {/* Weekly Progress */}
-        <div className="bg-gradient-to-br from-teal-100 to-cyan-100 dark:from-teal-900/30 dark:to-cyan-900/30 p-6 rounded-xl border border-teal-200 dark:border-teal-800/50">
+        <div className="bg-gradient-to-br from-[var(--celestial-100)] to-[var(--cyan-100)] dark:from-[var(--celestial-900)]/30 dark:to-[var(--cyan-900)]/30 p-6 rounded-xl border border-[var(--celestial-200)] dark:border-[var(--celestial-800)]/50">
           <div className="flex items-center gap-3 mb-2">
-            <CheckCircle size={24} weight="fill" className="text-teal-500" />
-            <span className="text-sm font-medium text-teal-700 dark:text-teal-400">This Week</span>
+            <CheckCircle size={24} weight="fill" className="text-[var(--celestial-500)]" />
+            <span className="text-sm font-medium text-[var(--celestial-700)] dark:text-[var(--celestial-400)]">This Week</span>
           </div>
-          <p className="text-4xl font-bold text-teal-600 dark:text-teal-400">
+          <p className="text-4xl font-bold text-[var(--celestial-600)] dark:text-[var(--celestial-400)]">
             {completedActivities}/{totalActivities}
           </p>
-          <div className="mt-2 h-2 bg-teal-200 dark:bg-teal-800 rounded-full overflow-hidden">
+          <div className="mt-2 h-2 bg-[var(--celestial-200)] dark:bg-[var(--celestial-800)] rounded-full overflow-hidden">
             <div 
-              className="h-full bg-teal-500 transition-all"
+              className="h-full bg-[var(--celestial-500)] transition-all"
               style={{ width: `${completionPercent}%` }}
             />
           </div>
         </div>
 
         {/* Pending Rewards */}
-        <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 p-6 rounded-xl border border-purple-200 dark:border-purple-800/50">
+        <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 p-6 rounded-xl border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]/50">
           <div className="flex items-center gap-3 mb-2">
-            <Gift size={24} weight="fill" className="text-purple-500" />
-            <span className="text-sm font-medium text-purple-700 dark:text-purple-400">Pending Rewards</span>
+            <Gift size={24} weight="fill" className="text-[var(--nebula-purple)]" />
+            <span className="text-sm font-medium text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]">Pending Rewards</span>
           </div>
-          <p className="text-4xl font-bold text-purple-600 dark:text-purple-400">{pendingRewardsCount || 0}</p>
+          <p className="text-4xl font-bold text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)]">{pendingRewardsCount || 0}</p>
         </div>
       </div>
 
       {/* Profile Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {kid.birthday && (
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-1">
+          <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+            <div className="flex items-center gap-2 text-sm text-muted mb-1">
               <Calendar size={16} />
               Birthday
             </div>
-            <p className="text-gray-900 dark:text-white">
+            <p className="text-[var(--foreground)]">
               {new Date(kid.birthday + 'T00:00:00').toLocaleDateString('en-US', { 
                 month: 'long', 
                 day: 'numeric', 
@@ -160,66 +160,66 @@ export default async function ParentKidProfilePage({ params }: Props) {
         )}
 
         {kid.favorite_shows && (
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">🎬 Favorite Shows</div>
-            <p className="text-gray-900 dark:text-white">{kid.favorite_shows}</p>
+          <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+            <div className="text-sm text-muted mb-1">🎬 Favorite Shows</div>
+            <p className="text-[var(--foreground)]">{kid.favorite_shows}</p>
           </div>
         )}
 
         {kid.favorite_music && (
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">🎵 Favorite Music</div>
-            <p className="text-gray-900 dark:text-white">{kid.favorite_music}</p>
+          <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+            <div className="text-sm text-muted mb-1">🎵 Favorite Music</div>
+            <p className="text-[var(--foreground)]">{kid.favorite_music}</p>
           </div>
         )}
 
         {kid.favorite_foods && (
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">🍕 Favorite Foods</div>
-            <p className="text-gray-900 dark:text-white">{kid.favorite_foods}</p>
+          <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+            <div className="text-sm text-muted mb-1">🍕 Favorite Foods</div>
+            <p className="text-[var(--foreground)]">{kid.favorite_foods}</p>
           </div>
         )}
 
         {kid.favorite_subjects && (
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">📚 Favorite Subjects</div>
-            <p className="text-gray-900 dark:text-white">{kid.favorite_subjects}</p>
+          <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+            <div className="text-sm text-muted mb-1">📚 Favorite Subjects</div>
+            <p className="text-[var(--foreground)]">{kid.favorite_subjects}</p>
           </div>
         )}
 
         {kid.hobbies && (
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">🎮 Hobbies</div>
-            <p className="text-gray-900 dark:text-white">{kid.hobbies}</p>
+          <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
+            <div className="text-sm text-muted mb-1">🎮 Hobbies</div>
+            <p className="text-[var(--foreground)]">{kid.hobbies}</p>
           </div>
         )}
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+      <div className="mt-8 pt-6 border-t border-[var(--border)]">
+        <h2 className="text-lg font-semibold text-[var(--foreground)] mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Link
             href={`/parent/kids/${kidId}/profile`}
-            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             Edit Profile
           </Link>
           <Link
             href={`/parent/kids/${kidId}/shop`}
-            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             View Shop
           </Link>
           <Link
             href={`/parent/kids/${kidId}/journal`}
-            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             View Journal
           </Link>
           <Link
             href="/parent/progress"
-            className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-[var(--background-secondary)] dark:bg-[var(--background-elevated)] text-[var(--foreground)] rounded-lg hover:bg-[var(--moon-200)] dark:hover:bg-[var(--background-secondary)] transition-colors"
           >
             View Progress
           </Link>

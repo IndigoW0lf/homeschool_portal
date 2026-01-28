@@ -30,10 +30,10 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-4xl bg-white dark:bg-[var(--night-900)] rounded-2xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="w-full max-w-4xl bg-[var(--background-elevated)] dark:bg-[var(--night-900)] rounded-2xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
         
         {/* Header */}
-        <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)] flex items-center justify-between bg-white dark:bg-[var(--night-900)] z-10">
+        <div className="p-4 border-b border-[var(--border)] dark:border-[var(--border)] flex items-center justify-between bg-[var(--background-elevated)] dark:bg-[var(--night-900)] z-10">
           <div className="flex items-center gap-3">
             {kid.avatarUrl ? (
                <img src={kid.avatarUrl} alt={kid.name} className="w-10 h-10 rounded-full bg-[var(--background-secondary)]" />
@@ -78,7 +78,7 @@ export function KidSettingsModal({ kid, onClose }: KidSettingsModalProps) {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 overflow-y-auto p-6 bg-white dark:bg-[var(--night-900)]">
+          <div className="flex-1 overflow-y-auto p-6 bg-[var(--background-elevated)] dark:bg-[var(--night-900)]">
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div className="flex items-center gap-2 text-heading mb-4">

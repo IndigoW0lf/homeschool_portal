@@ -66,11 +66,11 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="bg-[var(--background-elevated)] rounded-xl p-6 shadow-sm border border-[var(--border)]">
-        <h2 className="text-2xl font-bold text-heading dark:text-white mb-6">Art Studio</h2>
+        <h2 className="text-2xl font-bold text-heading dark:text-[var(--foreground)] mb-6">Art Studio</h2>
         
         {/* Template Selection */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Choose a Template</h3>
+          <h3 className="text-lg font-semibold text-heading dark:text-[var(--foreground)] mb-4">Choose a Template</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {templates.templates.map(template => {
               const isSelected = state.selectedTemplate === template.id;
@@ -103,7 +103,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
 
         {/* Preview */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Preview</h3>
+          <h3 className="text-lg font-semibold text-heading dark:text-[var(--foreground)] mb-4">Preview</h3>
           <div className="flex justify-center">
             <div 
               className="relative w-64 h-64 rounded-lg flex items-center justify-center"
@@ -132,7 +132,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
 
         {/* Color Pickers */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-heading dark:text-white mb-4">Colors</h3>
+          <h3 className="text-lg font-semibold text-heading dark:text-[var(--foreground)] mb-4">Colors</h3>
           <div className="space-y-4">
             {selectedTemplate.parts.map(part => (
               <div key={part.name}>
@@ -165,7 +165,7 @@ export function StudioEditor({ kidId, templates }: StudioEditorProps) {
         {/* Save Button */}
         <button
           onClick={handleSave}
-          className="w-full py-3 px-6 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="w-full py-3 px-6 bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {saved ? '✓ Saved!' : 'Save Design'}
         </button>

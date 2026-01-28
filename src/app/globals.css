@@ -65,6 +65,113 @@
   --nebula-purple: #A896C8;
   --nebula-purple-light: #D0C5E0;
   --nebula-peach: #F0C9A8;
+
+  /* Herbal (Green) Palette - Nature/Success */
+  --herbal-50: #F4F9F6;
+  --herbal-100: #E6F0EA;
+  --herbal-200: #C8DECFC;
+  --herbal-300: #A3C9AD;
+  --herbal-400: #7FB08C;
+  --herbal-500: #6F8F73; /* Matches --success */
+  --herbal-600: #557359;
+  --herbal-700: #3E5743;
+  --herbal-800: #2C3E30;
+  --herbal-900: #1D2920;
+
+  /* Ember (Orange/Gold) Short Alias */
+  --ember-50: var(--ember-gold-100); /* Use 100 as 50 is missing */
+  --ember-100: var(--ember-gold-100);
+  --ember-200: var(--ember-gold-200);
+  --ember-300: var(--ember-gold-300);
+  --ember-400: var(--ember-gold-400);
+  --ember-500: var(--ember-gold-500);
+  --ember-600: var(--ember-gold-600);
+  --ember-700: var(--ember-gold-700);
+
+  /* Solar (Bright Warmth) Alias to Ember Gold for now */
+  --solar-50: var(--ember-gold-100);
+  --solar-100: var(--ember-gold-100);
+  --solar-200: var(--ember-gold-200);
+  --solar-300: var(--ember-gold-300);
+  --solar-400: var(--ember-gold-400);
+  --solar-500: var(--ember-gold-500);
+  --solar-600: var(--ember-gold-600);
+  --solar-700: var(--ember-gold-700);
+  
+  /* Plum Scale - Rich purple-plum for mystical atmosphere */
+  --plum-950: #1A0F1A;
+  --plum-900: #251B25;
+  --plum-850: #2D1F2D;
+  --plum-800: #3A2838;
+  --plum-700: #4A3545;
+  --plum-600: #5C4355;
+  
+  /* =============================================================================
+     OMBRÉ SURFACES — Plum → Teal (Moonlit Hearth)
+     Use: large surfaces only (page/hero/sidebar/quest panels)
+     ============================================================================= */
+
+  /* Subtle page wash (works in light mode too) */
+  --surface-wash: radial-gradient(
+    ellipse at 20% 10%,
+    rgba(91, 155, 158, 0.10) 0%,
+    transparent 55%
+  ),
+  radial-gradient(
+    ellipse at 80% 90%,
+    rgba(168, 150, 200, 0.10) 0%,
+    transparent 55%
+  ),
+  linear-gradient(
+    135deg,
+    var(--moon-50) 0%,
+    var(--moon-100) 60%,
+    var(--moon-200) 100%
+  );
+
+  /* Dark hero / header: plum core with teal lift */
+  --surface-hero: radial-gradient(
+    ellipse at 25% 0%,
+    rgba(91, 155, 158, 0.22) 0%,
+    transparent 55%
+  ),
+  radial-gradient(
+    ellipse at 80% 80%,
+    rgba(168, 150, 200, 0.18) 0%,
+    transparent 60%
+  ),
+  linear-gradient(
+    135deg,
+    var(--plum-950) 0%,
+    var(--plum-850) 45%,
+    rgba(91, 155, 158, 0.14) 100%
+  );
+
+  /* Dark "quest panel": a touch warmer but still plum→teal */
+  --surface-quest: radial-gradient(
+    ellipse at 30% 10%,
+    rgba(184, 106, 75, 0.14) 0%,
+    transparent 55%
+  ),
+  radial-gradient(
+    ellipse at 75% 85%,
+    rgba(91, 155, 158, 0.18) 0%,
+    transparent 60%
+  ),
+  linear-gradient(
+    135deg,
+    var(--plum-900) 0%,
+    var(--plum-800) 55%,
+    rgba(91, 155, 158, 0.12) 100%
+  );
+
+  /* Rewards: warm gold shimmer (use for streaks/level ups) */
+  --surface-reward: linear-gradient(
+    90deg,
+    rgba(200, 168, 107, 0.30) 0%,
+    rgba(212, 168, 83, 0.30) 50%,
+    rgba(225, 200, 127, 0.30) 100%
+  );
   
   /* Slate - Neutral tones (from Cosmic Wilderness) */
   --slate-100: #E8EAED;
@@ -117,77 +224,75 @@
   --gradient-mystic-night: linear-gradient(180deg, #8B5A42 0%, #1C2029 100%);
   
   /* Light Mode Semantic Mappings */
-  --background: var(--moon-50);
-  --background-secondary: var(--moon-100);
-  --background-elevated: var(--moon-100);
+  --background: var(--moon-50);           /* Warm cream page background */
+  --background-secondary: var(--moon-100); /* Secondary sections */
+  --background-elevated: #F9F8F6;          /* Cards - softer off-white instead of #FDFCFA */
+  --background-sidebar: var(--moon-100);   /* Sidebar in light mode */
   --foreground: #2B2B2B;
-  --foreground-muted: var(--slate-500);
+  --foreground-muted: var(--slate-400);    /* Use Slate for muted text */
   
-  /* Border & Divider */
-  --border: var(--moon-200);
-  --border-subtle: var(--celestial-200);
-  --divider: var(--moon-200);
+  /* Border & Divider - use more color */
+  --border: var(--slate-200);              /* Slate-tinted borders */
+  --border-subtle: var(--moon-200);
+  --border-accent: var(--celestial-300);   /* Teal accent borders */
+  --divider: var(--slate-200);
+  
+  /* NEW: Palette Accent Colors for UI elements */
+  --accent-primary: var(--celestial-500);  /* Celestial Teal - primary actions */
+  --accent-secondary: var(--herbal-gold);  /* Herbal Gold - secondary accents */
+  --accent-warm: var(--cosmic-rust-500);   /* Cosmic Rust - warm highlights */
+  --accent-cool: var(--midnight-bloom);    /* Midnight Bloom - cool highlights */
+  --accent-muted: var(--slate-400);        /* Slate - muted elements */
   
   /* Interactive states */
   --focus-ring: var(--celestial-400);
   --hover-overlay: rgba(0, 0, 0, 0.04);
+  --btn-primary-bg: var(--cosmic-rust-500);    /* Cosmic Rust primary buttons */
+  --btn-primary-hover: var(--cosmic-rust-600);
+  --btn-secondary-bg: var(--celestial-500);    /* Celestial Teal secondary buttons */
   
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-glow: 0 0 20px rgba(212, 168, 83, 0.3);
-  
-  /* Legacy compatibility (phasing out) */
-  --paper-50: var(--moon-50);
-  --paper-100: var(--moon-100);
-  --ink-900: #2B2B2B;
-  --ink-700: #4A4A4A;
-  --brand-deep: var(--night-900);
-  --brand-dark: var(--night-800);
-  --brand-lilac: var(--nebula-purple);
-  --brand-coral: var(--cosmic-rust-500);
-  --brand-rose: var(--nebula-pink);
-  --brand-gold: var(--ember-gold-400);
-  --ember-500: var(--celestial-400);
-  --ember-600: var(--celestial-500);
-  --ember-400: var(--celestial-300);
-  --sky-400: var(--celestial-300);
-  --fabric-blue: #5E7FB8;
-  --fabric-green: var(--nebula-teal);
-  --fabric-gold: var(--ember-gold-400);
-  --fabric-rose: var(--nebula-pink);
-  --fabric-lilac: var(--nebula-purple);
 }
 
 /* Dark mode - THE PRIMARY FOCUS */
 html.dark,
 .dark {
-  --background: var(--night-900);
-  --background-secondary: var(--night-800);
-  --background-elevated: var(--night-700);
-  --foreground: #F0ECE6;
+  /* BEAUTIFUL PURPLE-PLUM BACKGROUNDS - Softened for better contrast */
+  --background: #12110F;                    /* Deep warm dark page bg */
+  --background-secondary: #1C1918;          /* Secondary sections - lighter */
+  --background-elevated: #2A2228;           /* Modals/Cards - Softer plum */
+  --background-sidebar: #221E22;            /* Sidebar - Softer plum */
+  --foreground: #e4d8c4;                    /* Candle Cream text */
   --foreground-muted: var(--slate-300);
   
-  /* Border & Divider */
-  --border: var(--night-600);
-  --border-subtle: var(--night-700);
-  --divider: var(--night-600);
+  /* Border & Divider - Softened */
+  --border: #3E3039;                        /* Softer purple-tinted border */
+  --border-subtle: #322A30;
+  --border-accent: var(--celestial-400);    /* Teal accent borders */
+  --divider: #3E3039;
+  
+  /* Palette Accent Colors for UI elements */
+  --accent-primary: var(--celestial-400);   /* Celestial Teal - primary actions */
+  --accent-secondary: var(--herbal-gold);   /* Herbal Gold - secondary accents */
+  --accent-warm: var(--cosmic-rust-400);    /* Cosmic Rust - warm highlights */
+  --accent-cool: var(--midnight-bloom);     /* Midnight Bloom - cool highlights */
+  --accent-muted: var(--slate-400);         /* Slate - muted elements */
   
   /* Interactive states */
   --hover-overlay: rgba(255, 255, 255, 0.04);
+  --btn-primary-bg: var(--cosmic-rust-500);    /* Cosmic Rust primary buttons */
+  --btn-primary-hover: var(--cosmic-rust-400);
+  --btn-secondary-bg: var(--celestial-400);    /* Celestial Teal secondary buttons */
   
-  /* Shadows in dark mode */
+  /* Shadows with warm glow */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px rgba(212, 168, 83, 0.4);
-  
-  /* Legacy compatibility */
-  --paper-50: var(--night-900);
-  --paper-100: var(--night-800);
-  --ink-900: #E5E5E5;
-  --ink-700: #B5B5B5;
+  --shadow-glow: 0 0 30px rgba(200, 168, 107, 0.3);  /* Herbal Gold glow */
 }
 
 /* =============================================================================
@@ -205,31 +310,30 @@ body {
    ============================================================================= */
 
 /* Cosmic gradient background for immersive pages */
-/* Light mode: warm moon/beige gradient */
 .bg-cosmic {
-  background: linear-gradient(135deg, var(--moon-50) 0%, var(--moon-100) 50%, var(--moon-200) 100%);
+  background: var(--surface-wash);
   background-attachment: fixed;
   color: var(--foreground);
 }
 
-/* Dark mode: deep cosmic gradient */
 .dark .bg-cosmic,
 html.dark .bg-cosmic {
-  background: var(--gradient-cosmic);
-  color: #F0ECE6;
+  background: var(--surface-hero);
+  background-attachment: fixed;
+  color: var(--foreground);
 }
 
-/* Legacy magical background */
+/* Background with palette gradient (also for magical pages) */
 .bg-magical {
-  background: linear-gradient(135deg, var(--moon-100) 0%, var(--moon-50) 100%);
+  background: var(--surface-wash);
   background-attachment: fixed;
   color: var(--foreground);
 }
 
 .dark .bg-magical,
 html.dark .bg-magical {
-  background: radial-gradient(circle at 50% 0%, var(--night-700) 0%, var(--night-900) 100%);
-  color: #F0ECE6;
+  background: var(--surface-quest);
+  color: var(--foreground);
 }
 
 /* Starfield pattern overlay - only shows in dark mode */
@@ -339,7 +443,9 @@ html.dark .bg-starfield::before {
 }
 
 .glow-celestial {
-  box-shadow: 0 0 20px rgba(91, 155, 158, 0.4);
+  box-shadow:
+    0 0 18px rgba(91, 155, 158, 0.28),
+    0 0 42px rgba(91, 155, 158, 0.12);
 }
 
 .glow-nebula {

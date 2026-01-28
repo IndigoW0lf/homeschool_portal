@@ -53,7 +53,7 @@ export function Features() {
         {/* Header */}
         <div className="text-center mb-16">
           <span className="text-[var(--cosmic-rust-400)] font-medium">FEATURES</span>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-[var(--foreground)] mt-3 mb-4">
             Everything you need to homeschool joyfully
           </h2>
           <p className="text-xl text-[var(--slate-300)] max-w-2xl mx-auto">
@@ -70,11 +70,11 @@ export function Features() {
             >
               {/* Icon */}
               <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.color} mb-6 group-hover:scale-110 transition-transform`}>
-                <feature.icon size={28} weight="fill" className="text-white" />
+                <feature.icon size={28} weight="fill" className="text-[var(--foreground)]" />
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-semibold text-white mb-3">
+              <h3 className="text-xl font-semibold text-[var(--foreground)] mb-3">
                 {feature.title}
               </h3>
               <p className="text-[var(--slate-300)] leading-relaxed">

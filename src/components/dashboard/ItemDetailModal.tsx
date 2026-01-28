@@ -144,7 +144,7 @@ export function ItemDetailModal({
       onClick={onClose}
     >
       <div 
-        className="bg-white dark:bg-[var(--night-900)] w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-[var(--background-elevated)] dark:bg-[var(--night-900)] w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -153,7 +153,7 @@ export function ItemDetailModal({
           <div className="flex items-center gap-3">
             <div className={cn(
               "p-2 rounded-lg",
-              isLesson ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"
+              isLesson ? "bg-[var(--celestial-400)]/20 text-[var(--celestial-500)]" : "bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
             )}>
               {isLesson ? <BookOpen size={28} weight="duotone" color="#b6e1d8" /> : <Pencil size={28} weight="duotone" color="#caa2d8" />}
             </div>
@@ -161,7 +161,7 @@ export function ItemDetailModal({
               <div className="flex items-center gap-2 mb-1">
                 <span className={cn(
                   "text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded",
-                  isLesson ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                  isLesson ? "bg-[var(--celestial-400)]/20 text-[var(--celestial-500)]" : "bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
                 )}>
                   {item.type || (isLesson ? 'Lesson' : 'Assignment')}
                 </span>
@@ -246,7 +246,7 @@ export function ItemDetailModal({
                       const questionText = typeof q === 'string' ? q : (q as { text?: string })?.text || '';
                       return questionText ? (
                         <li key={i} className="flex gap-2 text-heading dark:text-muted">
-                          <span className="text-blue-500">•</span>
+                          <span className="text-[var(--celestial-500)]">•</span>
                           {questionText}
                         </li>
                       ) : null;
@@ -281,7 +281,7 @@ export function ItemDetailModal({
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--background-elevated)] border border-[var(--border)] rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--background-elevated)] border border-[var(--border)] rounded-lg text-sm text-[var(--celestial-500)] dark:text-[var(--celestial-400)] hover:bg-[var(--celestial-50)] dark:hover:bg-[var(--celestial-900)]/20 transition-colors"
                       >
                         <Link size={18} weight="duotone" color="#b6e1d8" />
                         {link.label}
@@ -316,7 +316,7 @@ export function ItemDetailModal({
               {assignment.deliverable && (
                 <div className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)]">
                   <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2 flex items-center gap-2">
-                    <FileText size={16} className="text-blue-500" />
+                    <FileText size={16} className="text-[var(--celestial-500)]" />
                     Expected Deliverable
                   </h3>
                   <MarkdownText 
@@ -349,7 +349,7 @@ export function ItemDetailModal({
               {assignment.rubric && Array.isArray(assignment.rubric) && assignment.rubric.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <CheckSquare size={16} className="text-green-500" />
+                    <CheckSquare size={16} className="text-[var(--herbal-500)]" />
                     Success Criteria
                   </h3>
                   <div className="space-y-2">
@@ -367,13 +367,13 @@ export function ItemDetailModal({
 
               {/* Parent Notes */}
               {assignment.parent_notes && (
-                <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-xl border border-amber-100 dark:border-amber-900/30">
-                  <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">
+                <div className="bg-[var(--solar-50)] dark:bg-[var(--solar-900)]/10 p-4 rounded-xl border border-[var(--solar-100)] dark:border-[var(--solar-900)]/30">
+                  <h3 className="text-sm font-semibold text-[var(--solar-700)] dark:text-[var(--solar-400)] uppercase tracking-wider mb-2">
                     Parent Notes (Private)
                   </h3>
                   <MarkdownText 
                     content={assignment.parent_notes} 
-                    className="text-amber-800 dark:text-amber-300"
+                    className="text-[var(--solar-800)] dark:text-[var(--solar-300)]"
                   />
                 </div>
               )}
@@ -392,7 +392,7 @@ export function ItemDetailModal({
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--background-elevated)] border border-[var(--border)] rounded-lg text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--background-elevated)] border border-[var(--border)] rounded-lg text-sm text-[var(--celestial-500)] dark:text-[var(--celestial-400)] hover:bg-[var(--celestial-50)] dark:hover:bg-[var(--celestial-900)]/20 transition-colors"
                         >
                           <Link size={18} weight="duotone" color="#b6e1d8" />
                           {link.label || 'Link'}
@@ -426,7 +426,7 @@ export function ItemDetailModal({
         <div className="p-4 border-t border-[var(--border)] dark:border-[var(--border)] flex justify-between">
           <button
             onClick={handleDelete}
-            className="px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 text-[var(--destructive)] hover:bg-[var(--destructive)]/10 dark:hover:bg-[var(--destructive)]/20 rounded-lg transition-colors flex items-center gap-2"
           >
             <Trash size={22} weight="duotone" color="#ffcdf6" />
             Delete
@@ -436,7 +436,7 @@ export function ItemDetailModal({
               <a
                 href={`/print/worksheet/${item.id}`}
                 target="_blank"
-                className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors flex items-center gap-2 font-medium"
+                className="px-4 py-2 text-[var(--celestial-500)] dark:text-[var(--celestial-400)] hover:bg-[var(--celestial-50)] dark:hover:bg-[var(--celestial-900)]/20 rounded-lg transition-colors flex items-center gap-2 font-medium"
               >
                 <Printer size={18} weight="duotone" />
                 Print Worksheet
@@ -445,7 +445,7 @@ export function ItemDetailModal({
             {isLesson && (
               <button
                 onClick={() => setWorksheetModalOpen(true)}
-                className="px-4 py-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors flex items-center gap-2 font-medium"
+                className="px-4 py-2 text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/10 dark:hover:bg-[var(--nebula-purple)]/15 rounded-lg transition-colors flex items-center gap-2 font-medium"
               >
                 <MagicWand size={18} weight="duotone" />
                 Generate Worksheet
@@ -460,7 +460,7 @@ export function ItemDetailModal({
             </button>
             <button
               onClick={onEdit}
-              className="px-4 py-2 bg-[var(--ember-500)] text-white rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--ember-500)] text-[var(--foreground)] rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
             >
               <PencilSimple size={22} weight="duotone" color="#e7b58d" />
               Edit

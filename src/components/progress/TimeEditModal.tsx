@@ -60,8 +60,8 @@ export function TimeEditModal({
         </button>
         
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-            <Clock size={20} className="text-indigo-500" weight="duotone" />
+          <div className="p-2 bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-500)]/20 rounded-lg">
+            <Clock size={20} className="text-[var(--celestial-500)]" weight="duotone" />
           </div>
           <h3 className="font-semibold text-heading">Log Time</h3>
         </div>
@@ -85,7 +85,7 @@ export function TimeEditModal({
               max="12"
               value={hours}
               onChange={(e) => setHours(Math.max(0, parseInt(e.target.value) || 0))}
-              className="w-full px-3 py-2 text-center text-lg font-medium border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 text-center text-lg font-medium border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
           <div className="flex items-end pb-2 text-2xl text-muted">:</div>
@@ -98,7 +98,7 @@ export function TimeEditModal({
               step="5"
               value={minutes}
               onChange={(e) => setMinutes(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
-              className="w-full px-3 py-2 text-center text-lg font-medium border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-white dark:bg-[var(--background-secondary)] text-heading focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 text-center text-lg font-medium border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -113,7 +113,7 @@ export function TimeEditModal({
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-2 bg-[var(--celestial-500)] hover:bg-[var(--celestial-600)] text-[var(--foreground)] font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSaving ? 'Saving...' : (
               <>

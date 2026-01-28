@@ -62,7 +62,7 @@ export function OnboardingModal({ slides, onComplete, welcomeMessage }: Onboardi
 
           {/* Icon */}
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--lavender-400)] to-[var(--ember-400)] mb-6">
-            <div className="text-white">
+            <div className="text-[var(--foreground)]">
               {slide.icon}
             </div>
           </div>
@@ -118,7 +118,7 @@ export function OnboardingModal({ slides, onComplete, welcomeMessage }: Onboardi
             <button
               onClick={nextSlide}
               className={cn(
-                "flex-1 py-3 px-4 bg-gradient-to-r from-[var(--lavender-500)] to-[var(--ember-500)] text-white rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2",
+                "flex-1 py-3 px-4 bg-gradient-to-r from-[var(--lavender-500)] to-[var(--ember-500)] text-[var(--foreground)] rounded-xl font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2",
                 currentSlide === 0 && "w-full"
               )}
             >
