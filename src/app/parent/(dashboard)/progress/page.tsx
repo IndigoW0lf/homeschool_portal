@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { getKidsFromDB } from '@/lib/supabase/data';
-import { getStudentProgress, getKidSubjectCounts, getWeeklyActivity, getLifeSkillsCounts, getActivityLogStats, getUnifiedActivities } from '@/lib/supabase/progressData';
+import { getStudentProgress, getWeeklyActivity, getLifeSkillsCounts, getActivityLogStats, getUnifiedActivities } from '@/lib/supabase/progressData';
 import { getExternalCurriculumStats } from '@/app/actions/import';
 import { getWorksheetResponsesForKids } from '@/lib/supabase/worksheetData';
 import { ImportButton } from '@/components/dashboard/ImportButton';
@@ -31,17 +31,33 @@ export default async function ProgressPage() {
 
   const kidStats = await Promise.all(kids.map(async (kid) => {
     const progress = await getStudentProgress(kid.id);
-    const subjectCounts = await getKidSubjectCounts(kid.id);
     const weeklyActivity = await getWeeklyActivity(kid.id);
     const lifeSkillsCounts = await getLifeSkillsCounts(kid.id);
     const activityLogStats = await getActivityLogStats(kid.id);
     // Fetch unified activities from all 3 sources
     const unifiedActivities = await getUnifiedActivities(kid.id, startDate);
     
-    // Merge activity log subject counts into subjectCounts
-    const mergedSubjectCounts = { ...subjectCounts };
+    // Compute Lunara-only subject counts from unified activities
+    const lunaraSubjectCounts: Record<string, number> = {};
+    unifiedActivities.filter(a => a.source === 'lunara_quest').forEach(a => {
+      // Normalize subject key for display
+      let key = (a.subject || 'other').toLowerCase();
+      if (key.includes('read') || key === 'language arts') key = 'reading';
+      else if (key.includes('writ')) key = 'writing';
+      else if (key.includes('math') || key.includes('logic')) key = 'math';
+      else if (key.includes('sci')) key = 'science';
+      else if (key === 'social studies' || key.includes('history') || key.includes('geography')) key = 'social_studies';
+      else if (key === 'art' || key === 'music') key = 'arts';
+      else if (key.includes('life') || key.includes('skill') || key === 'pe') key = 'life_skills';
+      else if (key !== 'other') key = 'electives';
+      
+      lunaraSubjectCounts[key] = (lunaraSubjectCounts[key] || 0) + 1;
+    });
+    
+    // For badge progress, combine Lunara + Manual counts (not external which has grades)
+    const badgeSubjectCounts = { ...lunaraSubjectCounts };
     for (const [key, count] of Object.entries(activityLogStats.subjectCounts)) {
-      mergedSubjectCounts[key] = (mergedSubjectCounts[key] || 0) + count;
+      badgeSubjectCounts[key] = (badgeSubjectCounts[key] || 0) + count;
     }
 
     return {
@@ -51,7 +67,8 @@ export default async function ProgressPage() {
         currentStreak: progress?.currentStreak || 0,
         bestStreak: progress?.bestStreak || 0,
         streakEnabled: kid.streakEnabled ?? true,
-        subjectCounts: mergedSubjectCounts,
+        subjectCounts: lunaraSubjectCounts, // Now only Lunara data
+        badgeSubjectCounts, // For badge progress (Lunara + Manual)
         weeklyActivity,
         lifeSkillsCounts,
         activityLogStats,
@@ -120,7 +137,7 @@ export default async function ProgressPage() {
             />
 
             {/* Subject Mastery Badge Grid */}
-            <SubjectMasteryBadges subjectCounts={stats.subjectCounts} />
+            <SubjectMasteryBadges subjectCounts={stats.badgeSubjectCounts} />
 
             {/* Activity Chart */}
             <ActivityChart initialData={stats.weeklyActivity} kidId={kid.id} />

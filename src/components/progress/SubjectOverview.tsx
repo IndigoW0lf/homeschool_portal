@@ -48,6 +48,31 @@ function getSubjectColor(subject: string): string {
   return 'var(--slate-500)';
 }
 
+// Normalize subject names to handle case differences (reading -> Reading)
+function normalizeSubjectName(name: string): string {
+  const normalized = name.toLowerCase().replace(/_/g, ' ');
+  // Map common variations
+  const mappings: Record<string, string> = {
+    'reading': 'Reading',
+    'writing': 'Writing',
+    'math': 'Math',
+    'math & logic': 'Math & Logic',
+    'science': 'Science',
+    'social studies': 'Social Studies',
+    'social_studies': 'Social Studies',
+    'arts': 'Arts',
+    'electives': 'Electives',
+    'life skills': 'Life Skills',
+    'life_skills': 'Life Skills',
+    'pe': 'PE',
+    'pe & movement': 'PE & Movement',
+    'language arts': 'Language Arts',
+    'computer science': 'Computer Science',
+    'history': 'History',
+  };
+  return mappings[normalized] || name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 export function SubjectOverview({ 
   lunaraSubjects, 
   manualSubjects, 
@@ -71,23 +96,24 @@ export function SubjectOverview({
         break;
       case 'all':
       default:
-        // Merge all sources, combining counts for same subjects
+        // Merge all sources, combining counts for same subjects (case-insensitive)
         const merged: Record<string, SubjectData> = {};
         [...lunaraSubjects, ...manualSubjects, ...externalSubjects].forEach(s => {
-          if (merged[s.subject]) {
-            merged[s.subject].count += s.count;
+          const normalizedName = normalizeSubjectName(s.subject);
+          if (merged[normalizedName]) {
+            merged[normalizedName].count += s.count;
             // Average the averages if both have them
             if (s.average !== undefined && s.average !== null) {
-              if (merged[s.subject].average !== undefined && merged[s.subject].average !== null) {
-                merged[s.subject].average = Math.round(
-                  ((merged[s.subject].average || 0) + s.average) / 2
+              if (merged[normalizedName].average !== undefined && merged[normalizedName].average !== null) {
+                merged[normalizedName].average = Math.round(
+                  ((merged[normalizedName].average || 0) + s.average) / 2
                 );
               } else {
-                merged[s.subject].average = s.average;
+                merged[normalizedName].average = s.average;
               }
             }
           } else {
-            merged[s.subject] = { ...s };
+            merged[normalizedName] = { ...s, subject: normalizedName };
           }
         });
         subjects = Object.values(merged);
@@ -162,35 +188,20 @@ export function SubjectOverview({
 
       {/* Two-column layout: Donut + Performance/Activity Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Subject Distribution Donut */}
-        <div className="flex items-center gap-4">
-          {/* Donut Chart */}
-          <div className="relative flex-shrink-0">
+        {/* Subject Distribution Donut - larger and centered */}
+        <div className="flex items-center justify-center">
+          <div className="relative">
             <div 
-              className="w-24 h-24 rounded-full"
+              className="w-32 h-32 rounded-full shadow-lg"
               style={{ background: `conic-gradient(${gradientStops})` }}
             >
-              <div className="absolute inset-3 bg-[var(--background-elevated)] rounded-full flex items-center justify-center">
+              <div className="absolute inset-4 bg-[var(--background-elevated)] rounded-full flex items-center justify-center shadow-inner">
                 <div className="text-center">
-                  <p className="text-lg font-bold text-heading">{total}</p>
-                  <p className="text-[10px] text-muted uppercase">Items</p>
+                  <p className="text-2xl font-bold text-heading">{total}</p>
+                  <p className="text-[10px] text-muted uppercase tracking-wide">Activities</p>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Legend */}
-          <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-1">
-            {subjects.slice(0, 6).map(subject => (
-              <div key={subject.subject} className="flex items-center gap-1.5 min-w-0">
-                <div 
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: getSubjectColor(subject.subject) }}
-                />
-                <span className="text-xs text-muted truncate">{subject.subject}</span>
-                <span className="text-xs text-muted ml-auto">{subject.count}</span>
-              </div>
-            ))}
           </div>
         </div>
 
