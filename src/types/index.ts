@@ -249,6 +249,7 @@ export interface OpenPeepsAvatarState {
   head: string;           // Hair/head style ID
   accessories: string;    // Accessory ID or 'none'
   facialHair: string;     // Facial hair ID or 'none'
+  body?: string;          // Body pose ID or 'none' for bust only
   skinColor: string;      // Hex color without #
   clothingColor: string;  // Hex color without #
   backgroundColor: string; // Hex color without # or 'transparent'

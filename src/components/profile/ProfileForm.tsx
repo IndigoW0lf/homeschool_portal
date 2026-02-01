@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { Check } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import type { Profile } from '@/types';
-import { OpenPeepsAvatar, generateOpenPeepsUrl } from '@/components/OpenPeepsAvatar';
+import { LocalOpenPeepsAvatar, generateLocalOpenPeepsUrl } from '@/components/LocalOpenPeepsAvatar';
 import type { OpenPeepsState } from '@/components/OpenPeepsAvatarBuilder';
 
 const TIMEZONE_OPTIONS = [
@@ -53,6 +53,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     head: 'short1',
     accessories: 'none',
     facialHair: 'none',
+    body: 'hoodie',
     skinColor: 'd08b5b',
     clothingColor: '8fa7df',
     backgroundColor: 'b6e3f4',
@@ -209,11 +210,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             {avatarCategory === 'open-peeps' ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-center">
-                  <OpenPeepsAvatar
-                    seed="parent-preview"
+                  <LocalOpenPeepsAvatar
                     size={100}
                     {...openPeepsState}
-                    radius={50}
                   />
                 </div>
                 
@@ -233,7 +232,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                             : "border-transparent hover:border-[var(--border)]"
                         )}
                       >
-                        <OpenPeepsAvatar seed="f" size={36} face={face} head={openPeepsState.head} skinColor={openPeepsState.skinColor} radius={0} backgroundColor="transparent" />
+                        <LocalOpenPeepsAvatar size={36} face={face} head={openPeepsState.head} skinColor={openPeepsState.skinColor} backgroundColor="transparent" />
                       </button>
                     ))}
                   </div>
@@ -255,7 +254,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                             : "border-transparent hover:border-[var(--border)]"
                         )}
                       >
-                        <OpenPeepsAvatar seed="h" size={36} face={openPeepsState.face} head={head} skinColor={openPeepsState.skinColor} radius={0} backgroundColor="transparent" />
+                        <LocalOpenPeepsAvatar size={36} face={openPeepsState.face} head={head} skinColor={openPeepsState.skinColor} backgroundColor="transparent" />
                       </button>
                     ))}
                   </div>
@@ -327,7 +326,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    const url = generateOpenPeepsUrl({ ...openPeepsState, size: 256, radius: 50 });
+                    const url = generateLocalOpenPeepsUrl({ ...openPeepsState, size: 256 });
                     setAvatarUrl(url);
                     setShowAvatarPicker(false);
                   }}

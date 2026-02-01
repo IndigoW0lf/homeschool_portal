@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { OpenPeepsAvatar } from '@/components/OpenPeepsAvatar';
+import { LocalOpenPeepsAvatar } from '@/components/LocalOpenPeepsAvatar';
 import type { OpenPeepsAvatarState } from '@/types';
 
 interface StudentAvatarProps {
@@ -45,8 +45,7 @@ export function StudentAvatar({
   if (openPeepsState) {
     return (
       <div className={cn('rounded-full overflow-hidden flex-shrink-0', className)}>
-        <OpenPeepsAvatar
-          seed={name}
+        <LocalOpenPeepsAvatar
           size={sizePixels[size]}
           face={openPeepsState.face}
           head={openPeepsState.head}
@@ -55,7 +54,7 @@ export function StudentAvatar({
           skinColor={openPeepsState.skinColor}
           clothingColor={openPeepsState.clothingColor}
           backgroundColor={openPeepsState.backgroundColor}
-          radius={50}
+          body={openPeepsState.body}
         />
       </div>
     );

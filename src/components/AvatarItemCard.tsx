@@ -1,6 +1,6 @@
 'use client';
 
-import { OpenPeepsAvatar } from './OpenPeepsAvatar';
+import { LocalOpenPeepsAvatar } from './LocalOpenPeepsAvatar';
 
 interface AvatarItemCardProps {
   category: 'face' | 'head' | 'accessories' | 'facialHair';
@@ -54,10 +54,8 @@ export function AvatarItemCard({
     <div className="relative bg-[var(--background-elevated)] border border-[var(--border)] rounded-xl p-4 flex flex-col items-center gap-3 hover:border-[var(--ember-300)] transition-colors">
       {/* Preview */}
       <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-[var(--celestial-50)] to-[var(--moon-100)] dark:from-[var(--celestial-900)]/20 dark:to-[var(--moon-900)]/20 flex items-center justify-center">
-        <OpenPeepsAvatar
-          seed={`shop-${itemId}`}
+        <LocalOpenPeepsAvatar
           size={72}
-          radius={50}
           {...previewProps}
         />
       </div>

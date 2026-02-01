@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { House, GameController, Moon, List, X, Star, NotePencil, SignOut, ArrowLeft } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
-import { OpenPeepsAvatar } from '@/components/OpenPeepsAvatar';
+import { LocalOpenPeepsAvatar } from '@/components/LocalOpenPeepsAvatar';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
 import { useState } from 'react';
 import { OpenPeepsAvatarState } from '@/types';
@@ -210,11 +210,9 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidOpen
             <ArrowLeft size={18} weight="bold" />
             <span className="text-[10px] font-medium">Parent</span>
           </Link>
-          <OpenPeepsAvatar 
-            seed={kidId}
+          <LocalOpenPeepsAvatar 
             size={80}
             {...kidOpenPeepsState}
-            radius={50}
           />
           <span className={`mt-2 text-xs font-medium text-center ${
             needsDarkText 
