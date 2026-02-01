@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { Check } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import type { Profile } from '@/types';
+import { OpenPeepsAvatar, generateOpenPeepsUrl } from '@/components/OpenPeepsAvatar';
+import type { OpenPeepsState } from '@/components/OpenPeepsAvatarBuilder';
 
 const TIMEZONE_OPTIONS = [
   { value: 'America/New_York', label: 'EST (Eastern)' },
@@ -19,6 +21,7 @@ const TIMEZONE_OPTIONS = [
 
 // DiceBear avatar style categories
 const AVATAR_CATEGORIES = [
+  { id: 'open-peeps', label: '✨ Open Peeps', styles: [] },
   { id: 'modern', label: 'Clean & Modern', styles: ['micah', 'notionists', 'personas'] },
   { id: 'illustrated', label: 'Illustrated', styles: ['lorelei', 'adventurer', 'avataaars'] },
   { id: 'fun', label: 'Fun & Silly', styles: ['fun-emoji', 'bottts', 'thumbs'] },
@@ -45,7 +48,18 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
-  const [avatarCategory, setAvatarCategory] = useState('modern');
+  const [avatarCategory, setAvatarCategory] = useState('open-peeps');
+  
+  // Open Peeps state
+  const [openPeepsState, setOpenPeepsState] = useState<OpenPeepsState>({
+    face: 'smile',
+    head: 'short1',
+    accessories: 'none',
+    facialHair: 'none',
+    skinColor: 'd08b5b',
+    clothingColor: '8fa7df',
+    backgroundColor: 'b6e3f4',
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,46 +209,136 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             </div>
 
             {/* Avatar Grid for Selected Category */}
-            <div className="grid grid-cols-6 gap-2">
-              {currentCategory.styles.flatMap((style) => 
-                AVATAR_SEEDS.map((seed) => {
-                  const url = getAvatarUrl(style, seed);
-                  const isSelected = avatarUrl === url;
-                  return (
-                    <button
-                      key={`${style}-${seed}`}
-                      type="button"
-                      onClick={() => {
-                        setAvatarUrl(url);
-                        setShowAvatarPicker(false);
-                      }}
-                      className={cn(
-                        "relative p-1 rounded-xl transition-all",
-                        isSelected 
-                          ? "ring-2 ring-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20" 
-                          : "hover:bg-[var(--hover-overlay)]"
-                      )}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
-                        alt={`${style} avatar`}
-                        width={44}
-                        height={44}
-                        className="rounded-lg"
+            {avatarCategory === 'open-peeps' ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-center">
+                  <OpenPeepsAvatar
+                    seed="parent-preview"
+                    size={100}
+                    {...openPeepsState}
+                    radius={50}
+                  />
+                </div>
+                
+                {/* Quick face options */}
+                <div>
+                  <p className="text-xs font-medium text-muted mb-2">Face</p>
+                  <div className="flex flex-wrap gap-1">
+                    {['smile', 'smileBig', 'cute', 'calm', 'cheeky', 'awe', 'driven', 'serious'].map(face => (
+                      <button
+                        key={face}
+                        type="button"
+                        onClick={() => setOpenPeepsState(s => ({ ...s, face }))}
+                        className={cn(
+                          "w-10 h-10 rounded-lg overflow-hidden border-2 transition-all",
+                          openPeepsState.face === face
+                            ? "border-[var(--ember-500)]"
+                            : "border-transparent hover:border-[var(--border)]"
+                        )}
+                      >
+                        <OpenPeepsAvatar seed="f" size={36} face={face} head={openPeepsState.head} skinColor={openPeepsState.skinColor} radius={0} backgroundColor="transparent" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quick hair options */}
+                <div>
+                  <p className="text-xs font-medium text-muted mb-2">Hair</p>
+                  <div className="flex flex-wrap gap-1">
+                    {['short1', 'short2', 'medium1', 'long', 'afro', 'bun', 'bangs', 'noHair1'].map(head => (
+                      <button
+                        key={head}
+                        type="button"
+                        onClick={() => setOpenPeepsState(s => ({ ...s, head }))}
+                        className={cn(
+                          "w-10 h-10 rounded-lg overflow-hidden border-2 transition-all",
+                          openPeepsState.head === head
+                            ? "border-[var(--ember-500)]"
+                            : "border-transparent hover:border-[var(--border)]"
+                        )}
+                      >
+                        <OpenPeepsAvatar seed="h" size={36} face={openPeepsState.face} head={head} skinColor={openPeepsState.skinColor} radius={0} backgroundColor="transparent" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Skin tones */}
+                <div>
+                  <p className="text-xs font-medium text-muted mb-2">Skin Tone</p>
+                  <div className="flex gap-2">
+                    {['ffdbb4', 'edb98a', 'd08b5b', 'ae5d29', '694d3d'].map(skin => (
+                      <button
+                        key={skin}
+                        type="button"
+                        onClick={() => setOpenPeepsState(s => ({ ...s, skinColor: skin }))}
+                        className={cn(
+                          "w-8 h-8 rounded-full border-2 transition-all",
+                          openPeepsState.skinColor === skin
+                            ? "ring-2 ring-[var(--ember-500)] scale-110"
+                            : "border-[var(--border)]"
+                        )}
+                        style={{ backgroundColor: `#${skin}` }}
                       />
-                      {isSelected && (
-                        <Check 
-                          size={14} 
-                          weight="bold" 
-                          className="absolute -top-1 -right-1 text-[var(--foreground)] bg-[var(--ember-500)] rounded-full p-0.5"
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = generateOpenPeepsUrl({ ...openPeepsState, size: 256, radius: 50 });
+                    setAvatarUrl(url);
+                    setShowAvatarPicker(false);
+                  }}
+                  className="w-full py-2 bg-[var(--ember-500)] text-white rounded-lg font-medium hover:opacity-90"
+                >
+                  Use This Avatar
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-6 gap-2">
+                {currentCategory.styles.flatMap((style) => 
+                  AVATAR_SEEDS.map((seed) => {
+                    const url = getAvatarUrl(style, seed);
+                    const isSelected = avatarUrl === url;
+                    return (
+                      <button
+                        key={`${style}-${seed}`}
+                        type="button"
+                        onClick={() => {
+                          setAvatarUrl(url);
+                          setShowAvatarPicker(false);
+                        }}
+                        className={cn(
+                          "relative p-1 rounded-xl transition-all",
+                          isSelected 
+                            ? "ring-2 ring-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20" 
+                            : "hover:bg-[var(--hover-overlay)]"
+                        )}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt={`${style} avatar`}
+                          width={44}
+                          height={44}
+                          className="rounded-lg"
                         />
-                      )}
-                    </button>
-                  );
-                })
-              )}
-            </div>
+                        {isSelected && (
+                          <Check 
+                            size={14} 
+                            weight="bold" 
+                            className="absolute -top-1 -right-1 text-[var(--foreground)] bg-[var(--ember-500)] rounded-full p-0.5"
+                          />
+                        )}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
