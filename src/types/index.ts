@@ -243,6 +243,17 @@ export interface AvatarState {
   hairColor?: string;   // Hex color for hair
 }
 
+// Open Peeps 2D Avatar State (DiceBear-based)
+export interface OpenPeepsAvatarState {
+  face: string;           // Facial expression ID
+  head: string;           // Hair/head style ID
+  accessories: string;    // Accessory ID or 'none'
+  facialHair: string;     // Facial hair ID or 'none'
+  skinColor: string;      // Hex color without #
+  clothingColor: string;  // Hex color without #
+  backgroundColor: string; // Hex color without # or 'transparent'
+}
+
 // Studio types
 export interface StudioTemplatePart {
   name: string;
