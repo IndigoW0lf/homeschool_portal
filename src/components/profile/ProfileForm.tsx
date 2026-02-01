@@ -19,12 +19,9 @@ const TIMEZONE_OPTIONS = [
   { value: 'Pacific/Honolulu', label: 'HST (Hawaii)' },
 ];
 
-// DiceBear avatar style categories
+// Avatar category - Open Peeps only
 const AVATAR_CATEGORIES = [
   { id: 'open-peeps', label: '✨ Open Peeps', styles: [] },
-  { id: 'modern', label: 'Clean & Modern', styles: ['micah', 'notionists', 'personas'] },
-  { id: 'illustrated', label: 'Illustrated', styles: ['lorelei', 'adventurer', 'avataaars'] },
-  { id: 'fun', label: 'Fun & Silly', styles: ['fun-emoji', 'bottts', 'thumbs'] },
 ];
 
 // Varied seeds for different looks
@@ -267,19 +264,61 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 {/* Skin tones */}
                 <div>
                   <p className="text-xs font-medium text-muted mb-2">Skin Tone</p>
-                  <div className="flex gap-2">
-                    {['ffdbb4', 'edb98a', 'd08b5b', 'ae5d29', '694d3d'].map(skin => (
+                  <div className="flex flex-wrap gap-2">
+                    {['ffdbb4', 'edb98a', 'd08b5b', 'ae5d29', '694d3d', '4a3728'].map(skin => (
                       <button
                         key={skin}
                         type="button"
                         onClick={() => setOpenPeepsState(s => ({ ...s, skinColor: skin }))}
                         className={cn(
-                          "w-8 h-8 rounded-full border-2 transition-all",
+                          "w-7 h-7 rounded-full border-2 transition-all",
                           openPeepsState.skinColor === skin
                             ? "ring-2 ring-[var(--ember-500)] scale-110"
                             : "border-[var(--border)]"
                         )}
                         style={{ backgroundColor: `#${skin}` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Clothing colors */}
+                <div>
+                  <p className="text-xs font-medium text-muted mb-2">Shirt Color</p>
+                  <div className="flex flex-wrap gap-2">
+                    {['e78276', 'ff6b6b', 'ffcf77', 'fdea6b', '78e185', '4ecdc4', '9ddadb', '8fa7df', '5e7fb8', 'e279c7', 'be6adf', '9c8fb8', 'e27d60', 'f5f5f5', '2c2c2c', '6b4423'].map(color => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => setOpenPeepsState(s => ({ ...s, clothingColor: color }))}
+                        className={cn(
+                          "w-6 h-6 rounded-full border-2 transition-all",
+                          openPeepsState.clothingColor === color
+                            ? "ring-2 ring-[var(--ember-500)] scale-110"
+                            : "border-[var(--border)]"
+                        )}
+                        style={{ backgroundColor: `#${color}` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Background colors */}
+                <div>
+                  <p className="text-xs font-medium text-muted mb-2">Background</p>
+                  <div className="flex flex-wrap gap-2">
+                    {['b6e3f4', 'c0aede', 'd1d4f9', 'ffd5dc', 'ffdfbf', 'ffeeb4', 'd5f5e3', 'ffe8d6', 'fff3cd', 'e2f0cb', 'cce5ff', 'f8d7da'].map(bg => (
+                      <button
+                        key={bg}
+                        type="button"
+                        onClick={() => setOpenPeepsState(s => ({ ...s, backgroundColor: bg }))}
+                        className={cn(
+                          "w-6 h-6 rounded-full border-2 transition-all",
+                          openPeepsState.backgroundColor === bg
+                            ? "ring-2 ring-[var(--ember-500)] scale-110"
+                            : "border-[var(--border)]"
+                        )}
+                        style={{ backgroundColor: `#${bg}` }}
                       />
                     ))}
                   </div>

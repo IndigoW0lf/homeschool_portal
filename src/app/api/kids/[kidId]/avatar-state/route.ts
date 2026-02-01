@@ -9,7 +9,7 @@ interface RouteParams {
 
 /**
  * GET /api/kids/[kidId]/avatar-state
- * Fetch the kid's Open Peeps avatar state
+ * Fetch the kid's Open Peeps avatar state and unlocked items
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
@@ -27,9 +27,21 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Failed to fetch avatar state' }, { status: 500 });
   }
 
+  // Fetch unlocked avatar items
+  const { data: unlockedData } = await supabase
+    .from('kid_avatar_items')
+    .select('item_category, item_id')
+    .eq('kid_id', kidId);
+
+  const unlockedItems = (unlockedData || []).map(
+    (item: { item_category: string; item_id: string }) => 
+      `${item.item_category}:${item.item_id}`
+  );
+
   return NextResponse.json({
     openPeepsState: data?.open_peeps_avatar_state || null,
     avatarUrl: data?.avatar_url || null,
+    unlockedItems,
   });
 }
 
