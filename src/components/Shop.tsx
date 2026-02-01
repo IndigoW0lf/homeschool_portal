@@ -5,6 +5,7 @@ import { ShopItem } from '@/types';
 import { ShopItemCard } from './ShopItemCard';
 import { RewardItemCard } from './RewardItemCard';
 import { AvatarItemCard } from './AvatarItemCard';
+import { AvatarShopSection } from './AvatarShopSection';
 import openPeepsOptions from '../../content/open-peeps-options.json';
 
 interface ShopProps {
@@ -12,7 +13,7 @@ interface ShopProps {
   items: ShopItem[];
 }
 
-type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'home' | 'template';
+type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'peeps' | 'home' | 'template';
 
 // Extract premium avatar items from options
 type CategoryKey = 'face' | 'head' | 'accessories' | 'facialHair';
@@ -100,10 +101,11 @@ export function Shop({ kidId, items }: ShopProps) {
 
     const filters: { key: FilterType; label: string; show: boolean }[] = [
       { key: 'all', label: 'All', show: true },
+      { key: 'peeps', label: '🎭 Peeps Avatars', show: true },
+      { key: 'avatar', label: `✨ Parts (${PREMIUM_AVATAR_ITEMS.length})`, show: PREMIUM_AVATAR_ITEMS.length > 0 },
       { key: 'template', label: `Clothing (${templateCount})`, show: templateCount > 0 },
       { key: 'reward', label: `🎁 Rewards (${rewardCount})`, show: rewardCount > 0 },
       { key: 'badge', label: 'Badges', show: digitalCount > 0 },
-      { key: 'avatar', label: `✨ Avatar (${PREMIUM_AVATAR_ITEMS.length})`, show: PREMIUM_AVATAR_ITEMS.length > 0 },
       { key: 'home', label: 'Home', show: digitalCount > 0 },
     ];
 
@@ -167,8 +169,15 @@ export function Shop({ kidId, items }: ShopProps) {
       </div>
 
       {/* Shop Items Grid */}
-      {filter === 'avatar' ? (
-        /* Avatar Items Grid */
+      {filter === 'peeps' ? (
+        /* Full Open Peeps Avatars */
+        <AvatarShopSection
+          kidId={kidId}
+          moons={stars}
+          onMoonsChange={setStars}
+        />
+      ) : filter === 'avatar' ? (
+        /* Avatar Parts Grid */
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {PREMIUM_AVATAR_ITEMS.map(item => (
             <AvatarItemCard
