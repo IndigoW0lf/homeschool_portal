@@ -226,10 +226,10 @@ export function LocalOpenPeepsAvatar({
   const headLeft = '48%';  // Shift slightly left (was 50% centered)
   
   // Face should be smaller than head to fit inside  
-  const faceHeight = isSitting ? '20%' : '16%';  // Even smaller face
-  const faceWidth = isSitting ? '26%' : '22%';
-  const faceTop = '6%';  // Moved down more (was 6%)
-  const faceLeft = '50%';  // Moved right (was 48%)
+  const faceHeight = isSitting ? '18%' : '14%';  // Even smaller face
+  const faceWidth = isSitting ? '24%' : '20%';
+  const faceTop = '6.5%';  // Moved down more (was 6%)
+  const faceLeft = '50.5%';  // Moved right (was 48%)
 
   return (
     <div 
