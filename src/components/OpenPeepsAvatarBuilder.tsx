@@ -44,14 +44,13 @@ const DEFAULT_STATE: OpenPeepsState = {
   backgroundColor: 'b6e3f4',
 };
 
-type CategoryKey = 'pose' | 'face' | 'head' | 'accessories' | 'facialHair';
+type CategoryKey = 'pose' | 'face' | 'head' | 'accessories';
 
 const CATEGORIES: { key: CategoryKey; label: string; emoji: string }[] = [
   { key: 'pose', label: 'Pose', emoji: '🧍' },
   { key: 'face', label: 'Face', emoji: '😊' },
   { key: 'head', label: 'Hair', emoji: '💇' },
   { key: 'accessories', label: 'Glasses', emoji: '👓' },
-  { key: 'facialHair', label: 'Beard', emoji: '🧔' },
 ];
 
 export function OpenPeepsAvatarBuilder({
