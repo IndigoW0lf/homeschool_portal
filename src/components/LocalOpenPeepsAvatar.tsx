@@ -245,7 +245,7 @@ export function LocalOpenPeepsAvatar({
       {poseSrc && (
         <div 
           className="absolute inset-0"
-          style={{ top: '22%', left: '-2%' }}  // Shift left to match head
+          style={{ top: '22%', left: isSitting ? '5%' : '-2%' }}  // Sitting shifted right
         >
           <Image
             src={poseSrc}
