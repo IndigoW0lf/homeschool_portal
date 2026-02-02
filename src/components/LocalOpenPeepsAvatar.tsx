@@ -215,25 +215,25 @@ export function LocalOpenPeepsAvatar({
     : null;
 
   // Full body sizing - slightly larger container for more visible space
-  const aspectRatio = isSitting ? 1.4 : 1.6;  // Taller container = more space
+  const aspectRatio = isSitting ? 1.5 : 1.7;  // Taller container = more space
   const containerHeight = size * aspectRatio;
   
-  // Head positioning - the pose SVGs include a blank head area at top
-  // We need to position our head/face layers to align with that area
-  const headTop = '-1%';  // Moved up (was 2%)
-  const headHeight = isSitting ? '32%' : '28%';  // Slightly smaller head
-  const headWidth = isSitting ? '40%' : '36%';   // Smaller width
-  const headLeft = '46%';  // Shift slightly left (was 50% centered)
+  // Head positioning - USE SAME VALUES for sitting and standing
+  // The user tuned these for standing, sitting was using bigger values
+  const headTop = '-1%';
+  const headHeight = '28%';  // Same for both
+  const headWidth = '36%';   // Same for both
+  const headLeft = '46%';    // Shift slightly left
   
-  // Face should be smaller than head to fit inside  
-  const faceHeight = isSitting ? '19%' : '15%';  // Even smaller face
-  const faceWidth = isSitting ? '24%' : '20%';
-  const faceTop = '7.5%';  // Moved down more (was 6%)
-  const faceLeft = '48.5%';  // Moved right (was 48%)
+  // Face - same for both sitting and standing
+  const faceHeight = '15%';
+  const faceWidth = '20%';
+  const faceTop = '7.5%';
+  const faceLeft = '48.5%';
 
   return (
     <div 
-      className={`relative overflow-hidden ${className}`}
+      className={`relative ${className}`}
       style={{ 
         width: size, 
         height: containerHeight,
