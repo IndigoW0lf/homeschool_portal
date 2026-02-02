@@ -54,7 +54,7 @@ export default async function KidsLayout({ children, params }: KidsLayoutProps) 
         kidName={kid.name}
         kidNickname={kid.nickname}
         kidFavoriteColor={kid.favoriteColor}
-        kidAvatarState={kid.avatarState}
+        kidOpenPeepsState={(kid as unknown as Record<string, unknown>).open_peeps_avatar_state as import('@/types').OpenPeepsAvatarState | undefined}
       />
       
       {/* Main content area - offset for sidebar on desktop, header on mobile */}

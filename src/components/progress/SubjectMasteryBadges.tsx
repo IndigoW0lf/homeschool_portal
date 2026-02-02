@@ -1,7 +1,7 @@
 'use client';
 
 import { Trophy } from '@phosphor-icons/react';
-import { SUBJECT_BADGE_GROUPS, getBadgeById, type Badge } from '@/lib/badges';
+import { SUBJECT_BADGE_GROUPS, type Badge } from '@/lib/badges';
 
 interface SubjectMasteryBadgesProps {
   subjectCounts: Record<string, number>;
@@ -25,6 +25,51 @@ const SUBJECT_KEY_MAP: Record<string, string> = {
   'life skills': 'life_skills',
   'electives': 'arts', // Map electives to arts
 };
+
+// Convert Tailwind text color classes to CSS color values
+const COLOR_MAP: Record<string, string> = {
+  'text-amber-600': '#d97706',
+  'text-amber-500': '#f59e0b',
+  'text-amber-400': '#fbbf24',
+  'text-amber-300': '#fcd34d',
+  'text-blue-600': '#2563eb',
+  'text-blue-500': '#3b82f6',
+  'text-blue-400': '#60a5fa',
+  'text-blue-300': '#93c5fd',
+  'text-purple-600': '#9333ea',
+  'text-purple-500': '#a855f7',
+  'text-purple-400': '#c084fc',
+  'text-purple-300': '#d8b4fe',
+  'text-green-600': '#16a34a',
+  'text-green-500': '#22c55e',
+  'text-green-400': '#4ade80',
+  'text-green-300': '#86efac',
+  'text-orange-600': '#ea580c',
+  'text-orange-500': '#f97316',
+  'text-orange-400': '#fb923c',
+  'text-orange-300': '#fdba74',
+  'text-rose-600': '#e11d48',
+  'text-rose-500': '#f43f5e',
+  'text-rose-400': '#fb7185',
+  'text-rose-300': '#fda4af',
+  'text-cyan-600': '#0891b2',
+  'text-cyan-500': '#06b6d4',
+  'text-cyan-400': '#22d3ee',
+  'text-cyan-300': '#67e8f9',
+  'text-red-600': '#dc2626',
+  'text-red-500': '#ef4444',
+  'text-red-400': '#f87171',
+  'text-red-300': '#fca5a5',
+  'text-pink-600': '#db2777',
+  'text-pink-500': '#ec4899',
+  'text-pink-400': '#f472b6',
+  'text-pink-300': '#f9a8d4',
+};
+
+function getProgressBarColor(colorClass?: string): string {
+  if (!colorClass) return '#f59e0b'; // amber-500 default
+  return COLOR_MAP[colorClass] || '#f59e0b';
+}
 
 function normalizeSubjectKey(key: string): string {
   const lowered = key.toLowerCase();
@@ -170,9 +215,7 @@ export function SubjectMasteryBadges({ subjectCounts }: SubjectMasteryBadgesProp
                     className="h-full rounded-full transition-all duration-500"
                     style={{ 
                       width: `${subject.progress}%`,
-                      backgroundColor: subject.currentBadge?.color.includes('text-') 
-                        ? subject.currentBadge.color.replace('text-', 'rgb(var(--').replace('-500', '-500-rgb))').replace('-400', '-400-rgb))').replace('-600', '-600-rgb))')
-                        : 'var(--amber-500)'
+                      backgroundColor: getProgressBarColor(subject.currentBadge?.color)
                     }}
                   />
                 </div>

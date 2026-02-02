@@ -1,0 +1,60 @@
+{
+  "packs": [
+    {
+      "id": "pack_medieval",
+      "name": "Medieval Kingdom",
+      "description": "Build your own castle and kingdom!",
+      "cost": 50,
+      "theme": "medieval",
+      "previewEmoji": "🏰",
+      "items": [
+        { "id": "castle", "label": "Castle", "collision": true },
+        { "id": "knight", "label": "Knight", "collision": false },
+        { "id": "dragon", "label": "Dragon", "collision": true },
+        { "id": "banner", "label": "Banner", "collision": false }
+      ]
+    },
+    {
+      "id": "pack_beach",
+      "name": "Beach Paradise",
+      "description": "Sunny shores and ocean vibes!",
+      "cost": 40,
+      "theme": "beach",
+      "previewEmoji": "🏖️",
+      "items": [
+        { "id": "palm_tree", "label": "Palm Tree", "collision": true },
+        { "id": "umbrella", "label": "Umbrella", "collision": false },
+        { "id": "sandcastle", "label": "Sandcastle", "collision": true },
+        { "id": "crab", "label": "Crab", "collision": false }
+      ]
+    },
+    {
+      "id": "pack_space",
+      "name": "Space Explorer",
+      "description": "Blast off to the stars!",
+      "cost": 60,
+      "theme": "space",
+      "previewEmoji": "🚀",
+      "items": [
+        { "id": "rocket", "label": "Rocket", "collision": true },
+        { "id": "alien", "label": "Friendly Alien", "collision": false },
+        { "id": "crater", "label": "Crater", "collision": false },
+        { "id": "space_flag", "label": "Space Flag", "collision": false }
+      ]
+    },
+    {
+      "id": "pack_spooky",
+      "name": "Spooky Halloween",
+      "description": "Creepy crawly fun!",
+      "cost": 45,
+      "theme": "spooky",
+      "previewEmoji": "🎃",
+      "items": [
+        { "id": "gravestone", "label": "Gravestone", "collision": true },
+        { "id": "ghost", "label": "Ghost", "collision": false },
+        { "id": "pumpkin", "label": "Pumpkin", "collision": false },
+        { "id": "bat", "label": "Bat", "collision": false }
+      ]
+    }
+  ]
+}

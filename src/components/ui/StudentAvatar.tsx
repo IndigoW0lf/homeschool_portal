@@ -2,10 +2,13 @@
 
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { LocalOpenPeepsAvatar } from '@/components/LocalOpenPeepsAvatar';
+import type { OpenPeepsAvatarState } from '@/types';
 
 interface StudentAvatarProps {
   name: string;
   avatarUrl?: string; // Optional URL for the image
+  openPeepsState?: OpenPeepsAvatarState | null; // New: Open Peeps avatar state
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   color?: string; // Fallback color class if no image
@@ -14,11 +17,20 @@ interface StudentAvatarProps {
 export function StudentAvatar({ 
   name, 
   avatarUrl, 
+  openPeepsState,
   size = 'md', 
   className,
   color
 }: StudentAvatarProps) {
   
+  // Size in pixels for OpenPeepsAvatar
+  const sizePixels = {
+    sm: 32,
+    md: 40,
+    lg: 64,
+    xl: 96
+  };
+
   // Slightly larger font sizes for better readability
   const sizeClasses = {
     sm: 'w-8 h-8 text-sm',      // was text-xs
@@ -28,6 +40,23 @@ export function StudentAvatar({
   };
 
   const initials = name.slice(0, 2).toUpperCase();
+
+  // Prefer Open Peeps avatar if state is provided
+  if (openPeepsState) {
+    return (
+      <div className={cn('rounded-full overflow-hidden flex-shrink-0', className)}>
+        <LocalOpenPeepsAvatar
+          size={sizePixels[size]}
+          pose={openPeepsState.pose || 'standing_shirt1'}
+          face={openPeepsState.face}
+          head={openPeepsState.head}
+          accessories={openPeepsState.accessories}
+          facialHair={openPeepsState.facialHair}
+          backgroundColor={openPeepsState.backgroundColor}
+        />
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -56,3 +85,4 @@ export function StudentAvatar({
     </div>
   );
 }
+

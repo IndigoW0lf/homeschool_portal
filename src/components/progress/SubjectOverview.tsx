@@ -48,6 +48,31 @@ function getSubjectColor(subject: string): string {
   return 'var(--slate-500)';
 }
 
+// Normalize subject names to handle case differences (reading -> Reading)
+function normalizeSubjectName(name: string): string {
+  const normalized = name.toLowerCase().replace(/_/g, ' ');
+  // Map common variations
+  const mappings: Record<string, string> = {
+    'reading': 'Reading',
+    'writing': 'Writing',
+    'math': 'Math',
+    'math & logic': 'Math & Logic',
+    'science': 'Science',
+    'social studies': 'Social Studies',
+    'social_studies': 'Social Studies',
+    'arts': 'Arts',
+    'electives': 'Electives',
+    'life skills': 'Life Skills',
+    'life_skills': 'Life Skills',
+    'pe': 'PE',
+    'pe & movement': 'PE & Movement',
+    'language arts': 'Language Arts',
+    'computer science': 'Computer Science',
+    'history': 'History',
+  };
+  return mappings[normalized] || name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 export function SubjectOverview({ 
   lunaraSubjects, 
   manualSubjects, 
@@ -71,23 +96,24 @@ export function SubjectOverview({
         break;
       case 'all':
       default:
-        // Merge all sources, combining counts for same subjects
+        // Merge all sources, combining counts for same subjects (case-insensitive)
         const merged: Record<string, SubjectData> = {};
         [...lunaraSubjects, ...manualSubjects, ...externalSubjects].forEach(s => {
-          if (merged[s.subject]) {
-            merged[s.subject].count += s.count;
+          const normalizedName = normalizeSubjectName(s.subject);
+          if (merged[normalizedName]) {
+            merged[normalizedName].count += s.count;
             // Average the averages if both have them
             if (s.average !== undefined && s.average !== null) {
-              if (merged[s.subject].average !== undefined && merged[s.subject].average !== null) {
-                merged[s.subject].average = Math.round(
-                  ((merged[s.subject].average || 0) + s.average) / 2
+              if (merged[normalizedName].average !== undefined && merged[normalizedName].average !== null) {
+                merged[normalizedName].average = Math.round(
+                  ((merged[normalizedName].average || 0) + s.average) / 2
                 );
               } else {
-                merged[s.subject].average = s.average;
+                merged[normalizedName].average = s.average;
               }
             }
           } else {
-            merged[s.subject] = { ...s };
+            merged[normalizedName] = { ...s, subject: normalizedName };
           }
         });
         subjects = Object.values(merged);
@@ -160,76 +186,123 @@ export function SubjectOverview({
         </div>
       </div>
 
-      {/* Two-column layout: Donut + Performance */}
+      {/* Two-column layout: Donut + Performance/Activity Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Subject Distribution Donut */}
-        <div className="flex items-center gap-4">
-          {/* Donut Chart */}
-          <div className="relative flex-shrink-0">
+        {/* Subject Distribution Donut - larger and centered */}
+        <div className="flex items-center justify-center">
+          <div className="relative">
             <div 
-              className="w-24 h-24 rounded-full"
+              className="w-32 h-32 rounded-full shadow-lg"
               style={{ background: `conic-gradient(${gradientStops})` }}
             >
-              <div className="absolute inset-3 bg-[var(--background-elevated)] rounded-full flex items-center justify-center">
+              <div className="absolute inset-4 bg-[var(--background-elevated)] rounded-full flex items-center justify-center shadow-inner">
                 <div className="text-center">
-                  <p className="text-lg font-bold text-heading">{total}</p>
-                  <p className="text-[10px] text-muted uppercase">Items</p>
+                  <p className="text-2xl font-bold text-heading">{total}</p>
+                  <p className="text-[10px] text-muted uppercase tracking-wide">Activities</p>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Legend */}
-          <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-1">
-            {subjects.slice(0, 6).map(subject => (
-              <div key={subject.subject} className="flex items-center gap-1.5 min-w-0">
-                <div 
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: getSubjectColor(subject.subject) }}
-                />
-                <span className="text-xs text-muted truncate">{subject.subject}</span>
-                <span className="text-xs text-muted ml-auto">{subject.count}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* Subject Performance Bars */}
-        <div className="space-y-2">
-          <h4 className="text-xs font-medium text-muted uppercase tracking-wider">
-            {hasGrades ? 'Performance' : 'Activity Count'}
-          </h4>
-          <div className="space-y-1.5">
-            {subjects.slice(0, 5).map(subject => (
-              <div key={subject.subject} className="flex items-center gap-2">
-                <span className="w-24 text-xs text-muted truncate">{subject.subject}</span>
-                <div className="flex-1 h-2 bg-[var(--background-secondary)] rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{ 
-                      width: hasGrades && subject.average !== undefined && subject.average !== null
-                        ? `${subject.average}%`
-                        : `${Math.min((subject.count / Math.max(...subjects.map(s => s.count))) * 100, 100)}%`,
-                      backgroundColor: hasGrades && subject.average !== undefined && subject.average !== null
-                        ? subject.average >= 80 ? 'var(--celestial-500)' :
-                          subject.average >= 60 ? 'var(--herbal-gold)' : 'var(--cosmic-rust-500)'
-                        : getSubjectColor(subject.subject)
-                    }}
-                  />
-                </div>
-                {hasGrades && subject.average !== undefined && subject.average !== null ? (
-                  <span className={`text-xs font-medium w-10 text-right ${
-                    subject.average >= 80 ? 'text-[var(--celestial-500)]' :
-                    subject.average >= 60 ? 'text-[var(--herbal-gold)]' : 'text-[var(--cosmic-rust-500)]'
-                  }`}>
-                    {subject.average}%
-                  </span>
-                ) : (
-                  <span className="text-xs text-muted w-10 text-right">{subject.count}</span>
-                )}
+        {/* Right side: Performance Bars (MiAcademy only) OR Activity Distribution (other sources) */}
+        <div className="space-y-3">
+          {activeFilter === 'external' && hasGrades ? (
+            <>
+              {/* MiAcademy: Show performance bars with percentages */}
+              <h4 className="text-xs font-medium text-muted uppercase tracking-wider">
+                Performance
+              </h4>
+              <div className="space-y-1.5">
+                {subjects.slice(0, 5).map(subject => (
+                  <div key={subject.subject} className="flex items-center gap-2">
+                    <span className="w-24 text-xs text-muted truncate">{subject.subject}</span>
+                    <div className="flex-1 h-2 bg-[var(--background-secondary)] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{ 
+                          width: `${subject.average || 0}%`,
+                          backgroundColor: (subject.average || 0) >= 80 
+                            ? 'var(--celestial-500)' 
+                            : (subject.average || 0) >= 60 
+                              ? 'var(--herbal-gold)' 
+                              : 'var(--cosmic-rust-500)'
+                        }}
+                      />
+                    </div>
+                    <span className={`text-xs font-medium w-10 text-right ${
+                      (subject.average || 0) >= 80 ? 'text-[var(--celestial-500)]' :
+                      (subject.average || 0) >= 60 ? 'text-[var(--herbal-gold)]' : 'text-[var(--cosmic-rust-500)]'
+                    }`}>
+                      {subject.average || 0}%
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          ) : (
+            <>
+              {/* Lunara/Manual/All: Show activity distribution as numbers */}
+              <h4 className="text-xs font-medium text-muted uppercase tracking-wider">
+                Activity Distribution
+              </h4>
+              <div className="space-y-1.5">
+                {subjects.slice(0, 5).map(subject => {
+                  const percentage = Math.round((subject.count / total) * 100);
+                  return (
+                    <div key={subject.subject} className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded flex-shrink-0"
+                        style={{ backgroundColor: getSubjectColor(subject.subject) }}
+                      />
+                      <span className="flex-1 text-xs text-[var(--foreground)] truncate">{subject.subject}</span>
+                      <span className="text-xs font-medium text-[var(--foreground)]">{subject.count}</span>
+                      <span className="text-xs text-muted w-10 text-right">({percentage}%)</span>
+                    </div>
+                  );
+                })}
+              </div>
+              {subjects.length > 5 && (
+                <p className="text-[10px] text-muted">+ {subjects.length - 5} more subjects</p>
+              )}
+
+              {/* When "All" is selected and MiAcademy data exists, show separate performance summary */}
+              {activeFilter === 'all' && hasExternal && externalSubjects.some(s => s.average !== undefined && s.average !== null) && (
+                <div className="pt-2 mt-2 border-t border-[var(--border)]">
+                  <h4 className="text-xs font-medium text-muted uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                    <GraduationCap size={12} className="text-[var(--celestial-500)]" />
+                    MiAcademy Performance
+                  </h4>
+                  <div className="space-y-1">
+                    {externalSubjects.filter(s => s.average !== undefined && s.average !== null).slice(0, 3).map(subject => (
+                      <div key={subject.subject} className="flex items-center gap-2">
+                        <span className="flex-1 text-xs text-muted truncate">{subject.subject}</span>
+                        <div className="w-16 h-1.5 bg-[var(--background-secondary)] rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full"
+                            style={{ 
+                              width: `${subject.average || 0}%`,
+                              backgroundColor: (subject.average || 0) >= 80 
+                                ? 'var(--celestial-500)' 
+                                : (subject.average || 0) >= 60 
+                                  ? 'var(--herbal-gold)' 
+                                  : 'var(--cosmic-rust-500)'
+                            }}
+                          />
+                        </div>
+                        <span className={`text-xs font-medium w-8 text-right ${
+                          (subject.average || 0) >= 80 ? 'text-[var(--celestial-500)]' :
+                          (subject.average || 0) >= 60 ? 'text-[var(--herbal-gold)]' : 'text-[var(--cosmic-rust-500)]'
+                        }`}>
+                          {subject.average}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

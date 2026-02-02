@@ -2,22 +2,22 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { House, GameController, Moon, List, X, Star, NotePencil, SignOut, ArrowLeft } from '@phosphor-icons/react';
+import { House, GameController, Moon, List, X, Star, NotePencil, SignOut, ArrowLeft, Globe } from '@phosphor-icons/react';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
-import { BlockyAvatar } from '@/components/BlockyAvatar';
+import { LocalOpenPeepsAvatar } from '@/components/LocalOpenPeepsAvatar';
 import { MoonsCounter } from '@/components/kids/MoonsCounter';
 import { useState } from 'react';
-import { AvatarState } from '@/types';
+import { OpenPeepsAvatarState } from '@/types';
 
 interface KidsNavProps {
   kidId: string;
   kidName: string;
   kidNickname?: string;
   kidFavoriteColor?: string;
-  kidAvatarState?: AvatarState | null;
+  kidOpenPeepsState?: OpenPeepsAvatarState | null;
 }
 
-export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvatarState }: KidsNavProps) {
+export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidOpenPeepsState }: KidsNavProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -63,6 +63,13 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
       label: 'Play', 
       icon: GameController,
       color: 'var(--ember-400)',
+      exactMatch: false
+    },
+    { 
+      href: `/kids/${kidId}/world`, 
+      label: 'World', 
+      icon: Globe,
+      color: 'var(--flora-secondary)',
       exactMatch: false
     },
     { 
@@ -210,12 +217,9 @@ export function KidsNav({ kidId, kidName, kidNickname, kidFavoriteColor, kidAvat
             <ArrowLeft size={18} weight="bold" />
             <span className="text-[10px] font-medium">Parent</span>
           </Link>
-          <BlockyAvatar 
-            className="w-20 h-20 mb-2"
+          <LocalOpenPeepsAvatar 
             size={80}
-            skinColors={{
-              skin: kidAvatarState?.colors?.skin,
-            }}
+            {...kidOpenPeepsState}
           />
           <span className={`mt-2 text-xs font-medium text-center ${
             needsDarkText 

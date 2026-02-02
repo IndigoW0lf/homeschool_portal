@@ -5,6 +5,7 @@ import { KidProfileEditor } from '@/components/kids/KidProfileEditor';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { BadgeGallery } from '@/components/kids/BadgeGallery';
 import { FamilyConnections } from '@/components/kids/FamilyConnections';
+import { OpenPeepsAvatarBuilder } from '@/components/OpenPeepsAvatarBuilder';
 
 import Link from 'next/link';
 import { getKidSession } from '@/lib/kid-session';
@@ -53,28 +54,17 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         <KidProfileEditor kidId={kidId} initialData={kid} />
         
-        {/* Avatar Builder - Coming Soon */}
-        <div className="max-w-md mx-auto p-6 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
-          <div className="flex flex-col items-center text-center gap-4">
-            {/* Avatar preview */}
-            <AvatarPreview 
-              avatarState={kid.avatarState}
-              size="lg"
-              fallbackName={kid.nickname || kid.name}
-              fallbackColor={kid.favoriteColor}
-            />
-            <div>
-              <h3 className="font-semibold text-lg text-[var(--foreground)] mb-1">
-                ✨ Avatar Builder
-              </h3>
-              <p className="text-sm text-muted mb-3">
-                Coming soon! We're working on an awesome avatar creator for you.
-              </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--moon-200)] dark:bg-[var(--background-secondary)] text-muted rounded-lg font-medium cursor-not-allowed">
-                🚧 In Progress
-              </div>
-            </div>
+        {/* Avatar Builder */}
+        <div className="max-w-4xl mx-auto">
+          <div className="mb-4">
+            <h3 className="font-semibold text-lg text-[var(--foreground)]">
+              ✨ Customize Your Avatar
+            </h3>
+            <p className="text-sm text-muted">
+              Mix and match to create your own unique look!
+            </p>
           </div>
+          <OpenPeepsAvatarBuilder kidId={kidId} />
         </div>
 
         {/* Family Connections */}
