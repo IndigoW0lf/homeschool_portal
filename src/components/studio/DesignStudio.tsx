@@ -1,48 +1,43 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { 
   DesignTemplate, 
-  DesignRegion, 
-  StrokeData,
   DesignTemplatesManifest,
   DESIGN_COLOR_PALETTE,
   BRUSH_SIZES,
+  ItemDesignRow
 } from '@/types/design-studio';
 import { DesignCanvas, DesignCanvasRef } from './DesignCanvas';
-import { useRef } from 'react';
 import { ColorPalette } from './ColorPalette';
-import { PaintBucket, Pencil, Eraser, ArrowLeft, FloppyDisk, Eye, Lock, TShirt } from '@phosphor-icons/react';
-// Note: SyntyAvatarPreview removed - using 2D preview instead
-import { ItemDesignRow } from '@/types/design-studio';
+import { PaintBucket, Pencil, Eraser, ArrowLeft, FloppyDisk, Eye, Lock, TShirt, ArrowUUpLeft, ArrowUUpRight, Trash } from '@phosphor-icons/react';
 
 interface DesignStudioProps {
   kidId: string;
   templates: DesignTemplatesManifest;
-  existingDesigns?: Record<string, DesignRegion>; // For editing specific design passed from parent (legacy/direct link)
+  existingDesigns?: any; // Legacy prop, unused in new pixel flow
   designId?: string; // If editing
   unlockedTemplateIds?: string[];
   initialDesigns?: ItemDesignRow[];
 }
 
-type Tool = 'fill' | 'draw' | 'eraser';
+type Tool = 'fill' | 'draw' | 'eraser' | 'paintbucket';
 type ViewMode = 'create' | 'wardrobe';
 
 export function DesignStudio({ 
   kidId, 
   templates, 
-  existingDesigns, 
   designId: initialDesignId,
   unlockedTemplateIds = [],
-  initialDesigns = []}: DesignStudioProps) {
+  initialDesigns = []
+}: DesignStudioProps) {
   // Get starter templates (unlocked ones)
   const starterTemplates = templates.categories.flatMap(cat => 
     cat.templates.filter(t => t.unlocked)
   );
   
-  // Ref for canvas to export texture
   const designCanvasRef = useRef<DesignCanvasRef>(null);
   
   const [view, setView] = useState<ViewMode>('create');
@@ -51,18 +46,17 @@ export function DesignStudio({
   );
   const [currentDesignId, setCurrentDesignId] = useState<string | undefined>(initialDesignId);
 
-  const [tool, setTool] = useState<Tool>('fill');
+  const [tool, setTool] = useState<Tool>('paintbucket');
   const [currentColor, setCurrentColor] = useState(DESIGN_COLOR_PALETTE[0].value);
   const [brushSize, setBrushSize] = useState(BRUSH_SIZES[1].value);
-  const [activeRegion, setActiveRegion] = useState<string | null>(null);
-  const [regions, setRegions] = useState<Record<string, DesignRegion>>({}); // Current canvas state
   
   const [designName, setDesignName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewTexture, setPreviewTexture] = useState<string | null>(null);
+  const [initialPaintData, setInitialPaintData] = useState<string | undefined>(undefined);
 
-  // Update preview texture when regions change or when preview is opened
+  // Update preview texture when preview is opened
   useEffect(() => {
     if (showPreview && designCanvasRef.current) {
       const updateTexture = async () => {
@@ -74,92 +68,19 @@ export function DesignStudio({
         }
       };
       
-      // Debounce slightly to avoid rapid updates
       const timer = setTimeout(updateTexture, 100);
       return () => clearTimeout(timer);
     }
-  }, [showPreview, regions]); // Re-run when regions (colors) change
+  }, [showPreview]);
 
-  // Initialize regions when template changes OR when loading a wardrobe item
+  // Load design logic
   useEffect(() => {
-    if (!selectedTemplate) return;
-    
-    // If we have specific regions loaded (e.g. from wardrobe item click), keep them
-    // Otherwise init from template
-    // This logic needs to be careful not to overwrite work in progress if user just switches template?
-    // For simplicity: switching template resets canvas.
-    
-    const templateRegionIds = selectedTemplate.regions || selectedTemplate.parts?.map(p => p.name) || [];
-    const isNewTemplate = !regions || Object.keys(regions).length === 0 || 
-                         !Object.keys(regions).some(k => templateRegionIds.includes(k));
-
-    if (existingDesigns && !currentDesignId) {
-       setRegions(existingDesigns);
-    } else if (isNewTemplate) {
-      // Initialize empty regions for new design
-      const initialRegions: Record<string, DesignRegion> = {};
-      
-      // Handle standard parts (if available)
-      if (selectedTemplate.parts) {
-        selectedTemplate.parts.forEach(part => {
-          initialRegions[part.name] = {
-            id: part.name,
-            label: part.label,
-            fillColor: '#E5E5E5',
-            strokes: [],
-          };
-        });
-      }
-
-      // Handle raw regions (skin templates)
-      if ((selectedTemplate as any).regions) {
-        (selectedTemplate as any).regions.forEach((regionId: string) => {
-          initialRegions[regionId] = {
-            id: regionId,
-            label: regionId.replace(/-/g, ' '),
-            fillColor: '#E5E5E5',
-            strokes: [],
-          };
-        });
-      }
-
-      setRegions(initialRegions);
+    if (initialDesignId) {
+        // Find design in initialDesigns if possible, or fetch?
+        // For now assume passed in via Props mostly or state management.
+        // If passed via URL, page loads existingDesigns.
     }
-  }, [selectedTemplate, existingDesigns, currentDesignId]); // removed regions dependency to avoid loops
-
-
-
-  const handleRegionClick = useCallback((regionId: string) => {
-    setActiveRegion(regionId);
-  }, []);
-
-  const handleRegionFill = useCallback((regionId: string, color: string) => {
-    setRegions(prev => ({
-      ...prev,
-      [regionId]: {
-        ...prev[regionId],
-        fillColor: color,
-      },
-    }));
-  }, []);
-
-  const handleStrokeComplete = useCallback((stroke: StrokeData) => {
-    // Add stroke to the appropriate region (or a general layer)
-    // For now, add to first region or create a "strokes" layer
-    setRegions(prev => {
-      const regionId = activeRegion || Object.keys(prev)[0];
-      if (!regionId) return prev;
-      
-      return {
-        ...prev,
-        [regionId]: {
-          ...prev[regionId],
-          strokes: [...(prev[regionId]?.strokes || []), stroke],
-        },
-      };
-    });
-  }, [activeRegion]);
-
+  }, [initialDesignId]);
 
 
   const handleSave = async () => {
@@ -171,11 +92,13 @@ export function DesignStudio({
     
     setIsSaving(true);
     try {
-      // Capture texture image from canvas
       let textureImage: string | undefined;
+      let paintData: string | undefined;
+      
       if (designCanvasRef.current) {
         try {
-          textureImage = await designCanvasRef.current.toDataURL();
+          textureImage = await designCanvasRef.current.toDataURL(); // Full composite
+          paintData = designCanvasRef.current.toPaintDataURL(); // Just paint layer
         } catch (e) {
           console.error("Failed to generate texture:", e);
         }
@@ -188,8 +111,9 @@ export function DesignStudio({
           id: currentDesignId,
           templateId: selectedTemplate.id,
           name: designName.trim(),
-          regions,
-          textureImage, // Send base64 image to API
+          regions: {}, // Legacy compat: Empty regions
+          design_data: { paintData }, // New storage for paint layer
+          textureImage,
         }),
       });
       
@@ -198,6 +122,8 @@ export function DesignStudio({
       }
       
       toast.success('Design saved! ✨');
+      // Update local designs list if we could? 
+      // Ideally we refresh the list.
     } catch (error) {
       console.error('Failed to save design:', error);
       toast.error('Could not save design. Try again?');
@@ -206,37 +132,13 @@ export function DesignStudio({
     }
   };
 
-  const handleUndo = () => {
-    // Simple undo: remove last stroke from active region
-    if (!activeRegion || !regions[activeRegion]?.strokes.length) return;
-    
-    setRegions(prev => ({
-      ...prev,
-      [activeRegion]: {
-        ...prev[activeRegion],
-        strokes: prev[activeRegion].strokes.slice(0, -1),
-      },
-    }));
-  };
-
-  const handleClearRegion = () => {
-    if (!activeRegion) return;
-    
-    setRegions(prev => ({
-      ...prev,
-      [activeRegion]: {
-        ...prev[activeRegion],
-        fillColor: '#E5E5E5',
-        strokes: [],
-      },
-    }));
-  };
-
   const handleStartNew = () => {
     setView('create');
     setCurrentDesignId(undefined);
     setDesignName('');
-    setRegions({});
+    setInitialPaintData(undefined);
+    designCanvasRef.current?.clear();
+    
     // Reset to first available template
     if (starterTemplates[0]) {
       setSelectedTemplate(starterTemplates[0]);
@@ -244,7 +146,6 @@ export function DesignStudio({
   };
 
   const loadDesign = (design: ItemDesignRow) => {
-    // Find the template
     const template = templates.categories
       .flatMap(c => c.templates)
       .find(t => t.id === design.template_id);
@@ -258,7 +159,12 @@ export function DesignStudio({
     setSelectedTemplate(template);
     setCurrentDesignId(design.id);
     setDesignName(design.name);
-    setRegions(design.design_data.regions);
+    
+    // Load paint data if available
+    const paintData = design.design_data?.paintData;
+    setInitialPaintData(paintData); // DesignCanvas will pick this up on remount/update
+    
+    // If we switch template, DesignCanvas remounts/updates
   };
 
   return (
@@ -342,7 +248,6 @@ export function DesignStudio({
             </div>
           ) : (
             initialDesigns.map(design => {
-              // Find template info for icon
               const tmpl = templates.categories
                   .flatMap(c => c.templates)
                   .find(t => t.id === design.template_id);
@@ -354,12 +259,20 @@ export function DesignStudio({
                   className="bg-[var(--background-elevated)] p-4 rounded-xl border border-[var(--border)] hover:border-[var(--ember-300)] transition-all text-left group"
                 >
                   <div className="aspect-square bg-[var(--background-secondary)] dark:bg-[var(--night-900)] rounded-lg mb-3 flex items-center justify-center relative overflow-hidden">
-                    {/* Placeholder preview - in future use actual thumbnail */}
-                    <div className="text-4xl opacity-50 grayscale group-hover:grayscale-0 transition-all duration-300">
-                       {/* Try to find category icon */}
-                       {templates.categories.find(c => c.templates.some(t => t.id === design.template_id))?.icon || '👕'}
+                    {/* Use updated texture if available, or placeholder */}
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                         {/* We don't have texture saved in item row by default unless we updated types. 
+                             Assuming we pass it or it's fetched? 
+                             The `ItemDesignRow` has `preview_url`. Use that.
+                         */}
+                         {/* eslint-disable-next-line @next/next/no-img-element */}
+                         {design.preview_url ? (
+                             <img src={design.preview_url} alt={design.name} className="w-full h-full object-contain" />
+                         ) : (
+                             <span className="text-4xl opacity-50">👕</span>
+                         )}
                     </div>
-                    {tmpl && <span className="absolute bottom-1 right-1 text-xs text-muted">{tmpl.label}</span>}
+                    {tmpl && <span className="absolute bottom-1 right-1 text-xs text-muted bg-white/50 px-1 rounded">{tmpl.label}</span>}
                   </div>
                   <h3 className="font-semibold text-heading truncate">
                     {design.name}
@@ -382,19 +295,16 @@ export function DesignStudio({
               placeholder="Name your design..."
               className="w-full px-4 py-2 text-lg border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--ember-300)] focus:border-transparent bg-[var(--background-elevated)] text-heading"
             />
-            <p className="text-sm text-muted mt-1">
-              💡 Give your design a name to save it to your wardrobe
-            </p>
           </div>
 
           {/* Template Selector */}
           <div className="bg-[var(--background-elevated)] rounded-xl p-4 border border-[var(--border)]">
             <h3 className="text-sm font-medium text-muted mb-3">
-              Choose what to design
+              Choose template
             </h3>
             <div className="flex flex-wrap gap-2">
               {templates.categories.map(category => (
-                <div key={category.id} className="flex gap-2 p-1 bg-[var(--background-secondary)] bg-[var(--background)] rounded-lg">
+                <div key={category.id} className="flex gap-2 p-1 bg-[var(--background-secondary)] rounded-lg">
                   {category.templates.map(template => {
                     const isUnlocked = template.unlocked || unlockedTemplateIds.includes(template.id);
                     const isSelected = selectedTemplate?.id === template.id;
@@ -403,8 +313,8 @@ export function DesignStudio({
                       return (
                         <div
                           key={template.id}
-                          className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] text-muted flex items-center gap-2 cursor-not-allowed border border-transparent"
-                          title={`Unlock ${template.label} in the Moon Shop!`}
+                          className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--background-secondary)] text-muted flex items-center gap-2 cursor-not-allowed border border-transparent"
+                          title={`Unlock in Shop!`}
                         >
                           <Lock size={14} />
                           {template.label}
@@ -417,22 +327,20 @@ export function DesignStudio({
                         key={template.id}
                         onClick={() => {
                           setSelectedTemplate(template);
-                          // Reset if switching templates for a NEW design
                           if (!currentDesignId) {
-                            setRegions({}); 
+                            setInitialPaintData(undefined); // Reset canvas for new template
                           } else {
-                            // If editing, warn or handle?
-                            // For MVP, switching template while editing effectively starts a new design on that template
+                            // If switching templates while editing, treat as reset
                             setCurrentDesignId(undefined); 
                             setDesignName('');
-                            setRegions({});
+                            setInitialPaintData(undefined);
                           }
                         }}
                         className={`
                           px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
                           ${isSelected
                             ? 'bg-[var(--ember-500)] text-[var(--foreground)] shadow-sm'
-                            : 'bg-[var(--background-elevated)] text-heading dark:text-muted hover:bg-[var(--hover-overlay)] border border-[var(--border)]'
+                            : 'bg-[var(--background-elevated)] text-heading hover:bg-[var(--hover-overlay)] border border-[var(--border)]'
                           }
                         `}
                       >
@@ -452,17 +360,13 @@ export function DesignStudio({
                 <div className="absolute inset-0 z-10 bg-[var(--background-elevated)]/95 dark:bg-[var(--night-900)]/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-[var(--border)] p-6">
                   <div className="text-center flex flex-col items-center">
                     <div className="w-48 h-64 mb-4 rounded-xl overflow-hidden border border-[var(--border)] bg-gradient-to-b from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
-                      {/* 2D texture preview */}
                       {previewTexture ? (
-                        // eslint-disable-next-line @next/next/no-img-element
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={previewTexture} alt="Design preview" className="w-full h-full object-contain" />
                       ) : (
                         <span className="text-4xl">👕</span>
                       )}
                     </div>
-                    <p className="text-sm text-muted max-w-xs mx-auto">
-                      Previewing your design on the 3D character.
-                    </p>
                     <button 
                       onClick={() => setShowPreview(false)}
                       className="mt-4 px-6 py-2 bg-[var(--celestial-500)] text-[var(--foreground)] rounded-lg hover:bg-[var(--celestial-600)] transition-colors font-medium text-sm"
@@ -477,22 +381,42 @@ export function DesignStudio({
                 <DesignCanvas
                   ref={designCanvasRef}
                   template={selectedTemplate}
-                  regions={regions}
-                  activeRegion={activeRegion}
                   tool={tool}
                   currentColor={currentColor}
                   brushSize={brushSize}
-                  onRegionClick={handleRegionClick}
-                  onRegionFill={handleRegionFill}
-                  onStrokeComplete={handleStrokeComplete}
+                  initialPaintData={initialPaintData as string} // Fix type mapping if needed
                 />
               ) : (
-                <div className="aspect-square flex items-center justify-center bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)] rounded-xl">
-                  <p className="text-muted">
-                    Select a template to start designing
-                  </p>
+                <div className="aspect-square flex items-center justify-center bg-[var(--background-secondary)] rounded-xl">
+                  <p className="text-muted">Select a template</p>
                 </div>
               )}
+              
+              {/* Canvas Controls (Undo/Redo) */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-[var(--background-elevated)] p-2 rounded-lg shadow-sm border border-[var(--border)]">
+                 <button 
+                   onClick={() => designCanvasRef.current?.undo()}
+                   className="p-2 hover:bg-[var(--background-secondary)] rounded text-muted hover:text-heading"
+                   title="Undo"
+                 >
+                   <ArrowUUpLeft size={20} />
+                 </button>
+                 <button 
+                   onClick={() => designCanvasRef.current?.redo()}
+                   className="p-2 hover:bg-[var(--background-secondary)] rounded text-muted hover:text-heading"
+                   title="Redo"
+                 >
+                   <ArrowUUpRight size={20} />
+                 </button>
+                 <div className="w-px bg-[var(--border)] mx-1" />
+                 <button 
+                   onClick={() => designCanvasRef.current?.clear()}
+                   className="p-2 hover:bg-red-50 text-red-400 hover:text-red-500 rounded"
+                   title="Clear All"
+                 >
+                   <Trash size={20} />
+                 </button>
+              </div>
             </div>
 
             {/* Tools Panel */}
@@ -504,10 +428,10 @@ export function DesignStudio({
                 </h3>
                 <div className="grid grid-cols-3 gap-2">
                   <button
-                    onClick={() => setTool('fill')}
+                    onClick={() => setTool('paintbucket')}
                     className={`
                       flex flex-col items-center gap-1 p-3 rounded-lg transition-all
-                      ${tool === 'fill'
+                      ${tool === 'paintbucket'
                         ? 'bg-[var(--ember-100)] text-[var(--ember-600)] ring-2 ring-[var(--ember-300)]'
                         : 'bg-[var(--background-secondary)] text-muted hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]'
                       }
@@ -552,35 +476,9 @@ export function DesignStudio({
                   onColorSelect={setCurrentColor}
                   brushSize={brushSize}
                   onBrushSizeChange={setBrushSize}
-                  showBrushSize={tool === 'draw'}
+                  showBrushSize={tool === 'draw' || tool === 'eraser'}
                 />
               </div>
-
-              {/* Active Region Info */}
-              {activeRegion && (
-                <div className="bg-[var(--background-elevated)] rounded-xl p-4 border border-[var(--border)]">
-                  <h3 className="text-sm font-medium text-muted mb-2">
-                    Selected Area
-                  </h3>
-                  <p className="text-lg font-semibold text-heading capitalize">
-                    {activeRegion.replace(/-/g, ' ')}
-                  </p>
-                  <div className="mt-3 flex gap-2">
-                    <button
-                      onClick={handleUndo}
-                      className="flex-1 px-3 py-1.5 text-sm bg-[var(--background-secondary)] rounded-lg hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-600)]"
-                    >
-                      Undo
-                    </button>
-                    <button
-                      onClick={handleClearRegion}
-                      className="flex-1 px-3 py-1.5 text-sm bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </>

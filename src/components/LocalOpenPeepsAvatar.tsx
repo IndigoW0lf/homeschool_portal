@@ -220,10 +220,10 @@ export function LocalOpenPeepsAvatar({
   
   // Head positioning - USE SAME VALUES for sitting and standing
   // The user tuned these for standing, sitting was using bigger values
-  const headTop = '2%';
-  const headHeight = '25%';  // Constrain by HEIGHT to keep size correct
-  const headWidth = '85%';   // VERY WIDE box to prevent side clipping (hair)
-  const headLeft = '46%';    // Shift slightly left
+  const headTop = '-1%';  // Reverted to original
+  const headHeight = '28%';  // Revert to 28%
+  const headWidth = '36%';   // Revert to 36%
+  const headLeft = '46%';    // Revert to 46%
   
   // Face - same for both sitting and standing
   const faceHeight = '15%';
@@ -245,11 +245,7 @@ export function LocalOpenPeepsAvatar({
       {poseSrc && (
         <div 
           className="absolute inset-0"
-          style={{ 
-            top: '22%', 
-            bottom: '-5%', // Allow feet to extend below default bottom
-            left: isSitting ? '5%' : '-2%' 
-          }}
+          style={{ top: '22%', left: isSitting ? '5%' : '-2%' }}  // Removed bottom extension
         >
           <Image
             src={poseSrc}

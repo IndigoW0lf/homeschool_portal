@@ -67,10 +67,12 @@ export interface ItemDesignRow {
   template_id: string;
   name: string;
   design_data: {
-    regions: Record<string, DesignRegion>;
+    regions?: Record<string, DesignRegion>;
+    paintData?: string;
   };
   is_equipped: boolean;
   texture_url?: string;
+  preview_url?: string; // Sometimes used for frontend display
   created_at: string;
   updated_at: string;
 }
