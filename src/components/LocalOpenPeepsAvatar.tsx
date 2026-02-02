@@ -220,7 +220,7 @@ export function LocalOpenPeepsAvatar({
   
   // Head positioning - the pose SVGs include a blank head area at top
   // We need to position our head/face layers to align with that area
-  const headTop = '2%';  // Push down a bit so top isn't cut off
+  const headTop = '-1%';  // Moved up (was 2%)
   const headHeight = isSitting ? '32%' : '28%';  // Slightly smaller head
   const headWidth = isSitting ? '40%' : '36%';   // Smaller width
   const headLeft = '48%';  // Shift slightly left (was 50% centered)
@@ -228,7 +228,7 @@ export function LocalOpenPeepsAvatar({
   // Face should be smaller than head to fit inside  
   const faceHeight = isSitting ? '22%' : '18%';  // Even smaller face
   const faceWidth = isSitting ? '28%' : '24%';
-  const faceTop = '6%';  // Position face within head area (moved down)
+  const faceTop = '9%';  // Moved down more (was 6%)
   const faceLeft = '50%';  // Moved right (was 48%)
 
   return (
