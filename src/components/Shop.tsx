@@ -6,6 +6,8 @@ import { ShopItemCard } from './ShopItemCard';
 import { RewardItemCard } from './RewardItemCard';
 import { AvatarItemCard } from './AvatarItemCard';
 import { AvatarShopSection } from './AvatarShopSection';
+import { WorldPackCard } from './WorldPackCard';
+import { WorldPack } from '@/types/world';
 import openPeepsOptions from '../../content/open-peeps-options.json';
 
 interface ShopProps {
@@ -13,7 +15,7 @@ interface ShopProps {
   items: ShopItem[];
 }
 
-type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'peeps' | 'home' | 'template';
+type FilterType = 'all' | 'reward' | 'badge' | 'avatar' | 'peeps' | 'home' | 'template' | 'world';
 
 // Extract premium avatar items from options
 type CategoryKey = 'face' | 'head' | 'accessories' | 'facialHair';
@@ -53,6 +55,7 @@ export function Shop({ kidId, items }: ShopProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [, setIsLoading] = useState(true);
   const [ownedAvatarItems, setOwnedAvatarItems] = useState<Set<string>>(new Set());
+  const [worldPacks, setWorldPacks] = useState<(WorldPack & { isOwned?: boolean })[]>([]);
 
     // Fetch moons via API (handles kid sessions properly)
     useEffect(() => {
@@ -90,6 +93,22 @@ export function Shop({ kidId, items }: ShopProps) {
       fetchOwnedItems();
     }, [kidId]);
 
+    // Fetch world packs
+    useEffect(() => {
+      async function fetchWorldPacks() {
+        try {
+          const res = await fetch(`/api/world/${kidId}/packs`);
+          if (res.ok) {
+            const data = await res.json();
+            setWorldPacks(data.availablePacks || []);
+          }
+        } catch (error) {
+          console.error('[Shop] Failed to fetch world packs:', error);
+        }
+      }
+      fetchWorldPacks();
+    }, [kidId]);
+
     // Count items by type
     const rewardCount = items.filter(i => i.type === 'reward').length;
     const templateCount = items.filter(i => i.type === 'template').length;
@@ -102,6 +121,7 @@ export function Shop({ kidId, items }: ShopProps) {
     const filters: { key: FilterType; label: string; show: boolean }[] = [
       { key: 'all', label: 'All', show: true },
       { key: 'peeps', label: '🎭 Peeps Avatars', show: true },
+      { key: 'world', label: `🌍 World (${worldPacks.length})`, show: worldPacks.length > 0 },
       { key: 'avatar', label: `✨ Parts (${PREMIUM_AVATAR_ITEMS.length})`, show: PREMIUM_AVATAR_ITEMS.length > 0 },
       { key: 'template', label: `Clothing (${templateCount})`, show: templateCount > 0 },
       { key: 'reward', label: `🎁 Rewards (${rewardCount})`, show: rewardCount > 0 },
@@ -169,7 +189,32 @@ export function Shop({ kidId, items }: ShopProps) {
       </div>
 
       {/* Shop Items Grid */}
-      {filter === 'peeps' ? (
+      {filter === 'world' ? (
+        /* World Packs Grid */
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {worldPacks.map(pack => (
+            <WorldPackCard
+              key={pack.id}
+              pack={pack}
+              canAfford={stars >= pack.cost}
+              onPurchase={async () => {
+                const res = await fetch(`/api/world/${kidId}/packs`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ packId: pack.id }),
+                });
+                if (res.ok) {
+                  const data = await res.json();
+                  setStars(data.newMoonBalance);
+                  setWorldPacks(prev => 
+                    prev.map(p => p.id === pack.id ? { ...p, isOwned: true } : p)
+                  );
+                }
+              }}
+            />
+          ))}
+        </div>
+      ) : filter === 'peeps' ? (
         /* Full Open Peeps Avatars */
         <AvatarShopSection
           kidId={kidId}
