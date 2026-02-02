@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { LocalOpenPeepsAvatar, generateLocalOpenPeepsUrl } from './LocalOpenPeepsAvatar';
 import openPeepsOptions from '../../content/open-peeps-options.json';
@@ -69,11 +69,11 @@ export function OpenPeepsAvatarBuilder({
   const [state, setState] = useState<OpenPeepsState>({ ...DEFAULT_STATE, ...initialState });
   const [isSaving, setIsSaving] = useState(false);
   const [isDesignUnlocked, setIsDesignUnlocked] = useState(designStudioUnlocked);
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>('face');
 
-  // Track current index for each category
+  // Track current index for the active category only
   const [categoryIndices, setCategoryIndices] = useState<Record<CategoryKey, number>>(() => {
     const indices: Record<CategoryKey, number> = { face: 0, head: 0, body: 0, accessories: 0, facialHair: 0 };
-    // Set initial indices based on initial state
     CATEGORIES.forEach(cat => {
       const options = openPeepsOptions[cat.key] as AvatarOption[];
       const idx = options.findIndex(o => o.id === (initialState?.[cat.key] || DEFAULT_STATE[cat.key]));
@@ -106,31 +106,36 @@ export function OpenPeepsAvatarBuilder({
     return item?.unlocked || unlockedItems.includes(`${category}:${itemId}`);
   };
 
-  const navigate = (category: CategoryKey, direction: 'prev' | 'next') => {
-    const options = openPeepsOptions[category] as AvatarOption[];
-    const currentIdx = categoryIndices[category];
+  // Get filtered list of unlocked options for the active category
+  const unlockedOptions = useMemo(() => {
+    const options = openPeepsOptions[activeCategory] as AvatarOption[];
+    return options.filter(opt => isItemUnlocked(activeCategory, opt.id));
+  }, [activeCategory, unlockedItems]);
+
+  // Get current option index within unlocked options only
+  const currentUnlockedIndex = useMemo(() => {
+    const currentId = state[activeCategory];
+    const idx = unlockedOptions.findIndex(o => o.id === currentId);
+    return idx >= 0 ? idx : 0;
+  }, [activeCategory, state, unlockedOptions]);
+
+  const navigate = (direction: 'prev' | 'next') => {
+    if (unlockedOptions.length === 0) return;
+    
     let newIdx: number;
-    
     if (direction === 'next') {
-      newIdx = (currentIdx + 1) % options.length;
+      newIdx = (currentUnlockedIndex + 1) % unlockedOptions.length;
     } else {
-      newIdx = (currentIdx - 1 + options.length) % options.length;
+      newIdx = (currentUnlockedIndex - 1 + unlockedOptions.length) % unlockedOptions.length;
     }
     
-    const newOption = options[newIdx];
+    const newOption = unlockedOptions[newIdx];
+    setState(prev => ({ ...prev, [activeCategory]: newOption.id }));
     
-    // Check if unlocked
-    if (!isItemUnlocked(category, newOption.id)) {
-      toast.error(`${newOption.label} costs ${newOption.cost} 🌙 - Visit the Shop!`);
-      // Still navigate to show the locked item
-    }
-    
-    setCategoryIndices(prev => ({ ...prev, [category]: newIdx }));
-    
-    // Only update state if unlocked
-    if (isItemUnlocked(category, newOption.id)) {
-      setState(prev => ({ ...prev, [category]: newOption.id }));
-    }
+    // Also update the raw category index for reference
+    const allOptions = openPeepsOptions[activeCategory] as AvatarOption[];
+    const rawIdx = allOptions.findIndex(o => o.id === newOption.id);
+    setCategoryIndices(prev => ({ ...prev, [activeCategory]: rawIdx }));
   };
 
   const handleSave = async () => {
@@ -164,6 +169,8 @@ export function OpenPeepsAvatarBuilder({
     }
   };
 
+  const currentOption = unlockedOptions[currentUnlockedIndex];
+
   return (
     <div className={`${compact ? 'space-y-4' : 'max-w-2xl mx-auto p-4 sm:p-6 space-y-6'}`}>
       <div className={`bg-[var(--background-elevated)] rounded-xl ${compact ? 'p-4' : 'p-6'} shadow-sm border border-[var(--border)]`}>
@@ -185,80 +192,96 @@ export function OpenPeepsAvatarBuilder({
             }}
           >
             <LocalOpenPeepsAvatar
-              size={compact ? 100 : 140}
+              size={compact ? 100 : 160}
               {...state}
             />
           </div>
         </div>
 
-        {/* Category Selectors - Stacked vertically */}
-        <div className="space-y-4">
-          {CATEGORIES.map(cat => {
-            const options = openPeepsOptions[cat.key] as AvatarOption[];
-            const currentIdx = categoryIndices[cat.key];
-            const currentOption = options[currentIdx];
-            const isUnlocked = isItemUnlocked(cat.key, currentOption.id);
-            
-            return (
-              <div key={cat.key} className="flex items-center gap-3">
-                {/* Category label */}
-                <div className="w-20 flex-shrink-0">
-                  <span className="text-sm font-medium text-muted flex items-center gap-1">
-                    <span>{cat.emoji}</span>
-                    <span className="hidden sm:inline">{cat.label}</span>
-                  </span>
-                </div>
-                
-                {/* Navigator */}
-                <div className="flex-1 flex items-center justify-center gap-2">
-                  <button
-                    onClick={() => navigate(cat.key, 'prev')}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors"
-                  >
-                    <CaretLeft size={16} weight="bold" />
-                  </button>
-                  
-                  {/* Current option preview */}
-                  <div className={`relative flex flex-col items-center ${!isUnlocked ? 'opacity-50' : ''}`}>
-                    <div className="w-14 h-14 flex items-center justify-center">
-                      <LocalOpenPeepsAvatar
-                        size={52}
-                        {...{ ...state, [cat.key]: currentOption.id }}
-                      />
-                    </div>
-                    <span className="text-xs text-muted mt-1 text-center truncate max-w-[80px]">
-                      {currentOption.label}
-                    </span>
-                    {!isUnlocked && currentOption.cost && (
-                      <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-[9px] px-1 py-0.5 rounded-full font-bold flex items-center gap-0.5">
-                        <Lock size={8} />
-                        {currentOption.cost}🌙
-                      </div>
-                    )}
-                  </div>
-                  
-                  <button
-                    onClick={() => navigate(cat.key, 'next')}
-                    className="w-8 h-8 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors"
-                  >
-                    <CaretRight size={16} weight="bold" />
-                  </button>
-                </div>
-                
-                {/* Counter */}
-                <div className="w-12 text-right">
-                  <span className="text-xs text-muted">
-                    {currentIdx + 1}/{options.length}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+        {/* Category Tabs */}
+        <div className="flex justify-center gap-2 mb-4 flex-wrap">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.key}
+              onClick={() => setActiveCategory(cat.key)}
+              className={`
+                px-3 py-2 rounded-lg font-medium text-sm transition-all
+                ${activeCategory === cat.key
+                  ? 'bg-[var(--ember-500)] text-white'
+                  : 'bg-[var(--background-secondary)] text-muted hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)]'}
+              `}
+            >
+              <span className="mr-1">{cat.emoji}</span>
+              {cat.label}
+            </button>
+          ))}
         </div>
+
+        {/* Single Carousel for Active Category */}
+        <div className="flex items-center justify-center gap-4 py-4">
+          <button
+            onClick={() => navigate('prev')}
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors"
+          >
+            <CaretLeft size={24} weight="bold" />
+          </button>
+          
+          {/* Current option preview */}
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 flex items-center justify-center bg-[var(--background-secondary)] rounded-xl p-2">
+              {currentOption && (
+                <LocalOpenPeepsAvatar
+                  size={80}
+                  {...{ ...state, [activeCategory]: currentOption.id }}
+                />
+              )}
+            </div>
+            <span className="text-sm font-medium text-foreground mt-2">
+              {currentOption?.label || 'None'}
+            </span>
+            <span className="text-xs text-muted">
+              {currentUnlockedIndex + 1} / {unlockedOptions.length}
+            </span>
+          </div>
+          
+          <button
+            onClick={() => navigate('next')}
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors"
+          >
+            <CaretRight size={24} weight="bold" />
+          </button>
+        </div>
+
+        {/* Locked Items Banner */}
+        {(() => {
+          const allOptions = openPeepsOptions[activeCategory] as AvatarOption[];
+          const lockedCount = allOptions.filter(o => !isItemUnlocked(activeCategory, o.id)).length;
+          if (lockedCount === 0) return null;
+          
+          return (
+            <div className="mt-4 p-3 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 rounded-lg border border-amber-200 dark:border-amber-800/50">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Lock size={16} className="text-amber-600" />
+                  <span className="text-sm text-amber-700 dark:text-amber-300">
+                    {lockedCount} more {CATEGORIES.find(c => c.key === activeCategory)?.label.toLowerCase()} options in the Shop!
+                  </span>
+                </div>
+                <Link
+                  href={`/kids/${kidId}/shop`}
+                  className="px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-full flex items-center gap-1.5 hover:bg-amber-600 transition-colors"
+                >
+                  <ShoppingCart size={14} />
+                  <span>Shop</span>
+                </Link>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Design Studio Unlock CTA */}
         {!isDesignUnlocked && (
-          <div className="mt-6 p-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg border border-purple-200 dark:border-purple-800/50">
+          <div className="mt-4 p-3 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg border border-purple-200 dark:border-purple-800/50">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <span className="text-lg">🎨</span>

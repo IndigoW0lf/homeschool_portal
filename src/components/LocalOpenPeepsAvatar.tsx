@@ -219,27 +219,7 @@ export function LocalOpenPeepsAvatar({
         </div>
       )}
 
-      {/* Layer 2: Face base */}
-      {faceSrc && (
-        <div 
-          className="absolute left-1/2 -translate-x-1/2"
-          style={{ 
-            top: headTop,
-            height: headHeight,
-            width: isFullBody ? '70%' : '100%',
-          }}
-        >
-          <Image
-            src={faceSrc}
-            alt="face"
-            fill
-            className="object-contain"
-            unoptimized
-          />
-        </div>
-      )}
-
-      {/* Layer 3: Hair/head */}
+      {/* Layer 2: Hair/head (renders UNDER face) */}
       {headSrc && (
         <div 
           className="absolute left-1/2 -translate-x-1/2"
@@ -252,6 +232,26 @@ export function LocalOpenPeepsAvatar({
           <Image
             src={headSrc}
             alt="hair"
+            fill
+            className="object-contain"
+            unoptimized
+          />
+        </div>
+      )}
+
+      {/* Layer 3: Face (renders ON TOP of hair) */}
+      {faceSrc && (
+        <div 
+          className="absolute left-1/2 -translate-x-1/2"
+          style={{ 
+            top: headTop,
+            height: headHeight,
+            width: isFullBody ? '70%' : '100%',
+          }}
+        >
+          <Image
+            src={faceSrc}
+            alt="face"
             fill
             className="object-contain"
             unoptimized
