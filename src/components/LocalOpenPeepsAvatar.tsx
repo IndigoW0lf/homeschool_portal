@@ -218,10 +218,17 @@ export function LocalOpenPeepsAvatar({
   const aspectRatio = isSitting ? 1.3 : 1.5;
   const containerHeight = size * aspectRatio;
   
-  // Head positioning - sits on top of pose
-  const headTop = '0%';
-  const headHeight = isSitting ? '50%' : '45%';
-  const headWidth = isSitting ? '60%' : '55%';
+  // Head positioning - the pose SVGs include a blank head area at top
+  // We need to position our head/face layers to align with that area
+  // The poses have the body starting around 35-40% from top
+  const headTop = '-8%';  // Negative to position head above the pose's neck area
+  const headHeight = isSitting ? '35%' : '30%';  // Smaller head (was 45-50%)
+  const headWidth = isSitting ? '42%' : '38%';   // Smaller width
+  
+  // Face should be slightly smaller than head to fit inside
+  const faceHeight = isSitting ? '28%' : '24%';  // Even smaller (was same as head)
+  const faceWidth = isSitting ? '35%' : '32%';
+  const faceTop = '-4%';  // Slightly lower than hair to center in head
 
   return (
     <div 
@@ -237,7 +244,7 @@ export function LocalOpenPeepsAvatar({
       {poseSrc && (
         <div 
           className="absolute inset-0"
-          style={{ top: '15%' }}
+          style={{ top: '18%' }}
         >
           <Image
             src={poseSrc}
@@ -269,14 +276,14 @@ export function LocalOpenPeepsAvatar({
         </div>
       )}
 
-      {/* Layer 3: Face (renders ON TOP of hair) */}
+      {/* Layer 3: Face (renders ON TOP of hair, slightly smaller) */}
       {faceSrc && (
         <div 
           className="absolute left-1/2 -translate-x-1/2"
           style={{ 
-            top: headTop,
-            height: headHeight,
-            width: headWidth,
+            top: faceTop,
+            height: faceHeight,
+            width: faceWidth,
           }}
         >
           <Image
@@ -289,14 +296,14 @@ export function LocalOpenPeepsAvatar({
         </div>
       )}
 
-      {/* Layer 4: Facial hair */}
+      {/* Layer 4: Facial hair (same position as face) */}
       {facialHairSrc && (
         <div 
           className="absolute left-1/2 -translate-x-1/2"
           style={{ 
-            top: headTop,
-            height: headHeight,
-            width: headWidth,
+            top: faceTop,
+            height: faceHeight,
+            width: faceWidth,
           }}
         >
           <Image
@@ -309,14 +316,14 @@ export function LocalOpenPeepsAvatar({
         </div>
       )}
 
-      {/* Layer 5: Accessories (top layer) */}
+      {/* Layer 5: Accessories (glasses - same as face) */}
       {accessoriesSrc && (
         <div 
           className="absolute left-1/2 -translate-x-1/2"
           style={{ 
-            top: headTop,
-            height: headHeight,
-            width: headWidth,
+            top: faceTop,
+            height: faceHeight,
+            width: faceWidth,
           }}
         >
           <Image
