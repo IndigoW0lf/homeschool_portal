@@ -455,6 +455,21 @@ export async function awardStars(
       total_stars: newTotal,
       updated_at: new Date().toISOString()
     }, { onConflict: 'kid_id' });
+
+  // Update moons (currency)
+  // We do this separately because it live in the 'kids' table
+  const { data: kidData } = await supabase
+    .from('kids')
+    .select('moons')
+    .eq('id', kidId)
+    .single();
+    
+  if (kidData) {
+     await supabase
+       .from('kids')
+       .update({ moons: (kidData.moons || 0) + starsToAward })
+       .eq('id', kidId);
+  }
   
   return { success: true, alreadyAwarded: false, newTotal };
 }
