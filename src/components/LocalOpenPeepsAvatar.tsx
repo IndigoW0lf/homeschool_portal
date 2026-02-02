@@ -221,9 +221,9 @@ export function LocalOpenPeepsAvatar({
   // Head positioning - USE SAME VALUES for sitting and standing
   // The user tuned these for standing, sitting was using bigger values
   const headTop = '-1%';
-  const headHeight = '28%';  // Same for both
-  const headWidth = '36%';   // Same for both
-  const headLeft = '46%';    // Shift slightly left
+  const headHeight = '32%';  // Larger to give hair room
+  const headWidth = '45%';   // Wider to prevent hair clipping
+  const headLeft = '48%';    // Slightly adjusted for wider head
   
   // Face - same for both sitting and standing
   const faceHeight = '15%';
@@ -266,6 +266,7 @@ export function LocalOpenPeepsAvatar({
             left: headLeft,
             height: headHeight,
             width: headWidth,
+            overflow: 'visible',  // Don't clip hair
           }}
         >
           <Image
