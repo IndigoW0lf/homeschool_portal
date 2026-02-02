@@ -15,7 +15,7 @@ import { DesignCanvas, DesignCanvasRef } from './DesignCanvas';
 import { useRef } from 'react';
 import { ColorPalette } from './ColorPalette';
 import { PaintBucket, Pencil, Eraser, ArrowLeft, FloppyDisk, Eye, Lock, TShirt } from '@phosphor-icons/react';
-import { SyntyAvatarPreview } from '@/components/SyntyAvatarPreview';
+// Note: SyntyAvatarPreview removed - using 2D preview instead
 import { ItemDesignRow } from '@/types/design-studio';
 
 interface DesignStudioProps {
@@ -451,12 +451,14 @@ export function DesignStudio({
               {showPreview && (
                 <div className="absolute inset-0 z-10 bg-[var(--background-elevated)]/95 dark:bg-[var(--night-900)]/95 backdrop-blur-sm rounded-xl flex items-center justify-center border border-[var(--border)] p-6">
                   <div className="text-center flex flex-col items-center">
-                    <div className="w-48 h-64 mb-4 rounded-xl overflow-hidden border border-[var(--border)] bg-gradient-to-b from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900">
-                      <SyntyAvatarPreview 
-                        kidId="preview"
-                        textureUrl={previewTexture || undefined}
-                        skinColor="#f2d3b1"
-                      />
+                    <div className="w-48 h-64 mb-4 rounded-xl overflow-hidden border border-[var(--border)] bg-gradient-to-b from-purple-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+                      {/* 2D texture preview */}
+                      {previewTexture ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={previewTexture} alt="Design preview" className="w-full h-full object-contain" />
+                      ) : (
+                        <span className="text-4xl">👕</span>
+                      )}
                     </div>
                     <p className="text-sm text-muted max-w-xs mx-auto">
                       Previewing your design on the 3D character.
