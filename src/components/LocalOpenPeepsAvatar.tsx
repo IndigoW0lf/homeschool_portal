@@ -3,6 +3,10 @@
 /**
  * LocalOpenPeepsAvatar - Custom SVG compositor using local Open Peeps assets
  * Layers SVG components on top of each other with proper z-indexing
+ * 
+ * Supports two modes:
+ * 1. Pose-based (default): Full body pose + face + hair + accessories
+ * 2. Bust-only: Upper body + face + hair + accessories (no legs)
  */
 
 import Image from 'next/image';
@@ -92,44 +96,13 @@ const HEAD_MAP: Record<string, string> = {
   hatHip: 'hat-hip.svg',
 };
 
-const BODY_MAP: Record<string, string> = {
-  none: '',
-  hoodie: 'Hoodie.svg',
-  tee1: 'Tee 1.svg',
-  tee2: 'Tee 2.svg',
-  sweater: 'Sweater.svg',
-  blazerBlackTee: 'Blazer Black Tee.svg',
-  dress: 'Dress.svg',
-  buttonShirt1: 'Button Shirt 1.svg',
-  buttonShirt2: 'Button Shirt 2.svg',
-  gymShirt: 'Gym Shirt.svg',
-  stripedTee: 'Striped Tee.svg',
-  stripedPocketTee: 'Striped Pocket Tee.svg',
-  sportyTee: 'Sporty Tee.svg',
-  thunderTShirt: 'Thunder T-Shirt.svg',
-  teeSelena: 'Tee Selena.svg',
-  teeArmsCrossed: 'Tee Arms Crossed.svg',
-  poloAndSweater: 'Polo and Sweater.svg',
-  sweaterDots: 'Sweater Dots.svg',
-  turtleneck: 'Turtleneck.svg',
-  shirtAndCoat: 'Shirt and Coat.svg',
-  polkaDotJacket: 'Polka Dot Jacket.svg',
-  furJacket: 'Fur Jacket.svg',
-  coffee: 'Coffee.svg',
-  device: 'Device.svg',
-  gaming: 'Gaming.svg',
-  macbook: 'Macbook.svg',
-  paper: 'Paper.svg',
-  pointingUp: 'Pointing Up.svg',
-  explaining: 'Explaining.svg',
-  killer: 'Killer.svg',
-  whatever: 'Whatever.svg',
-};
-
 const ACCESSORIES_MAP: Record<string, string> = {
   none: '',
   glasses: 'Glasses.svg',
   glasses2: 'Glasses 2.svg',
+  glasses3: 'Glasses 3.svg',
+  glasses4: 'Glasses 4.svg',
+  glasses5: 'Glasses 5.svg',
   eyepatch: 'Eyepatch.svg',
   sunglasses: 'Sunglasses.svg',
   sunglasses2: 'Sunglasses 2.svg',
@@ -137,58 +110,118 @@ const ACCESSORIES_MAP: Record<string, string> = {
 
 const FACIAL_HAIR_MAP: Record<string, string> = {
   none: '',
-  fullMajestic: 'Full Majestic.svg',
+  chin: 'Chin.svg',
   goatee1: 'Goatee 1.svg',
   goatee2: 'Goatee 2.svg',
-  moustaceFancy: 'Moustache Fancy.svg',
-  moustacheMagnum: 'Moustache Magnum.svg',
+  moustache1: 'Moustache 1.svg',
+  moustache2: 'Moustache 2.svg',
+  moustache3: 'Moustache 3.svg',
+  moustache4: 'Moustache 4.svg',
+  moustache5: 'Moustache 5.svg',
+  moustache6: 'Moustache 6.svg',
+  moustache7: 'Moustache 7.svg',
+  moustache8: 'Moustache 8.svg',
+  moustache9: 'Moustache 9.svg',
+  full: 'Full.svg',
+  full2: 'Full 2.svg',
+  full3: 'Full 3.svg',
+  full4: 'Full 4.svg',
+};
+
+// Pose options map to files in pose/sitting/ or pose/standing/
+interface PoseInfo {
+  folder: 'sitting' | 'standing';
+  file: string;
+}
+
+const POSE_MAP: Record<string, PoseInfo> = {
+  // Standing poses
+  standing_shirt1: { folder: 'standing', file: 'shirt-1.svg' },
+  standing_shirt2: { folder: 'standing', file: 'shirt-2.svg' },
+  standing_shirt3: { folder: 'standing', file: 'shirt-3.svg' },
+  standing_shirt4: { folder: 'standing', file: 'shirt-4.svg' },
+  standing_blazer1: { folder: 'standing', file: 'blazer-1.svg' },
+  standing_blazer2: { folder: 'standing', file: 'blazer-2.svg' },
+  standing_blazer3: { folder: 'standing', file: 'blazer-3.svg' },
+  standing_blazer4: { folder: 'standing', file: 'blazer-4.svg' },
+  standing_crossed1: { folder: 'standing', file: 'crossed_arms-1.svg' },
+  standing_crossed2: { folder: 'standing', file: 'crossed_arms-2.svg' },
+  standing_resting1: { folder: 'standing', file: 'resting-1.svg' },
+  standing_resting2: { folder: 'standing', file: 'resting-2.svg' },
+  standing_walking1: { folder: 'standing', file: 'walking-1.svg' },
+  standing_walking2: { folder: 'standing', file: 'walking-2.svg' },
+  standing_walking3: { folder: 'standing', file: 'walking-3.svg' },
+  standing_pointing1: { folder: 'standing', file: 'pointing_finger-1.svg' },
+  standing_pointing2: { folder: 'standing', file: 'pointing_finger-2.svg' },
+  standing_polka: { folder: 'standing', file: 'polka_dots.svg' },
+  standing_easing1: { folder: 'standing', file: 'easing-1.svg' },
+  standing_easing2: { folder: 'standing', file: 'easing-2.svg' },
+  standing_robot1: { folder: 'standing', file: 'robot_dance-1.svg' },
+  standing_robot2: { folder: 'standing', file: 'robot_dance-2.svg' },
+  standing_robot3: { folder: 'standing', file: 'robot_dance-3.svg' },
+  // Sitting poses
+  sitting_closed1: { folder: 'sitting', file: 'closed_legs-1.svg' },
+  sitting_closed2: { folder: 'sitting', file: 'closed_legs-2.svg' },
+  sitting_crossed: { folder: 'sitting', file: 'crossed_legs.svg' },
+  sitting_mid1: { folder: 'sitting', file: 'mid-1.svg' },
+  sitting_mid2: { folder: 'sitting', file: 'mid-2.svg' },
+  sitting_hands1: { folder: 'sitting', file: 'hands_back-1.svg' },
+  sitting_hands2: { folder: 'sitting', file: 'hands_back-2.svg' },
+  sitting_leg1: { folder: 'sitting', file: 'one_leg_up-1.svg' },
+  sitting_leg2: { folder: 'sitting', file: 'one_leg_up-2.svg' },
+  sitting_bike: { folder: 'sitting', file: 'bike.svg' },
+  sitting_wheelchair: { folder: 'sitting', file: 'wheelchair.svg' },
 };
 
 export interface LocalOpenPeepsAvatarProps {
+  pose?: string;           // New: full body pose from pose/
   face?: string;
   head?: string;
-  body?: string;
   accessories?: string;
   facialHair?: string;
-  skinColor?: string;
-  clothingColor?: string;
   backgroundColor?: string;
   size?: number;
   className?: string;
 }
 
 export function LocalOpenPeepsAvatar({
+  pose = 'standing_shirt1',
   face = 'smile',
   head = 'short1',
-  body = 'hoodie',
   accessories = 'none',
   facialHair = 'none',
-  skinColor = 'd08b5b',
-  clothingColor = '8fa7df',
   backgroundColor = 'b6e3f4',
   size = 120,
   className = '',
 }: LocalOpenPeepsAvatarProps) {
   
-  // Build the SVG paths
+  // Get pose info
+  const poseInfo = POSE_MAP[pose];
+  const poseSrc = poseInfo 
+    ? `${BASE_PATH}/pose/${poseInfo.folder}/${encodeURIComponent(poseInfo.file)}`
+    : null;
+  
+  // Determine if sitting (affects layout)
+  const isSitting = pose.startsWith('sitting_');
+  
+  // Build the other SVG paths
   const faceSrc = FACE_MAP[face] ? `${BASE_PATH}/face/${encodeURIComponent(FACE_MAP[face])}` : null;
   const headSrc = HEAD_MAP[head] ? `${BASE_PATH}/head/${encodeURIComponent(HEAD_MAP[head])}` : null;
-  const bodySrc = body && body !== 'none' && BODY_MAP[body] ? `${BASE_PATH}/body/${encodeURIComponent(BODY_MAP[body])}` : null;
-  const accessoriesSrc = accessories && accessories !== 'none' && ACCESSORIES_MAP[accessories] ? `${BASE_PATH}/accessories/${encodeURIComponent(ACCESSORIES_MAP[accessories])}` : null;
-  const facialHairSrc = facialHair && facialHair !== 'none' && FACIAL_HAIR_MAP[facialHair] ? `${BASE_PATH}/facial-hair/${encodeURIComponent(FACIAL_HAIR_MAP[facialHair])}` : null;
+  const accessoriesSrc = accessories && accessories !== 'none' && ACCESSORIES_MAP[accessories] 
+    ? `${BASE_PATH}/accessories/${encodeURIComponent(ACCESSORIES_MAP[accessories])}` 
+    : null;
+  const facialHairSrc = facialHair && facialHair !== 'none' && FACIAL_HAIR_MAP[facialHair] 
+    ? `${BASE_PATH}/facial-hair/${encodeURIComponent(FACIAL_HAIR_MAP[facialHair])}` 
+    : null;
 
-  // Full body mode - stack body below head with overlap
-  const isFullBody = body && body !== 'none' && bodySrc;
-  
-  // Sizing calculations
-  const aspectRatio = isFullBody ? 1.5 : 1; // Full body is taller
+  // Full body sizing
+  const aspectRatio = isSitting ? 1.3 : 1.5;
   const containerHeight = size * aspectRatio;
   
-  // Head positioning for full body mode
-  const headTop = isFullBody ? '0%' : '0%';
-  const headHeight = isFullBody ? '55%' : '100%';
-  const bodyTop = isFullBody ? '35%' : '0%'; // Overlap body with head
-  const bodyHeight = isFullBody ? '65%' : '0%';
+  // Head positioning - sits on top of pose
+  const headTop = '0%';
+  const headHeight = isSitting ? '50%' : '45%';
+  const headWidth = isSitting ? '60%' : '55%';
 
   return (
     <div 
@@ -197,21 +230,18 @@ export function LocalOpenPeepsAvatar({
         width: size, 
         height: containerHeight,
         backgroundColor: backgroundColor === 'transparent' ? undefined : `#${backgroundColor}`,
-        borderRadius: isFullBody ? '20%' : '50%',
+        borderRadius: '20%',
       }}
     >
-      {/* Layer 1: Body (bottom layer for full body) */}
-      {bodySrc && (
+      {/* Layer 1: Pose (full body - bottom layer) */}
+      {poseSrc && (
         <div 
-          className="absolute left-0 right-0"
-          style={{ 
-            top: bodyTop,
-            height: bodyHeight,
-          }}
+          className="absolute inset-0"
+          style={{ top: '15%' }}
         >
           <Image
-            src={bodySrc}
-            alt="body"
+            src={poseSrc}
+            alt="pose"
             fill
             className="object-contain object-top"
             unoptimized
@@ -226,7 +256,7 @@ export function LocalOpenPeepsAvatar({
           style={{ 
             top: headTop,
             height: headHeight,
-            width: isFullBody ? '70%' : '100%',
+            width: headWidth,
           }}
         >
           <Image
@@ -246,7 +276,7 @@ export function LocalOpenPeepsAvatar({
           style={{ 
             top: headTop,
             height: headHeight,
-            width: isFullBody ? '70%' : '100%',
+            width: headWidth,
           }}
         >
           <Image
@@ -266,7 +296,7 @@ export function LocalOpenPeepsAvatar({
           style={{ 
             top: headTop,
             height: headHeight,
-            width: isFullBody ? '70%' : '100%',
+            width: headWidth,
           }}
         >
           <Image
@@ -286,7 +316,7 @@ export function LocalOpenPeepsAvatar({
           style={{ 
             top: headTop,
             height: headHeight,
-            width: isFullBody ? '70%' : '100%',
+            width: headWidth,
           }}
         >
           <Image
@@ -303,13 +333,14 @@ export function LocalOpenPeepsAvatar({
 }
 
 /**
- * Generate a static URL/path for database storage (stores first body or bust)
+ * Generate a static URL/path for database storage
  */
 export function generateLocalOpenPeepsUrl(options: LocalOpenPeepsAvatarProps): string {
-  const body = options.body || 'hoodie';
-  if (body !== 'none' && BODY_MAP[body]) {
-    return `${BASE_PATH}/body/${encodeURIComponent(BODY_MAP[body])}`;
+  const pose = options.pose || 'standing_shirt1';
+  const poseInfo = POSE_MAP[pose];
+  if (poseInfo) {
+    return `${BASE_PATH}/pose/${poseInfo.folder}/${encodeURIComponent(poseInfo.file)}`;
   }
-  // Fall back to a pre-composed bust from upper_template
-  return `${BASE_PATH}/upper_template/peep-1.svg`;
+  // Fallback
+  return `${BASE_PATH}/pose/standing/shirt-1.svg`;
 }

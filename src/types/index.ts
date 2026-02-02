@@ -243,15 +243,16 @@ export interface AvatarState {
   hairColor?: string;   // Hex color for hair
 }
 
-// Open Peeps 2D Avatar State (DiceBear-based)
+// Open Peeps 2D Avatar State (pose-based with backward compatibility)
 export interface OpenPeepsAvatarState {
+  pose?: string;          // New: Full body pose ID (e.g., 'standing_shirt1')
   face: string;           // Facial expression ID
   head: string;           // Hair/head style ID
   accessories: string;    // Accessory ID or 'none'
   facialHair: string;     // Facial hair ID or 'none'
-  body?: string;          // Body pose ID or 'none' for bust only
-  skinColor: string;      // Hex color without #
-  clothingColor: string;  // Hex color without #
+  body?: string;          // Legacy: Body pose ID or 'none' for bust only
+  skinColor?: string;     // Legacy: Hex color without # (for color customization)
+  clothingColor?: string; // Legacy: Hex color without # (for color customization)
   backgroundColor: string; // Hex color without # or 'transparent'
 }
 

@@ -13,19 +13,18 @@ interface AvatarOption {
   label: string;
   unlocked: boolean;
   cost?: number;
+  folder?: string;
+  file?: string;
 }
 
 export interface OpenPeepsState {
+  pose: string;         // Full body pose
   face: string;
   head: string;
   accessories: string;
   facialHair: string;
-  body: string;  // 'none' = bust only, or body pose id
-  skinColor: string;
-  clothingColor: string;
   backgroundColor: string;
 }
-
 
 interface OpenPeepsAvatarBuilderProps {
   kidId: string;
@@ -37,24 +36,22 @@ interface OpenPeepsAvatarBuilderProps {
 }
 
 const DEFAULT_STATE: OpenPeepsState = {
+  pose: 'standing_shirt1',
   face: 'smile',
   head: 'short1',
   accessories: 'none',
   facialHair: 'none',
-  body: 'hoodie',  // Default to a full-body pose
-  skinColor: 'd08b5b',
-  clothingColor: '8fa7df',
   backgroundColor: 'b6e3f4',
 };
 
-type CategoryKey = 'face' | 'head' | 'accessories' | 'facialHair' | 'body';
+type CategoryKey = 'pose' | 'face' | 'head' | 'accessories' | 'facialHair';
 
 const CATEGORIES: { key: CategoryKey; label: string; emoji: string }[] = [
+  { key: 'pose', label: 'Pose', emoji: '🧍' },
   { key: 'face', label: 'Face', emoji: '😊' },
   { key: 'head', label: 'Hair', emoji: '💇' },
-  { key: 'body', label: 'Outfit', emoji: '👕' },
   { key: 'accessories', label: 'Glasses', emoji: '👓' },
-  { key: 'facialHair', label: 'Facial Hair', emoji: '🧔' },
+  { key: 'facialHair', label: 'Beard', emoji: '🧔' },
 ];
 
 export function OpenPeepsAvatarBuilder({
@@ -69,18 +66,7 @@ export function OpenPeepsAvatarBuilder({
   const [state, setState] = useState<OpenPeepsState>({ ...DEFAULT_STATE, ...initialState });
   const [isSaving, setIsSaving] = useState(false);
   const [isDesignUnlocked, setIsDesignUnlocked] = useState(designStudioUnlocked);
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>('face');
-
-  // Track current index for the active category only
-  const [categoryIndices, setCategoryIndices] = useState<Record<CategoryKey, number>>(() => {
-    const indices: Record<CategoryKey, number> = { face: 0, head: 0, body: 0, accessories: 0, facialHair: 0 };
-    CATEGORIES.forEach(cat => {
-      const options = openPeepsOptions[cat.key] as AvatarOption[];
-      const idx = options.findIndex(o => o.id === (initialState?.[cat.key] || DEFAULT_STATE[cat.key]));
-      indices[cat.key] = idx >= 0 ? idx : 0;
-    });
-    return indices;
-  });
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>('pose');
 
   // Check design studio status
   useEffect(() => {
@@ -109,6 +95,7 @@ export function OpenPeepsAvatarBuilder({
   // Get filtered list of unlocked options for the active category
   const unlockedOptions = useMemo(() => {
     const options = openPeepsOptions[activeCategory] as AvatarOption[];
+    if (!options) return [];
     return options.filter(opt => isItemUnlocked(activeCategory, opt.id));
   }, [activeCategory, unlockedItems]);
 
@@ -131,11 +118,6 @@ export function OpenPeepsAvatarBuilder({
     
     const newOption = unlockedOptions[newIdx];
     setState(prev => ({ ...prev, [activeCategory]: newOption.id }));
-    
-    // Also update the raw category index for reference
-    const allOptions = openPeepsOptions[activeCategory] as AvatarOption[];
-    const rawIdx = allOptions.findIndex(o => o.id === newOption.id);
-    setCategoryIndices(prev => ({ ...prev, [activeCategory]: rawIdx }));
   };
 
   const handleSave = async () => {
@@ -159,7 +141,6 @@ export function OpenPeepsAvatarBuilder({
       }
       
       toast.success('Avatar saved! ✨');
-      // Refresh to update sidebar avatar
       router.refresh();
     } catch (error) {
       console.error('Failed to save avatar:', error);
@@ -170,6 +151,10 @@ export function OpenPeepsAvatarBuilder({
   };
 
   const currentOption = unlockedOptions[currentUnlockedIndex];
+  const allOptions = openPeepsOptions[activeCategory] as AvatarOption[] | undefined;
+  const lockedCount = allOptions 
+    ? allOptions.filter(o => !isItemUnlocked(activeCategory, o.id)).length 
+    : 0;
 
   return (
     <div className={`${compact ? 'space-y-4' : 'max-w-2xl mx-auto p-4 sm:p-6 space-y-6'}`}>
@@ -184,7 +169,7 @@ export function OpenPeepsAvatarBuilder({
         {/* Main Avatar Preview */}
         <div className="flex flex-col items-center mb-6">
           <div 
-            className="rounded-full p-3"
+            className="rounded-2xl p-4"
             style={{ 
               backgroundColor: state.backgroundColor === 'transparent' 
                 ? 'var(--paper-100)' 
@@ -192,27 +177,27 @@ export function OpenPeepsAvatarBuilder({
             }}
           >
             <LocalOpenPeepsAvatar
-              size={compact ? 100 : 160}
+              size={compact ? 120 : 180}
               {...state}
             />
           </div>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex justify-center gap-2 mb-4 flex-wrap">
+        <div className="flex justify-center gap-1 sm:gap-2 mb-4 flex-wrap">
           {CATEGORIES.map(cat => (
             <button
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
               className={`
-                px-3 py-2 rounded-lg font-medium text-sm transition-all
+                px-2 sm:px-3 py-2 rounded-lg font-medium text-xs sm:text-sm transition-all
                 ${activeCategory === cat.key
                   ? 'bg-[var(--ember-500)] text-white'
                   : 'bg-[var(--background-secondary)] text-muted hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)]'}
               `}
             >
               <span className="mr-1">{cat.emoji}</span>
-              {cat.label}
+              <span className="hidden sm:inline">{cat.label}</span>
             </button>
           ))}
         </div>
@@ -221,22 +206,30 @@ export function OpenPeepsAvatarBuilder({
         <div className="flex items-center justify-center gap-4 py-4">
           <button
             onClick={() => navigate('prev')}
-            className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors"
+            disabled={unlockedOptions.length <= 1}
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors disabled:opacity-50"
           >
             <CaretLeft size={24} weight="bold" />
           </button>
           
           {/* Current option preview */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 flex items-center justify-center bg-[var(--background-secondary)] rounded-xl p-2">
+          <div className="flex flex-col items-center min-w-[120px]">
+            <div 
+              className="w-28 h-36 flex items-center justify-center rounded-xl overflow-hidden"
+              style={{
+                backgroundColor: state.backgroundColor === 'transparent' 
+                  ? 'var(--paper-100)' 
+                  : `#${state.backgroundColor}`
+              }}
+            >
               {currentOption && (
                 <LocalOpenPeepsAvatar
-                  size={80}
+                  size={90}
                   {...{ ...state, [activeCategory]: currentOption.id }}
                 />
               )}
             </div>
-            <span className="text-sm font-medium text-foreground mt-2">
+            <span className="text-sm font-medium text-foreground mt-2 text-center">
               {currentOption?.label || 'None'}
             </span>
             <span className="text-xs text-muted">
@@ -246,38 +239,33 @@ export function OpenPeepsAvatarBuilder({
           
           <button
             onClick={() => navigate('next')}
-            className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors"
+            disabled={unlockedOptions.length <= 1}
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-[var(--background-secondary)] hover:bg-[var(--night-200)] dark:hover:bg-[var(--night-700)] transition-colors disabled:opacity-50"
           >
             <CaretRight size={24} weight="bold" />
           </button>
         </div>
 
         {/* Locked Items Banner */}
-        {(() => {
-          const allOptions = openPeepsOptions[activeCategory] as AvatarOption[];
-          const lockedCount = allOptions.filter(o => !isItemUnlocked(activeCategory, o.id)).length;
-          if (lockedCount === 0) return null;
-          
-          return (
-            <div className="mt-4 p-3 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 rounded-lg border border-amber-200 dark:border-amber-800/50">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <Lock size={16} className="text-amber-600" />
-                  <span className="text-sm text-amber-700 dark:text-amber-300">
-                    {lockedCount} more {CATEGORIES.find(c => c.key === activeCategory)?.label.toLowerCase()} options in the Shop!
-                  </span>
-                </div>
-                <Link
-                  href={`/kids/${kidId}/shop`}
-                  className="px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-full flex items-center gap-1.5 hover:bg-amber-600 transition-colors"
-                >
-                  <ShoppingCart size={14} />
-                  <span>Shop</span>
-                </Link>
+        {lockedCount > 0 && (
+          <div className="mt-4 p-3 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/30 rounded-lg border border-amber-200 dark:border-amber-800/50">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Lock size={16} className="text-amber-600" />
+                <span className="text-sm text-amber-700 dark:text-amber-300">
+                  {lockedCount} more {CATEGORIES.find(c => c.key === activeCategory)?.label.toLowerCase()} options in the Shop!
+                </span>
               </div>
+              <Link
+                href={`/kids/${kidId}/shop`}
+                className="px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-full flex items-center gap-1.5 hover:bg-amber-600 transition-colors"
+              >
+                <ShoppingCart size={14} />
+                <span>Shop</span>
+              </Link>
             </div>
-          );
-        })()}
+          </div>
+        )}
 
         {/* Design Studio Unlock CTA */}
         {!isDesignUnlocked && (

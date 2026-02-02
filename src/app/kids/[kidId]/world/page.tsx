@@ -32,13 +32,11 @@ export default async function WorldPage({ params }: PageProps) {
       
       kidAvatar = (
         <LocalOpenPeepsAvatar
+          pose={avatarState.pose || 'standing_shirt1'}
           face={avatarState.face || 'smile'}
           head={avatarState.head || 'short1'}
-          body={avatarState.body || 'hoodie'}
           accessories={avatarState.accessories || 'none'}
           facialHair={avatarState.facialHair || 'none'}
-          skinColor={avatarState.skinColor || 'd08b5b'}
-          clothingColor={avatarState.clothingColor || '8fa7df'}
           backgroundColor="transparent"
           size={50}
         />

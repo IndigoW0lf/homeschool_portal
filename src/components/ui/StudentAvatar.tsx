@@ -47,14 +47,12 @@ export function StudentAvatar({
       <div className={cn('rounded-full overflow-hidden flex-shrink-0', className)}>
         <LocalOpenPeepsAvatar
           size={sizePixels[size]}
+          pose={openPeepsState.pose || 'standing_shirt1'}
           face={openPeepsState.face}
           head={openPeepsState.head}
           accessories={openPeepsState.accessories}
           facialHair={openPeepsState.facialHair}
-          skinColor={openPeepsState.skinColor}
-          clothingColor={openPeepsState.clothingColor}
           backgroundColor={openPeepsState.backgroundColor}
-          body={openPeepsState.body}
         />
       </div>
     );
