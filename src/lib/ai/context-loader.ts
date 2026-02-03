@@ -43,6 +43,7 @@ export interface LessonContext {
   type: string | null;
   parentNotes: string | null;
   estimatedMinutes: number;
+  gradeLevels?: string[]; // Grades of students assigned to this lesson
 }
 
 /**
@@ -170,6 +171,36 @@ export async function loadLessonContext(
     console.error('Error loading lesson context:', error);
     return null;
   }
+
+  // Fetch grades of students assigned to this lesson (via schedule_items)
+  let gradeLevels: string[] = [];
+  const { data: assignments } = await supabase
+    .from('schedule_items')
+    .select('student_id')
+    .eq('lesson_id', lessonId);
+
+  if (assignments && assignments.length > 0) {
+    const studentIds = assignments.map(a => a.student_id).filter(Boolean) as string[];
+    if (studentIds.length > 0) {
+      const { data: kids } = await supabase
+        .from('kids')
+        .select('grades, grade_band')
+        .in('id', studentIds);
+      
+      if (kids) {
+        kids.forEach(kid => {
+          if (kid.grades && kid.grades.length > 0) {
+            gradeLevels.push(...kid.grades);
+          } else if (kid.grade_band) {
+            gradeLevels.push(kid.grade_band);
+          }
+        });
+      }
+    }
+  }
+  
+  // Deduplicate grades
+  gradeLevels = Array.from(new Set(gradeLevels));
   
   return {
     id: data.id,
@@ -177,6 +208,7 @@ export async function loadLessonContext(
     type: data.type,
     parentNotes: data.parent_notes,
     estimatedMinutes: data.estimated_minutes,
+    gradeLevels,
   };
 }
 

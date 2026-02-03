@@ -127,25 +127,33 @@ export function getGradeLevelSearchTerms(gradeLevel?: string): string {
   const normalized = gradeLevel.toLowerCase();
   
   // Map common formats
+  // Map common formats
   if (normalized.includes('k') || normalized.includes('kindergarten')) {
     return 'for kids kindergarten';
   }
   if (normalized.includes('preschool') || normalized.includes('pre-k')) {
     return 'for toddlers preschool';
   }
-  if (normalized.match(/1st|first|grade 1/)) return 'for kids 1st grade';
-  if (normalized.match(/2nd|second|grade 2/)) return 'for kids 2nd grade';
-  if (normalized.match(/3rd|third|grade 3/)) return 'for kids 3rd grade';
-  if (normalized.match(/4th|fourth|grade 4/)) return 'for kids 4th grade';
-  if (normalized.match(/5th|fifth|grade 5/)) return 'for kids 5th grade';
-  if (normalized.match(/6th|sixth|grade 6/)) return 'middle school 6th grade';
-  if (normalized.match(/7th|seventh|grade 7/)) return 'middle school 7th grade';
-  if (normalized.match(/8th|eighth|grade 8/)) return 'middle school 8th grade';
-  if (normalized.match(/9th|ninth|grade 9/)) return 'high school 9th grade';
-  if (normalized.match(/10th|tenth|grade 10/)) return 'high school 10th grade';
-  if (normalized.match(/11th|eleventh|grade 11/)) return 'high school 11th grade';
-  if (normalized.match(/12th|twelfth|grade 12/)) return 'high school 12th grade';
   
+  // Strict number matching or word matching
+  if (normalized === '1' || normalized.match(/\b1st\b|\bfirst\b|grade 1\b/)) return 'for kids 1st grade';
+  if (normalized === '2' || normalized.match(/\b2nd\b|\bsecond\b|grade 2\b/)) return 'for kids 2nd grade';
+  if (normalized === '3' || normalized.match(/\b3rd\b|\bthird\b|grade 3\b/)) return 'for kids 3rd grade';
+  if (normalized === '4' || normalized.match(/\b4th\b|\bfourth\b|grade 4\b/)) return 'for kids 4th grade';
+  if (normalized === '5' || normalized.match(/\b5th\b|\bfifth\b|grade 5\b/)) return 'for kids 5th grade';
+  if (normalized === '6' || normalized.match(/\b6th\b|\bsixth\b|grade 6\b/)) return 'middle school 6th grade';
+  if (normalized === '7' || normalized.match(/\b7th\b|\bseventh\b|grade 7\b/)) return 'middle school 7th grade';
+  if (normalized === '8' || normalized.match(/\b8th\b|\beighth\b|grade 8\b/)) return 'middle school 8th grade';
+  if (normalized === '9' || normalized.match(/\b9th\b|\bninth\b|grade 9\b/)) return 'high school 9th grade';
+  if (normalized === '10' || normalized.match(/\b10th\b|\btenth\b|grade 10\b/)) return 'high school 10th grade';
+  if (normalized === '11' || normalized.match(/\b11th\b|\beleventh\b|grade 11\b/)) return 'high school 11th grade';
+  if (normalized === '12' || normalized.match(/\b12th\b|\btwelfth\b|grade 12\b/)) return 'high school 12th grade';
+  
+  // Fallback for Grade bands
+  if (normalized.includes('3-5')) return 'for kids elementary school';
+  if (normalized.includes('6-8')) return 'for middle school';
+  if (normalized.includes('9-12')) return 'for high school';
+
   return gradeLevel;
 }
 

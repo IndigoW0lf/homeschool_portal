@@ -97,6 +97,24 @@ ${description ? `User's Notes/Description: ${description}` : ''}
 
     console.log('[API/generate-activity] Generating activity:', { title, category, activityType, gradeLevel });
 
+    // Fallback: If no grade level provided, try to find a baseline from the family
+    // This ensures video search isn't totally generic ("adult")
+    let searchGradeLevel = gradeLevel;
+    if (!searchGradeLevel) {
+      const { data: familyKids } = await supabase
+        .from('kids')
+        .select('grades')
+        .limit(1);
+      
+      if (familyKids && familyKids.length > 0) {
+        const grades = familyKids[0].grades;
+        if (grades && grades.length > 0) {
+          searchGradeLevel = grades[0];
+          console.log('[API/generate-activity] Using family fallback grade level:', searchGradeLevel);
+        }
+      }
+    }
+
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
@@ -139,7 +157,7 @@ ${description ? `User's Notes/Description: ${description}` : ''}
         { 
           searchYouTube: true, 
           generateWorksheet: false,
-          ageOrGrade: gradeLevel 
+          ageOrGrade: searchGradeLevel 
         }
       );
       

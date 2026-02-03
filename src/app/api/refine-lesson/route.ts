@@ -102,6 +102,20 @@ export async function POST(request: NextRequest) {
           console.log('[API/refine-lesson] Target grade level:', targetGradeLevel);
         }
       }
+    } else {
+      // Fallback: If no specific assignment, try to use the family's general grade level
+      const { data: familyKids } = await supabase
+        .from('kids')
+        .select('grades')
+        .limit(1);
+      
+      if (familyKids && familyKids.length > 0) {
+         const grades = familyKids[0].grades;
+         if (grades && grades.length > 0) {
+           targetGradeLevel = grades[0];
+           console.log('[API/refine-lesson] Using family fallback grade level:', targetGradeLevel);
+         }
+      }
     }
 
     // Normalize keyQuestions to strings for the prompt

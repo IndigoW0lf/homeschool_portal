@@ -56,6 +56,21 @@ export async function POST(request: NextRequest) {
           console.log('[API/lessons] Target grade level:', targetGradeLevel);
         }
       }
+    } else {
+      // Fallback: If no specific assignment, try to use the family's general grade level
+      // This prevents "adult" suggestions when creating generic lessons
+      const { data: familyKids } = await supabase
+        .from('kids')
+        .select('grades')
+        .limit(1); // Just get one kid to establish a baseline
+      
+      if (familyKids && familyKids.length > 0) {
+         const grades = familyKids[0].grades;
+         if (grades && grades.length > 0) {
+           targetGradeLevel = grades[0];
+           console.log('[API/lessons] Using family fallback grade level:', targetGradeLevel);
+         }
+      }
     }
 
     // Use centralized enrichment instead of inline logic

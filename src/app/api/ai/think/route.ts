@@ -182,6 +182,11 @@ export async function POST(request: NextRequest) {
           else if (c.gradeBand) gradeLevel = c.gradeBand;
         }
 
+        // Fallback: If we have lesson context (LESSON_STUCK mode)
+        if (!gradeLevel && loadedContext.raw.lesson?.gradeLevels && loadedContext.raw.lesson.gradeLevels.length > 0) {
+          gradeLevel = loadedContext.raw.lesson.gradeLevels.join(', '); // "3, 5" works with our search helper
+        }
+
         console.log('[AI Think] Enriching with grade level:', gradeLevel || 'unknown');
 
         enrichedResponse = await enrichWithResources(parsedResponse, {
