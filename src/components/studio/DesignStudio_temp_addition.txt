@@ -1,0 +1,15 @@
+      
+      {/* Tier Upgrade Modal */}
+      <TierUpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        kidId={kidId}
+        currentTier={currentTier}
+        nextTier={nextTierInfo.nextTier}
+        nextTierLimits={nextTierInfo.limits}
+        moonCost={nextTierInfo.cost}
+        currentMoonBalance={moonBalance}
+        onUpgradeSuccess={() => {
+          window.location.reload();
+        }}
+      />

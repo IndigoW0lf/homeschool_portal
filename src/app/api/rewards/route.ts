@@ -42,13 +42,15 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { kidId, name, description, emoji, category, moonCost } = body as {
+    const { kidId, name, description, emoji, icon, category, moonCost, isUnlimited } = body as {
       kidId: string;
       name: string;
       description?: string;
       emoji?: string;
+      icon?: string;
       category?: string;
       moonCost: number;
+      isUnlimited?: boolean;
     };
 
     if (!kidId || !name || !moonCost) {
@@ -60,6 +62,9 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createServerClient();
     
+    // Explicitly handle isUnlimited (default true if undefined)
+    const is_unlimited = isUnlimited !== undefined ? isUnlimited : true;
+
     const { data, error } = await supabase
       .from('kid_rewards')
       .insert({
@@ -67,8 +72,10 @@ export async function POST(request: NextRequest) {
         name,
         description: description || '',
         emoji: emoji || '🎁',
+        icon: icon || null, // Phosphor icon name
         category: category || 'custom',
         moon_cost: moonCost,
+        is_unlimited,
       })
       .select()
       .single();
@@ -93,13 +100,15 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, description, emoji, moonCost, isActive } = body as {
+    const { id, name, description, emoji, icon, moonCost, isActive, isUnlimited } = body as {
       id: string;
       name?: string;
       description?: string;
       emoji?: string;
+      icon?: string;
       moonCost?: number;
       isActive?: boolean;
+      isUnlimited?: boolean;
     };
 
     if (!id) {
@@ -112,8 +121,10 @@ export async function PUT(request: NextRequest) {
     if (name !== undefined) updates.name = name;
     if (description !== undefined) updates.description = description;
     if (emoji !== undefined) updates.emoji = emoji;
+    if (icon !== undefined) updates.icon = icon;
     if (moonCost !== undefined) updates.moon_cost = moonCost;
     if (isActive !== undefined) updates.is_active = isActive;
+    if (isUnlimited !== undefined) updates.is_unlimited = isUnlimited;
 
     const { data, error } = await supabase
       .from('kid_rewards')

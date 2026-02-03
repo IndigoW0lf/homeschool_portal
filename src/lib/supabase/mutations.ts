@@ -674,3 +674,84 @@ export async function togglePinAssignment(id: string, is_pinned: boolean) {
   if (error) throw error;
   return data;
 }
+
+// ========== DESIGN STUDIO TIER UNLOCKS ==========
+
+/**
+ * Unlock a design studio tier for a kid
+ * Validates moon balance, deducts moons, updates tier level, and records unlock history
+ */
+export async function unlockDesignStudioTier(
+  kidId: string,
+  targetTier: 1 | 2 | 3 | 4,
+  moonCost: number
+): Promise<{ success: boolean; error?: string; newMoonBalance?: number }> {
+  const supabase = await createServerClient();
+  
+  // Fetch current kid data
+  const { data: kid, error: fetchError } = await supabase
+    .from('kids')
+    .select('design_studio_tier, design_studio_tier_unlocks, moons')
+    .eq('id', kidId)
+    .single();
+  
+  if (fetchError || !kid) {
+    return { success: false, error: 'Kid not found' };
+  }
+  
+  const currentTier = kid.design_studio_tier || 1;
+  const currentMoons = kid.moons || 0;
+  
+  // Validation
+  if (targetTier <= currentTier) {
+    return { success: false, error: 'Already at or above this tier' };
+  }
+  
+  if (targetTier !== currentTier + 1) {
+    return { success: false, error: 'Must unlock tiers in order' };
+  }
+  
+  if (currentMoons < moonCost) {
+    return { success: false, error: 'Insufficient moons' };
+  }
+  
+  // Deduct moons and update tier
+  const newMoonBalance = currentMoons - moonCost;
+  const unlockTimestamp = new Date().toISOString();
+  
+  // Update tier unlocks JSONB
+  const tierUnlocks = (kid.design_studio_tier_unlocks || {}) as Record<string, string>;
+  tierUnlocks[targetTier.toString()] = unlockTimestamp;
+  
+  const { error: updateError } = await supabase
+    .from('kids')
+    .update({
+      design_studio_tier: targetTier,
+      design_studio_tier_unlocks: tierUnlocks,
+      moons: newMoonBalance,
+    })
+    .eq('id', kidId);
+  
+  if (updateError) {
+    console.error('Error updating kid tier:', updateError);
+    return { success: false, error: 'Failed to update tier' };
+  }
+  
+  // Record unlock history
+  const { error: historyError } = await supabase
+    .from('design_tier_unlocks')
+    .insert({
+      kid_id: kidId,
+      from_tier: currentTier,
+      to_tier: targetTier,
+      moon_cost: moonCost,
+      unlocked_at: unlockTimestamp,
+    });
+  
+  if (historyError) {
+    console.error('Error recording tier unlock history:', historyError);
+    // Don't fail the whole operation for history errors
+  }
+  
+  return { success: true, newMoonBalance };
+}

@@ -133,3 +133,27 @@ export const BRUSH_SIZES = [
   { value: 8, label: 'Medium' },
   { value: 16, label: 'Thick' },
 ];
+
+// ========== TIER SYSTEM TYPES ==========
+
+export type DesignStudioTier = 1 | 2 | 3 | 4;
+export type DesignTool = 'fill' | 'draw' | 'eraser' | 'paintbucket';
+
+export interface TierLimits {
+  tier: DesignStudioTier;
+  name: string;
+  maxSavedDesigns: number | 'unlimited';
+  availableTools: DesignTool[];
+  availableBrushSizes: number[];
+  maxMarketplaceListings: number;
+  canEquipMultiple: boolean;
+  allowedTemplates: string[];
+  icon: string;
+  color: string;
+}
+
+export interface TierUnlockHistory {
+  tier: DesignStudioTier;
+  unlockedAt: string;
+}
+

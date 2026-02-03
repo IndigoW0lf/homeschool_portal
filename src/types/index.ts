@@ -54,6 +54,10 @@ export interface Kid {
   lastLoginAt?: string;
   // Featured badges (up to 3 badge IDs to showcase on portal)
   featuredBadges?: string[];
+  // Gamification
+  moons?: number;
+  design_studio_tier?: 1 | 2 | 3 | 4;
+  design_studio_tier_unlocks?: Record<string, string>; // JSONB: tier number -> unlock timestamp
 }
 
 export interface Profile {

@@ -47,6 +47,10 @@ export default async function StudioPage({ params }: StudioPageProps) {
     .eq('kid_id', kidId)
     .order('created_at', { ascending: false });
 
+  // 3. Fetch kid's tier info
+  const currentTier = (kid.design_studio_tier || 1) as 1 | 2 | 3 | 4;
+  const moonBalance = kid.moons || 0;
+
   return (
     <main className="min-h-screen bg-[var(--paper-50)] dark:bg-[var(--background)]">
       <DesignStudio 
@@ -54,6 +58,8 @@ export default async function StudioPage({ params }: StudioPageProps) {
         templates={templates}
         unlockedTemplateIds={unlockedTemplateIds}
         initialDesigns={designs || []}
+        currentTier={currentTier}
+        moonBalance={moonBalance}
       />
     </main>
   );

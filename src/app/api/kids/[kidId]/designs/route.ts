@@ -37,21 +37,68 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   
   try {
     const body = await request.json();
-    const { templateId, name, regions, textureImage } = body as {
+    const { templateId, name, regions, textureImage, design_data } = body as {
       templateId: string;
       name: string;
-      regions: Record<string, DesignRegion>;
+      regions?: Record<string, DesignRegion>;
+      design_data?: { paintData?: string };
       textureImage?: string; // Base64 data URL
     };
     
-    if (!templateId || !name || !regions) {
+    if (!templateId || !name) {
       return NextResponse.json(
-        { error: 'Missing required fields: templateId, name, regions' },
+        { error: 'Missing required fields: templateId, name' },
         { status: 400 }
       );
     }
     
     const supabase = await createServiceRoleClient();
+    
+    // Check tier limits before saving
+    const { data: kid, error: kidError } = await supabase
+      .from('kids')
+      .select('design_studio_tier')
+      .eq('id', kidId)
+      .single();
+    
+    if (kidError) {
+      console.error('[Designs API] Error fetching kid:', kidError);
+      return NextResponse.json({ error: 'Kid not found' }, { status: 404 });
+    }
+    
+    const currentTier = (kid.design_studio_tier || 1) as 1 | 2 | 3 | 4;
+    
+    // Count existing designs
+    const { count, error: countError } = await supabase
+      .from('kid_designs')
+      .select('*', { count: 'exact', head: true })
+      .eq('kid_id', kidId);
+    
+    if (countError) {
+      console.error('[Designs API] Error counting designs:', countError);
+      return NextResponse.json({ error: 'Failed to check design limits' }, { status: 500 });
+    }
+    
+    const designCount = count || 0;
+    
+    // Import tier limits (dynamic import to avoid circular dependencies)
+    const { getTierLimits } = await import('@/lib/avatar/tier-limits');
+    const tierLimits = getTierLimits(currentTier);
+    
+    // Check if at limit
+    if (tierLimits.maxSavedDesigns !== 'unlimited' && designCount >= tierLimits.maxSavedDesigns) {
+      return NextResponse.json(
+        { 
+          error: 'Design limit reached',
+          limit: tierLimits.maxSavedDesigns,
+          currentCount: designCount,
+          tier: currentTier,
+          tierName: tierLimits.name
+        },
+        { status: 403 }
+      );
+    }
+    
     let texture_url = null;
 
     // Handle texture upload if provided
@@ -79,15 +126,19 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       }
     }
     
+    // Store both legacy regions and new design_data
+    const designDataToStore = design_data || { regions: regions || {} };
+    
     const { data: design, error } = await supabase
       .from('kid_designs')
       .insert({
         kid_id: kidId,
         template_id: templateId,
         name: name.trim(),
-        design_data: { regions },
+        design_data: designDataToStore,
         is_equipped: false,
-        texture_url: texture_url
+        texture_url: texture_url,
+        preview_url: texture_url // Use texture as preview
       })
       .select()
       .single();
