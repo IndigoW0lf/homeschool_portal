@@ -413,10 +413,31 @@ export async function awardStars(
   itemId: string,
   starsToAward: number = 1
 ): Promise<{ success: boolean; alreadyAwarded: boolean; newTotal?: number }> {
+  const { createServiceRoleClient } = await import('./server');
+  const { getKidSession } = await import('@/lib/kid-session');
+  
   const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let db = supabase;
+  
+  // If not parent, check for kid session
+  if (!user) {
+    const session = await getKidSession();
+    if (session && session.kidId === kidId) {
+      // Authorized Kid: Use Service Role to bypass RLS
+      db = await createServiceRoleClient();
+    } else {
+      // Anonymous / Unauthorized
+      console.error('[awardStars] Unauthorized: No parent user or valid kid session');
+      // We can return success: false, or throw. 
+      // Current behavior implies return object.
+      return { success: false, alreadyAwarded: false };
+    }
+  }
   
   // Try to insert award (will fail if already awarded due to unique constraint)
-  const { error: awardError } = await supabase
+  const { error: awardError } = await db
     .from('progress_awards')
     .insert({
       kid_id: kidId,
@@ -435,7 +456,7 @@ export async function awardStars(
   }
   
   // Update total stars in student_progress
-  const { data: progress, error: fetchError } = await supabase
+  const { data: progress, error: fetchError } = await db
     .from('student_progress')
     .select('total_stars')
     .eq('kid_id', kidId)
@@ -448,7 +469,7 @@ export async function awardStars(
   const currentStars = progress?.total_stars || 0;
   const newTotal = currentStars + starsToAward;
   
-  await supabase
+  await db
     .from('student_progress')
     .upsert({
       kid_id: kidId,
@@ -458,14 +479,14 @@ export async function awardStars(
 
   // Update moons (currency)
   // We do this separately because it live in the 'kids' table
-  const { data: kidData } = await supabase
+  const { data: kidData } = await db
     .from('kids')
     .select('moons')
     .eq('id', kidId)
     .single();
     
   if (kidData) {
-     await supabase
+     await db
        .from('kids')
        .update({ moons: (kidData.moons || 0) + starsToAward })
        .eq('id', kidId);
@@ -553,9 +574,26 @@ function formatDateString(date: Date): string {
 
 // Grant an unlock (badge)
 export async function grantUnlock(kidId: string, unlockId: string): Promise<boolean> {
-  const supabase = await createServerClient();
+  const { createServiceRoleClient } = await import('./server');
+  const { getKidSession } = await import('@/lib/kid-session');
   
-  const { error } = await supabase
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let db = supabase;
+  
+  // If not parent, check for kid session
+  if (!user) {
+    const session = await getKidSession();
+    if (session && session.kidId === kidId) {
+      db = await createServiceRoleClient();
+    } else {
+      console.error('[grantUnlock] Unauthorized: No parent user or valid kid session');
+      return false;
+    }
+  }
+  
+  const { error } = await db
     .from('student_unlocks')
     .insert({
       kid_id: kidId,
@@ -681,15 +719,34 @@ export async function togglePinAssignment(id: string, is_pinned: boolean) {
  * Unlock a design studio tier for a kid
  * Validates moon balance, deducts moons, updates tier level, and records unlock history
  */
+// Unlock a design studio tier for a kid
+// Validates moon balance, deducts moons, updates tier level, and records unlock history
 export async function unlockDesignStudioTier(
   kidId: string,
   targetTier: 1 | 2 | 3 | 4,
   moonCost: number
 ): Promise<{ success: boolean; error?: string; newMoonBalance?: number }> {
+  const { createServiceRoleClient } = await import('./server');
+  const { getKidSession } = await import('@/lib/kid-session');
+  
   const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let db = supabase;
+  
+  // If not parent, check for kid session
+  if (!user) {
+    const session = await getKidSession();
+    if (session && session.kidId === kidId) {
+      db = await createServiceRoleClient();
+    } else {
+      console.error('[unlockDesignStudioTier] Unauthorized: No parent user or valid kid session');
+      return { success: false, error: 'Unauthorized' };
+    }
+  }
   
   // Fetch current kid data
-  const { data: kid, error: fetchError } = await supabase
+  const { data: kid, error: fetchError } = await db
     .from('kids')
     .select('design_studio_tier, design_studio_tier_unlocks, moons')
     .eq('id', kidId)
@@ -723,7 +780,7 @@ export async function unlockDesignStudioTier(
   const tierUnlocks = (kid.design_studio_tier_unlocks || {}) as Record<string, string>;
   tierUnlocks[targetTier.toString()] = unlockTimestamp;
   
-  const { error: updateError } = await supabase
+  const { error: updateError } = await db
     .from('kids')
     .update({
       design_studio_tier: targetTier,
@@ -738,7 +795,7 @@ export async function unlockDesignStudioTier(
   }
   
   // Record unlock history
-  const { error: historyError } = await supabase
+  const { error: historyError } = await db
     .from('design_tier_unlocks')
     .insert({
       kid_id: kidId,
