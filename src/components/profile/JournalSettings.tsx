@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { NotePencil, Check, ArrowsClockwise, Fire } from '@phosphor-icons/react';
+import { NotePencil, Check, ArrowsClockwise, Fire, Moon } from '@phosphor-icons/react';
 import { supabase } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
 
@@ -24,6 +24,7 @@ interface KidJournalSettings {
   journalAllowSkip: boolean;
   journalPromptTypes: string[];
   streakEnabled: boolean;
+  journalMoonReward: number;
 }
 
 export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
@@ -33,6 +34,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
     journalAllowSkip: true,
     journalPromptTypes: ['gratitude', 'reflection', 'creativity'],
     streakEnabled: true,
+    journalMoonReward: 1,
   });
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
     try {
       const { data } = await supabase
         .from('kids')
-        .select('journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled')
+        .select('journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled, journal_moon_reward')
         .eq('id', selectedKid)
         .single();
 
@@ -61,6 +63,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           journalAllowSkip: data.journal_allow_skip ?? true,
           journalPromptTypes: data.journal_prompt_types || ['gratitude', 'reflection', 'creativity'],
           streakEnabled: data.streak_enabled ?? true,
+          journalMoonReward: data.journal_moon_reward || 1,
         });
       }
     } catch (error) {
@@ -80,6 +83,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           journal_allow_skip: settings.journalAllowSkip,
           journal_prompt_types: settings.journalPromptTypes,
           streak_enabled: settings.streakEnabled,
+          journal_moon_reward: settings.journalMoonReward,
         })
         .eq('id', selectedKid);
 
@@ -161,6 +165,31 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
               className="w-5 h-5 rounded text-orange-500 focus:ring-orange-500"
             />
           </label>
+        
+          {/* Moon Reward Setting */}
+          <div className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg">
+             <div className="flex items-center gap-3">
+               <Moon size={20} weight="fill" className="text-yellow-400" />
+               <div>
+                 <p className="font-medium text-heading dark:text-[var(--foreground)]">Moons per Entry</p>
+                 <p className="text-sm text-muted">How many moons to award for each journal entry</p>
+               </div>
+             </div>
+             <div className="flex items-center gap-2">
+                <input
+                   type="range"
+                   min="0"
+                   max="10"
+                   step="1"
+                   value={settings.journalMoonReward}
+                   onChange={(e) => setSettings(prev => ({ ...prev, journalMoonReward: parseInt(e.target.value) }))}
+                   className="w-32 accent-pink-500"
+                />
+                <span className="font-bold flex items-center justify-center w-8 h-8 rounded bg-[var(--background-elevated)] border border-[var(--border)]">
+                   {settings.journalMoonReward}
+                </span>
+             </div>
+          </div>
 
           {/* Allow Skip Toggle */}
           <label className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg cursor-pointer">

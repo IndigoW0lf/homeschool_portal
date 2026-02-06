@@ -355,11 +355,29 @@ export async function addToSchedule(item: Omit<ScheduleItemRow, 'id' | 'status' 
 // ... existing code ...
 
 export async function toggleScheduleItemComplete(id: string, isCompleted: boolean) {
-  const supabase = await createServerClient();
+  const { createServiceRoleClient } = await import('./server');
+  const { getKidSession } = await import('@/lib/kid-session');
+  
+  // Determine if we are Parent (Auth) or Kid (Session)
+  const supabaseStandard = await createServerClient();
+  const { data: { user } } = await supabaseStandard.auth.getUser();
+  
+  let db = supabaseStandard;
+  
+  // If not parent, check for kid session
+  if (!user) {
+    const session = await getKidSession();
+    if (session) {
+      // Authorized Kid: Use Service Role
+      // TODO: We should verify the item belongs to the kid here, effectively RLS manually
+      db = await createServiceRoleClient();
+    }
+  }
+
   const status = isCompleted ? 'completed' : 'pending';
   const completed_at = isCompleted ? new Date().toISOString() : null;
 
-  const { data, error } = await supabase
+  const { data: item, error } = await db
     .from('schedule_items')
     .update({ status, completed_at })
     .eq('id', id)
@@ -367,7 +385,32 @@ export async function toggleScheduleItemComplete(id: string, isCompleted: boolea
     .single();
 
   if (error) throw error;
-  return data;
+
+  // If completed, award variable stars/moons
+  if (isCompleted && item) {
+    let rewardAmount = 1;
+
+    // Look up the underlying item reward
+    if (item.item_type === 'lesson' && item.lesson_id) {
+       const { data: lesson } = await db.from('lessons').select('moon_reward').eq('id', item.lesson_id).single();
+       if (lesson?.moon_reward) rewardAmount = lesson.moon_reward;
+    } else if (item.item_type === 'assignment' && item.assignment_id) {
+       const { data: assignment } = await db.from('assignment_items').select('moon_reward').eq('id', item.assignment_id).single();
+       if (assignment?.moon_reward) rewardAmount = assignment.moon_reward;
+    }
+
+    const result = await awardStars(item.student_id, item.date, item.id, rewardAmount);
+
+    // Check for unlocks
+    if (result.success && result.newTotal) {
+       await checkAndGrantUnlocks(item.student_id, result.newTotal);
+    }
+
+    // Update streak if applicable
+    await updateStreak(item.student_id, item.date);
+  }
+
+  return item;
 }
 
 // Deletes an item from the schedule

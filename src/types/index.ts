@@ -58,6 +58,7 @@ export interface Kid {
   moons?: number;
   design_studio_tier?: 1 | 2 | 3 | 4;
   design_studio_tier_unlocks?: Record<string, string>; // JSONB: tier number -> unlock timestamp
+  journal_moon_reward?: number; // Default 1
 }
 
 export interface Profile {
@@ -331,6 +332,7 @@ export interface KidRow {
   journal_prompt_types: string[] | null;
   // Featured badges
   featured_badges: string[] | null;
+  journal_moon_reward: number | null;
 }
 
 // Journal entry
@@ -369,6 +371,7 @@ export interface LessonRow {
   estimated_minutes: number;
   parent_notes: string | null;
   created_at: string;
+  moon_reward?: number; // Default 1
 }
 
 // Assignment step (for the "Do" part)
@@ -429,6 +432,7 @@ export interface AssignmentItemRow {
   // New fields
   is_pinned?: boolean;
   display_order?: number;
+  moon_reward?: number; // Default 1
 }
 
 export interface DayPlanRow {

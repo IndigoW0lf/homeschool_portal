@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Pencil, CheckSquare, Clock, Link, Plus, X, EyeClosed, FileText, Stack, Users, Trash } from '@phosphor-icons/react';
+import { Pencil, CheckSquare, Clock, Link, Plus, X, EyeClosed, FileText, Stack, Users, Trash, Moon } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
@@ -34,6 +34,7 @@ const assignmentSchema = z.object({
   })).default([]),
   assignTo: z.array(z.string()).default([]),
   isTemplate: z.boolean().default(true),
+  moonReward: z.number().min(0).default(1),
 });
 
 type AssignmentFormData = z.infer<typeof assignmentSchema>;
@@ -110,6 +111,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
       estimatedMinutes: 15,
       isTemplate: true,
       parentNotes: '',
+      moonReward: 1,
       ...initialData
   };
 
@@ -181,6 +183,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
            steps: data.steps, 
            links: data.links,
            worksheet_data: (initialData as any)?.worksheet_data || null,
+           moon_reward: data.moonReward,
         };
 
         if (initialData?.id) {
@@ -366,7 +369,7 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
              <Stack size={18} weight="duotone" color="#e7b58d" /> Resources & Tags
          </h3>
 
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
              <div>
                 <label className="input-label mb-2">Tags</label>
                 <TagInput
@@ -383,6 +386,17 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
                 <input
                    type="number"
                    {...register('estimatedMinutes', { valueAsNumber: true })}
+                   className="input w-full"
+                />
+             </div>
+             <div>
+                <label className="input-label mb-2 flex items-center gap-1">
+                   <Moon size={14} className="text-yellow-400" weight="fill" /> Moon Reward
+                </label>
+                <input
+                   type="number"
+                   min={0}
+                   {...register('moonReward', { valueAsNumber: true })}
                    className="input w-full"
                 />
              </div>

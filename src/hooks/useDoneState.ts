@@ -30,22 +30,21 @@ export function useDoneState(kidId: string, date: string, lessonId: string) {
     
     // Sync to BOTH localStorage AND database for cross-device visibility
     // lessonId here is actually the schedule_item.id when called from ScheduleItemCard
+    // This calls setScheduleItemDoneAction -> toggleScheduleItemComplete -> awardStars (on server)
     await setDone(kidId, date, lessonId, newState, lessonId);
 
-    // Award star if marking done for first time
-    if (newState) {
-      try {
-        // Call server action to award stars
-        const result = await awardStars(kidId, date, lessonId, 1);
-        
-        // Check and grant any new unlocks
-        if (result.newTotal) {
-          await checkAndGrantUnlocks(kidId, result.newTotal);
-        }
-      } catch (err) {
-        console.error('Error awarding stars:', err);
-      }
-    }
+    // No need to manually award stars here anymore, the server action does it!
+    // However, we might want to check for unlocks if we want immediate feedback
+    // effectively optimistically assuming success?
+    // For now, let's rely on the server action. But if we need the new total for unlocks...
+    
+    // Actually, we should probably fetch the new total if we want to trigger unlocks client-side
+    // OR, we can move checkAndGrantUnlocks to the server action too?
+    // checkAndGrantUnlocks IS in mutations.ts!
+    // But toggleScheduleItemComplete doesn't call it.
+    
+    // Let's add checkAndGrantUnlocks to toggleScheduleItemComplete later if needed.
+    // For now, the priority is fixing the star awarding.
   }, [done, kidId, date, lessonId]);
 
   return { done, toggle, isLoaded: true };

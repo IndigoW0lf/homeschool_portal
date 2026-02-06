@@ -64,6 +64,23 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
 
+    // Award moons if not skipped
+    if (!skipped && data) {
+       // Fetch kid's reward setting
+       const { data: kidSettings } = await supabase
+         .from('kids')
+         .select('journal_moon_reward')
+         .eq('id', kidId)
+         .single();
+       
+       const rewardAmount = kidSettings?.journal_moon_reward || 1;
+       
+       // Use our centralized mutation logic (need to import or duplicate simplified version)
+       // Since this is an API route, we can call the DB directly to award
+       const { awardStars } = await import('@/lib/supabase/mutations');
+       await awardStars(kidId, date, `journal-${date}`, rewardAmount);
+    }
+
     if (error) {
       console.error('[Journal Save] Database error:', error);
       return NextResponse.json(
