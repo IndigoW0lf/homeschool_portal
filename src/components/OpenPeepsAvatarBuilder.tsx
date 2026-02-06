@@ -214,7 +214,7 @@ export function OpenPeepsAvatarBuilder({
           {/* Current option preview */}
           <div className="flex flex-col items-center min-w-[120px]">
             <div 
-              className="w-28 h-36 flex items-center justify-center rounded-xl overflow-hidden"
+              className="w-28 h-48 flex items-center justify-center rounded-xl overflow-hidden"
               style={{
                 backgroundColor: state.backgroundColor === 'transparent' 
                   ? 'var(--paper-100)' 

@@ -94,6 +94,8 @@ const HEAD_MAP: Record<string, string> = {
   bear: 'Bear.svg',
   hatBeanie: 'hat-beanie.svg',
   hatHip: 'hat-hip.svg',
+  dreads1: 'Twists.svg',    // Mapping Dreads to Twists as fallback
+  dreads2: 'Twists 2.svg', // Mapping Dreads 2 to Twists 2
 };
 
 const ACCESSORIES_MAP: Record<string, string> = {
@@ -215,21 +217,24 @@ export function LocalOpenPeepsAvatar({
     : null;
 
   // Full body sizing - slightly larger container for more visible space
-  const aspectRatio = isSitting ? 1.5 : 1.7;  // Taller container = more space
+  // User requested "zoom out about 15% more and move it down a bit"
+  const aspectRatio = isSitting ? 1.6 : 1.8;  // Adjusted aspect ratio
   const containerHeight = size * aspectRatio;
   
-  // Head positioning - USE SAME VALUES for sitting and standing
-  // The user tuned these for standing, sitting was using bigger values
-  const headTop = '-1%';  // Reverted to original
-  const headHeight = '28%';  // Revert to 28%
-  const headWidth = '36%';   // Revert to 36%
-  const headLeft = '46%';    // Revert to 46%
+  // Head positioning - MOVED DOWN significantly and SCALED DOWN ~15%
+  const headTop = '8%';    // Moved down from -1%
+  const headHeight = '24%';  // Reduced from 28%
+  const headWidth = '30%';   // Reduced from 36%
+  const headLeft = '49%';    // Centered (relative to width)
   
-  // Face - same for both sitting and standing
-  const faceHeight = '15%';
-  const faceWidth = '20%';
-  const faceTop = '7.5%';
-  const faceLeft = '48.5%';
+  // Face - Scaled down and moved down matches head
+  const faceHeight = '13%'; // Reduced from 15%
+  const faceWidth = '17%';  // Reduced from 20%
+  const faceTop = '15%';    // Moved down from 7.5%
+  const faceLeft = '50.5%';   // Centered
+  
+  // Pose - Moved down
+  const poseTop = '30%';    // Moved down from 22%
 
   return (
     <div 
@@ -245,7 +250,7 @@ export function LocalOpenPeepsAvatar({
       {poseSrc && (
         <div 
           className="absolute inset-0"
-          style={{ top: '22%', left: isSitting ? '5%' : '-2%' }}  // Removed bottom extension
+          style={{ top: poseTop, left: isSitting ? '5%' : '-2%' }}
         >
           <Image
             src={poseSrc}

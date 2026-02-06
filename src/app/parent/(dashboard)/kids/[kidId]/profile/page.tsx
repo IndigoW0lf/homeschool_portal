@@ -2,9 +2,9 @@ import { createServerClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import { getKidSubjectCounts } from '@/lib/supabase/progressData';
 import { KidProfileEditor } from '@/components/kids/KidProfileEditor';
-import { AvatarPreview } from '@/components/kids/AvatarPreview';
 import { BadgeGallery } from '@/components/kids/BadgeGallery';
 import { FamilyConnections } from '@/components/kids/FamilyConnections';
+import { OpenPeepsAvatarBuilder } from '@/components/OpenPeepsAvatarBuilder';
 import Link from 'next/link';
 import { ArrowSquareOut } from '@phosphor-icons/react/dist/ssr';
 
@@ -39,8 +39,23 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
 
   if (error || !kid) notFound();
 
+  // Fetch unlocked avatar items
+  const { data: unlockedItems } = await supabase
+    .from('kid_avatar_items')
+    .select('item_category, item_id')
+    .eq('kid_id', kidId);
+
+  const unlockedItemIds = (unlockedItems || []).map(
+    (item: { item_category: string; item_id: string }) => 
+      `${item.item_category}:${item.item_id}`
+  );
+
   const subjectCounts = await getKidSubjectCounts(kidId);
   const displayName = kid.nickname || kid.name;
+
+  // Prepare initial avatar state
+  // Check if we have open_peeps_state, otherwise use default
+  const initialAvatarState = (kid as any).open_peeps_avatar_state || {};
 
   return (
     <div className="min-h-screen">
@@ -71,12 +86,18 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
       <div className="bg-[var(--background-elevated)] border-b border-[var(--border)]">
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
-            <AvatarPreview 
-              avatarState={kid.avatar_state}
-              size="lg"
-              fallbackName={displayName}
-              fallbackColor={kid.favorite_color}
-            />
+             {/* Use OpenPeepsBuilder in compact/preview mode if possible, 
+                 or just let it be the editor since parent demanded 'exact same' */}
+             {/* Actually, for header we usually want a small preview. 
+                 But the layout above had AvatarPreview + Title.
+                 I'll keep the Builder in the Main Content area as requested.
+                 For the Header, I'll remove the AvatarPreview since the Builder is right below?
+                 Or keep a static preview? 
+                 The static preview used AvatarPreview which is Blocky.
+                 I should probably not render a Blocky preview if they are using Open Peeps.
+                 For now, I'll just remove the preview from header or replace it with a profile icon.
+                 Actually, I'll just leave the text. 
+             */}
             <div>
               <h1 className="text-2xl font-bold text-[var(--foreground)]">
                 {displayName}'s Profile
@@ -93,28 +114,21 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         <KidProfileEditor kidId={kidId} initialData={kid} />
         
-        {/* Avatar Builder - Coming Soon */}
-        <div className="max-w-md mx-auto p-6 rounded-xl bg-gradient-to-r from-[var(--nebula-purple)]/10 to-[var(--nebula-pink)]/10 border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)]">
-          <div className="flex flex-col items-center text-center gap-4">
-            {/* Avatar preview */}
-            <AvatarPreview 
-              avatarState={kid.avatar_state}
-              size="lg"
-              fallbackName={displayName}
-              fallbackColor={kid.favorite_color}
-            />
-            <div>
-              <h3 className="font-semibold text-lg text-[var(--foreground)] mb-1">
-                ✨ Avatar Builder
-              </h3>
-              <p className="text-sm text-muted mb-3">
-                Coming soon! We're working on an awesome avatar creator.
-              </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--moon-200)] dark:bg-[var(--background-secondary)] text-muted rounded-lg font-medium cursor-not-allowed">
-                🚧 In Progress
-              </div>
-            </div>
-          </div>
+        {/* Avatar Builder (Replaces "Coming Soon") */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-[var(--foreground)] px-1">
+             Avatar Customization
+          </h3>
+          <p className="text-sm text-muted px-1 mb-2">
+            Customize {displayName}'s avatar including background color.
+          </p>
+          
+          <OpenPeepsAvatarBuilder
+            kidId={kidId}
+            initialState={initialAvatarState}
+            unlockedItems={unlockedItemIds}
+            compact={false} // Use full view as requested
+          />
         </div>
 
         {/* Family Connections */}
