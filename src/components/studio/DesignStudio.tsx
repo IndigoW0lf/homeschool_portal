@@ -511,6 +511,7 @@ export function DesignStudio({
             </div>
           </div>
         </>
+      )}
       
       {/* Tier Upgrade Modal */}
       <TierUpgradeModal
@@ -526,7 +527,6 @@ export function DesignStudio({
           window.location.reload();
         }}
       />
-      )}
     </div>
   );
 }

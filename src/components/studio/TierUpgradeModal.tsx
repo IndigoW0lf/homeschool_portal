@@ -1,7 +1,7 @@
 'use client';
 
 import { X, Sparkle } from '@phosphor-icons/react';
-import { type TierLimits } from '@/types/design-studio';
+import { type TierLimits, type DesignStudioTier } from '@/types/design-studio';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -10,7 +10,7 @@ interface TierUpgradeModalProps {
   onClose: () => void;
   kidId: string;
   currentTier: 1 | 2 | 3 | 4;
-  nextTier: 2 | 3 | 4 | null;
+  nextTier: DesignStudioTier | null;
   nextTierLimits: TierLimits | null;
   moonCost: number;
   currentMoonBalance: number;
