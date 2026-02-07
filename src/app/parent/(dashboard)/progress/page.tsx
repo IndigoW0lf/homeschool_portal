@@ -9,7 +9,7 @@ import { WorksheetResponseViewer } from '@/components/dashboard/WorksheetRespons
 import { LifeSkillsChart } from '@/components/dashboard/LifeSkillsChart';
 import { redirect } from 'next/navigation';
 import { ChartLineUp, GraduationCap, Notebook, Brain, Book } from '@phosphor-icons/react/dist/ssr';
-import { KidProgressSection, UnifiedActivityList, PrintLogGenerator, SubjectOverview, SubjectMasteryBadges, ActivityChart } from '@/components/progress';
+import { KidProgressSection, UnifiedActivityList, PrintLogGenerator, SubjectOverview, SubjectMasteryBadges, ActivityChart, HoursTracker } from '@/components/progress';
 import { ActivityLogWrapper } from '@/components/activity';
 
 
@@ -135,6 +135,9 @@ export default async function ProgressPage() {
                 average: s.average,
               })) || []}
             />
+
+            {/* School Hours Tracker */}
+            <HoursTracker kidId={kid.id} kidName={kid.name} />
 
             {/* Subject Mastery Badge Grid */}
             <SubjectMasteryBadges subjectCounts={stats.badgeSubjectCounts} />
