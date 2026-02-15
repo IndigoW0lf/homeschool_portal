@@ -5,6 +5,7 @@ import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { useFeedback } from '@/components/ui/FeedbackModal';
 import { 
   Sparkle, Clock, Link as LinkIcon, Plus, X, EyeClosed, Stack, Users, 
   ListNumbers, MagicWand, Books, PencilSimple, Spinner
@@ -63,6 +64,7 @@ interface ActivityFormProps {
 export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: ActivityFormProps = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const feedback = useFeedback();
   const isFromLuna = searchParams.get('from') === 'luna';
   const isFromQuickStart = searchParams.get('from') === 'quickstart';
   const shouldPrefill = isFromLuna || isFromQuickStart;
@@ -230,12 +232,10 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
       if (data.materials) setValue('materials', data.materials);
       if (data.estimatedMinutes) setValue('estimatedMinutes', data.estimatedMinutes);
 
-      toast.success('Activity generated!', {
-        description: 'Review and edit the content below.',
-      });
+      feedback.show({ type: 'success', title: 'Activity generated', message: 'Review and edit the content below.' });
     } catch (error) {
       console.error('Generation error:', error);
-      toast.error('Failed to generate activity. Please try again.');
+      feedback.show({ type: 'error', title: 'Generation failed', message: 'Please try again.' });
     } finally {
       setIsGenerating(false);
     }
@@ -290,14 +290,17 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           if (result.videoCount > 0) extras.push(`${result.videoCount} videos found`);
           
           if (data.date && data.assignTo.length > 0) {
-            toast.success('Activity Scheduled! 📅', {
-              description: `"${data.title}" added to calendar.${extras.length ? ' Plus: ' + extras.join(', ') : ''}`,
-              duration: 5000
+            feedback.show({
+              type: 'success',
+              title: 'Activity scheduled',
+              message: `"${data.title}" added to calendar.${extras.length ? ' Plus: ' + extras.join(', ') : ''}`,
             });
             router.push('/parent');
           } else {
-            toast.success('Activity Saved! 📚', {
-              description: extras.length ? `Plus: ${extras.join(', ')}` : 'You can schedule it later.'
+            feedback.show({
+              type: 'success',
+              title: 'Activity saved',
+              message: extras.length ? `Plus: ${extras.join(', ')}` : 'You can schedule it later.',
             });
           }
         }
@@ -307,8 +310,10 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
       }
     } catch (err) {
       console.error(err);
-      toast.error('Could not save activity.', {
-        description: err instanceof Error ? err.message : 'Please check your connection and try again.'
+      feedback.show({
+        type: 'error',
+        title: 'Could not save activity',
+        message: err instanceof Error ? err.message : 'Please check your connection and try again.',
       });
     } finally {
       setIsSubmitting(false);
@@ -534,7 +539,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
                       placeholder={`Step ${index + 1}...`}
                       className="flex-1 bg-[var(--background-elevated)] border border-[var(--border)] rounded-md py-1.5 px-2 text-sm"
                     />
-                    <button type="button" onClick={() => removeStep(index)} className="text-muted hover:text-red-500">
+                    <button type="button" onClick={() => removeStep(index)} className="text-muted hover:text-red-500" aria-label="Remove step">
                       <X size={14} />
                     </button>
                   </div>
@@ -639,7 +644,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
                   <LinkIcon size={14} className="text-teal-500" />
                   <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
                   <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
-                  <button type="button" onClick={() => removeLink(index)} className="text-muted hover:text-red-500"><X size={16} /></button>
+                  <button type="button" onClick={() => removeLink(index)} className="text-muted hover:text-red-500" aria-label="Remove link"><X size={16} /></button>
                 </div>
               ))}
             </div>

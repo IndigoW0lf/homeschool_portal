@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { Plus, Books, PencilSimple, File, FunnelSimple, PushPin, DotsSixVertical } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { Lesson, AssignmentItemRow } from '@/types';
-import { ActivityModal } from './ActivityModal';
 import { QuickStartPanel } from './QuickStartPanel';
 import { LunaraTitle } from '@/components/ui/LunaraTitle';
 import { 
@@ -136,21 +136,14 @@ export function ContentLibrary({
   onViewLesson,
   onViewAssignment 
 }: ContentLibraryProps) {
-  const [filter, setFilter] = useState<ContentType>('all');
-  const [showModal, setShowModal] = useState(false);
+  const [filter, setFilter] = useState<ContentType>('lesson');
+  const [reusableOnly, setReusableOnly] = useState(true);
   const [showQuickStart, setShowQuickStart] = useState(false);
 
-  // Combine and sort content
-  // We maintain local state for optimistic UI updates? 
-  // For now, simpler to just derive from props, but DND requires state.
-  // Actually, to support DND we must have local state that initializes from props.
-  // However, props update when strict mode runs or revalidation happens.
-  
   const mapToContentItem = (l: Lesson | AssignmentItemRow) => {
-     const isLesson = 'instructions' in l; // duck typing
+     const isLesson = 'instructions' in l;
      // eslint-disable-next-line @typescript-eslint/no-explicit-any
      const type = isLesson ? 'lesson' : (l as any).worksheet_data ? 'worksheet' : 'assignment';
-     
      return {
        id: l.id,
        title: l.title,
@@ -163,19 +156,35 @@ export function ContentLibrary({
      };
   };
 
-  const [localItems, setLocalItems] = useState<ContentItem[]>(() => {
-    const all = [
-      ...lessons.map(mapToContentItem),
-      ...assignments.map(mapToContentItem)
-    ];
-    // Initial sort: Pinned first, then display_order
-    return all.sort((a, b) => {
-      if (a.is_pinned === b.is_pinned) {
-        return (a.display_order || 0) - (b.display_order || 0);
-      }
+  // Apply "reusable only": pinned lessons + template assignments (things you reuse)
+  const baseItems = useMemo(() => {
+    const lessonItems = lessons
+      .filter(l => !reusableOnly || (l as unknown as { is_pinned?: boolean }).is_pinned)
+      .map(mapToContentItem);
+    const assignmentItems = assignments
+      .filter(a => !reusableOnly || a.is_template)
+      .map(mapToContentItem);
+    const all = [...lessonItems, ...assignmentItems].sort((a, b) => {
+      if (a.is_pinned === b.is_pinned) return (a.display_order || 0) - (b.display_order || 0);
       return a.is_pinned ? -1 : 1;
     });
-  });
+    return all;
+  }, [lessons, assignments, reusableOnly]);
+
+  const [localItems, setLocalItems] = useState<ContentItem[]>(() => baseItems);
+
+  // When baseItems changes (e.g. reusableOnly toggle or props refresh), sync list
+  useEffect(() => {
+    setLocalItems(prev => {
+      const byId = new Map(baseItems.map(i => [i.id, i]));
+      const next = prev.filter(i => byId.has(i.id)).map(i => byId.get(i.id)!);
+      const added = baseItems.filter(i => !prev.some(p => p.id === i.id));
+      return [...next, ...added].sort((a, b) => {
+        if (a.is_pinned === b.is_pinned) return (a.display_order || 0) - (b.display_order || 0);
+        return a.is_pinned ? -1 : 1;
+      });
+    });
+  }, [baseItems]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -196,7 +205,7 @@ export function ContentLibrary({
   // If we rely on props, the list snaps back until the server mutation returns.
   // So we use local state + server action.
 
-  const filteredItems = localItems.filter(c => filter === 'all' || c.type === filter);
+  const filteredItems = localItems.filter(c => c.type === filter);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -285,18 +294,15 @@ export function ContentLibrary({
         {/* Header */}
         <div className="card-header">
           <div className="flex items-center gap-3">
-            <LunaraTitle 
-              gradient="herbal-bloom" 
-              size="md"
-            >
-              Lessons
+            <LunaraTitle gradient="herbal-bloom" size="md">
+              Content Library
             </LunaraTitle>
           </div>
-          
-          {/* Filter Tabs */}
+
+          {/* Tabs: Lessons | Assignments | Worksheets */}
           <div className="flex items-center gap-2">
             <FunnelSimple size={16} className="text-muted" />
-            {(['all', 'lesson', 'assignment', 'worksheet'] as const).map(type => (
+            {(['lesson', 'assignment', 'worksheet'] as const).map(type => (
               <button
                 key={type}
                 onClick={() => setFilter(type)}
@@ -307,19 +313,30 @@ export function ContentLibrary({
                     : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)] hover:text-[var(--foreground)]"
                 )}
               >
-                {type === 'all' ? 'All' : type + 's'}
+                {type === 'lesson' ? 'Lessons' : type === 'worksheet' ? 'Worksheets' : 'Assignments'}
               </button>
             ))}
           </div>
 
-          {/* Create Button */}
-          <button
-            onClick={() => setShowModal(true)}
+          {/* Reusable only toggle */}
+          <label className="flex items-center gap-2 text-sm text-muted cursor-pointer whitespace-nowrap">
+            <input
+              type="checkbox"
+              checked={reusableOnly}
+              onChange={(e) => setReusableOnly(e.target.checked)}
+              className="rounded border-[var(--border)]"
+            />
+            Reusable only
+          </label>
+
+          {/* Create: go to full-page form (one place to create) */}
+          <Link
+            href="/parent/lessons"
             className="btn-primary flex items-center gap-2"
           >
             <Plus size={18} weight="bold" />
             New Activity
-          </button>
+          </Link>
         </div>
 
         {/* Quick Start Toggle */}
@@ -368,12 +385,6 @@ export function ContentLibrary({
         </div>
       </div>
 
-      {/* Unified Activity Modal */}
-      <ActivityModal 
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        kids={kids}
-      />
     </>
   );
 }

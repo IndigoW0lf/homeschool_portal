@@ -22,14 +22,14 @@ export function isDone(kidId: string, date: string, lessonId: string): boolean {
  * @param scheduleItemId - The schedule_items.id (NOT the lesson/assignment id)
  */
 export async function setDone(
-  kidId: string, 
-  date: string, 
-  itemId: string, 
+  kidId: string,
+  date: string,
+  itemId: string,
   done: boolean,
   scheduleItemId?: string // Optional - if provided, syncs to database
-): Promise<void> {
-  if (typeof window === 'undefined') return;
-  
+): Promise<{ moonsAwarded?: number } | undefined> {
+  if (typeof window === 'undefined') return undefined;
+
   // 1. Update localStorage immediately for instant UI feedback
   const key = getDoneKey(kidId, date, itemId);
   if (done) {
@@ -37,20 +37,22 @@ export async function setDone(
   } else {
     localStorage.removeItem(key);
   }
-  
+
   // 2. Sync to database if we have the schedule_item ID
   if (scheduleItemId) {
     try {
       const { setScheduleItemDoneAction } = await import('@/lib/actions/schedule');
-      await setScheduleItemDoneAction(scheduleItemId, done);
-      
+      const result = await setScheduleItemDoneAction(scheduleItemId, done);
+
       const status = done ? 'completed' : 'pending';
       console.log(`✅ Synced completion to DB: ${scheduleItemId} -> ${status}`);
+      return result.success && result.moonsAwarded != null ? { moonsAwarded: result.moonsAwarded } : undefined;
     } catch (err) {
       console.error('Failed to sync completion to database:', err);
       // Don't throw - local state is already updated, DB sync is best-effort
     }
   }
+  return undefined;
 }
 
 /**

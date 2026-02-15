@@ -386,7 +386,7 @@ export async function toggleScheduleItemComplete(id: string, isCompleted: boolea
 
   if (error) throw error;
 
-  // If completed, award variable stars/moons
+  let moonsAwarded: number | undefined;
   if (isCompleted && item) {
     let rewardAmount = 1;
 
@@ -400,6 +400,7 @@ export async function toggleScheduleItemComplete(id: string, isCompleted: boolea
     }
 
     const result = await awardStars(item.student_id, item.date, item.id, rewardAmount);
+    if (result.success) moonsAwarded = rewardAmount;
 
     // Check for unlocks
     if (result.success && result.newTotal) {
@@ -410,7 +411,7 @@ export async function toggleScheduleItemComplete(id: string, isCompleted: boolea
     await updateStreak(item.student_id, item.date);
   }
 
-  return item;
+  return { item, moonsAwarded };
 }
 
 // Deletes an item from the schedule

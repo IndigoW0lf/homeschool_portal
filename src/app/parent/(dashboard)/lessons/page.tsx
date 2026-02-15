@@ -1,4 +1,3 @@
-import { createServerClient } from '@/lib/supabase/server';
 import { ActivityForm } from '@/components/activities/ActivityForm';
 import { LessonViewer } from '@/components/lessons/LessonViewer';
 import { ArrowLeft } from '@phosphor-icons/react/dist/ssr';
@@ -15,13 +14,8 @@ export default async function LessonsPage({ searchParams }: PageProps) {
   // If viewing a lesson, fetch it
   let lesson = null;
   if (viewId) {
-    const supabase = await createServerClient();
-    const { data } = await supabase
-      .from('lesson_items')
-      .select('*')
-      .eq('id', viewId)
-      .single();
-    lesson = data;
+    const { getLessonByIdFromDB } = await import('@/lib/supabase/data');
+    lesson = await getLessonByIdFromDB(viewId) ?? null;
   }
 
   return (
@@ -32,11 +26,11 @@ export default async function LessonsPage({ searchParams }: PageProps) {
           <>
             <div className="mb-6">
               <Link 
-                href="/parent/progress" 
+                href="/parent" 
                 className="inline-flex items-center gap-2 text-sm link mb-3 transition-colors"
               >
                 <ArrowLeft size={16} weight="bold" />
-                Back to Progress
+                Back to Dashboard
               </Link>
               <h1 className="heading-lg">
                 {lesson.title}
@@ -55,17 +49,25 @@ export default async function LessonsPage({ searchParams }: PageProps) {
           <div className="text-center py-12">
             <p className="text-muted">Lesson not found</p>
             <Link 
-              href="/parent/progress"
+              href="/parent"
               className="link mt-2 inline-block"
             >
-              Return to Progress
+              Back to Dashboard
             </Link>
           </div>
         ) : (
-          // Create Mode - Activity form
-          <div className="card-elevated p-6">
-            <ActivityForm />
-          </div>
+          // Create / edit list - Activity form (one place for new lessons, assignments, worksheets)
+          <>
+            <div className="mb-6">
+              <h1 className="heading-lg">Create Activity</h1>
+              <p className="text-muted text-sm mt-1">
+                Add a lesson, assignment, or worksheet. Schedule it to a day and assign to kids.
+              </p>
+            </div>
+            <div className="card-elevated p-6">
+              <ActivityForm />
+            </div>
+          </>
         )}
       </div>
     </div>

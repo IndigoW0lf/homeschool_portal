@@ -1,6 +1,7 @@
 'use client';
 
 import { useDoneState } from '@/hooks/useDoneState';
+import { useFeedback } from '@/components/ui/FeedbackModal';
 
 interface DoneToggleProps {
   kidId: string;
@@ -10,10 +11,24 @@ interface DoneToggleProps {
 
 export function DoneToggle({ kidId, date, lessonId }: DoneToggleProps) {
   const { done, toggle, isLoaded } = useDoneState(kidId, date, lessonId);
+  const feedback = useFeedback();
+
+  const handleClick = () => {
+    toggle().then((res) => {
+      if (res?.moonsAwarded) {
+        const n = res.moonsAwarded;
+        feedback.show({
+          type: 'success',
+          title: `You earned ${n} moon${n !== 1 ? 's' : ''}!`,
+          message: '',
+        });
+      }
+    });
+  };
 
   return (
     <button
-      onClick={toggle}
+      onClick={handleClick}
       disabled={!isLoaded}
       className={`
         flex-shrink-0 w-12 h-12 rounded-full border-2 flex items-center justify-center

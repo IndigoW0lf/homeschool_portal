@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Quicksand, Macondo } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'sonner';
+import { FeedbackProvider } from '@/components/ui/FeedbackModal';
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -46,8 +47,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className={`${quicksand.className} antialiased`} suppressHydrationWarning>
-        {children}
-        <Toaster 
+        <FeedbackProvider>
+          {children}
+          <Toaster 
           richColors 
           position="top-center" 
           theme="light"
@@ -64,6 +66,7 @@ export default function RootLayout({
             className: 'cute-toast',
           }}
         />
+        </FeedbackProvider>
       </body>
     </html>
   );

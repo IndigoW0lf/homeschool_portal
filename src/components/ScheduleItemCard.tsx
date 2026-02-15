@@ -2,6 +2,7 @@
 
 import { DoneToggle } from './DoneToggle';
 import { useDoneState } from '@/hooks/useDoneState';
+import { useFeedback } from '@/components/ui/FeedbackModal';
 import { CalendarDots } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +23,8 @@ interface ScheduleItemCardProps {
 
 export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClick }: ScheduleItemCardProps) {
   const { done, toggle: markDone } = useDoneState(kidId, date, item.id);
-  
+  const feedback = useFeedback();
+
   // Format date for display
   const formattedDate = showDate ? new Date(date + 'T00:00:00').toLocaleDateString('en-US', {
     weekday: 'short',
@@ -30,16 +32,23 @@ export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClic
     day: 'numeric'
   }) : null;
 
+  const showMoonsIfAwarded = (res: { moonsAwarded?: number } | undefined) => {
+    if (res?.moonsAwarded) {
+      const n = res.moonsAwarded;
+      feedback.show({ type: 'success', title: `You earned ${n} moon${n !== 1 ? 's' : ''}!`, message: '' });
+    }
+  };
+
   // Auto-mark as done when card is clicked (not just the toggle button)
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger if clicking buttons, links, inputs, or labels
     if ((e.target as HTMLElement).closest('button, a, input, label')) return;
-    
+
     // Auto-mark as done if not already done (skip if readOnly)
     if (!done && !readOnly) {
-      markDone();
+      markDone().then(showMoonsIfAwarded);
     }
-    
+
     // Open the modal
     onClick?.();
   };

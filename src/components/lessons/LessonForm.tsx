@@ -5,6 +5,7 @@ import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { useFeedback } from '@/components/ui/FeedbackModal';
 import { BookOpen, Clock, Link, Plus, X, EyeClosed, Question, Stack, Users, MagicWand, Spinner, Sparkle, Link as LinkIcon } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS } from '@/lib/mock-data';
@@ -58,6 +59,7 @@ interface LessonFormProps {
 export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: propStudents = [] }: LessonFormProps = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const feedback = useFeedback();
   const isFromLuna = searchParams.get('from') === 'luna';
   const isFromQuickStart = searchParams.get('from') === 'quickstart';
   const shouldPrefill = isFromLuna || isFromQuickStart;
@@ -218,9 +220,9 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
       });
 
       setRefinementFeedback('');
-      toast.success('Lesson refined! Review the changes below.');
+      feedback.show({ type: 'success', title: 'Lesson refined', message: 'Review the changes below.' });
     } catch {
-      toast.error('Failed to refine. Please try again.');
+      feedback.show({ type: 'error', title: 'Refine failed', message: 'Please try again.' });
     } finally {
       setIsRefining(false);
     }
@@ -313,30 +315,26 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
         } else {
           // Fallback feedback if used standalone
           if (savedId && data.date && data.assignTo.length > 0) {
-             toast.success('Lesson Scheduled! 📅', {
-               description: `"${data.title}" added to calendar for ${data.date}.`,
-               duration: 4000
-             });
+             feedback.show({ type: 'success', title: 'Lesson scheduled', message: `"${data.title}" added to calendar for ${data.date}.` });
           } else if (savedId && data.date) {
              toast.warning('Lesson Saved, but NOT Scheduled', {
                description: 'You selected a date but no students. Please edit to assign.',
                duration: 5000
              });
           } else {
-             toast.success('Lesson Saved to Library! 📚', {
-               description: 'You can schedule it later from the details page.'
-             });
+             feedback.show({ type: 'success', title: 'Lesson saved', message: 'Saved to library. You can schedule it later from the details page.' });
           }
         }
      } catch (err) {
         console.error(err);
         const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         const isDescriptionError = errorMessage.toLowerCase().includes('description') || errorMessage.toLowerCase().includes('instructions');
-        
-        toast.error('Could not save lesson', {
-           description: isDescriptionError 
-              ? 'AI features require a description. Please add one or uncheck the AI options.'
-              : 'Please check your connection and try again.'
+        feedback.show({
+          type: 'error',
+          title: 'Could not save lesson',
+          message: isDescriptionError
+            ? 'AI features require a description. Please add one or uncheck the AI options.'
+            : 'Please check your connection and try again.',
         });
      }
   };
@@ -523,7 +521,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
                            className="input-sm flex-1"
                            placeholder="e.g. What is the numerator?"
                         />
-                        <button type="button" onClick={() => removeQuestion(index)} className="text-muted hover:text-red-400">
+                        <button type="button" onClick={() => removeQuestion(index)} className="text-muted hover:text-red-400" aria-label="Remove question">
                            <X size={14} />
                         </button>
                      </div>
@@ -654,7 +652,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
                       <input {...register(`links.${index}.label`)} placeholder="Label" className="flex-1 min-w-[120px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
                        <input {...register(`links.${index}.url`)} placeholder="URL" className="flex-1 min-w-[150px] p-1.5 text-sm rounded border border-[var(--border)] bg-[var(--background-elevated)]" />
                        {/* Link Type removed from schema for now to fix errors */}
-                      <button type="button" onClick={() => removeLink(index)} className="text-muted hover:text-red-500"><X size={16} /></button>
+                      <button type="button" onClick={() => removeLink(index)} className="text-muted hover:text-red-500" aria-label="Remove link"><X size={16} /></button>
                    </div>
                 ))}
              </div>

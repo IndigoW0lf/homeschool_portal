@@ -1,8 +1,9 @@
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { HolidayManager } from '@/components/dashboard/HolidayManager';
+import { TodaySection } from '@/components/dashboard/TodaySection';
 import { WeeklyProgressChart } from '@/components/dashboard/WeeklyProgressChart';
 import { RedemptionManager } from '@/components/profile/RedemptionManager';
-import { getLessonsFromDB, getAssignmentItemsFromDB, getResourcesFromDB, getKidsFromDB, getScheduleItemsFromDB, getHolidaysFromDB } from '@/lib/supabase/data';
+import { getLessonsFromDB, getAssignmentItemsFromDB, getResourcesFromDB, getKidsFromDB, getScheduleItemsFromDB, getHolidaysFromDB, getTodaySummaryForParent, getTimezoneForKid } from '@/lib/supabase/data';
 import { startOfWeek, endOfWeek, format } from 'date-fns';
 
 export const dynamic = 'force-dynamic';
@@ -17,6 +18,18 @@ export default async function ParentDashboard() {
     getHolidaysFromDB()
   ]);
 
+  const timezone = kids.length > 0 ? await getTimezoneForKid(kids[0].id) : 'America/Chicago';
+  const todaySummaries = await getTodaySummaryForParent(
+    kids.map((k) => ({ id: k.id, name: k.name })),
+    timezone
+  );
+  const todayLabel = new Date().toLocaleDateString('en-US', {
+    timeZone: timezone,
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+  });
+
   // Filter schedule items to only THIS week
   const now = new Date();
   const weekStart = startOfWeek(now, { weekStartsOn: 1 }); // Monday
@@ -30,6 +43,8 @@ export default async function ParentDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-6">
+
+      <TodaySection summaries={todaySummaries} todayLabel={todayLabel} />
 
       <DashboardOverview 
         lessons={lessons}

@@ -16,10 +16,10 @@ export async function setScheduleItemDoneAction(
      // Use the centralized mutation which handles auth (Parent vs Kid) AND awards stars/moons
      const { toggleScheduleItemComplete } = await import('@/lib/supabase/mutations');
      
-     await toggleScheduleItemComplete(scheduleItemId, done);
+     const { moonsAwarded } = await toggleScheduleItemComplete(scheduleItemId, done);
      
-     revalidatePath('/kids/[kidId]'); 
-     return { success: true };
+     revalidatePath('/kids/[kidId]');
+     return { success: true, moonsAwarded };
 
   } catch (error) {
     console.error('Update schedule item failed:', error);

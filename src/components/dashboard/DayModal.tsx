@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { X, CheckCircle, Circle, Plus, Copy, Sparkle, Trash, DotsSixVertical, PencilSimple, BookOpen, Timer, Question, Tag, ListBullets, CaretLeft, LinkSimple, ArrowSquareOut } from '@phosphor-icons/react';
+import { useFeedback } from '@/components/ui/FeedbackModal';
+import { X, CheckCircle, Circle, Plus, Copy, Sparkle, Trash, DotsSixVertical } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
+import { ItemDetailView, ItemDetailHeader } from './ItemDetailView';
 import { toggleScheduleItemComplete, deleteScheduleItemAction, assignItemToSchedule } from '@/lib/supabase/mutations';
 import { Kid, Lesson, AssignmentItemRow, ScheduleDisplayItem } from '@/types';
 
@@ -24,6 +26,7 @@ interface DayModalProps {
 export function DayModal({ date, isOpen, onClose, schedule = [], students = [], lessons = [], assignments = [], filterStudentId = null }: DayModalProps) {
 
   const router = useRouter();
+  const feedback = useFeedback();
   const [activeVariationId, setActiveVariationId] = useState<string | null>(null);
   const [variationText, setVariationText] = useState('');
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -86,17 +89,17 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
     e.stopPropagation();
     
     toast('Remove from schedule?', {
-      description: 'This will remove the item from this day\'s playlist.',
+      description: "This will remove the item from this day's playlist.",
       action: {
         label: 'Remove',
         onClick: async () => {
           try {
             await deleteScheduleItemAction(id);
-            toast.success('Removed! 🗑️', { description: 'Item removed from schedule.' });
+            feedback.show({ type: 'success', title: 'Removed', message: 'Item removed from schedule.' });
             router.refresh();
           } catch (err) {
             console.error(err);
-            toast.error('Failed to remove item');
+            feedback.show({ type: 'error', title: 'Failed to remove item', message: 'Please try again.' });
           }
         }
       },
@@ -125,15 +128,13 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
           .map(s => s.name)
           .join(' & ');
         
-        toast.success('Added to Schedule! 📅', {
-           description: `"${item.title}" added for ${kidNames}.`
-        });
+        feedback.show({ type: 'success', title: 'Added to schedule', message: `"${item.title}" added for ${kidNames}.` });
         
         setPickerType(null); // return to list
         router.refresh();
      } catch (err) {
         console.error(err);
-        toast.error('Could not schedule item');
+        feedback.show({ type: 'error', title: 'Could not schedule item', message: 'Please try again.' });
      }
   };
 
@@ -155,266 +156,23 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
              </h2>
              <p className="text-sm text-muted">Day Plan & Playlist</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-full transition-colors">
+          <button type="button" onClick={onClose} className="p-2 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-800)] rounded-full transition-colors" aria-label="Close">
             <X size={24} className="text-muted" />
           </button>
         </div>
 
-         {/* Scrollable Playlist OR Picker OR Item Detail */}
-         <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[var(--background-secondary)]/50 dark:bg-black/20">
-           
-           {viewingItem ? (
-              /* Item Detail View */
-              <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-                 {(() => {
-                    // Resolve full item details from the props based on the ID in the viewingItem
-                    const itemId = viewingItem.itemId || viewingItem.id || viewingItem.lesson_id || viewingItem.assignment_id;
-                    const itemType = viewingItem.itemType || viewingItem.type;
-                    
-                    const fullItem = itemType === 'lesson' 
-                       ? lessons.find(l => l.id === itemId)
-                       : assignments.find(a => a.id === itemId);
-                       
-                    // Use full item if found, otherwise fall back to the partial details we have
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const detailData: any = fullItem || viewingItem.details || viewingItem;
-                    
-                    // Helper to safely get array (handles JSONB that might come as string via some paths, though types say typed)
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const safeArray = (arr: any) => {
-                       if (!arr) return [];
-                       if (Array.isArray(arr)) return arr;
-                       try { return JSON.parse(arr); } catch { return []; }
-                    };
-
-                    // For lessons, instructions might be JSON
-                    let description = detailData.description;
-                    let safeQuestions = safeArray(detailData.keyQuestions || detailData.key_questions);
-                    let safeLinks = safeArray(detailData.links);
-                    
-                    if (itemType === 'lesson' && detailData.instructions) {
-                       // Try to parse instructions if description is missing
-                       if (!description) {
-                          try {
-                             const parsed = JSON.parse(detailData.instructions);
-                             if (parsed.description) description = parsed.description;
-                             if (!safeQuestions.length && parsed.keyQuestions) safeQuestions = parsed.keyQuestions;
-                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                             if (!safeLinks.length && parsed.links) safeLinks = parsed.links.map((l: any) => ({ label: l.label, url: l.url }));
-                          } catch {
-                             // Plain text instructions treat as description
-                             description = detailData.instructions;
-                          }
-                       }
-                    }
-
-                    return (
-                    <>
-                 <div className="flex items-center gap-2 mb-4">
-                    <button onClick={() => setViewingItem(null)} className="p-1.5 hover:bg-[var(--background-secondary)] dark:hover:bg-[var(--night-700)] rounded-full transition-colors">
-                       <CaretLeft size={20} weight="bold" className="text-muted" />
-                    </button>
-                    <h3 className="font-bold text-lg flex-1 text-heading">{itemType === 'lesson' ? 'Lesson' : 'Assignment'} Details</h3>
-                    <button 
-                       onClick={() => {
-                          // Navigate to edit page
-                          const editPath = itemType === 'lesson' 
-                             ? `/parent/lessons/${itemId}` 
-                             : `/parent/assignments/${itemId}`;
-                          router.push(editPath);
-                       }}
-                       className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-[var(--foreground)] rounded-lg text-sm font-medium transition-colors"
-                    >
-                       <PencilSimple size={16} weight="bold" />
-                       Edit
-                    </button>
-                 </div>
-                 
-                 {/* Item Title Card */}
-                 <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                    <div className="flex items-start gap-3">
-                       <div className={cn(
-                          "w-10 h-10 rounded-lg flex items-center justify-center",
-                          itemType === 'lesson' 
-                             ? "bg-[var(--celestial-400)]/20 dark:bg-[var(--celestial-900)]/30 text-[var(--celestial-500)]" 
-                             : "bg-[var(--nebula-purple)]/20 dark:bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
-                       )}>
-                          <BookOpen size={22} weight="duotone" />
-                       </div>
-                       <div className="flex-1">
-                          <span className={cn(
-                             "text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mb-1 inline-block",
-                             itemType === 'lesson' ? "bg-[var(--celestial-400)]/20 text-[var(--celestial-500)]" : "bg-[var(--nebula-purple)]/20 text-[var(--nebula-purple)]"
-                          )}>
-                             {detailData.type || viewingItem.type || itemType}
-                          </span>
-                          <h2 className="text-xl font-bold text-heading">{detailData.title || viewingItem.title || 'Untitled'}</h2>
-                          <div className="flex items-center gap-3 mt-2 text-sm text-muted">
-                             <span className="flex items-center gap-1">
-                                <Timer size={14} weight="duotone" />
-                                {detailData.estimatedMinutes || detailData.estimated_minutes || viewingItem.estimatedMinutes || 20} mins
-                             </span>
-                          </div>
-                       </div>
-                    </div>
-                 </div>
-                 
-                 {/* Details Section */}
-                 <div className="space-y-4">
-                       
-                       {/* Description */}
-                       {description && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading mb-2">Description</h3>
-                             <div className="text-heading dark:text-muted prose prose-sm max-w-none">
-                                {description.split('\n').map((line: string, i: number) => (
-                                   <p key={i} className="mb-1 last:mb-0">{line}</p>
-                                ))}
-                             </div>
-                          </div>
-                       )}
-
-                       {/* Key Questions (for lessons) */}
-                       {safeQuestions.length > 0 && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
-                                <Question size={18} weight="duotone" className="text-[var(--ember-500)]" />
-                                Key Questions
-                             </h3>
-                             <ul className="space-y-2">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                {safeQuestions.map((q: any, i: number) => (
-                                   <li key={i} className="flex items-start gap-2 text-heading dark:text-muted">
-                                      <span className="text-[var(--ember-500)] font-bold">{i + 1}.</span>
-                                      <span>{typeof q === 'string' ? q : q.text}</span>
-                                   </li>
-                                ))}
-                             </ul>
-                          </div>
-                       )}
-                       
-                       {/* Steps (for assignments) */}
-                       {detailData.steps && safeArray(detailData.steps).length > 0 && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
-                                <ListBullets size={18} weight="duotone" className="text-[var(--fabric-lilac)]" />
-                                Steps
-                             </h3>
-                             <ul className="space-y-2">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                {safeArray(detailData.steps).map((step: any, i: number) => (
-                                   <li key={i} className="flex items-start gap-2 text-heading dark:text-muted">
-                                      <span className="text-[var(--fabric-lilac)] font-bold">{i + 1}.</span>
-                                      <span>{typeof step === 'string' ? step : step.text}</span>
-                                   </li>
-                                ))}
-                             </ul>
-                          </div>
-                       )}
-                       
-                       {/* Rubric (Success Criteria) for Assignments */}
-                       {detailData.rubric && safeArray(detailData.rubric).length > 0 && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
-                                <CheckCircle size={18} weight="duotone" className="text-[var(--herbal-500)]" />
-                                Success Criteria
-                             </h3>
-                             <ul className="space-y-2">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                {safeArray(detailData.rubric).map((item: any, i: number) => (
-                                   <li key={i} className="flex items-center gap-2 text-heading dark:text-muted">
-                                      <div className="w-4 h-4 rounded-sm border-2 border-[var(--border)] dark:border-[var(--border)]"></div>
-                                      <span>{typeof item === 'string' ? item : item.text}</span>
-                                   </li>
-                                ))}
-                             </ul>
-                          </div>
-                       )}
-
-                       {/* Deliverable (for assignments) */}
-                       {detailData.deliverable && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading mb-2">Expected Deliverable</h3>
-                             <p className="text-heading dark:text-muted">{detailData.deliverable}</p>
-                          </div>
-                       )}
-                       
-                       {/* Materials (for lessons) */}
-                       {detailData.materials && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading mb-2">Materials Needed</h3>
-                             <p className="text-heading dark:text-muted">{detailData.materials}</p>
-                          </div>
-                       )}
-
-                       {/* Links/Resources */}
-                       {safeLinks.length > 0 && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading mb-2">Links & Resources</h3>
-                             <div className="flex flex-col gap-2">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                {safeLinks.map((link: any, i: number) => (
-                                   <a 
-                                      key={i}
-                                      href={link.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer" 
-                                      className="flex items-center gap-3 p-3 rounded-lg bg-[var(--background-secondary)] dark:bg-[var(--background-secondary)]/50 hover:bg-[var(--hover-overlay)] transition-colors group"
-                                   >
-                                      <div className="w-8 h-8 rounded-lg bg-[var(--fabric-mint)]/20 text-[var(--fabric-mint)] flex items-center justify-center">
-                                         <LinkSimple size={16} weight="bold" />
-                                      </div>
-                                      <span className="flex-1 font-medium text-[var(--celestial-500)] dark:text-[var(--celestial-400)] group-hover:underline">
-                                         {link.label || link.url}
-                                      </span>
-                                      <ArrowSquareOut size={16} className="text-muted group-hover:text-[var(--celestial-500)]" />
-                                   </a>
-                                ))}
-                             </div>
-                          </div>
-                       )}
-                       
-                       {/* Tags */}
-                       {detailData.tags && safeArray(detailData.tags).length > 0 && (
-                          <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] p-5 shadow-sm">
-                             <h3 className="font-semibold text-heading flex items-center gap-2 mb-3">
-                                <Tag size={18} weight="duotone" className="text-[var(--fabric-mint)]" />
-                                Tags
-                             </h3>
-                             <div className="flex flex-wrap gap-2">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                {safeArray(detailData.tags).map((tag: any, i: number) => (
-                                   <span key={i} className="px-2 py-1 text-xs font-medium bg-[var(--background-secondary)] text-muted dark:text-muted rounded-full">
-                                      {tag}
-                                   </span>
-                                ))}
-                             </div>
-                          </div>
-                       )}
-                       
-                       {/* Parent Notes */}
-                       {(detailData.parent_notes || detailData.parentNotes) && (
-                          <div className="bg-[var(--solar-50)] dark:bg-[var(--solar-900)]/20 rounded-xl border border-[var(--solar-100)] dark:border-[var(--solar-900)]/30 p-5">
-                             <h3 className="font-semibold text-[var(--solar-800)] dark:text-[var(--solar-300)] mb-2">🔒 Parent Notes</h3>
-                             <p className="text-[var(--solar-700)] dark:text-[var(--solar-200)] text-sm">{detailData.parent_notes || detailData.parentNotes}</p>
-                          </div>
-                       )}
-                    </div>
-                 
-                 {/* No details message - fallback if really empty */}
-                 {!detailData.details && !description && !safeQuestions.length && !detailData.steps &&  (
-                    <div className="text-center py-10 text-muted">
-                       <p>No additional details available for this item.</p>
-                    </div>
-                 )}
-                 </>
-                 );
-                 })()}
-              </div>
-           ) : pickerType ? (
+         {/* Two-panel: list/picker left, item detail right when viewing */}
+         <div className="flex-1 flex min-h-0">
+           {/* Left: playlist or picker */}
+           <div className={cn(
+             "flex flex-col overflow-y-auto bg-[var(--background-secondary)]/50 dark:bg-black/20",
+             viewingItem ? "w-full md:w-[40%] md:min-w-[240px] md:border-r md:border-[var(--border)]" : "w-full"
+           )}>
+             <div className="p-4 md:p-6 space-y-4">
+           {pickerType ? (
               <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
                  <div className="flex items-center gap-2 mb-4">
-                    <button onClick={() => setPickerType(null)} className="p-1 hover:bg-[var(--background-secondary)] rounded-full">
+                    <button type="button" onClick={() => setPickerType(null)} className="p-1 hover:bg-[var(--background-secondary)] rounded-full" aria-label="Back to playlist">
                        <X size={20} />
                     </button>
                     <h3 className="font-bold text-lg flex-1">Select {pickerType === 'lesson' ? 'Lesson' : 'Assignment'}</h3>
@@ -479,7 +237,7 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                      {!filterStudentId && students.length > 1 && (
                         <div className="flex items-center gap-2 pt-2 pb-1">
                            <StudentAvatar name={student.name} className="w-6 h-6 text-[10px]" />
-                           <span className="font-semibold text-sm text-muted">{student.name}'s Tasks</span>
+                           <span className="font-semibold text-sm text-muted">{student.name}&apos;s Tasks</span>
                            <div className="flex-1 h-px bg-[var(--background-secondary)]" />
                         </div>
                      )}
@@ -532,25 +290,19 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                                          const remaining = studentItems.filter((i: any) => i.id !== item.id && (!i.status || i.status === 'pending')).length;
                                          
                                          if (remaining === 0) {
-                                            toast.success('High Five! 🙌', {
-                                               description: `${student.name} finished everything for today!`,
-                                               duration: 5000,
-                                               action: {
-                                                  label: 'Close',
-                                                  onClick: () => onClose()
-                                               }
+                                            feedback.show({
+                                              type: 'success',
+                                              title: 'High five!',
+                                              message: `${student.name} finished everything for today!`,
                                             });
                                          } else {
-                                            toast.success('Good job! 🌟', {
-                                               description: 'Item marked as complete.',
-                                               duration: 2000
-                                            });
+                                            feedback.show({ type: 'success', title: 'Good job!', message: 'Item marked as complete.' });
                                          }
                                       }
                                       router.refresh();
                                    } catch (e) {
                                       console.error('Error toggling completion:', e);
-                                      toast.error('Could not update status');
+                                      feedback.show({ type: 'error', title: 'Could not update status', message: 'Please try again.' });
                                    }
                                 }} 
                                 className={cn("cursor-pointer transition-colors", item.status === 'completed' ? "text-[var(--herbal-500)]" : "text-muted hover:text-muted")}
@@ -646,8 +398,10 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                             <span className="text-xs opacity-70">From Library</span>
                          </button>
                          <button 
+                            type="button"
                             onClick={() => setShowAddMenu(false)}
                             className="absolute -top-3 -right-3 p-1.5 bg-[var(--background-secondary)] rounded-full text-muted hover:bg-[var(--moon-200)]"
+                            aria-label="Close add menu"
                          >
                             <X size={14} />
                          </button>
@@ -656,7 +410,31 @@ export function DayModal({ date, isOpen, onClose, schedule = [], students = [], 
                 </div>
              </>
            )}
- 
+             </div>
+           </div>
+
+           {/* Right panel: item detail (same component as library modal) */}
+           {viewingItem && (() => {
+             const itemId = viewingItem.itemId || viewingItem.id || (viewingItem as ScheduleDisplayItem).lesson_id || (viewingItem as ScheduleDisplayItem).assignment_id;
+             const itemType = ((viewingItem.itemType || viewingItem.type) || 'lesson') as 'lesson' | 'assignment';
+             const fullItem = itemType === 'lesson'
+               ? lessons.find(l => l.id === itemId)
+               : assignments.find(a => a.id === itemId);
+             return (
+               <div className="flex-1 overflow-y-auto p-4 md:p-6 border-l border-[var(--border)] bg-[var(--background-elevated)]/30">
+                 <ItemDetailHeader
+                   item={fullItem || null}
+                   itemType={itemType}
+                   onEdit={() => router.push(itemType === 'lesson' ? `/parent/lessons/${itemId}` : `/parent/assignments/${itemId}`)}
+                   onBack={() => setViewingItem(null)}
+                   compact
+                 />
+                 <div className="mt-4">
+                   <ItemDetailView item={fullItem || null} itemType={itemType} compact />
+                 </div>
+               </div>
+             );
+           })()}
          </div>
       </div>
     </div>

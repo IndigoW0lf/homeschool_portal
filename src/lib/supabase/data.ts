@@ -1,6 +1,6 @@
 import { createServerClient } from './server';
 import { Kid, Lesson, CalendarEntry, Resources } from '@/types';
-import { formatDateString } from '../dateUtils';
+import { formatDateString, getTodayInTimezone } from '../dateUtils';
 import type { Profile } from '@/types';
 
 // User Profile
@@ -630,6 +630,85 @@ export async function getUpcomingHolidaysFromDB(limit = 5): Promise<import('@/ty
     startDate: row.start_date,
     endDate: row.end_date,
   }));
+}
+
+/** Per-kid summary for parent "Today" view: today's items, weekly totals, recent completions */
+export interface TodayKidSummary {
+  kidId: string;
+  kidName: string;
+  todayItems: Array<{ id: string; title: string; type: string; status: string; estimatedMinutes?: number }>;
+  thisWeekCompleted: number;
+  thisWeekMoons: number;
+  recentCompletions: Array<{ title: string; date: string }>;
+}
+
+export async function getTodaySummaryForParent(
+  kids: Array<{ id: string; name: string }>,
+  timezone: string = DEFAULT_TIMEZONE
+): Promise<TodayKidSummary[]> {
+  if (kids.length === 0) return [];
+
+  const { startOfWeek, endOfWeek } = await import('date-fns');
+  const now = new Date();
+  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
+  const weekStartStr = formatDateString(weekStart);
+  const weekEndStr = formatDateString(weekEnd);
+  const todayStr = getTodayInTimezone(timezone);
+
+  const supabase = await createServerClient();
+  const results: TodayKidSummary[] = [];
+
+  for (const kid of kids) {
+    const [todaySchedule, weekItems, weekAwards, recent] = await Promise.all([
+      getScheduleItemsForStudent(kid.id, todayStr, todayStr),
+      supabase
+        .from('schedule_items')
+        .select('id, date, status, lesson:lessons!schedule_items_lesson_id_fkey(title), assignment:assignment_items(title)')
+        .eq('student_id', kid.id)
+        .gte('date', weekStartStr)
+        .lte('date', weekEndStr),
+      supabase
+        .from('progress_awards')
+        .select('stars_earned')
+        .eq('kid_id', kid.id)
+        .gte('date', weekStartStr)
+        .lte('date', weekEndStr),
+      supabase
+        .from('schedule_items')
+        .select('date, title_override, lesson:lessons!schedule_items_lesson_id_fkey(title), assignment:assignment_items(title)')
+        .eq('student_id', kid.id)
+        .eq('status', 'completed')
+        .not('completed_at', 'is', null)
+        .order('completed_at', { ascending: false })
+        .limit(5)
+    ]);
+
+    const weekRows = weekItems.data || [];
+    const thisWeekCompleted = weekRows.filter((r: { status: string }) => r.status === 'completed').length;
+    const thisWeekMoons = (weekAwards.data || []).reduce((sum: number, r: { stars_earned?: number }) => sum + (r.stars_earned ?? 0), 0);
+    const recentCompletions = (recent.data || []).map((r: { date: string; title_override?: string; lesson?: { title?: string }; assignment?: { title?: string } }) => ({
+      title: r.title_override || r.lesson?.title || r.assignment?.title || 'Activity',
+      date: r.date
+    }));
+
+    results.push({
+      kidId: kid.id,
+      kidName: kid.name,
+      todayItems: todaySchedule.map(item => ({
+        id: item.id,
+        title: item.title,
+        type: item.type,
+        status: item.status,
+        estimatedMinutes: item.estimatedMinutes
+      })),
+      thisWeekCompleted,
+      thisWeekMoons,
+      recentCompletions
+    });
+  }
+
+  return results;
 }
 
 
