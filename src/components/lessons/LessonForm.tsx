@@ -5,7 +5,7 @@ import { useForm, useFieldArray, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
-import { BookOpen, Clock, Link, Plus, X, EyeClosed, Question, Stack, Users, MagicWand, Spinner } from '@phosphor-icons/react';
+import { BookOpen, Clock, Link, Plus, X, EyeClosed, Question, Stack, Users, MagicWand, Spinner, Sparkle, Link as LinkIcon } from '@phosphor-icons/react';
 import { TagInput } from '@/components/ui/TagInput';
 import { TAGS } from '@/lib/mock-data';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
@@ -68,6 +68,10 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
   const [studentsLoading, setStudentsLoading] = useState(propStudents.length === 0);
   // Track if we've already fetched to prevent infinite loops
   const hasFetchedRef = React.useRef(false);
+  
+  // AI enrichment state
+  const [autoGenerateWorksheet, setAutoGenerateWorksheet] = useState(false);
+  const [autoSearchYouTube, setAutoSearchYouTube] = useState(false);
   
   // Fetch students from database if not passed as prop
   useEffect(() => {
@@ -275,7 +279,8 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
                  links: data.links,
                  assignTo: data.assignTo,
                  scheduleDate: data.date,
-                 generateWorksheet: true, // Enable worksheet generation
+                 generateWorksheet: autoGenerateWorksheet, // User-controlled
+                 searchYouTube: autoSearchYouTube, // User-controlled
               }),
            });
            
@@ -325,8 +330,13 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
         }
      } catch (err) {
         console.error(err);
-        toast.error('Uh oh! Could not save lesson.', {
-           description: 'Please check your connection and try again.'
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        const isDescriptionError = errorMessage.toLowerCase().includes('description') || errorMessage.toLowerCase().includes('instructions');
+        
+        toast.error('Could not save lesson', {
+           description: isDescriptionError 
+              ? 'AI features require a description. Please add one or uncheck the AI options.'
+              : 'Please check your connection and try again.'
         });
      }
   };
@@ -552,9 +562,56 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
                 />
              </div>
           </div>
-      </div>
+       </div>
 
-      {/* 3. LOGISTICS & LINKS */}
+       {/* 3. AI ENRICHMENT (OPTIONAL) */}
+       <div className="card p-6 space-y-4">
+         <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
+           <MagicWand size={18} className="text-[var(--nebula-purple)]" /> AI Enrichment (optional)
+         </h3>
+
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+           {/* Auto-generate worksheet */}
+           <label className="flex items-center gap-3 p-4 bg-[var(--nebula-purple)]/10 dark:bg-[var(--nebula-purple)]/15 rounded-xl cursor-pointer border border-[var(--nebula-purple)]/30 dark:border-[var(--nebula-purple)] hover:bg-[var(--nebula-purple)]/20 dark:hover:bg-[var(--nebula-purple)]/20 transition-colors">
+             <input
+               type="checkbox"
+               checked={autoGenerateWorksheet}
+               onChange={e => setAutoGenerateWorksheet(e.target.checked)}
+               className="w-5 h-5 rounded border-[var(--nebula-purple)]/40 text-[var(--nebula-purple)] focus:ring-purple-500"
+             />
+             <div className="flex-1">
+               <span className="font-medium text-[var(--nebula-purple)] dark:text-[var(--nebula-purple-light)] flex items-center gap-2">
+                 <Sparkle size={18} weight="fill" className="text-[var(--nebula-purple)]" />
+                 Generate worksheet
+               </span>
+               <p className="text-xs text-[var(--nebula-purple)]/70 dark:text-[var(--nebula-purple)]/70 mt-0.5">
+                 AI creates practice questions
+               </p>
+             </div>
+           </label>
+
+           {/* Auto-find YouTube videos */}
+           <label className="flex items-center gap-3 p-4 bg-red-500/10 dark:bg-red-500/15 rounded-xl cursor-pointer border border-red-500/30 dark:border-red-500/50 hover:bg-red-500/20 dark:hover:bg-red-500/20 transition-colors">
+             <input
+               type="checkbox"
+               checked={autoSearchYouTube}
+               onChange={e => setAutoSearchYouTube(e.target.checked)}
+               className="w-5 h-5 rounded border-red-500/40 text-red-500 focus:ring-red-500"
+             />
+             <div className="flex-1">
+               <span className="font-medium text-red-600 dark:text-red-400 flex items-center gap-2">
+                 <LinkIcon size={18} weight="bold" className="text-red-500" />
+                 Find YouTube videos
+               </span>
+               <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-0.5">
+                 AI searches for relevant videos
+               </p>
+             </div>
+           </label>
+         </div>
+       </div>
+
+       {/* 4. LOGISTICS & LINKS */}
        <div className="card p-6 space-y-6">
          <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
              <Stack size={18} weight="duotone" color="#e7b58d" /> Resources & Tags
