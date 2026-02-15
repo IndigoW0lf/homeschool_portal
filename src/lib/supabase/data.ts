@@ -144,6 +144,51 @@ export async function getKidByIdFromDB(id: string): Promise<Kid | undefined> {
   return kids.find(k => k.id === id);
 }
 
+const DEFAULT_TIMEZONE = 'America/Chicago';
+
+/**
+ * Get the family's timezone for "today" and date boundaries (e.g. kid portal).
+ * Uses kid -> family -> first family member's profile timezone.
+ * Works with kid session (no auth) by using service role when needed.
+ */
+export async function getTimezoneForKid(kidId: string): Promise<string> {
+  const { createServerClient, createServiceRoleClient } = await import('./server');
+  const { getKidSession } = await import('@/lib/kid-session');
+
+  const supabaseAuth = await createServerClient();
+  const { data: { user } } = await supabaseAuth.auth.getUser();
+
+  const supabase = user
+    ? supabaseAuth
+    : await createServiceRoleClient();
+
+  const { data: kid, error: kidError } = await supabase
+    .from('kids')
+    .select('family_id')
+    .eq('id', kidId)
+    .single();
+
+  if (kidError || !kid?.family_id) return DEFAULT_TIMEZONE;
+
+  const { data: member } = await supabase
+    .from('family_members')
+    .select('user_id')
+    .eq('family_id', kid.family_id)
+    .limit(1)
+    .single();
+
+  if (!member?.user_id) return DEFAULT_TIMEZONE;
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('timezone')
+    .eq('id', member.user_id)
+    .single();
+
+  const tz = profile?.timezone?.trim();
+  return tz || DEFAULT_TIMEZONE;
+}
+
 // Lessons - filtered by family membership (all family members can see lessons)
 export async function getLessonsFromDB(): Promise<Lesson[]> {
   const supabase = await createServerClient();

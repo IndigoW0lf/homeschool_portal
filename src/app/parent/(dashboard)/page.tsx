@@ -8,7 +8,7 @@ import { startOfWeek, endOfWeek, format } from 'date-fns';
 export const dynamic = 'force-dynamic';
 
 export default async function ParentDashboard() {
-  const [lessons, assignments,, kids, scheduleItems, holidays] = await Promise.all([
+  const [lessons, assignments, , kids, scheduleItems, holidays] = await Promise.all([
     getLessonsFromDB(),
     getAssignmentItemsFromDB(),
     getResourcesFromDB(),
@@ -34,7 +34,7 @@ export default async function ParentDashboard() {
       <DashboardOverview 
         lessons={lessons}
         assignments={assignments}
-        resources={[]} 
+        resources={[]}
         students={kids}
         schedule={scheduleItems}
       />

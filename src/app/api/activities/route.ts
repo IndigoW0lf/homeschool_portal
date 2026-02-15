@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { createLesson, createAssignment, assignItemToSchedule } from '@/lib/supabase/mutations';
-import { enrichActivity } from '@/lib/ai/enrich-activity';
+import { enrichActivity, type EnrichmentResult } from '@/lib/ai/enrich-activity';
 import { 
   ActivityInput, 
   ActivityCreateResult,
@@ -63,20 +63,28 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       }
     }
 
-    // 4. Run AI enrichment (YouTube + worksheet)
-    const enrichment = await enrichActivity(
-      {
-        title: input.title,
-        category: input.category,
-        description: input.description,
-      },
-      {
-        searchYouTube: input.searchYouTube !== false,  // Default to true
-        generateWorksheet: input.generateWorksheet,
-        worksheetInstructions: input.description,
-        ageOrGrade: targetGradeLevel,  // Pass grade level for age-appropriate content
-      }
-    );
+    // 4. Run AI enrichment (YouTube + worksheet). If it fails, continue with no enrichment.
+    let enrichment: EnrichmentResult = {
+      videoLinks: [],
+      worksheet: null,
+    };
+    try {
+      enrichment = await enrichActivity(
+        {
+          title: input.title,
+          category: input.category,
+          description: input.description || '',  // Optional; title is used as fallback in worksheet gen
+        },
+        {
+          searchYouTube: input.searchYouTube !== false,
+          generateWorksheet: input.generateWorksheet,
+          worksheetInstructions: input.description || input.title,  // Fallback to title when description empty
+          ageOrGrade: targetGradeLevel,
+        }
+      );
+    } catch (enrichErr) {
+      console.error('[API/activities] Enrichment failed (activity will still be created):', enrichErr);
+    }
 
     // 5. Merge enriched links with any provided links
     const allLinks: ActivityLink[] = [

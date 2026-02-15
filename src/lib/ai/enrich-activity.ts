@@ -162,7 +162,8 @@ async function searchYouTubeVideos(
 }
 
 /**
- * Generate a worksheet for the activity
+ * Generate a worksheet for the activity.
+ * Uses description/instructions when present; falls back to title so AI always has context.
  */
 async function generateWorksheetContent(
   activity: { title: string; description?: string },
@@ -170,16 +171,18 @@ async function generateWorksheetContent(
   instructions?: string
 ): Promise<WorksheetData> {
   console.log('[Enrichment] Generating worksheet for:', activity.title);
-  
+
   const contextInstructions = [
     activity.description,
     instructions,
   ].filter(Boolean).join('\n\n');
+  // Fallback to title so worksheet generation always has context (description is optional in the form)
+  const context = contextInstructions.trim() || `Topic: ${activity.title}`;
 
   return await generateWorksheet(
     activity.title,
     ageOrGrade,
-    contextInstructions || undefined
+    context
   );
 }
 

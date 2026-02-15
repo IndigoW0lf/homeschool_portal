@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent } from '@/lib/supabase/data';
+import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent, getTimezoneForKid } from '@/lib/supabase/data';
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
 import { formatDateString, getTodayInTimezone, getNowInTimezone } from '@/lib/dateUtils';
 import { ProgressCardWrapper, ResourceSection } from '@/components';
@@ -30,9 +30,8 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
     notFound();
   }
 
-  // Use timezone-aware "today" to prevent UTC showing wrong date
-  // TODO: Fetch parent's timezone from family settings, for now default to CST
-  const timezone = 'America/Chicago';
+  // Use family timezone for "today" and date boundaries
+  const timezone = await getTimezoneForKid(kidId);
   const todayString = getTodayInTimezone(timezone);
   const today = getNowInTimezone(timezone);
   let viewDate = today;

@@ -50,11 +50,11 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
   const [selectedItem, setSelectedItem] = useState<ScheduleItem | null>(null);
   const [, setAutoCompleted] = useState(false);
   
-  // Hydrate localStorage from DB on mount - ensures completion state persists across devices
+  // Hydrate localStorage from DB on mount - use schedule item id (item.id) so keys match DoneToggle
   useEffect(() => {
     hydrateDoneState(kidId, items.map(item => ({
       date: item.date,
-      itemId: item.itemId,
+      itemId: item.id,
       status: item.status
     })));
   }, [kidId, items]);

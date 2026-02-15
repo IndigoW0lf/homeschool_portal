@@ -520,21 +520,25 @@ export async function awardStars(
       updated_at: new Date().toISOString()
     }, { onConflict: 'kid_id' });
 
-  // Update moons (currency)
-  // We do this separately because it live in the 'kids' table
+  // Update moons (currency) in kids table
   const { data: kidData } = await db
     .from('kids')
     .select('moons')
     .eq('id', kidId)
     .single();
-    
+
   if (kidData) {
-     await db
-       .from('kids')
-       .update({ moons: (kidData.moons || 0) + starsToAward })
-       .eq('id', kidId);
+    const { error: moonError } = await db
+      .from('kids')
+      .update({ moons: (kidData.moons || 0) + starsToAward })
+      .eq('id', kidId);
+
+    if (moonError) {
+      console.error('[awardStars] Failed to update kids.moons:', moonError);
+      return { success: false, alreadyAwarded: false };
+    }
   }
-  
+
   return { success: true, alreadyAwarded: false, newTotal };
 }
 

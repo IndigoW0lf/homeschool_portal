@@ -1,0 +1,30 @@
+---
+description: Lunara Homeschool Portal – project conventions and tech stack
+globs: 
+alwaysApply: true
+---
+
+# Lunara Homeschool Quest – Project Rules
+
+## Tech stack (this project only)
+- **Framework:** Next.js 16 (App Router), React 19, TypeScript
+- **Data & Auth:** Supabase only (Postgres, Auth, Storage). No GraphQL, Apollo, or Grafbase in this repo.
+- **Styling:** Tailwind 4, custom design system (`design-system.css`, `globals.css`), Quicksand + Macondo fonts
+- **State:** Server components + server actions for mutations; client state/localStorage for kid done state and gamification cache
+
+## Conventions
+- **Data reads:** Use `@/lib/supabase/data.ts` (server) or direct Supabase client in server components.
+- **Data writes:** Use `@/lib/supabase/mutations.ts` (server-only) or server actions in `@/lib/actions/*`. Never write from client with anon key for sensitive operations.
+- **Kid session:** Kid login is cookie-based (`lunara_kid_session`). Middleware restricts kids to `/kids/[theirId]/*` and redirects away from `/parent`. Use `getKidSession()` and service role client when acting on behalf of a kid.
+- **Timezone:** Always use the parent/family timezone for “today” and date boundaries (e.g. kid portal, reports). Fetch from the kid’s family (e.g. profile timezone of a family member). Default to `America/Chicago` only when no timezone is set. Do not hardcode timezone in UI logic.
+
+## Patterns
+- Match existing file structure and naming (e.g. `ScheduleItemsList`, `getScheduleItemsForStudent`).
+- Use existing UI components and design tokens (e.g. `--ember-*`, `--celestial-*`, `btn-primary`).
+- Prefer server components; use `'use client'` only when needed (hooks, events, browser APIs).
+- Keep strong typing (types in `@/types`, Zod for API/forms where used).
+
+## What not to do
+- Do not introduce Apollo, Grafbase, or GraphQL in this project.
+- Do not assume “authenticated user” on kid portal routes; use kid session or service role for kid-scoped data.
+- Do not hardcode timezone for “today” or week boundaries; use parent/family timezone.

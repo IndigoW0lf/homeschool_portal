@@ -549,6 +549,9 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           <h3 className="font-semibold text-heading dark:text-[var(--foreground)] flex items-center gap-2">
             <MagicWand size={18} className="text-[var(--nebula-purple)]" /> Additional Enrichment (optional)
           </h3>
+          <p className="text-sm text-muted">
+            A title is required for AI. Adding a description improves video and worksheet results but is not required.
+          </p>
 
           {/* Additional enrichment options */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
