@@ -7,7 +7,7 @@ interface LessonViewerProps {
   lesson: {
     id: string;
     title: string;
-    type: string;
+    type?: string;
     description?: string;
     instructions?: string;
     estimated_minutes?: number;
@@ -30,9 +30,11 @@ export function LessonViewer({ lesson }: LessonViewerProps) {
     <div className="space-y-6">
       {/* Header info */}
       <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-[var(--celestial-500)]/20 text-[var(--celestial-500)]">
-          {lesson.type}
-        </span>
+        {lesson.type && (
+          <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-[var(--celestial-500)]/20 text-[var(--celestial-500)]">
+            {lesson.type}
+          </span>
+        )}
         {lesson.estimated_minutes && (
           <span className="text-sm text-muted flex items-center gap-1">
             <Clock size={18} weight="duotone" className="text-amber-400" />

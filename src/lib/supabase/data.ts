@@ -687,10 +687,14 @@ export async function getTodaySummaryForParent(
     const weekRows = weekItems.data || [];
     const thisWeekCompleted = weekRows.filter((r: { status: string }) => r.status === 'completed').length;
     const thisWeekMoons = (weekAwards.data || []).reduce((sum: number, r: { stars_earned?: number }) => sum + (r.stars_earned ?? 0), 0);
-    const recentCompletions = (recent.data || []).map((r: { date: string; title_override?: string; lesson?: { title?: string }; assignment?: { title?: string } }) => ({
-      title: r.title_override || r.lesson?.title || r.assignment?.title || 'Activity',
-      date: r.date
-    }));
+    const recentCompletions = (recent.data || []).map((r: { date: string; title_override?: string; lesson?: { title?: string } | { title?: string }[]; assignment?: { title?: string } | { title?: string }[] }) => {
+      const lessonTitle = Array.isArray(r.lesson) ? r.lesson[0]?.title : r.lesson?.title;
+      const assignmentTitle = Array.isArray(r.assignment) ? r.assignment[0]?.title : r.assignment?.title;
+      return {
+        title: r.title_override || lessonTitle || assignmentTitle || 'Activity',
+        date: r.date
+      };
+    });
 
     results.push({
       kidId: kid.id,
