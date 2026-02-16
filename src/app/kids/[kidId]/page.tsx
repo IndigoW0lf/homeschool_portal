@@ -136,6 +136,7 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
              entries={weekScheduleItems} 
              kidId={kidId} 
              viewDate={viewDate}
+             todayDateString={todayString}
              prevWeekUrl={`/kids/${kidId}?date=${prevWeek}`}
              nextWeekUrl={`/kids/${kidId}?date=${nextWeek}`}
              currentWeekUrl={`/kids/${kidId}`}

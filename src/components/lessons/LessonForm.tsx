@@ -315,14 +315,14 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
         } else {
           // Fallback feedback if used standalone
           if (savedId && data.date && data.assignTo.length > 0) {
-             feedback.show({ type: 'success', title: 'Lesson scheduled', message: `"${data.title}" added to calendar for ${data.date}.` });
+             feedback.show({ type: 'success', title: 'Lesson scheduled', message: `"${data.title}" added to calendar for ${data.date}. View your week on the dashboard.` });
           } else if (savedId && data.date) {
              toast.warning('Lesson Saved, but NOT Scheduled', {
                description: 'You selected a date but no students. Please edit to assign.',
                duration: 5000
              });
           } else {
-             feedback.show({ type: 'success', title: 'Lesson saved', message: 'Saved to library. You can schedule it later from the details page.' });
+             feedback.show({ type: 'success', title: 'Lesson saved', message: 'Saved to library. View on the dashboard to schedule later.' });
           }
         }
      } catch (err) {
@@ -439,10 +439,11 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
       {/* 1. CORE INFO */}
       <div className="bg-[var(--background-elevated)] p-6 rounded-xl border border-[var(--border)] shadow-sm space-y-6">
             <div>
-               <label className="input-label">Lesson Title</label>
+               <label className="input-label">Lesson Title <span className="text-red-500" aria-hidden="true">*</span></label>
                <input
                   {...register('title')}
                   placeholder="e.g. Introduction to Fractions"
+                  aria-required="true"
                   className="w-full text-lg p-2 border-b-2 border-[var(--border)] bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-muted"
                />
                {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
@@ -452,6 +453,7 @@ export function LessonForm({ initialData, onSubmit: parentOnSubmit, students: pr
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div>
                   <label className="input-label mb-2">Schedule Date</label>
+                  <p className="text-xs text-muted mb-1">Pick a date and assign to students to add to the schedule.</p>
                   <input 
                      type="date"
                      {...register('date')}

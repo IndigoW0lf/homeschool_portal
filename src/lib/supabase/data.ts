@@ -148,12 +148,12 @@ const DEFAULT_TIMEZONE = 'America/Chicago';
 
 /**
  * Get the family's timezone for "today" and date boundaries (e.g. kid portal).
- * Uses kid -> family -> first family member's profile timezone.
- * Works with kid session (no auth) by using service role when needed.
+ * Uses parent profile timezone: kid -> family -> first family member -> profiles.timezone.
+ * RLS: When parent is logged in, profiles_select allows reading own profile and same-family
+ * members. When kid session (no auth), we use service role so we can read the parent's profile.
  */
 export async function getTimezoneForKid(kidId: string): Promise<string> {
   const { createServerClient, createServiceRoleClient } = await import('./server');
-  const { getKidSession } = await import('@/lib/kid-session');
 
   const supabaseAuth = await createServerClient();
   const { data: { user } } = await supabaseAuth.auth.getUser();

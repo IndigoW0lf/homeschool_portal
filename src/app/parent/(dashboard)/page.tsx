@@ -3,16 +3,15 @@ import { HolidayManager } from '@/components/dashboard/HolidayManager';
 import { TodaySection } from '@/components/dashboard/TodaySection';
 import { WeeklyProgressChart } from '@/components/dashboard/WeeklyProgressChart';
 import { RedemptionManager } from '@/components/profile/RedemptionManager';
-import { getLessonsFromDB, getAssignmentItemsFromDB, getResourcesFromDB, getKidsFromDB, getScheduleItemsFromDB, getHolidaysFromDB, getTodaySummaryForParent, getTimezoneForKid } from '@/lib/supabase/data';
+import { getLessonsFromDB, getAssignmentItemsFromDB, getKidsFromDB, getScheduleItemsFromDB, getHolidaysFromDB, getTodaySummaryForParent, getTimezoneForKid } from '@/lib/supabase/data';
 import { startOfWeek, endOfWeek, format } from 'date-fns';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ParentDashboard() {
-  const [lessons, assignments, , kids, scheduleItems, holidays] = await Promise.all([
+  const [lessons, assignments, kids, scheduleItems, holidays] = await Promise.all([
     getLessonsFromDB(),
     getAssignmentItemsFromDB(),
-    getResourcesFromDB(),
     getKidsFromDB(),
     getScheduleItemsFromDB(),
     getHolidaysFromDB()

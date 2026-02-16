@@ -20,6 +20,8 @@ interface KidPortalWeekCalendarProps {
   entries: ScheduleItem[];
   kidId: string;
   viewDate?: Date;
+  /** Today's date string (yyyy-MM-dd) in family timezone; used for highlighting "today" in the week */
+  todayDateString?: string;
   prevWeekUrl: string;
   nextWeekUrl: string;
   currentWeekUrl: string;
@@ -37,10 +39,11 @@ function subscribe(callback: () => void) {
   };
 }
 
-export function KidPortalWeekCalendar({ 
-  entries, 
-  kidId, 
+export function KidPortalWeekCalendar({
+  entries,
+  kidId,
   viewDate,
+  todayDateString,
   prevWeekUrl,
   nextWeekUrl,
   currentWeekUrl,
@@ -55,7 +58,6 @@ export function KidPortalWeekCalendar({
     return acc;
   }, {} as Record<string, ScheduleItem[]>);
 
-  // Use viewDate or default to today
   const baseDate = viewDate || new Date();
   const today = new Date();
   
@@ -93,7 +95,8 @@ export function KidPortalWeekCalendar({
 
   const completionData = JSON.parse(completionSnapshot) as Record<string, { completed: number; total: number }>;
 
-  // Check if we're viewing the current week
+  const isToday = (dateKey: string) =>
+    todayDateString ? dateKey === todayDateString : isSameDay(new Date(dateKey + 'T12:00:00'), today);
   const isCurrentWeek = isSameDay(monday, startOfWeek(today, { weekStartsOn: 1 }));
   const weekLabel = isCurrentWeek 
     ? 'This Week' 
@@ -135,7 +138,7 @@ export function KidPortalWeekCalendar({
       <div className="grid grid-cols-7 gap-1 text-center">
         {weekDates.map(date => {
           const dateKey = formatDateKey(date);
-          const isToday = isSameDay(date, today);
+          const todayHighlight = isToday(dateKey);
           const isViewDate = viewDate && isSameDay(date, viewDate);
           const { completed = 0, total = 0 } = completionData[dateKey] || {};
           const allDone = total > 0 && completed === total;
@@ -149,7 +152,7 @@ export function KidPortalWeekCalendar({
                 "p-2 rounded-lg transition-all flex flex-col items-center justify-center min-h-[60px]",
                 isViewDate 
                   ? "bg-[var(--ember-100)] border-2 border-[var(--ember-400)] shadow-sm scale-105 z-10" 
-                  : isToday
+                  : todayHighlight
                     ? "bg-[var(--celestial-50)] dark:bg-[var(--celestial-900)]/20 border border-[var(--celestial-200)] dark:border-[var(--celestial-700)]"
                     : "hover:bg-[var(--hover-overlay)]/50",
                 allDone && !isViewDate && "bg-[var(--herbal-50)] dark:bg-[var(--herbal-900)]/20 border-[var(--herbal-100)] dark:border-[var(--herbal-800)]/30"
@@ -162,7 +165,7 @@ export function KidPortalWeekCalendar({
                 "text-lg font-bold leading-none my-1",
                 isViewDate 
                   ? "text-[var(--ember-600)]" 
-                  : isToday
+                  : todayHighlight
                     ? "text-[var(--celestial-500)] dark:text-[var(--celestial-400)]"
                     : allDone 
                       ? "text-green-600 dark:text-green-400" 

@@ -88,8 +88,8 @@
 1. **Parent dashboard discards resources**  
    `src/app/parent/(dashboard)/page.tsx` fetches `getResourcesFromDB()` but uses `resources={[]}` for `DashboardOverview`. `getResourcesFromDB()` returns `Resources` (grouped by category); `DashboardOverview` expects `ResourceRow[]`, and the prop is not used in the component body. Options: (a) add a data function that returns `ResourceRow[]` and wire it up if the overview should show resources, (b) change `DashboardOverview` to accept `Resources` and use it in the UI, or (c) remove `getResourcesFromDB()` from this page to avoid an unused fetch.
 
-2. **CSS typo**  
-   `src/app/globals.css`: `--herbal-200: #C8DECFC` has 7 characters; should be `#C8DECF` (6).
+2. **CSS**  
+   `--herbal-200` in `globals.css` is correct (`#C8DECF`).
 
 3. **No tests**  
    `package.json` has no test script or test runner (Jest, Vitest, Playwright). Any logic or UI changes are unguarded by tests.

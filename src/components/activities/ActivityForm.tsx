@@ -293,14 +293,14 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
             feedback.show({
               type: 'success',
               title: 'Activity scheduled',
-              message: `"${data.title}" added to calendar.${extras.length ? ' Plus: ' + extras.join(', ') : ''}`,
+              message: `"${data.title}" added to calendar. View your week on the dashboard.${extras.length ? ' Plus: ' + extras.join(', ') : ''}`,
             });
             router.push('/parent');
           } else {
             feedback.show({
               type: 'success',
               title: 'Activity saved',
-              message: extras.length ? `Plus: ${extras.join(', ')}` : 'You can schedule it later.',
+              message: extras.length ? `Plus: ${extras.join(', ')}. View on the dashboard to schedule.` : 'Saved to library. View on the dashboard to schedule later.',
             });
           }
         }
@@ -343,10 +343,11 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           {/* Title + Generate Row */}
           <div className="flex gap-3 items-end">
             <div className="flex-1">
-              <label className="input-label">Title</label>
+              <label className="input-label">Title <span className="text-red-500" aria-hidden="true">*</span></label>
               <input
                 {...register('title')}
                 placeholder="e.g. Introduction to Fractions"
+                aria-required="true"
                 className="w-full text-lg p-2 border-b-2 border-[var(--border)] bg-transparent focus:border-[var(--ember-500)] outline-none transition-colors placeholder:text-muted"
               />
               {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
@@ -389,6 +390,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               <div>
                 <label className="input-label mb-2">Schedule Date</label>
                 <input type="date" {...register('date')} className="input w-full" />
+                <p className="text-xs text-muted mt-1">Pick a date and assign to students below to add this to the schedule.</p>
               </div>
             </div>
 
