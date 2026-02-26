@@ -5,6 +5,7 @@ import { NotePencil, ArrowsClockwise, FastForward, Check, Sparkle } from '@phosp
 import { cn } from '@/lib/utils';
 import { markAwarded, isAwarded } from '@/lib/progressState';
 import { awardStars } from '@/lib/supabase/mutations';
+import { useFeedback } from '@/components/ui/FeedbackModal';
 
 interface JournalCardProps {
   kidId: string;
@@ -82,6 +83,8 @@ export function JournalCard({
     fetchPrompt();
   };
 
+  const feedback = useFeedback();
+
   const handleSubmit = async () => {
     if (!response.trim() || !prompt) return;
     
@@ -108,6 +111,16 @@ export function JournalCard({
         if (awardRes.success || awardRes.alreadyAwarded) {
            markAwarded(kidId, date, journalItemId);
         }
+        
+        // Show celebratory modal (same as assignment completions)
+        if (awardRes.success && !awardRes.alreadyAwarded) {
+          feedback.show({
+            type: 'success',
+            title: 'You earned 1 moon! 🌙',
+            message: 'Great job writing in your journal today!',
+          });
+        }
+        
         setIsComplete(true);
       }
     } catch (error) {

@@ -400,7 +400,7 @@ export async function toggleScheduleItemComplete(id: string, isCompleted: boolea
     }
 
     const result = await awardStars(item.student_id, item.date, item.id, rewardAmount);
-    if (result.success) moonsAwarded = rewardAmount;
+    if (result.success && !result.alreadyAwarded) moonsAwarded = rewardAmount;
 
     // Check for unlocks
     if (result.success && result.newTotal) {
