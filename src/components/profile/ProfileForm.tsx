@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import type { Profile } from '@/types';
 import { LocalOpenPeepsAvatar, generateLocalOpenPeepsUrl } from '@/components/LocalOpenPeepsAvatar';
 import type { OpenPeepsState } from '@/components/OpenPeepsAvatarBuilder';
+import { ProfilePhotoUpload } from '@/components/ui/ProfilePhotoUpload';
 
 const TIMEZONE_OPTIONS = [
   { value: 'America/New_York', label: 'EST (Eastern)' },
@@ -19,9 +20,10 @@ const TIMEZONE_OPTIONS = [
   { value: 'Pacific/Honolulu', label: 'HST (Hawaii)' },
 ];
 
-// Avatar category - Open Peeps only
+// Avatar category
 const AVATAR_CATEGORIES = [
   { id: 'open-peeps', label: '✨ Open Peeps', styles: [] },
+  { id: 'photo', label: '📷 Real Photo', styles: [] },
 ];
 
 // Varied seeds for different looks
@@ -356,6 +358,20 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 >
                   Use This Avatar
                 </button>
+              </div>
+            ) : avatarCategory === 'photo' ? (
+              <div className="py-4">
+                <ProfilePhotoUpload 
+                  entityId={profile.id}
+                  entityType="parent"
+                  currentPhotoUrl={avatarUrl}
+                  onUploadComplete={(url: string) => {
+                    setAvatarUrl(url);
+                    setShowAvatarPicker(false);
+                    router.refresh();
+                  }}
+                  onCancel={() => setShowAvatarPicker(false)}
+                />
               </div>
             ) : (
               <div className="grid grid-cols-6 gap-2">

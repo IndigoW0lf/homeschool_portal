@@ -3,11 +3,10 @@ import { getKidByIdFromDB } from '@/lib/supabase/data';
 import { getKidSubjectCounts } from '@/lib/supabase/progressData';
 import { KidProfileEditor } from '@/components/kids/KidProfileEditor';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
+import { ProfilePicManager } from '@/components/kids/ProfilePicManager';
 import { BadgeGallery } from '@/components/kids/BadgeGallery';
 import { FamilyConnections } from '@/components/kids/FamilyConnections';
-import { OpenPeepsAvatarBuilder } from '@/components/OpenPeepsAvatarBuilder';
 
-import Link from 'next/link';
 import { getKidSession } from '@/lib/kid-session';
 
 interface ProfilePageProps {
@@ -34,6 +33,8 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
           <div className="flex items-center gap-4">
             <AvatarPreview 
               avatarState={kid.avatarState}
+              photoUrl={kid.profilePhotoUrl}
+              profilePicType={kid.profilePicType}
               size="lg"
               fallbackName={kid.nickname || kid.name}
               fallbackColor={kid.favoriteColor}
@@ -54,18 +55,11 @@ export default async function KidProfilePage({ params }: ProfilePageProps) {
       <div className="max-w-4xl mx-auto px-4 py-6 sm:py-8 space-y-8">
         <KidProfileEditor kidId={kidId} initialData={kid} />
         
-        {/* Avatar Builder */}
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-4">
-            <h3 className="font-semibold text-lg text-[var(--foreground)]">
-              ✨ Customize Your Avatar
-            </h3>
-            <p className="text-sm text-muted">
-              Mix and match to create your own unique look!
-            </p>
-          </div>
-          <OpenPeepsAvatarBuilder kidId={kidId} />
-        </div>
+        <ProfilePicManager 
+          kidId={kidId} 
+          initialType={kid.profilePicType || 'avatar'}
+          currentPhotoUrl={kid.profilePhotoUrl}
+        />
 
         {/* Family Connections */}
         {kid.familyId && (

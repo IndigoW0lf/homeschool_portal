@@ -39,7 +39,7 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     // 1. Get current kid's family_id
     const { data: currentKid, error: kidError } = await supabase
       .from('kids')
-      .select('family_id, id, name, grade_band, grades, avatar_url, favorite_color, birthday, bio, favorite_shows, favorite_music, favorite_foods, favorite_subjects, hobbies, nickname, avatar_state, journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled, featured_badges')
+      .select('family_id, id, name, grade_band, grades, avatar_url, profile_photo_url, profile_pic_type, favorite_color, birthday, bio, favorite_shows, favorite_music, favorite_foods, favorite_subjects, hobbies, nickname, avatar_state, journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled, featured_badges')
       .eq('id', kidSession.kidId)
       .single();
 
@@ -120,8 +120,10 @@ function mapKidRow(row: any): Kid {
     gradeBand: row.grade_band || '',
     grades: row.grades || [],
     familyId: row.family_id || undefined,
-    avatarUrl: row.avatar_url || undefined,
-    favoriteColor: row.favorite_color || undefined,
+    avatarUrl: row.avatar_url || null,
+    profilePhotoUrl: row.profile_photo_url || null,
+    profilePicType: row.profile_pic_type as 'avatar' | 'photo' | undefined,
+    favoriteColor: row.favorite_color || null,
     birthday: row.birthday || undefined,
     bio: row.bio || undefined,
     favoriteShows: row.favorite_shows || undefined,

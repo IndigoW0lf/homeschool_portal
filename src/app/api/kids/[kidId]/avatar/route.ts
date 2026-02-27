@@ -46,15 +46,23 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'File too large (max 5MB)' }, { status: 400 });
     }
 
-    // Get current avatar to delete old one
+    const typeParam = request.nextUrl.searchParams.get('type');
+    const isPhoto = typeParam === 'photo';
+
+    // Get current profile to delete old photo/avatar safely
     const { data: kid } = await supabase
       .from('kids')
-      .select('avatar_url')
+      .select('avatar_url, profile_photo_url')
       .eq('id', kidId)
       .single();
 
-    // Delete old avatar if exists
-    if (kid?.avatar_url) {
+    // Delete old file if exists corresponding to the type
+    if (isPhoto && kid?.profile_photo_url) {
+      const oldPath = kid.profile_photo_url.split('/kid-avatars/').pop();
+      if (oldPath) {
+        await supabase.storage.from('kid-avatars').remove([oldPath]);
+      }
+    } else if (!isPhoto && kid?.avatar_url) {
       const oldPath = kid.avatar_url.split('/kid-avatars/').pop();
       if (oldPath) {
         await supabase.storage.from('kid-avatars').remove([oldPath]);
@@ -62,7 +70,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Upload new avatar with timestamp to bust cache
-    const fileName = `avatar_${Date.now()}.${file.type.split('/')[1] || 'jpg'}`;
+    const prefix = isPhoto ? 'photo' : 'avatar';
+    const fileName = `${prefix}_${Date.now()}.${file.type.split('/')[1] || 'jpg'}`;
     const filePath = `${kidId}/${fileName}`;
     
     const arrayBuffer = await file.arrayBuffer();
@@ -77,7 +86,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     if (uploadError) {
       console.error('[Avatar API] Upload error:', uploadError);
-      return NextResponse.json({ error: 'Failed to upload avatar' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
     }
 
     // Get public URL
@@ -85,10 +94,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .from('kid-avatars')
       .getPublicUrl(filePath);
 
-    // Update kid record with new avatar URL
+    // Update kid record with new URL and type
+    const updates = isPhoto 
+      ? { profile_photo_url: publicUrl, profile_pic_type: 'photo' }
+      : { avatar_url: publicUrl, profile_pic_type: 'avatar' };
+
     const { error: updateError } = await supabase
       .from('kids')
-      .update({ avatar_url: publicUrl })
+      .update(updates)
       .eq('id', kidId);
 
     if (updateError) {
@@ -99,7 +112,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return NextResponse.json({
       success: true,
       avatarUrl: publicUrl,
-      message: 'Avatar updated!'
+      photoUrl: publicUrl,
+      message: 'Profile updated!'
     });
 
   } catch (error) {
