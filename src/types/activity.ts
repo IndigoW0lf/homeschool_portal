@@ -114,6 +114,8 @@ export interface ActivityCreateResult {
   videoCount: number;
   worksheetId?: string;
   message?: string;
+  /** True when activity was created but AI enrichment (worksheet/videos) failed */
+  enrichmentFailed?: boolean;
 }
 
 // ============================================

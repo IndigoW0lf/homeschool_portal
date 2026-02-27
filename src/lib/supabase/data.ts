@@ -1,5 +1,5 @@
 import { createServerClient } from './server';
-import { Kid, Lesson, CalendarEntry, Resources } from '@/types';
+import { Kid, Lesson, CalendarEntry, Resources, type ScheduleDisplayItem } from '@/types';
 import { formatDateString, getTodayInTimezone } from '../dateUtils';
 import type { Profile } from '@/types';
 
@@ -437,7 +437,7 @@ export async function getMiAcademyResourceFromDB(): Promise<{ label: string; url
 
 
 // Schedule Items - filtered by authenticated user
-export async function getScheduleItemsFromDB() {
+export async function getScheduleItemsFromDB(): Promise<ScheduleDisplayItem[]> {
   const supabase = await createServerClient();
   
   // Get current user
@@ -459,19 +459,23 @@ export async function getScheduleItemsFromDB() {
     return [];
   }
 
-  return (data || []).map(row => ({
-    id: row.id,
-    date: row.date,
-    studentId: row.student_id,
-    itemType: row.item_type,
-    status: row.status,
-    completedAt: row.completed_at,
-    itemId: row.item_type === 'lesson' ? row.lesson_id : row.assignment_id,
-    title: row.lesson?.title || row.assignment?.title || 'Untitled',
-    type: row.lesson?.type || row.assignment?.type || 'Task',
-    // Mock details for DayModal compatibility if needed, or we rely on the Join
-    studentIds: [row.student_id] // Helper for DayModal which expects array
-  }));
+  return (data || []).map(row => {
+    const itemType = row.item_type === 'lesson' || row.item_type === 'assignment' ? row.item_type : 'assignment';
+    return {
+      id: row.id,
+      date: row.date,
+      studentId: row.student_id,
+      itemType,
+      status: row.status || 'pending',
+      sortOrder: row.sort_order ?? 0,
+      itemId: (row.item_type === 'lesson' ? row.lesson_id : row.assignment_id) ?? row.id,
+      title: row.lesson?.title || row.assignment?.title || 'Untitled',
+      type: row.lesson?.type || row.assignment?.type || 'Task',
+      estimatedMinutes: 20,
+      completedAt: row.completed_at,
+      studentIds: [row.student_id],
+    };
+  });
 }
 
 // Get schedule items for a specific student, optionally filtered by date range

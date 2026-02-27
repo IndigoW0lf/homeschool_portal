@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+/**
+ * Auth and kid-session routing.
+ * Note: Next.js may deprecate the "middleware" file convention in favor of "proxy".
+ * When that happens, migrate this logic per: https://nextjs.org/docs/messages/middleware-to-proxy
+ */
 export function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   

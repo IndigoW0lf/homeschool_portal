@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { addWeeks, subWeeks } from 'date-fns';
 import { WeekView } from './WeekView';
@@ -12,7 +12,7 @@ import { AssignmentForm } from '@/components/assignments/AssignmentForm';
 import { LessonForm } from '@/components/lessons/LessonForm';
 import { LunaTriggerButton } from '@/components/luna';
 import { ContentLibrary } from './ContentLibrary';
-import { Lesson, AssignmentItemRow, ResourceRow, Kid } from '@/types';
+import { Lesson, AssignmentItemRow, ResourceRow, Kid, ScheduleDisplayItem } from '@/types';
 import { deleteLesson, deleteAssignment } from '@/lib/supabase/mutations';
 import { ScheduleModal } from './ScheduleModal';
 import { toast } from 'sonner';
@@ -22,17 +22,12 @@ interface DashboardOverviewProps {
   assignments: AssignmentItemRow[];
   resources: ResourceRow[];
   students: Kid[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  schedule: any[]; // TODO: Define strict type
+  schedule: ScheduleDisplayItem[];
+  /** Initial student filter from URL (e.g. ?student=atlas) for "View week" link */
+  initialFilterStudentId?: string | null;
 }
 
-export function DashboardOverview({ lessons = [], assignments = [], resources = [], students = [], schedule = [] }: DashboardOverviewProps) {
-  // Debug hydration mismatch
-  if (typeof window !== 'undefined') {
-    console.log('Client Lessons:', lessons);
-    console.log('Client Lesson 0:', lessons[0]);
-  }
-
+export function DashboardOverview({ lessons = [], assignments = [], resources = [], students = [], schedule = [], initialFilterStudentId = null }: DashboardOverviewProps) {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
@@ -40,12 +35,15 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [viewingItemId, setViewingItemId] = useState<string | null>(null);
   const [viewingItemType, setViewingItemType] = useState<'lesson' | 'assignment'>('lesson');
-  const [filterStudentId, setFilterStudentId] = useState<string | null>(null); // null = show all
+  const [filterStudentId, setFilterStudentId] = useState<string | null>(initialFilterStudentId);
+
+  useEffect(() => {
+    setFilterStudentId(initialFilterStudentId);
+  }, [initialFilterStudentId]);
 
   // Filter schedule by selected student
-  const filteredSchedule = filterStudentId 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ? schedule.filter((s: any) => s.studentId === filterStudentId)
+  const filteredSchedule = filterStudentId
+    ? schedule.filter((s) => s.studentId === filterStudentId)
     : schedule;
 
   const handlePrevWeek = () => setCurrentDate(subWeeks(currentDate, 1));
@@ -123,7 +121,7 @@ export function DashboardOverview({ lessons = [], assignments = [], resources = 
       rubric: (Array.isArray(row.rubric) ? row.rubric : [{ text: '' }]) as { text: string }[],
       steps: (Array.isArray(row.steps) ? row.steps : [{ text: '' }]) as { text: string }[],
       links: (Array.isArray(row.links) ? row.links : []) as { url: string; label: string }[],
-      assignTo: [], // TODO: assignments don't store student IDs directly on the item row anymore, need logic if we want this pre-filled
+      assignTo: [], // Assignments are scheduled per-student via schedule_items; we don't pre-fill from item
   });
 
   return (

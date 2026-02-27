@@ -288,19 +288,24 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           const extras = [];
           if (result.hasWorksheet) extras.push('worksheet generated');
           if (result.videoCount > 0) extras.push(`${result.videoCount} videos found`);
-          
+          const enrichmentNote = result.enrichmentFailed
+            ? ' Activity saved; optional worksheet or video search didn\'t complete.'
+            : '';
+          const baseScheduled = `"${data.title}" added to calendar. View your week on the dashboard.${extras.length ? ' Plus: ' + extras.join(', ') : ''}${enrichmentNote}`;
+          const baseSaved = (extras.length ? `Plus: ${extras.join(', ')}. ` : '') + `View on the dashboard to schedule.${enrichmentNote}`;
+
           if (data.date && data.assignTo.length > 0) {
             feedback.show({
               type: 'success',
               title: 'Activity scheduled',
-              message: `"${data.title}" added to calendar. View your week on the dashboard.${extras.length ? ' Plus: ' + extras.join(', ') : ''}`,
+              message: baseScheduled,
             });
             router.push('/parent');
           } else {
             feedback.show({
               type: 'success',
               title: 'Activity saved',
-              message: extras.length ? `Plus: ${extras.join(', ')}. View on the dashboard to schedule.` : 'Saved to library. View on the dashboard to schedule later.',
+              message: extras.length ? baseSaved : `Saved to library. View on the dashboard to schedule later.${enrichmentNote}`,
             });
           }
         }
@@ -662,7 +667,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               isSubmitting && "opacity-50 cursor-not-allowed"
             )}
           >
-            {isSubmitting ? 'Creating...' : 'Save Activity'}
+            {isSubmitting ? 'Creating activity and finding resources…' : 'Save Activity'}
           </button>
         </div>
       </form>

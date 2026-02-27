@@ -340,9 +340,11 @@ export async function addToSchedule(item: Omit<ScheduleItemRow, 'id' | 'status' 
   // Get the authenticated user for RLS
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
-  
-  // TODO: Validate item_type matches ID presence (e.g. if type='lesson', lesson_id must be set)
-  
+
+  const itemType = item.item_type;
+  if (itemType === 'lesson' && !item.lesson_id) throw new Error('lesson_id required when item_type is lesson');
+  if (itemType === 'assignment' && !item.assignment_id) throw new Error('assignment_id required when item_type is assignment');
+
   const { data, error } = await supabase
     .from('schedule_items')
     .insert({ ...item, user_id: user.id })
@@ -363,28 +365,25 @@ export async function toggleScheduleItemComplete(id: string, isCompleted: boolea
   const { data: { user } } = await supabaseStandard.auth.getUser();
   
   let db = supabaseStandard;
-  
-  // If not parent, check for kid session
+  let restrictToKidId: string | null = null;
+
   if (!user) {
     const session = await getKidSession();
     if (session) {
-      // Authorized Kid: Use Service Role
-      // TODO: We should verify the item belongs to the kid here, effectively RLS manually
       db = await createServiceRoleClient();
+      restrictToKidId = session.kidId;
     }
   }
 
   const status = isCompleted ? 'completed' : 'pending';
   const completed_at = isCompleted ? new Date().toISOString() : null;
 
-  const { data: item, error } = await db
-    .from('schedule_items')
-    .update({ status, completed_at })
-    .eq('id', id)
-    .select()
-    .single();
+  let query = db.from('schedule_items').update({ status, completed_at }).eq('id', id);
+  if (restrictToKidId) query = query.eq('student_id', restrictToKidId);
+  const { data: item, error } = await query.select().single();
 
   if (error) throw error;
+  if (!item) throw new Error('Schedule item not found or access denied');
 
   let moonsAwarded: number | undefined;
   if (isCompleted && item) {
