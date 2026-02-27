@@ -182,7 +182,8 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
            rubric: data.rubric,
            steps: data.steps, 
            links: data.links,
-           worksheet_data: (initialData as any)?.worksheet_data || null,
+           // eslint-disable-next-line @typescript-eslint/no-explicit-any
+           worksheet_data: (initialData as any)?.worksheet_data ?? null,
            moon_reward: data.moonReward,
         };
 

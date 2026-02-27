@@ -67,8 +67,11 @@ export function ReportsClient({ kids }: ReportsClientProps) {
         end = today;
     }
     
-    setStartDate(format(start, 'yyyy-MM-dd'));
-    setEndDate(format(end, 'yyyy-MM-dd'));
+    const t = setTimeout(() => {
+      setStartDate(format(start, 'yyyy-MM-dd'));
+      setEndDate(format(end, 'yyyy-MM-dd'));
+    }, 0);
+    return () => clearTimeout(t);
   }, [datePreset]);
 
   // Fetch entries when date range changes

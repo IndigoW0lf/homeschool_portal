@@ -113,7 +113,7 @@ export function KidAccessManager({ kid }: KidAccessManagerProps) {
                 className="w-full px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--background-elevated)] focus:ring-2 focus:ring-[var(--lavender-500)] outline-none"
               />
               <p className="text-[10px] text-muted mt-1.5 ml-1">
-                Used for login initial matching (e.g. "Stella A")
+                Used for login initial matching (e.g. &quot;Stella A&quot;)
               </p>
             </div>
           </div>

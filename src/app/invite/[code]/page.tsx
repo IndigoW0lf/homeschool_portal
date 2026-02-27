@@ -70,7 +70,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
         </div>
         
         <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
-          You're Invited!
+          You&apos;re Invited!
         </h1>
         
         <p className="text-muted dark:text-[var(--foreground-muted)] mb-6">
@@ -81,7 +81,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
         {emailMismatch && (
           <div className="mb-6 p-4 bg-[var(--solar-100)] dark:bg-[var(--solar-900)]/20 rounded-xl border border-[var(--solar-200)] dark:border-[var(--solar-800)]">
             <p className="text-sm text-[var(--solar-700)] dark:text-[var(--solar-300)]">
-              This invite was sent to <strong>{invite.email}</strong>, but you're logged in as <strong>{user?.email}</strong>.
+              This invite was sent to <strong>{invite.email}</strong>, but you&apos;re logged in as <strong>{user?.email}</strong>.
             </p>
           </div>
         )}
@@ -118,7 +118,7 @@ export default async function InvitePage({ params }: InvitePageProps) {
         )}
         
         <p className="mt-6 text-xs text-muted">
-          By accepting, you'll be able to view and manage the family's homeschool activities.
+          By accepting, you&apos;ll be able to view and manage the family&apos;s homeschool activities.
         </p>
       </div>
     </div>

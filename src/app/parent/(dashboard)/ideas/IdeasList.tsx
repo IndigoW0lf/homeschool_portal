@@ -125,7 +125,7 @@ export function IdeasList({ initialIdeas }: IdeasListProps) {
                       You asked
                     </p>
                     <p className="text-sm text-muted italic">
-                      "{idea.user_message}"
+                      &quot;{idea.user_message}&quot;
                     </p>
                   </div>
                 )}

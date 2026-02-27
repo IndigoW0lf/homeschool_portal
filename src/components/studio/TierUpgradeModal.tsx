@@ -94,7 +94,7 @@ export function TierUpgradeModal({
           <div>
             <h3 className="text-sm font-semibold text-heading mb-3 flex items-center gap-2">
               <Sparkle size={16} className="text-[var(--ember-500)]" />
-              What's New
+              What&apos;s New
             </h3>
             <ul className="space-y-2">
               {nextTierLimits.maxSavedDesigns !== 'unlimited' && (

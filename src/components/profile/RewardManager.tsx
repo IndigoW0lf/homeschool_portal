@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import * as PhosphorIcons from '@phosphor-icons/react';
-import { Gift, Plus, Pencil, Trash, Check, X, ArrowsClockwise, Storefront, Star, FloppyDisk, Infinity as InfinityIcon } from '@phosphor-icons/react';
+import { Plus, Pencil, Trash, Check, X, ArrowsClockwise, Storefront, Star, Infinity as InfinityIcon } from '@phosphor-icons/react';
 import { REWARD_TEMPLATES, REWARD_CATEGORIES, RewardTemplate } from '@/lib/reward-templates';
 
 // Common icons for the picker
@@ -16,6 +16,10 @@ const ICON_PICKER_OPTIONS = [
   'Smiley', 'Heart', 'Star', 'Gift', 'Ticket',
   'Money', 'PiggyBank', 'CreditCard', 'ShoppingBag', 'Tag'
 ];
+
+// Typed index for dynamic Phosphor icon access
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PhosphorIconMap = PhosphorIcons as unknown as Record<string, React.ComponentType<{ size?: number; weight?: string; className?: string }> | undefined>;
 
 interface RewardManagerProps {
   kids: Array<{ id: string; name: string }>;
@@ -240,8 +244,8 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
 
   // Helper to render icon
   const renderIcon = (iconName: string | undefined, emoji: string, size = 24) => {
-    if (iconName && (PhosphorIcons as any)[iconName]) {
-      const IconCmp = (PhosphorIcons as any)[iconName];
+    if (iconName && PhosphorIconMap[iconName]) {
+      const IconCmp = PhosphorIconMap[iconName]!;
       return <IconCmp size={size} weight="duotone" className="text-[var(--nebula-purple)]" />;
     }
     return <span style={{ fontSize: size }}>{emoji}</span>;
@@ -347,7 +351,8 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
                  <label className="block text-sm text-muted mb-2">Select Icon</label>
                  <div className="grid grid-cols-5 gap-2 h-40 overflow-y-auto p-2 border border-[var(--border)] rounded-lg bg-[var(--background-elevated)]">
                     {ICON_PICKER_OPTIONS.map(iconName => {
-                      const IconCmp = (PhosphorIcons as any)[iconName];
+                      const IconCmp = PhosphorIconMap[iconName];
+                       if (!IconCmp) return null;
                       return (
                         <button
                           key={iconName}
@@ -428,7 +433,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
             {selectedCategory === 'custom' ? (
                customTemplates.length === 0 ? (
                  <p className="col-span-2 text-center text-sm text-muted py-4">
-                   No custom templates yet. Create a reward and check "Save as template"!
+                   No custom templates yet. Create a reward and check &quot;Save as template&quot;!
                  </p>
                ) : (
                  customTemplates.map(template => (
@@ -467,7 +472,7 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
       {/* Current Rewards List */}
       <div>
         <h4 className="text-sm font-medium text-heading dark:text-muted mb-3">
-          {selectedKidName}'s Shop Rewards ({rewards.length})
+          {selectedKidName}&apos;s Shop Rewards ({rewards.length})
         </h4>
 
         {isLoading ? (

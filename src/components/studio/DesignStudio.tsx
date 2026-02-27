@@ -20,7 +20,7 @@ import { LockedFeatureBadge } from './LockedFeatureBadge';
 interface DesignStudioProps {
   kidId: string;
   templates: DesignTemplatesManifest;
-  existingDesigns?: any; // Legacy prop, unused in new pixel flow
+  existingDesigns?: unknown[]; // Legacy prop, unused in new pixel flow
   designId?: string; // If editing
   unlockedTemplateIds?: string[];
   initialDesigns?: ItemDesignRow[];
@@ -267,7 +267,7 @@ export function DesignStudio({
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {initialDesigns.length === 0 ? (
             <div className="col-span-full py-12 text-center text-muted">
-              <p>You haven't designed anything yet!</p>
+              <p>You haven&apos;t designed anything yet!</p>
               <button 
                 onClick={handleStartNew}
                 className="mt-4 text-[var(--ember-500)] hover:underline"

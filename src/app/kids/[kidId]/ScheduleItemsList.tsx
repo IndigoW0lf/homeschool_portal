@@ -155,7 +155,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
                 {lessonDetails.description && (
                   <div>
                     <h4 className="text-sm font-semibold text-muted uppercase tracking-wider mb-2">
-                      What You'll Learn
+                      What You&apos;ll Learn
                     </h4>
                     <MarkdownText content={lessonDetails.description} />
                   </div>
@@ -328,7 +328,7 @@ export function ScheduleItemsList({ items, kidId, date, showDates, readOnly }: S
             {/* Encouragement message */}
             <div className="bg-[var(--ember-50)] dark:bg-[var(--ember-900)/20] p-4 rounded-xl text-center">
               <p className="text-[var(--ember-600)] dark:text-[var(--ember-400)] font-medium flex items-center justify-center gap-2">
-                You've got this! <Sparkle size={18} weight="fill" className="text-yellow-500" />
+                You&apos;ve got this! <Sparkle size={18} weight="fill" className="text-yellow-500" />
               </p>
             </div>
           </div>

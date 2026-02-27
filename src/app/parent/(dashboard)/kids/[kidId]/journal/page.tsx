@@ -57,7 +57,7 @@ export default async function ParentViewKidJournalPage({ params }: Props) {
                 Parent View
               </div>
               <p className="text-sm text-muted">
-                Viewing {displayName}'s journal as admin
+                Viewing {displayName}&apos;s journal as admin
               </p>
             </div>
             <Link
@@ -80,7 +80,7 @@ export default async function ParentViewKidJournalPage({ params }: Props) {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[var(--foreground)]">
-                {displayName}'s Journal
+                {displayName}&apos;s Journal
               </h1>
               <p className="text-muted">
                 {entries?.length || 0} entries

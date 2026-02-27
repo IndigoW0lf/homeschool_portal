@@ -70,7 +70,7 @@ export function ActivityLogList({
       <div className="text-center py-8 text-muted">
         <BookOpen size={48} className="mx-auto mb-2 opacity-30" />
         <p>No activities logged yet.</p>
-        <p className="text-sm">Click "Log an Activity" to get started!</p>
+        <p className="text-sm">Click &quot;Log an Activity&quot; to get started!</p>
       </div>
     );
   }

@@ -151,10 +151,10 @@ export function TimeCapsuleViewer({
         {/* AI Message */}
         <div className="p-4 bg-[var(--background-elevated)] rounded-lg border border-amber-100 dark:border-amber-800">
           <p className="text-[var(--foreground)] italic">
-            "Dear {kidName}, in {periodLabel} you wrote {entryCount} journal {entryCount === 1 ? 'entry' : 'entries'}
+            &quot;Dear {kidName}, in {periodLabel} you wrote {entryCount} journal {entryCount === 1 ? 'entry' : 'entries'}
             {topMood && ` and felt mostly ${MOOD_LABELS[topMood].toLowerCase()}`}
             {topTags.length > 0 && `. You thought a lot about ${topTags.join(', ')}`}. 
-            Keep filling your journal with your thoughts and memories! ✨"
+            Keep filling your journal with your thoughts and memories! ✨&quot;
           </p>
         </div>
       </div>
@@ -170,7 +170,7 @@ export function TimeCapsuleViewer({
             </span>
           </div>
           <p className="text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] mb-2 italic">
-            "{highlightEntry.prompt}"
+            &quot;{highlightEntry.prompt}&quot;
           </p>
           <p className="text-[var(--foreground)]">
             {highlightEntry.response}
@@ -223,7 +223,7 @@ export function TimeCapsuleViewer({
                   )}
                 </div>
                 <p className="text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] mb-2 italic">
-                  "{entry.prompt}"
+                  &quot;{entry.prompt}&quot;
                 </p>
                 <p className="text-[var(--foreground)]">{entry.response}</p>
               </div>

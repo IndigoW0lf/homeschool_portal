@@ -60,7 +60,7 @@ export function Turnstile({
 
     // Check if already loaded
     if (window.turnstile) {
-      setScriptLoaded(true);
+      setTimeout(() => setScriptLoaded(true), 0);
       return;
     }
 

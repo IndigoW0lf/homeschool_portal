@@ -39,14 +39,14 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
           Welcome to Lunara Quest!
         </h2>
         <p className="text-muted">
-          Your magical homeschool companion awaits. Let's get you set up!
+          Your magical homeschool companion awaits. Let&apos;s get you set up!
         </p>
       </div>
 
       {/* What You'll Get */}
       <div className="bg-[var(--background-secondary)]/50 rounded-xl p-4">
         <h3 className="font-medium text-heading mb-3">
-          What's included:
+          What&apos;s included:
         </h3>
         <ul className="space-y-2 text-sm text-muted">
           <li className="flex items-center gap-2">

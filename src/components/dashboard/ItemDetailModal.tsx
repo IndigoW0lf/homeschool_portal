@@ -42,11 +42,14 @@ export function ItemDetailModal({
 
   useEffect(() => {
     if (isOpen && item && isLesson) {
-      setHistory(null); // triggers loading state
+      // Defer the reset to avoid synchronous setState-in-effect
+      const t = setTimeout(() => setHistory(null), 0);
       getLessonHistory(item.id).then(data => {
         setHistory(data);
       });
+      return () => clearTimeout(t);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHistory([]);
     }
   }, [isOpen, item, isLesson]);

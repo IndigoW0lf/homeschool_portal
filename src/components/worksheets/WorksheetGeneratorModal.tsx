@@ -276,7 +276,7 @@ export function WorksheetGeneratorModal({ isOpen, onClose, contextTopic = '', on
                 <div>
                   <h3 className="text-lg font-bold text-muted">Ready to Create</h3>
                   <p className="text-sm max-w-md mx-auto mt-2">
-                    Enter a topic on the left to generate a custom printable worksheet tailored to your child's needs.
+                    Enter a topic on the left to generate a custom printable worksheet tailored to your child&apos;s needs.
                   </p>
                 </div>
               </div>

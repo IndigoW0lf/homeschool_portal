@@ -47,7 +47,7 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-xl font-semibold text-[var(--foreground)] mb-3">
-                3. Children's Privacy
+                3. Children&apos;s Privacy
               </h2>
               <p>
                 Lunara Quest is designed for parents and educators to use with their children. We do not knowingly collect personal information directly from children under 13. All child profiles are created and managed by their parent or guardian.

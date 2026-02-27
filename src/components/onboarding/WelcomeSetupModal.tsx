@@ -75,7 +75,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
             Welcome to {familyName}!
           </h2>
           <p className="text-muted">
-            Let's set up your profile so everyone knows who you are
+            Let&apos;s set up your profile so everyone knows who you are
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export function WelcomeSetupModal({ userId, familyName = 'the family' }: Welcome
             ) : (
               <>
                 <Check size={18} weight="bold" />
-                Let's Go!
+                Let&apos;s Go!
               </>
             )}
           </button>

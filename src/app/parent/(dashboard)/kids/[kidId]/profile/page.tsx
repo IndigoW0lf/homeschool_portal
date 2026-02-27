@@ -67,7 +67,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
                 Parent View
               </div>
               <p className="text-sm text-muted">
-                Viewing {displayName}'s profile as admin
+                Viewing {displayName}&apos;s profile as admin
               </p>
             </div>
             <Link
@@ -99,7 +99,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
              */}
             <div>
               <h1 className="text-2xl font-bold text-[var(--foreground)]">
-                {displayName}'s Profile
+                {displayName}&apos;s Profile
               </h1>
               <p className="text-muted">
                 Manage profile information and settings
@@ -119,7 +119,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
              Avatar Customization
           </h3>
           <p className="text-sm text-muted px-1 mb-2">
-            Customize {displayName}'s avatar including background color.
+            Customize {displayName}&apos;s avatar including background color.
           </p>
           
           <OpenPeepsAvatarBuilder

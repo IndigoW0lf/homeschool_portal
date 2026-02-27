@@ -139,7 +139,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
           <label className="flex items-center justify-between p-4 bg-[var(--background-secondary)] rounded-lg cursor-pointer">
             <div>
               <p className="font-medium text-heading dark:text-[var(--foreground)]">Enable Daily Journal</p>
-              <p className="text-sm text-muted">Show journal prompt on {selectedKidName}'s home</p>
+              <p className="text-sm text-muted">Show journal prompt on {selectedKidName}&apos;s home</p>
             </div>
             <input
               type="checkbox"
@@ -155,7 +155,7 @@ export function JournalSettings({ kids, kidId }: JournalSettingsProps) {
               <Fire size={20} weight="fill" className="text-orange-500" />
               <div>
                 <p className="font-medium text-heading dark:text-[var(--foreground)]">Show Streak Counter</p>
-                <p className="text-sm text-muted">Display current streak on {selectedKidName}'s home</p>
+                <p className="text-sm text-muted">Display current streak on {selectedKidName}&apos;s home</p>
               </div>
             </div>
             <input

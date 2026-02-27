@@ -104,7 +104,7 @@ export default async function ParentViewKidShopPage({ params }: Props) {
                 Parent View
               </div>
               <p className="text-sm text-muted">
-                Viewing {displayName}'s shop as admin
+                Viewing {displayName}&apos;s shop as admin
               </p>
             </div>
             <Link
@@ -127,7 +127,7 @@ export default async function ParentViewKidShopPage({ params }: Props) {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[var(--foreground)]">
-                {displayName}'s Moons Shop
+                {displayName}&apos;s Moons Shop
               </h1>
               <p className="text-muted">
                 View and manage shop items
