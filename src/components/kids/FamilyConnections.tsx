@@ -6,13 +6,14 @@ import { useRouter } from 'next/navigation';
 import { Users, Crown, Heart } from '@phosphor-icons/react';
 import { AvatarPreview } from './AvatarPreview';
 import { supabase } from '@/lib/supabase/browser';
+import type { AvatarState } from '@/types';
 
 interface Sibling {
   id: string;
   name: string;
   nickname?: string;
   favoriteColor?: string;
-  avatarState?: any;
+  avatarState?: AvatarState;
 }
 
 interface Parent {
@@ -89,7 +90,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
     loadFamily();
   }, [kidId, familyId]);
 
-  const handleSiblingClick = (e: React.MouseEvent, siblingId: string) => {
+  const handleSiblingClick = (e: React.MouseEvent) => {
     if (isKidSession) {
       e.preventDefault();
       // If in kid session, we can't just switch. 
@@ -176,7 +177,7 @@ export function FamilyConnections({ kidId, familyId, isKidSession }: FamilyConne
                 <Link
                   key={sibling.id}
                   href={`/kids/${sibling.id}/profile`}
-                  onClick={(e) => handleSiblingClick(e, sibling.id)}
+                  onClick={handleSiblingClick}
                   className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-gradient-to-br from-[var(--celestial-50)] to-[var(--cyan-50)] dark:from-[var(--celestial-900)]/20 dark:to-[var(--cyan-900)]/20 border border-[var(--celestial-100)] dark:border-[var(--celestial-800)]/50 hover:shadow-md hover:scale-105 transition-all"
                 >
                   <AvatarPreview

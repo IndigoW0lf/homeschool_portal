@@ -294,7 +294,7 @@ export function DesignStudio({
                              Assuming we pass it or it's fetched? 
                              The `ItemDesignRow` has `preview_url`. Use that.
                          */}
-                         {/* eslint-disable-next-line @next/next/no-img-element */}
+                         { }
                          {design.preview_url ? (
                              <img src={design.preview_url} alt={design.name} className="w-full h-full object-contain" />
                          ) : (

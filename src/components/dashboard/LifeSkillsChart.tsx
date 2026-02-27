@@ -40,15 +40,20 @@ export function LifeSkillsChart({ completedItems }: LifeSkillsChartProps) {
 
   const total = categoryData.reduce((acc, cat) => acc + cat.count, 0);
   
-  // Calculate pie chart segments
+  // Calculate pie chart segments using reduce to avoid mutation in useMemo
   const segments = useMemo(() => {
-    let currentAngle = -90; // Start from top
-    return categoryData.map(cat => {
-      const angle = total > 0 ? (cat.count / total) * 360 : 0;
-      const startAngle = currentAngle;
-      currentAngle += angle;
-      return { ...cat, startAngle, angle };
-    }).filter(s => s.angle > 0);
+    type Segment = { key: string; color: string; description: string; count: number; percentage: number; startAngle: number; angle: number };
+    return categoryData.reduce<{ segs: Segment[]; currentAngle: number }>(
+      (acc, cat) => {
+        const angle = total > 0 ? (cat.count / total) * 360 : 0;
+        if (angle === 0) return acc;
+        return {
+          segs: [...acc.segs, { ...cat, startAngle: acc.currentAngle, angle }],
+          currentAngle: acc.currentAngle + angle,
+        };
+      },
+      { segs: [], currentAngle: -90 } // Start from top
+    ).segs;
   }, [categoryData, total]);
 
   // Convert angle to path
@@ -77,7 +82,7 @@ export function LifeSkillsChart({ completedItems }: LifeSkillsChartProps) {
     <div className="flex flex-col lg:flex-row gap-6 items-center">
       {/* Pie Chart */}
       <div className="relative">
-        <svg viewBox="0 0 100 100" className="w-40 h-40">
+        <svg className="w-40 h-40">
           {segments.map((seg, i) => (
             <path
               key={seg.key}

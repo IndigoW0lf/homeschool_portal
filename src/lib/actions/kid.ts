@@ -48,7 +48,7 @@ export async function updateKidProfileAction(kidId: string, updates: Partial<Kid
     }
 
     // Prepare DB payload (convert camelCase to snake_case)
-    const dbPayload: any = {};
+    const dbPayload: Record<string, unknown> = {};
     if (updates.nickname !== undefined) dbPayload.nickname = updates.nickname;
     if (updates.bio !== undefined) dbPayload.bio = updates.bio;
     if (updates.favoriteShows !== undefined) dbPayload.favorite_shows = updates.favoriteShows;

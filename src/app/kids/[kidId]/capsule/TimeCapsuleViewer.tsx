@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Sparkle, Calendar, ArrowLeft, ArrowRight, Tag } from '@phosphor-icons/react';
-import { format, parseISO, subMonths, addMonths, subYears, addYears } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import Link from 'next/link';
 
 interface JournalEntry {
@@ -54,16 +54,12 @@ export function TimeCapsuleViewer({
 }: TimeCapsuleViewerProps) {
   const [showAllEntries, setShowAllEntries] = useState(false);
 
-  // Get a random highlight entry
-  const highlightEntry = entries.length > 0 
-    ? entries[Math.floor(Math.random() * entries.length)]
-    : null;
-
-  // Navigation helpers
-  const now = new Date();
-  const currentDateParam = currentPeriod === 'year' 
-    ? periodLabel 
-    : format(parseISO(periodLabel.includes(',') ? '2024-01-01' : `${periodLabel.split(' ')[1]}-${format(parseISO(`2024-${periodLabel.split(' ')[0]}-01`), 'MM')}`), 'yyyy-MM');
+  // Pick a stable random highlight entry (useMemo avoids calling impure Math.random during render)
+  const highlightEntry = useMemo(() => {
+    if (entries.length === 0) return null;
+    return entries[Math.floor(Math.random() * entries.length)];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entries.length]);
 
   if (entries.length === 0) {
     return (

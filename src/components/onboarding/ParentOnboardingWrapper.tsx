@@ -17,6 +17,21 @@ export function ParentOnboardingWrapper({ userId, hasSeenTutorial }: ParentOnboa
   const [familyName, setFamilyName] = useState<string | undefined>(undefined);
   const searchParams = useSearchParams();
 
+  const fetchFamilyName = async () => {
+    const { data } = await supabase
+      .from('family_members')
+      .select('family:families(name)')
+      .eq('user_id', userId)
+      .limit(1)
+      .single();
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const family = data?.family as any;
+    if (family?.name) {
+      setFamilyName(family.name);
+    }
+  };
+
   useEffect(() => {
     // Only show once per session - if already shown/dismissed, don't show again
     if (hasShownRef.current) return;
@@ -38,22 +53,8 @@ export function ParentOnboardingWrapper({ userId, hasSeenTutorial }: ParentOnboa
       hasShownRef.current = true;
       fetchFamilyName();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasSeenTutorial, searchParams, userId]);
-
-  const fetchFamilyName = async () => {
-    const { data } = await supabase
-      .from('family_members')
-      .select('family:families(name)')
-      .eq('user_id', userId)
-      .limit(1)
-      .single();
-    
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const family = data?.family as any;
-    if (family?.name) {
-      setFamilyName(family.name);
-    }
-  };
 
   const handleComplete = async () => {
     setShowOnboarding(false);

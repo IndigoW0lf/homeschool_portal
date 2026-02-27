@@ -33,19 +33,18 @@ export function ItemDetailModal({
 }: ItemDetailModalProps) {
   const router = useRouter();
   const [worksheetModalOpen, setWorksheetModalOpen] = useState(false);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [history, setHistory] = useState<HistoryItem[] | null>(null);
   
   const isLesson = itemType === 'lesson';
   const lesson = isLesson ? (item as Lesson) : null;
   const assignment = !isLesson ? (item as AssignmentItemRow) : null;
+  const loadingHistory = isOpen && isLesson && history === null;
 
   useEffect(() => {
     if (isOpen && item && isLesson) {
-      setLoadingHistory(true);
+      setHistory(null); // triggers loading state
       getLessonHistory(item.id).then(data => {
         setHistory(data);
-        setLoadingHistory(false);
       });
     } else {
       setHistory([]);
@@ -137,7 +136,7 @@ export function ItemDetailModal({
               </h3>
               {loadingHistory ? (
                 <div className="text-sm text-muted animate-pulse">Loading history...</div>
-              ) : history.length === 0 ? (
+              ) : !history || history.length === 0 ? (
                 <p className="text-sm text-muted italic">Never assigned</p>
               ) : (
                 <ul className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">

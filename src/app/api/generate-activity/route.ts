@@ -136,8 +136,7 @@ ${description ? `User's Notes/Description: ${description}` : ''}
     // We only want links from our trusted YouTube search
     if ('suggestedLinks' in generated) {
       console.log('[API/generate-activity] Removing hallucinated links from AI response');
-      // @ts-ignore
-      delete generated.suggestedLinks;
+      delete (generated as Record<string, unknown>).suggestedLinks;
     }
     
     console.log('[API/generate-activity] AI generation complete:', {

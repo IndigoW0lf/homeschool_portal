@@ -2,6 +2,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { PrintPageClient } from '@/components/worksheets/PrintPageClient';
 import Link from 'next/link';
+import type { WorksheetData } from '@/types';
 
 interface PrintWorksheetPageProps {
   params: Promise<{ id: string }>;
@@ -68,7 +69,7 @@ export default async function PrintWorksheetPage({ params }: PrintWorksheetPageP
     );
   }
 
-  return <PrintPageClient data={assignment.worksheet_data as any} />;
+  return <PrintPageClient data={assignment.worksheet_data as WorksheetData} />;
 }
 
 

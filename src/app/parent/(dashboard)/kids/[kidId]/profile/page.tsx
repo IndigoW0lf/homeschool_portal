@@ -53,9 +53,8 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
   const subjectCounts = await getKidSubjectCounts(kidId);
   const displayName = kid.nickname || kid.name;
 
-  // Prepare initial avatar state
-  // Check if we have open_peeps_state, otherwise use default
-  const initialAvatarState = (kid as any).open_peeps_avatar_state || {};
+  // Prepare initial avatar state  
+  const initialAvatarState = (kid as unknown as Record<string, unknown>).open_peeps_avatar_state || {};
 
   return (
     <div className="min-h-screen">

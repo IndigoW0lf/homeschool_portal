@@ -43,8 +43,10 @@ export function Turnstile({
   const initializedRef = useRef(false);
   const callbacksRef = useRef({ onVerify, onExpire, onError });
   
-  // Keep callbacks ref updated without causing re-renders
-  callbacksRef.current = { onVerify, onExpire, onError };
+  // Keep callbacks ref updated in a layout effect to avoid updating during render
+  useEffect(() => {
+    callbacksRef.current = { onVerify, onExpire, onError };
+  });
 
   const [scriptLoaded, setScriptLoaded] = useState(false);
 

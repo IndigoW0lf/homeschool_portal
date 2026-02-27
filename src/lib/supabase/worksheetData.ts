@@ -49,14 +49,23 @@ export async function getWorksheetResponsesForKids(kidIds: string[]): Promise<Wo
     return [];
   }
 
-  return (data || []).map(row => ({
+  type RawRow = {
+    id: string;
+    kid_id: string;
+    assignment_id: string;
+    responses: unknown;
+    submitted_at: string;
+    kids: { name: string } | null;
+    assignment: { title: string; worksheet_data: unknown } | null;
+  };
+  return ((data || []) as unknown as RawRow[]).map(row => ({
     id: row.id,
     kidId: row.kid_id,
-    kidName: (row.kids as any)?.name || 'Unknown',
+    kidName: row.kids?.name || 'Unknown',
     assignmentId: row.assignment_id,
-    assignmentTitle: (row.assignment as any)?.title || 'Untitled',
+    assignmentTitle: row.assignment?.title || 'Untitled',
     responses: row.responses as Record<string, string | string[] | null>,
     submittedAt: row.submitted_at,
-    worksheetData: (row.assignment as any)?.worksheet_data || {},
+    worksheetData: (row.assignment?.worksheet_data || {}) as WorksheetResponseData['worksheetData'],
   }));
 }
