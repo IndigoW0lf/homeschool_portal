@@ -295,7 +295,9 @@ export interface ShopItem {
   cost: number;
   description: string;
   unlocks?: string[];
-  emoji?: string; // For reward items
+  emoji?: string; // Legacy/fallback
+  icon?: string; // Phosphor icon
+  is_unlimited?: boolean;
 }
 
 export interface ShopItems {

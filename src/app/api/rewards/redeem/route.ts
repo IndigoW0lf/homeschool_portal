@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
     
     let cost = 0;
     let rewardName = '';
+    let isUnlimited = true; // Default to true for templates/safeguard
 
     // Handle Template Purchase
     if (type === 'template') {
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       // 1. Get the reward details (Standard Reward)
       const { data: reward, error: rewardError } = await supabase
         .from('kid_rewards')
-        .select('moon_cost, name')
+        .select('moon_cost, name, is_unlimited')
         .eq('id', rewardId)
         .single();
       
@@ -89,6 +90,7 @@ export async function POST(request: NextRequest) {
       
       cost = reward.moon_cost;
       rewardName = reward.name;
+      isUnlimited = reward.is_unlimited;
     }
     
     // 2. Get current moons for the kid from student_progress
@@ -170,6 +172,15 @@ export async function POST(request: NextRequest) {
           
          return NextResponse.json({ error: 'Failed to create redemption' }, { status: 500 });
       }
+      
+      // 6. If it's a one-time reward (is_unlimited is false), mark it inactive
+      if (!isUnlimited) {
+        await supabase
+          .from('kid_rewards')
+          .update({ is_active: false })
+          .eq('id', rewardId);
+      }
+      
       resultData = data;
     }
 

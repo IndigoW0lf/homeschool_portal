@@ -40,7 +40,6 @@ interface KidReward {
 }
 
 interface CustomTemplate extends RewardTemplate {
-  icon?: string;
   is_unlimited?: boolean;
 }
 
@@ -115,8 +114,8 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
           kidId: selectedKid,
           name: template.name,
           description: template.description,
-          emoji: template.emoji,
-          icon: (template as CustomTemplate).icon,
+          icon: template.icon,
+          emoji: '🎁', // Fallback for old templates
           category: template.category,
           moonCost: template.suggestedCost,
           isUnlimited: (template as CustomTemplate).is_unlimited ?? true,
@@ -414,19 +413,23 @@ export function RewardManager({ kids, kidId }: RewardManagerProps) {
               >
                 ⭐ My Templates
               </button>
-            {(Object.keys(REWARD_CATEGORIES) as (keyof typeof REWARD_CATEGORIES)[]).map(cat => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors ${
-                  selectedCategory === cat
-                    ? 'bg-[var(--nebula-purple)] text-white'
-                    : 'bg-[var(--background-elevated)] text-muted hover:bg-[var(--background)]'
-                }`}
-              >
-                {REWARD_CATEGORIES[cat].emoji} {REWARD_CATEGORIES[cat].label}
-              </button>
-            ))}
+            {(Object.keys(REWARD_CATEGORIES) as (keyof typeof REWARD_CATEGORIES)[]).map(cat => {
+              const IconCmp = PhosphorIconMap[REWARD_CATEGORIES[cat].icon];
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1 rounded-full text-sm whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+                    selectedCategory === cat
+                      ? 'bg-[var(--nebula-purple)] text-white'
+                      : 'bg-[var(--background-elevated)] text-muted hover:bg-[var(--background)]'
+                  }`}
+                >
+                  {IconCmp && <IconCmp size={16} />}
+                  {REWARD_CATEGORIES[cat].label}
+                </button>
+              );
+            })}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto">

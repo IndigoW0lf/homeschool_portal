@@ -48,6 +48,8 @@ export default async function ShopPage({ params }: ShopPageProps) {
     cost: reward.moon_cost,
     description: reward.description || '',
     emoji: reward.emoji,
+    icon: reward.icon,
+    is_unlimited: reward.is_unlimited,
   }));
 
   // 2. Get unlocked templates for this kid
