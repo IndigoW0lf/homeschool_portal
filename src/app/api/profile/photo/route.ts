@@ -72,10 +72,11 @@ export async function POST(request: NextRequest) {
       .from('profile-photos')
       .getPublicUrl(filePath);
 
-    // Update profile record with new photo URL and set type to photo
+    // Update profile record: set both avatar_url (for display) and profile_photo_url
     const { error: updateError } = await supabase
       .from('profiles')
       .update({ 
+        avatar_url: publicUrl,
         profile_photo_url: publicUrl,
         profile_pic_type: 'photo'
       })

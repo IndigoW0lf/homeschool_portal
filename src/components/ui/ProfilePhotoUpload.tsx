@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Camera, X, Check, Spinner, Image as ImageIcon } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
@@ -12,50 +12,51 @@ interface ProfilePhotoUploadProps {
   onCancel?: () => void;
 }
 
-// Compress image to max 512x512 and convert to JPEG
-async function compressImage(file: File): Promise<Blob> {
+const CROP_SIZE = 320;
+
+// Crop image to the visible region (object-cover + object-position) and compress to JPEG
+async function cropAndCompressImage(
+  file: File,
+  positionX: number,
+  positionY: number
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
     img.onload = () => {
-      // Calculate new dimensions (max 512x512, maintaining aspect ratio)
-      let width = img.width;
-      let height = img.height;
-      const maxSize = 512;
-      
-      if (width > height) {
-        if (width > maxSize) {
-          height = (height * maxSize) / width;
-          width = maxSize;
-        }
-      } else {
-        if (height > maxSize) {
-          width = (width * maxSize) / height;
-          height = maxSize;
-        }
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      const scale = Math.max(CROP_SIZE / w, CROP_SIZE / h);
+      const scaledW = w * scale;
+      const scaledH = h * scale;
+      // object-position x% y%: point (x%,y%) of image is at (x%,y%) of the box
+      // So image left edge in box coords: CROP_SIZE * positionX/100 - scaledW/2
+      const srcXScaled = Math.max(0, (CROP_SIZE * positionX) / 100 - scaledW / 2);
+      const srcYScaled = Math.max(0, (CROP_SIZE * positionY) / 100 - scaledH / 2);
+      const srcW = Math.min(CROP_SIZE, scaledW - srcXScaled);
+      const srcH = Math.min(CROP_SIZE, scaledH - srcYScaled);
+      const ox = srcXScaled / scale;
+      const oy = srcYScaled / scale;
+      const ow = srcW / scale;
+      const oh = srcH / scale;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = CROP_SIZE;
+      canvas.height = CROP_SIZE;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Canvas not available'));
+        return;
       }
-      
-      canvas.width = width;
-      canvas.height = height;
-      
-      // Draw and compress
-      ctx?.drawImage(img, 0, 0, width, height);
-      
+      ctx.drawImage(img, ox, oy, ow, oh, 0, 0, CROP_SIZE, CROP_SIZE);
       canvas.toBlob(
         (blob) => {
-          if (blob) {
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to compress image'));
-          }
+          if (blob) resolve(blob);
+          else reject(new Error('Failed to crop image'));
         },
         'image/jpeg',
-        0.85 // Quality 85%
+        0.88
       );
     };
-    
     img.onerror = () => reject(new Error('Failed to load image'));
     img.src = URL.createObjectURL(file);
   });
@@ -65,67 +66,86 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [cropPosition, setCropPosition] = useState({ x: 50, y: 50 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0, posX: 0, posY: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
-    // Validate file type
+
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
-    
-    // Validate file size (max 10MB before compression)
     if (file.size > 10 * 1024 * 1024) {
       toast.error('Image must be under 10MB');
       return;
     }
-    
-    // Create preview
-    const preview = URL.createObjectURL(file);
-    setPreviewUrl(preview);
+    setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
+    setCropPosition({ x: 50, y: 50 });
   };
-  
+
+  const handleCropPointerDown = useCallback((e: React.PointerEvent) => {
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    setIsDragging(true);
+    dragStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      posX: cropPosition.x,
+      posY: cropPosition.y,
+    };
+  }, [cropPosition.x, cropPosition.y]);
+
+  const handleCropPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
+    const sensitivity = 0.15;
+    const newX = Math.max(0, Math.min(100, dragStart.current.posX - dx * sensitivity));
+    const newY = Math.max(0, Math.min(100, dragStart.current.posY - dy * sensitivity));
+    setCropPosition({ x: newX, y: newY });
+  }, [isDragging]);
+
+  const handleCropPointerUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
   const handleUpload = async () => {
     if (!selectedFile) return;
-    
+
     setIsUploading(true);
-    
     try {
-      // Compress image
-      const compressedBlob = await compressImage(selectedFile);
-      
-      // Create form data for upload
+      const croppedBlob = await cropAndCompressImage(
+        selectedFile,
+        cropPosition.x,
+        cropPosition.y
+      );
+
       const formData = new FormData();
-      formData.append('file', compressedBlob, 'photo.jpg');
-      
-      // Upload via appropriate API
-      const endpoint = entityType === 'kid' 
-        ? `/api/kids/${entityId}/avatar?type=photo` 
+      formData.append('file', croppedBlob, 'photo.jpg');
+
+      const endpoint = entityType === 'kid'
+        ? `/api/kids/${entityId}/avatar?type=photo`
         : `/api/profile/photo`;
-        
+
       const res = await fetch(endpoint, {
         method: 'POST',
         body: formData,
       });
-      
+
       const data = await res.json();
-      
+
       if (!res.ok) {
         throw new Error(data.error || 'Upload failed');
       }
-      
+
       toast.success('Profile photo updated!');
-      // Call with the returned URL depending on endpoint
       onUploadComplete(data.photoUrl || data.avatarUrl);
-      
-      // Clean up
       setPreviewUrl(null);
       setSelectedFile(null);
-      
     } catch (err) {
       console.error('Upload error:', err);
       toast.error('Failed to upload photo');
@@ -133,37 +153,49 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
       setIsUploading(false);
     }
   };
-  
+
   const handleReset = () => {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-    }
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
     setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
     if (onCancel) onCancel();
   };
-  
+
+  const showCropStep = Boolean(previewUrl && selectedFile);
+
   return (
     <div className="space-y-4">
-      {/* Current or Preview Photo */}
       <div className="flex flex-col items-center">
         <div className="relative w-32 h-32 mb-4">
-          {previewUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img 
-              src={previewUrl} 
-              alt="Preview" 
-              className="w-full h-full rounded-full object-cover border-4 border-[var(--ember-400)] shadow-lg"
-            />
+          {showCropStep ? (
+            <div
+              className="w-32 h-32 rounded-full overflow-hidden border-4 border-[var(--ember-400)] shadow-lg cursor-grab active:cursor-grabbing select-none touch-none"
+              onPointerDown={handleCropPointerDown}
+              onPointerMove={handleCropPointerMove}
+              onPointerUp={handleCropPointerUp}
+              onPointerLeave={handleCropPointerUp}
+              onPointerCancel={handleCropPointerUp}
+              role="img"
+              aria-label="Drag to adjust photo position"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={previewUrl}
+                alt=""
+                className="w-full h-full object-cover pointer-events-none"
+                style={{
+                  objectPosition: `${cropPosition.x}% ${cropPosition.y}%`,
+                }}
+                draggable={false}
+              />
+            </div>
           ) : currentPhotoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img 
-              src={currentPhotoUrl} 
-              alt="Current photo" 
-              className="w-full h-full rounded-full object-cover border-4 border-[var(--border)] shadow-md"
+            <img
+              src={currentPhotoUrl}
+              alt="Current photo"
+              className="w-full h-full rounded-full object-cover object-top border-4 border-[var(--border)] shadow-md"
             />
           ) : (
             <button
@@ -175,8 +207,7 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
               <span className="text-xs text-muted font-medium">Add Photo</span>
             </button>
           )}
-          
-          {/* Upload button overlay if we already have a photo/preview */}
+
           {(currentPhotoUrl || previewUrl) && !isUploading && (
             <button
               type="button"
@@ -188,50 +219,53 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
             </button>
           )}
         </div>
-        
-        {/* Hidden file input */}
+
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={handleFileSelect}
           className="hidden"
+          aria-label="Choose profile photo"
         />
-        
-        {/* Action buttons when preview is shown */}
-        {previewUrl && (
-          <div className="flex justify-center gap-2 animate-in fade-in slide-in-from-bottom-2">
-            <button
-              type="button"
-              onClick={handleReset}
-              disabled={isUploading}
-              className="px-4 py-2 text-sm font-medium text-muted hover:bg-[var(--hover-overlay)] rounded-lg transition-colors flex items-center gap-1.5"
-            >
-              <X size={16} />
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleUpload}
-              disabled={isUploading}
-              className="px-4 py-2 text-sm font-medium bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-[var(--foreground)] rounded-lg transition-colors flex items-center gap-1.5 shadow-md"
-            >
-              {isUploading ? (
-                <>
-                  <Spinner size={16} className="animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <Check size={16} weight="bold" />
-                  Save Photo
-                </>
-              )}
-            </button>
-          </div>
+
+        {showCropStep && (
+          <>
+            <p className="text-xs text-muted mb-3 text-center max-w-[240px]">
+              Drag the photo to choose what appears in the circle, then save.
+            </p>
+            <div className="flex justify-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+              <button
+                type="button"
+                onClick={handleReset}
+                disabled={isUploading}
+                className="px-4 py-2 text-sm font-medium text-muted hover:bg-[var(--hover-overlay)] rounded-lg transition-colors flex items-center gap-1.5"
+              >
+                <X size={16} />
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleUpload}
+                disabled={isUploading}
+                className="px-4 py-2 text-sm font-medium bg-[var(--ember-500)] hover:bg-[var(--ember-600)] text-[var(--foreground)] rounded-lg transition-colors flex items-center gap-1.5 shadow-md"
+              >
+                {isUploading ? (
+                  <>
+                    <Spinner size={16} className="animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Check size={16} weight="bold" />
+                    Save Photo
+                  </>
+                )}
+              </button>
+            </div>
+          </>
         )}
-        
-        {/* Help text */}
+
         {!previewUrl && (
           <p className="text-center text-xs text-muted max-w-[200px]">
             Upload a JPG or PNG (max 10MB)

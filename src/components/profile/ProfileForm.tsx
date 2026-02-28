@@ -119,7 +119,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               alt="Your avatar"
               width={120}
               height={120}
-              className="rounded-full bg-[var(--celestial-50)] bg-[var(--background-secondary)]/50 shadow-lg ring-4 ring-[var(--background-elevated)] dark:ring-gray-800"
+              className="rounded-full bg-[var(--celestial-50)] bg-[var(--background-secondary)]/50 shadow-lg ring-4 ring-[var(--background-elevated)] dark:ring-gray-800 object-cover object-top w-[120px] h-[120px]"
             />
           </div>
           <h2 className="mt-4 text-2xl font-bold text-heading">
@@ -196,7 +196,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             aria-hidden
             width={96}
             height={96}
-            className="rounded-full bg-[var(--background-secondary)] ring-4 ring-white dark:ring-gray-800 shadow-md group-hover:ring-[var(--ember-300)] transition-all"
+            className="rounded-full bg-[var(--background-secondary)] ring-4 ring-white dark:ring-gray-800 shadow-md group-hover:ring-[var(--ember-300)] transition-all object-cover object-top w-24 h-24"
           />
           <span className="absolute bottom-0 right-0 bg-[var(--ember-500)] text-[var(--foreground)] text-xs px-2 py-1 rounded-full shadow-sm">
             Change
