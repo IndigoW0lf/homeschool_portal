@@ -197,7 +197,7 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={previewUrl}
+                  src={previewUrl ?? ''}
                   alt=""
                   className="pointer-events-none object-cover"
                   style={{
