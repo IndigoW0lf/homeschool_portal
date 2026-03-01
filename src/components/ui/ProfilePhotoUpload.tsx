@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { Camera, X, Check, Spinner, Image as ImageIcon } from '@phosphor-icons/react';
+import { Camera, X, Check, Spinner, Image as ImageIcon, MagnifyingGlassMinus, MagnifyingGlassPlus } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface ProfilePhotoUploadProps {
@@ -13,23 +13,28 @@ interface ProfilePhotoUploadProps {
 }
 
 const CROP_SIZE = 320;
+const PREVIEW_SIZE = 280; // Larger preview for crop step
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 3;
 
-// Crop image to the visible region (object-cover + object-position) and compress to JPEG
+// Crop image using position (0-100) and zoom, output CROP_SIZE square as JPEG
 async function cropAndCompressImage(
   file: File,
   positionX: number,
-  positionY: number
+  positionY: number,
+  zoom: number
 ): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       const w = img.naturalWidth;
       const h = img.naturalHeight;
-      const scale = Math.max(CROP_SIZE / w, CROP_SIZE / h);
+      // Zoom: we show a smaller portion of the image when zoomed in
+      const baseScale = Math.max(CROP_SIZE / w, CROP_SIZE / h);
+      const scale = baseScale * zoom;
       const scaledW = w * scale;
       const scaledH = h * scale;
-      // object-position x% y%: point (x%,y%) of image is at (x%,y%) of the box
-      // So image left edge in box coords: CROP_SIZE * positionX/100 - scaledW/2
+      // object-position style: point (positionX%, positionY%) of scaled image at center of viewport
       const srcXScaled = Math.max(0, (CROP_SIZE * positionX) / 100 - scaledW / 2);
       const srcYScaled = Math.max(0, (CROP_SIZE * positionY) / 100 - scaledH / 2);
       const srcW = Math.min(CROP_SIZE, scaledW - srcXScaled);
@@ -67,6 +72,7 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [cropPosition, setCropPosition] = useState({ x: 50, y: 50 });
+  const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0, posX: 0, posY: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -86,6 +92,7 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
     setPreviewUrl(URL.createObjectURL(file));
     setSelectedFile(file);
     setCropPosition({ x: 50, y: 50 });
+    setZoom(1);
   };
 
   const handleCropPointerDown = useCallback((e: React.PointerEvent) => {
@@ -103,7 +110,7 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
     if (!isDragging) return;
     const dx = e.clientX - dragStart.current.x;
     const dy = e.clientY - dragStart.current.y;
-    const sensitivity = 0.15;
+    const sensitivity = 0.12;
     const newX = Math.max(0, Math.min(100, dragStart.current.posX - dx * sensitivity));
     const newY = Math.max(0, Math.min(100, dragStart.current.posY - dy * sensitivity));
     setCropPosition({ x: newX, y: newY });
@@ -121,7 +128,8 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
       const croppedBlob = await cropAndCompressImage(
         selectedFile,
         cropPosition.x,
-        cropPosition.y
+        cropPosition.y,
+        zoom
       );
 
       const formData = new FormData();
@@ -139,16 +147,19 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Upload failed');
+        throw new Error(data.error || data.details || 'Upload failed');
       }
 
-      toast.success('Profile photo updated!');
-      onUploadComplete(data.photoUrl || data.avatarUrl);
+      const url = data.photoUrl ?? data.avatarUrl;
+      if (url) onUploadComplete(url);
+
+      toast.success(entityType === 'kid' ? 'Photo saved!' : 'Profile photo updated!');
       setPreviewUrl(null);
       setSelectedFile(null);
     } catch (err) {
       console.error('Upload error:', err);
-      toast.error('Failed to upload photo');
+      const msg = err instanceof Error ? err.message : 'Failed to upload photo';
+      toast.error(msg);
     } finally {
       setIsUploading(false);
     }
@@ -167,29 +178,61 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-center">
-        <div className="relative w-32 h-32 mb-4">
+        <div className="relative mb-4" style={{ width: showCropStep ? PREVIEW_SIZE : 128, height: showCropStep ? PREVIEW_SIZE : 128 }}>
           {showCropStep ? (
-            <div
-              className="w-32 h-32 rounded-full overflow-hidden border-4 border-[var(--ember-400)] shadow-lg cursor-grab active:cursor-grabbing select-none touch-none"
-              onPointerDown={handleCropPointerDown}
-              onPointerMove={handleCropPointerMove}
-              onPointerUp={handleCropPointerUp}
-              onPointerLeave={handleCropPointerUp}
-              onPointerCancel={handleCropPointerUp}
-              role="img"
-              aria-label="Drag to adjust photo position"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={previewUrl}
-                alt=""
-                className="w-full h-full object-cover pointer-events-none"
-                style={{
-                  objectPosition: `${cropPosition.x}% ${cropPosition.y}%`,
-                }}
-                draggable={false}
-              />
-            </div>
+            <>
+              <p className="text-sm font-medium text-heading mb-2 text-center">
+                Adjust your photo
+              </p>
+              <div
+                className="rounded-full overflow-hidden border-4 border-[var(--ember-400)] shadow-xl cursor-grab active:cursor-grabbing select-none touch-none bg-[var(--background-secondary)]"
+                style={{ width: PREVIEW_SIZE, height: PREVIEW_SIZE }}
+                onPointerDown={handleCropPointerDown}
+                onPointerMove={handleCropPointerMove}
+                onPointerUp={handleCropPointerUp}
+                onPointerLeave={handleCropPointerUp}
+                onPointerCancel={handleCropPointerUp}
+                role="img"
+                aria-label="Drag to position photo"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={previewUrl}
+                  alt=""
+                  className="pointer-events-none object-cover"
+                  style={{
+                    width: `${100 * zoom}%`,
+                    height: `${100 * zoom}%`,
+                    objectPosition: `${cropPosition.x}% ${cropPosition.y}%`,
+                  }}
+                  draggable={false}
+                />
+              </div>
+              {/* Zoom controls */}
+              <div className="flex items-center justify-center gap-2 mt-3">
+                <button
+                  type="button"
+                  onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - 0.25))}
+                  disabled={zoom <= ZOOM_MIN}
+                  className="p-2 rounded-lg bg-[var(--background-secondary)] border border-[var(--border)] text-muted hover:text-heading hover:bg-[var(--hover-overlay)] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                  aria-label="Zoom out"
+                >
+                  <MagnifyingGlassMinus size={20} />
+                </button>
+                <span className="text-xs text-muted min-w-[4rem] text-center">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + 0.25))}
+                  disabled={zoom >= ZOOM_MAX}
+                  className="p-2 rounded-lg bg-[var(--background-secondary)] border border-[var(--border)] text-muted hover:text-heading hover:bg-[var(--hover-overlay)] disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                  aria-label="Zoom in"
+                >
+                  <MagnifyingGlassPlus size={20} />
+                </button>
+              </div>
+            </>
           ) : currentPhotoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -208,7 +251,7 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
             </button>
           )}
 
-          {(currentPhotoUrl || previewUrl) && !isUploading && (
+          {(currentPhotoUrl || previewUrl) && !isUploading && !showCropStep && (
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -231,8 +274,8 @@ export function ProfilePhotoUpload({ entityId, entityType, currentPhotoUrl, onUp
 
         {showCropStep && (
           <>
-            <p className="text-xs text-muted mb-3 text-center max-w-[240px]">
-              Drag the photo to choose what appears in the circle, then save.
+            <p className="text-xs text-muted mb-3 text-center max-w-[280px]">
+              Drag to position and use +/- to zoom. What you see in the circle is what will be saved.
             </p>
             <div className="flex justify-center gap-2 animate-in fade-in slide-in-from-bottom-2">
               <button
