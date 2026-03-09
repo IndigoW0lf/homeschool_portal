@@ -80,7 +80,7 @@ export function ScheduleModal({
         // Let's use mapped date strings to be safe with formatted input.
         // Or simple iteration:
         
-        let current = addDays(startDate, 1); // fix off-by-one? Validating...
+        const current = addDays(startDate, 1); // fix off-by-one? Validating...
         // new Date('2023-01-01') is UTC. 
         // Let's rely on date-fns parsing or basic string manipulation to avoid TZ chaos.
         // Actually, let's just use the string and increment.

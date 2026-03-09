@@ -10,6 +10,8 @@ export interface Kid {
   familyId?: string; // Reference to family for connections
   // Profile fields
   avatarUrl?: string;
+  profilePhotoUrl?: string | null;
+  profilePicType?: 'avatar' | 'photo';
   favoriteColor?: string;
   birthday?: string; // YYYY-MM-DD
   bio?: string;
@@ -293,7 +295,9 @@ export interface ShopItem {
   cost: number;
   description: string;
   unlocks?: string[];
-  emoji?: string; // For reward items
+  emoji?: string; // Legacy/fallback
+  icon?: string; // Phosphor icon
+  is_unlimited?: boolean;
 }
 
 export interface ShopItems {
@@ -308,8 +312,10 @@ export interface KidRow {
   grades: string[] | null;
   user_id: string | null;
   pin_hash: string | null;
-  avatar_url: string | null;
-  favorite_color: string | null;
+  avatarUrl: string | null;
+  profilePhotoUrl?: string | null;
+  profilePicType?: 'avatar' | 'photo';
+  favoriteColor?: string | null;
   birthday: string | null;
   bio: string | null;
   // Fun favorites

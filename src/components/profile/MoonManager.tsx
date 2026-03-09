@@ -133,7 +133,7 @@ export function MoonManager({ kids, kidId }: MoonManagerProps) {
         <Moon size={32} weight="fill" className="text-[var(--foreground)]" />
         <div>
           <p className="text-2xl font-bold text-[var(--foreground)]">{totalMoons}</p>
-          <p className="text-sm text-[var(--foreground)]/70">{selectedKidName}'s moons</p>
+          <p className="text-sm text-[var(--foreground)]/70">{selectedKidName}&apos;s moons</p>
         </div>
       </div>
 

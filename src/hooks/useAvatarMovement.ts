@@ -4,7 +4,7 @@
  * useAvatarMovement - Hook for avatar keyboard/touch movement with collision detection
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { WorldMap, AvatarPosition } from '@/types/world';
 import { ASSET_METADATA } from '@/lib/world/assets';
 
@@ -37,7 +37,9 @@ export function useAvatarMovement({
   const moveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Update position when map loads with saved position
-  useEffect(() => {
+  // useLayoutEffect is specifically designed for synchronous DOM/state updates
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useLayoutEffect(() => {
     if (map?.avatar_x !== undefined && map?.avatar_y !== undefined) {
       setPosition(prev => ({
         ...prev,
@@ -46,6 +48,7 @@ export function useAvatarMovement({
       }));
     }
   }, [map?.avatar_x, map?.avatar_y]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   /**
    * Check if a tile is blocked (water terrain or collision item)

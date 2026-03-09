@@ -8,7 +8,14 @@ import { startOfWeek, endOfWeek, format } from 'date-fns';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ParentDashboard() {
+interface PageProps {
+  searchParams: Promise<{ student?: string }>;
+}
+
+export default async function ParentDashboard({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const initialStudentId = params.student ?? null;
+
   const [lessons, assignments, kids, scheduleItems, holidays] = await Promise.all([
     getLessonsFromDB(),
     getAssignmentItemsFromDB(),
@@ -51,6 +58,7 @@ export default async function ParentDashboard() {
         resources={[]}
         students={kids}
         schedule={scheduleItems}
+        initialFilterStudentId={initialStudentId}
       />
 
       {/* Pending Rewards + Weekly Progress - 2 column layout */}

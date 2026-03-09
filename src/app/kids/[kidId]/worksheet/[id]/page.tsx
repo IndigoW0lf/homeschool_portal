@@ -1,6 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { InteractiveWorksheet } from '@/components/kids/InteractiveWorksheet';
+import type { WorksheetData } from '@/types';
 
 interface WorksheetPageProps {
   params: Promise<{ kidId: string; id: string }>;
@@ -44,7 +45,7 @@ export default async function WorksheetPage({ params }: WorksheetPageProps) {
 
   return (
     <InteractiveWorksheet
-      data={assignment.worksheet_data as any}
+      data={assignment.worksheet_data as WorksheetData}
       kidId={kidId}
       assignmentId={id}
     />

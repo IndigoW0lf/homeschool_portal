@@ -5,7 +5,7 @@ import { CaretLeft, CaretRight, CalendarBlank } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { StudentAvatar } from '@/components/ui/StudentAvatar';
 import { LunaTriggerButton } from '@/components/luna';
-import { Kid } from '@/types';
+import { Kid, ScheduleDisplayItem } from '@/types';
 
 interface WeekViewProps {
   currentDate: Date;
@@ -13,7 +13,7 @@ interface WeekViewProps {
   onSelectDate: (date: Date) => void;
   onPrevWeek: () => void;
   onNextWeek: () => void;
-  schedule?: any[]; // TODO: Strict type
+  schedule?: ScheduleDisplayItem[];
   students?: Kid[];
   filterStudentId?: string | null;
   onFilterChange?: (studentId: string | null) => void;
@@ -26,23 +26,21 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
   const weekDays = Array.from({ length: 7 }).map((_, i) => {
     const day = addDays(weekStart, i);
     const dateStr = format(day, 'yyyy-MM-dd');
-    const items = schedule.filter((s: any) => s.date === dateStr);
-    
-    // Count types
-    const lessonCount = items.filter((i: any) => i.itemType === 'lesson').length;
-    const assignmentCount = items.filter((i: any) => i.itemType === 'assignment').length;
-    
-    // Count completed items
-    const completedCount = items.filter((i: any) => i.status === 'completed').length;
+    const items = schedule.filter((s) => s.date === dateStr);
+
+    const lessonCount = items.filter((i) => (i.itemType ?? i.item_type) === 'lesson').length;
+    const assignmentCount = items.filter((i) => (i.itemType ?? i.item_type) === 'assignment').length;
+
+    const completedCount = items.filter((i) => i.status === 'completed').length;
     const totalCount = items.length;
     const allComplete = totalCount > 0 && completedCount === totalCount;
-    
-    // Get unique student IDs for this day
-    const studentIds = [...new Set(items.map((i: any) => i.studentId).filter(Boolean))];
+
+    const studentIds = [...new Set(items.map((i) => i.studentId ?? i.student_id).filter(Boolean))];
 
     return { date: day, dateStr, lessonCount, assignmentCount, total: items.length, studentIds, completedCount, totalCount, allComplete };
   });
 
+  const allPressed = filterStudentId === null ? "true" : "false";
   return (
     <div className="card overflow-hidden pb-4">
       {/* Header */}
@@ -56,6 +54,7 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
         {onFilterChange && students.length > 0 && (
           <div className="flex items-center gap-1">
             <button
+              type="button"
               onClick={() => onFilterChange(null)}
               className={cn(
                 "px-3 py-1.5 text-xs font-medium rounded-full transition-all",
@@ -63,12 +62,17 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
                   ? "bg-[var(--cosmic-rust-500)] text-[var(--foreground)] shadow-sm"
                   : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)]"
               )}
+              aria-label="Show all students"
+              aria-pressed={allPressed}
             >
               All
             </button>
-            {students.map(s => (
+            {students.map(s => {
+              const studentPressed = filterStudentId === s.id ? "true" : "false";
+              return (
               <button
                 key={s.id}
+                type="button"
                 onClick={() => onFilterChange(filterStudentId === s.id ? null : s.id)}
                 className={cn(
                   "px-3 py-1.5 text-xs font-medium rounded-full transition-all flex items-center gap-1.5",
@@ -76,11 +80,14 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
                     ? "bg-[var(--cosmic-rust-500)] text-[var(--foreground)] shadow-sm"
                     : "bg-[var(--background-secondary)] text-muted hover:bg-[var(--hover-overlay)]"
                 )}
+                aria-label={filterStudentId === s.id ? `Filter by ${s.name} (selected)` : `Filter by ${s.name}`}
+                aria-pressed={studentPressed}
               >
                 <StudentAvatar name={s.name} className="w-5 h-5 text-[8px]" />
                 {s.name}
               </button>
-            ))}
+              );
+            })}
           </div>
         )}
         
@@ -91,10 +98,10 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
             label="Think with Luna"
             iconOnly
           />
-          <button onClick={onPrevWeek} className="btn-icon-sm">
+          <button type="button" onClick={onPrevWeek} className="btn-icon-sm" aria-label="Previous week">
             <CaretLeft size={24} weight="duotone" className="text-[var(--celestial-400)]" />
           </button>
-          <button onClick={onNextWeek} className="btn-icon-sm">
+          <button type="button" onClick={onNextWeek} className="btn-icon-sm" aria-label="Next week">
             <CaretRight size={24} weight="duotone" className="text-[var(--celestial-400)]" />
           </button>
         </div>
@@ -105,15 +112,19 @@ export function WeekView({ currentDate, selectedDate, onSelectDate, onPrevWeek, 
         {weekDays.map((day) => {
           const isSelected = selectedDate && isSameDay(day.date, selectedDate);
           const isToday = isSameDay(day.date, new Date());
+          const dayPressed = isSelected ? "true" : "false";
 
           return (
             <button
               key={day.dateStr}
+              type="button"
               onClick={() => onSelectDate(day.date)}
               className={cn(
                 "flex flex-col items-center p-4 hover:bg-[var(--hover-overlay)] transition-colors h-40 relative text-left",
                 isSelected ? "bg-[var(--cosmic-rust-100)]" : ""
               )}
+              aria-label={`Select ${format(day.date, 'EEEE, MMMM d')}. ${day.lessonCount} lessons, ${day.assignmentCount} assignments.`}
+              aria-pressed={dayPressed}
             >
               <span className="text-xs font-medium text-muted uppercase mb-1">{format(day.date, 'EEE')}</span>
               <span className={cn(

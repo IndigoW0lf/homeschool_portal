@@ -40,12 +40,13 @@ export async function GET(request: NextRequest) {
       results
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { message?: string; stack?: string };
     console.error('[Test-YouTube] Error:', error);
     return NextResponse.json({
       success: false,
-      message: error.message,
-      stack: error.stack,
+      message: err.message,
+      stack: err.stack,
       details: 'Check server logs for more info'
     }, { status: 500 });
   }

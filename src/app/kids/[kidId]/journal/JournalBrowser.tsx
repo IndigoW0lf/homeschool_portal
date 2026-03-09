@@ -418,7 +418,7 @@ function JournalEntryCard({
       {/* Prompt */}
       {entry.prompt !== 'Free writing' && (
         <p className="text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] mb-2 italic">
-          "{entry.prompt}"
+          &quot;{entry.prompt}&quot;
         </p>
       )}
 

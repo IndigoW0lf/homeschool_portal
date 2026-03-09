@@ -68,6 +68,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       videoLinks: [],
       worksheet: null,
     };
+    let enrichmentFailed = false;
     try {
       enrichment = await enrichActivity(
         {
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
         }
       );
     } catch (enrichErr) {
+      enrichmentFailed = true;
       console.error('[API/activities] Enrichment failed (activity will still be created):', enrichErr);
     }
 
@@ -175,6 +177,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ActivityC
       videoCount: enrichment.videoLinks.length,
       worksheetId: worksheetAssignmentId,
       message: buildSuccessMessage(input, enrichment.videoLinks.length, !!enrichment.worksheet),
+      enrichmentFailed: enrichmentFailed || undefined,
     };
 
     console.log('[API/activities] Success:', result);

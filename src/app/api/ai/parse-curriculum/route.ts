@@ -124,7 +124,7 @@ function parseMiAcademyReport(rawText: string): ManuallyParsedRow[] {
     
     if (singleDateMatch) {
       const dateStr = singleDateMatch[1];
-      let restOfLine = singleDateMatch[2].trim();
+      const restOfLine = singleDateMatch[2].trim();
       
       // Check if this is just more dates concatenated (PDF extraction issue)
       // If the "content" starts with another date, skip this row

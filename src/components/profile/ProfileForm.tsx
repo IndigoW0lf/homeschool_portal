@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { updateProfile } from '@/lib/supabase/profile';
-import { toast } from 'sonner';
+import { useFeedback } from '@/components/ui/FeedbackModal';
 import { Check } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import type { Profile } from '@/types';
 import { LocalOpenPeepsAvatar, generateLocalOpenPeepsUrl } from '@/components/LocalOpenPeepsAvatar';
 import type { OpenPeepsState } from '@/components/OpenPeepsAvatarBuilder';
+import { ProfilePhotoUpload } from '@/components/ui/ProfilePhotoUpload';
 
 const TIMEZONE_OPTIONS = [
   { value: 'America/New_York', label: 'EST (Eastern)' },
@@ -19,13 +20,31 @@ const TIMEZONE_OPTIONS = [
   { value: 'Pacific/Honolulu', label: 'HST (Hawaii)' },
 ];
 
-// Avatar category - Open Peeps only
+// Avatar category
 const AVATAR_CATEGORIES = [
   { id: 'open-peeps', label: '✨ Open Peeps', styles: [] },
+  { id: 'photo', label: '📷 Real Photo', styles: [] },
 ];
 
 // Varied seeds for different looks
 const AVATAR_SEEDS = ['luna', 'sage', 'morgan', 'alex', 'riley', 'quinn'];
+
+// Open Peeps background palette – Tailwind classes to avoid inline styles
+const OPEN_PEEPS_BG_CLASSES: Record<string, string> = {
+  b6e3f4: 'bg-[#b6e3f4]',
+  c0aede: 'bg-[#c0aede]',
+  d1d4f9: 'bg-[#d1d4f9]',
+  ffd5dc: 'bg-[#ffd5dc]',
+  ffdfbf: 'bg-[#ffdfbf]',
+  ffeeb4: 'bg-[#ffeeb4]',
+  d5f5e3: 'bg-[#d5f5e3]',
+  ffe8d6: 'bg-[#ffe8d6]',
+  fff3cd: 'bg-[#fff3cd]',
+  e2f0cb: 'bg-[#e2f0cb]',
+  cce5ff: 'bg-[#cce5ff]',
+  f8d7da: 'bg-[#f8d7da]',
+};
+const OPEN_PEEPS_BG_KEYS = Object.keys(OPEN_PEEPS_BG_CLASSES);
 
 function getAvatarUrl(style: string, seed: string) {
   return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
@@ -37,6 +56,7 @@ interface ProfileFormProps {
 
 export function ProfileForm({ profile }: ProfileFormProps) {
   const router = useRouter();
+  const feedback = useFeedback();
   const [displayName, setDisplayName] = useState(profile.display_name || '');
   const [timezone, setTimezone] = useState(profile.timezone || 'America/Chicago');
   const [teachingStyle, setTeachingStyle] = useState(profile.teaching_style || '');
@@ -71,15 +91,15 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       });
 
       if (updated) {
-        toast.success('Profile updated! ✨');
+        feedback.show({ type: 'success', title: 'Profile updated', message: 'Your changes have been saved.' });
         setIsEditing(false);
         router.refresh();
       } else {
-        toast.error('Hmm, that didn\'t work. Try again?');
+        feedback.show({ type: 'error', title: 'Update failed', message: 'Something went wrong. Try again?' });
       }
     } catch (err) {
       console.error(err);
-      toast.error('Something went wrong');
+      feedback.show({ type: 'error', title: 'Something went wrong', message: err instanceof Error ? err.message : 'Please try again.' });
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +119,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               alt="Your avatar"
               width={120}
               height={120}
-              className="rounded-full bg-[var(--celestial-50)] bg-[var(--background-secondary)]/50 shadow-lg ring-4 ring-[var(--background-elevated)] dark:ring-gray-800"
+              className="rounded-full bg-[var(--celestial-50)] bg-[var(--background-secondary)]/50 shadow-lg ring-4 ring-[var(--background-elevated)] dark:ring-gray-800 object-cover object-top w-[120px] h-[120px]"
             />
           </div>
           <h2 className="mt-4 text-2xl font-bold text-heading">
@@ -157,6 +177,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
   }
 
   // Edit Mode
+  const avatarExpanded = showAvatarPicker ? "true" : "false";
   return (
     <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-300">
       {/* Avatar Section */}
@@ -165,14 +186,17 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           type="button"
           onClick={() => setShowAvatarPicker(!showAvatarPicker)}
           className="relative group"
+          aria-label="Change avatar"
+          aria-expanded={avatarExpanded}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={avatarUrl}
-            alt="Your avatar"
+            alt=""
+            aria-hidden
             width={96}
             height={96}
-            className="rounded-full bg-[var(--background-secondary)] ring-4 ring-white dark:ring-gray-800 shadow-md group-hover:ring-[var(--ember-300)] transition-all"
+            className="rounded-full bg-[var(--background-secondary)] ring-4 ring-white dark:ring-gray-800 shadow-md group-hover:ring-[var(--ember-300)] transition-all object-cover object-top w-24 h-24"
           />
           <span className="absolute bottom-0 right-0 bg-[var(--ember-500)] text-[var(--foreground)] text-xs px-2 py-1 rounded-full shadow-sm">
             Change
@@ -218,7 +242,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <div>
                   <p className="text-xs font-medium text-muted mb-2">Face</p>
                   <div className="flex flex-wrap gap-1">
-                    {['smile', 'smileBig', 'cute', 'calm', 'cheeky', 'awe', 'driven', 'serious'].map(face => (
+                    {['smile', 'smileBig', 'cute', 'calm', 'cheeky', 'awe', 'driven', 'serious'].map(face => {
+                      const facePressed = openPeepsState.face === face ? "true" : "false";
+                      return (
                       <button
                         key={face}
                         type="button"
@@ -229,10 +255,13 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                             ? "border-[var(--ember-500)]"
                             : "border-transparent hover:border-[var(--border)]"
                         )}
+                        aria-label={`Face: ${face}`}
+                        aria-pressed={facePressed}
                       >
                         <LocalOpenPeepsAvatar size={36} pose={openPeepsState.pose} face={face} head={openPeepsState.head} backgroundColor="transparent" />
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -240,7 +269,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <div>
                   <p className="text-xs font-medium text-muted mb-2">Hair</p>
                   <div className="flex flex-wrap gap-1">
-                    {['short1', 'short2', 'medium1', 'long', 'afro', 'bun', 'bangs', 'noHair1'].map(head => (
+                    {['short1', 'short2', 'medium1', 'long', 'afro', 'bun', 'bangs', 'noHair1'].map(head => {
+                      const headPressed = openPeepsState.head === head ? "true" : "false";
+                      return (
                       <button
                         key={head}
                         type="button"
@@ -251,10 +282,13 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                             ? "border-[var(--ember-500)]"
                             : "border-transparent hover:border-[var(--border)]"
                         )}
+                        aria-label={`Hair: ${head}`}
+                        aria-pressed={headPressed}
                       >
                         <LocalOpenPeepsAvatar size={36} pose={openPeepsState.pose} face={openPeepsState.face} head={head} backgroundColor="transparent" />
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -262,7 +296,9 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <div>
                   <p className="text-xs font-medium text-muted mb-2">Pose</p>
                   <div className="flex flex-wrap gap-1">
-                    {['standing_shirt1', 'standing_blazer1', 'standing_crossed1', 'sitting_closed1'].map(pose => (
+                    {['standing_shirt1', 'standing_blazer1', 'standing_crossed1', 'sitting_closed1'].map(pose => {
+                      const posePressed = openPeepsState.pose === pose ? "true" : "false";
+                      return (
                       <button
                         key={pose}
                         type="button"
@@ -273,10 +309,13 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                             ? "border-[var(--ember-500)]"
                             : "border-transparent hover:border-[var(--border)]"
                         )}
+                        aria-label={`Pose: ${pose}`}
+                        aria-pressed={posePressed}
                       >
                         <LocalOpenPeepsAvatar size={40} pose={pose} face={openPeepsState.face} head={openPeepsState.head} backgroundColor="transparent" />
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -286,20 +325,25 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <div>
                   <p className="text-xs font-medium text-muted mb-2">Background</p>
                   <div className="flex flex-wrap gap-2">
-                    {['b6e3f4', 'c0aede', 'd1d4f9', 'ffd5dc', 'ffdfbf', 'ffeeb4', 'd5f5e3', 'ffe8d6', 'fff3cd', 'e2f0cb', 'cce5ff', 'f8d7da'].map(bg => (
-                      <button
-                        key={bg}
-                        type="button"
-                        onClick={() => setOpenPeepsState(s => ({ ...s, backgroundColor: bg }))}
-                        className={cn(
-                          "w-6 h-6 rounded-full border-2 transition-all",
-                          openPeepsState.backgroundColor === bg
-                            ? "ring-2 ring-[var(--ember-500)] scale-110"
-                            : "border-[var(--border)]"
-                        )}
-                        style={{ backgroundColor: `#${bg}` }}
-                      />
-                    ))}
+                    {OPEN_PEEPS_BG_KEYS.map(bg => {
+                      const bgPressed = openPeepsState.backgroundColor === bg ? "true" : "false";
+                      return (
+                        <button
+                          key={bg}
+                          type="button"
+                          onClick={() => setOpenPeepsState(s => ({ ...s, backgroundColor: bg }))}
+                          className={cn(
+                            "w-6 h-6 rounded-full border-2 transition-all",
+                            OPEN_PEEPS_BG_CLASSES[bg],
+                            openPeepsState.backgroundColor === bg
+                              ? "ring-2 ring-[var(--ember-500)] scale-110"
+                              : "border-[var(--border)]"
+                          )}
+                          aria-label={`Background color #${bg}`}
+                          aria-pressed={bgPressed}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -315,12 +359,27 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                   Use This Avatar
                 </button>
               </div>
+            ) : avatarCategory === 'photo' ? (
+              <div className="py-4">
+                <ProfilePhotoUpload 
+                  entityId={profile.id}
+                  entityType="parent"
+                  currentPhotoUrl={avatarUrl}
+                  onUploadComplete={(url: string) => {
+                    setAvatarUrl(url);
+                    setShowAvatarPicker(false);
+                    router.refresh();
+                  }}
+                  onCancel={() => setShowAvatarPicker(false)}
+                />
+              </div>
             ) : (
               <div className="grid grid-cols-6 gap-2">
                 {currentCategory.styles.flatMap((style) => 
                   AVATAR_SEEDS.map((seed) => {
                     const url = getAvatarUrl(style, seed);
                     const isSelected = avatarUrl === url;
+                    const avatarPressed = isSelected ? "true" : "false";
                     return (
                       <button
                         key={`${style}-${seed}`}
@@ -335,6 +394,8 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                             ? "ring-2 ring-[var(--ember-500)] bg-[var(--ember-50)] dark:bg-[var(--ember-900)]/20" 
                             : "hover:bg-[var(--hover-overlay)]"
                         )}
+                        aria-label={`Choose avatar ${style} ${seed}`}
+                        aria-pressed={avatarPressed}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -405,15 +466,17 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
       {/* Favorite Color */}
       <div>
-        <label className="block text-sm font-medium text-heading dark:text-muted mb-1">
+        <label htmlFor="profile-favorite-color" className="block text-sm font-medium text-heading dark:text-muted mb-1">
           Favorite Color
         </label>
         <div className="flex items-center gap-3">
           <input
+            id="profile-favorite-color"
             type="color"
             value={favoriteColor}
             onChange={(e) => setFavoriteColor(e.target.value)}
             className="w-12 h-12 rounded-lg cursor-pointer border-2 border-[var(--border)] dark:border-[var(--border)]"
+            aria-label="Favorite color"
           />
           <div 
             className="flex-1 h-12 rounded-lg flex items-center justify-center text-[var(--foreground)] font-medium"

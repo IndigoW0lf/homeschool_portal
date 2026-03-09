@@ -23,31 +23,30 @@ export default async function WorldPage({ params }: PageProps) {
     .single();
   
   // Parse avatar state for Open Peeps avatar
-  let kidAvatar = null;
+  let avatarState: Record<string, string> | null = null;
   if (kid?.avatar_state) {
     try {
-      const avatarState = typeof kid.avatar_state === 'string' 
-        ? JSON.parse(kid.avatar_state) 
+      avatarState = typeof kid.avatar_state === 'string'
+        ? JSON.parse(kid.avatar_state)
         : kid.avatar_state;
-      
-      kidAvatar = (
-        <LocalOpenPeepsAvatar
-          pose={avatarState.pose || 'standing_shirt1'}
-          face={avatarState.face || 'smile'}
-          head={avatarState.head || 'short1'}
-          accessories={avatarState.accessories || 'none'}
-          facialHair={avatarState.facialHair || 'none'}
-          backgroundColor="transparent"
-          size={50}
-        />
-      );
-    } catch (e) {
-      // Fallback to emoji
-      kidAvatar = <span className="text-3xl">😎</span>;
+    } catch {
+      // Fallback to null — JSX is constructed outside try/catch
     }
-  } else {
-    kidAvatar = <span className="text-3xl">😎</span>;
   }
+
+  const kidAvatar = avatarState ? (
+    <LocalOpenPeepsAvatar
+      pose={avatarState.pose || 'standing_shirt1'}
+      face={avatarState.face || 'smile'}
+      head={avatarState.head || 'short1'}
+      accessories={avatarState.accessories || 'none'}
+      facialHair={avatarState.facialHair || 'none'}
+      backgroundColor="transparent"
+      size={50}
+    />
+  ) : (
+    <span className="text-3xl">😎</span>
+  );
 
   return (
     <main className="p-6 max-w-5xl mx-auto">

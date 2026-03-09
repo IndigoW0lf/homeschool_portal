@@ -40,7 +40,7 @@ export async function attachWorksheetToLessonAction(
     const currentLinks = Array.isArray(lesson.links) ? lesson.links : [];
     
     // Check for duplicates to avoid adding the same worksheet twice
-    const exists = currentLinks.some((l: any) => l.url === newLink.url);
+    const exists = currentLinks.some((l: { url: string }) => l.url === newLink.url);
     
     if (!exists) {
       await updateLesson(lessonId, {

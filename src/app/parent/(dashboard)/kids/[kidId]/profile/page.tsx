@@ -53,9 +53,8 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
   const subjectCounts = await getKidSubjectCounts(kidId);
   const displayName = kid.nickname || kid.name;
 
-  // Prepare initial avatar state
-  // Check if we have open_peeps_state, otherwise use default
-  const initialAvatarState = (kid as any).open_peeps_avatar_state || {};
+  // Prepare initial avatar state  
+  const initialAvatarState = (kid as unknown as Record<string, unknown>).open_peeps_avatar_state || {};
 
   return (
     <div className="min-h-screen">
@@ -68,7 +67,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
                 Parent View
               </div>
               <p className="text-sm text-muted">
-                Viewing {displayName}'s profile as admin
+                Viewing {displayName}&apos;s profile as admin
               </p>
             </div>
             <Link
@@ -100,7 +99,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
              */}
             <div>
               <h1 className="text-2xl font-bold text-[var(--foreground)]">
-                {displayName}'s Profile
+                {displayName}&apos;s Profile
               </h1>
               <p className="text-muted">
                 Manage profile information and settings
@@ -120,7 +119,7 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
              Avatar Customization
           </h3>
           <p className="text-sm text-muted px-1 mb-2">
-            Customize {displayName}'s avatar including background color.
+            Customize {displayName}&apos;s avatar including background color.
           </p>
           
           <OpenPeepsAvatarBuilder

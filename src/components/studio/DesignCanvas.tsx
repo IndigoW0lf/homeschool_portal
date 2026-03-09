@@ -45,6 +45,46 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
   const historyStack = useRef<ImageData[]>([]);
   const historyPointer = useRef<number>(-1);
 
+  const saveState = () => {
+    const canvas = paintCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Truncate future if we are in middle of stack
+    if (historyPointer.current < historyStack.current.length - 1) {
+      historyStack.current = historyStack.current.slice(0, historyPointer.current + 1);
+    }
+
+    // Save
+    historyStack.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    historyPointer.current++;
+  };
+
+  const restoreState = () => {
+    const canvas = paintCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const imageData = historyStack.current[historyPointer.current];
+    if (imageData) {
+      ctx.putImageData(imageData, 0, 0);
+    }
+  };
+
+  const loadImageFromSvg = (svgString: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
+      img.src = url;
+    });
+  };
+
   // Initialize canvas with blank state or handle resize
   useEffect(() => {
     const canvas = paintCanvasRef.current;
@@ -63,23 +103,8 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
         }
       }
     }
+   
   }, [initialPaintData]);
-
-  const saveState = () => {
-    const canvas = paintCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Truncate future if we are in middle of stack
-    if (historyPointer.current < historyStack.current.length - 1) {
-      historyStack.current = historyStack.current.slice(0, historyPointer.current + 1);
-    }
-
-    // Save
-    historyStack.current.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    historyPointer.current++;
-  };
 
   useImperativeHandle(ref, () => ({
     toDataURL: async () => {
@@ -91,11 +116,6 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
       const ctx = tempCanvas.getContext('2d');
       if (!ctx) return '';
 
-      // 1. Draw Base (from template image if separated, or just draw white background?)
-      // Actually we need the Base SVG rendered. 
-      // Simplified export: Grab current visual composite from DOM? No, unsafe.
-      // Re-render layers.
-      
       // If we have separated Base SVG content:
       if (baseSvgContent) {
         const baseImg = await loadImageFromSvg(baseSvgContent);
@@ -142,30 +162,6 @@ export const DesignCanvas = forwardRef<DesignCanvasRef, DesignCanvasProps>(({
         }
     }
   }));
-
-  const restoreState = () => {
-    const canvas = paintCanvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const imageData = historyStack.current[historyPointer.current];
-    if (imageData) {
-      ctx.putImageData(imageData, 0, 0);
-    }
-  };
-
-  const loadImageFromSvg = (svgString: string): Promise<HTMLImageElement> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        resolve(img);
-      };
-      img.src = url;
-    });
-  };
 
   // Load and split SVG
   useEffect(() => {

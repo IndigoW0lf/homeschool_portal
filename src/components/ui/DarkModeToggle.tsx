@@ -1,21 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MoonStars, Sun } from '@phosphor-icons/react';
 
-export function DarkModeToggle() {
-  const [isDark, setIsDark] = useState(false);
+function getInitialDarkMode(): boolean {
+  if (typeof window === 'undefined') return false;
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const dark = saved === 'dark' || (!saved && prefersDark);
+  if (dark) document.documentElement.classList.add('dark');
+  return dark;
+}
 
-  useEffect(() => {
-    // Check for saved preference or system preference
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (saved === 'dark' || (!saved && prefersDark)) {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    }
-  }, []);
+export function DarkModeToggle() {
+  const [isDark, setIsDark] = useState(getInitialDarkMode);
 
   const toggle = () => {
     setIsDark(!isDark);

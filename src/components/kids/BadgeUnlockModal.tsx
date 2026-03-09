@@ -15,13 +15,14 @@ export function BadgeUnlockModal({ badgeId, onClose }: BadgeUnlockModalProps) {
   const badge = badgeId ? ALL_BADGES.find(b => b.id === badgeId) : null;
   
   useEffect(() => {
-    if (badge) {
-      // Delay the animation slightly for better effect
-      const timer = setTimeout(() => setIsVisible(true), 100);
-      return () => clearTimeout(timer);
-    } else {
-      setIsVisible(false);
+    if (!badge) {
+      // badge removed — reset visibility via a microtask, not a sync call
+      const t = setTimeout(() => setIsVisible(false), 0);
+      return () => clearTimeout(t);
     }
+    // Delay the animation slightly for better effect
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
   }, [badge]);
   
   if (!badge) return null;

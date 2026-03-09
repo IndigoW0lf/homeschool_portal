@@ -119,7 +119,7 @@ We can go through in this order (or adjust):
 8. **API routes** — Grouped by domain (auth, content, kids, AI, world, avatars); errors, validation, and security.
 9. **Supabase layer** — `data.ts`, `mutations.ts`, RLS, types vs DB columns (camelCase vs snake_case).
 10. **UI & design system** — Components, design-system.css, globals.css, accessibility and consistency.
-11. **Config & deploy** — next.config, env vars, Codacy/ESLint, and production checklist.
+11. **Config & deploy** — next.config, env vars, Codacy/ESLint, and production checklist. **Middleware:** Next.js may deprecate `middleware` in favor of `proxy`; see comment in `src/middleware.ts` and https://nextjs.org/docs/messages/middleware-to-proxy when planning migration.
 
 ---
 

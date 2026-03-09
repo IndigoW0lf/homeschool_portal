@@ -40,13 +40,21 @@ function TodayKidTile({ summary, todayLabel }: { summary: TodayKidSummary; today
           <h3 className="heading-sm text-[var(--foreground)]">{summary.kidName}</h3>
           <p className="text-sm text-[var(--muted)] mt-0.5">{todayLabel}</p>
         </div>
-        <Link
-          href={`/kids/${summary.kidId}`}
-          className="flex items-center gap-1.5 text-sm font-medium text-[var(--nebula-pink)] hover:underline shrink-0"
-        >
-          Open their view
-          <ArrowRight size={16} weight="bold" aria-hidden />
-        </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            href={`/parent?student=${summary.kidId}`}
+            className="text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)] hover:underline"
+          >
+            View week
+          </Link>
+          <Link
+            href={`/kids/${summary.kidId}`}
+            className="flex items-center gap-1.5 text-sm font-medium text-[var(--nebula-pink)] hover:underline"
+          >
+            Open their view
+            <ArrowRight size={16} weight="bold" aria-hidden />
+          </Link>
+        </div>
       </div>
       {/* Two columns: Today's tasks | This week + Recent */}
       <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">

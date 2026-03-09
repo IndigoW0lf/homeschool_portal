@@ -44,6 +44,7 @@ export default function GlobalError({ error, reset }: ErrorBoundaryProps) {
                 ✨ Try Again
               </button>
               
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
               <a
                 href="/"
                 className="block w-full px-6 py-3 bg-[var(--background-elevated)]/10 text-[var(--foreground)] rounded-xl font-medium hover:bg-[var(--background-elevated)]/20 transition-colors border border-white/10"

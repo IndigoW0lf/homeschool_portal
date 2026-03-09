@@ -61,15 +61,17 @@ export function SignupWizard() {
     const email = searchParams.get('email');
     
     // Pre-fill email from invite
-    if (email) {
-      setData(prev => ({ ...prev, email }));
-    }
-    
-    // Extract invite code from redirect path
-    if (redirect?.startsWith('/invite/')) {
-      const code = redirect.replace('/invite/', '');
-      setInviteCode(code);
-    }
+    const t = setTimeout(() => {
+      if (email) {
+        setData(prev => ({ ...prev, email }));
+      }
+      // Extract invite code from redirect path
+      if (redirect?.startsWith('/invite/')) {
+        const code = redirect.replace('/invite/', '');
+        setInviteCode(code);
+      }
+    }, 0);
+    return () => clearTimeout(t);
   }, [searchParams]);
 
   // Determine which steps to show
@@ -172,7 +174,7 @@ export function SignupWizard() {
       {joiningFamilyName && (
         <div className="mb-6 p-4 bg-[var(--lavender-100)] dark:bg-[var(--lavender-900)]/20 rounded-xl border border-[var(--lavender-200)] dark:border-[var(--lavender-800)]">
           <p className="text-sm text-[var(--lavender-700)] dark:text-[var(--lavender-300)]">
-            ✨ You're joining <strong>{joiningFamilyName}</strong> – the kids are already set up!
+            ✨ You&apos;re joining <strong>{joiningFamilyName}</strong> – the kids are already set up!
           </p>
         </div>
       )}

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Sparkle, Calendar, ArrowLeft, ArrowRight, Tag } from '@phosphor-icons/react';
-import { format, parseISO, subMonths, addMonths, subYears, addYears } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import Link from 'next/link';
 
 interface JournalEntry {
@@ -54,16 +54,12 @@ export function TimeCapsuleViewer({
 }: TimeCapsuleViewerProps) {
   const [showAllEntries, setShowAllEntries] = useState(false);
 
-  // Get a random highlight entry
-  const highlightEntry = entries.length > 0 
-    ? entries[Math.floor(Math.random() * entries.length)]
-    : null;
-
-  // Navigation helpers
-  const now = new Date();
-  const currentDateParam = currentPeriod === 'year' 
-    ? periodLabel 
-    : format(parseISO(periodLabel.includes(',') ? '2024-01-01' : `${periodLabel.split(' ')[1]}-${format(parseISO(`2024-${periodLabel.split(' ')[0]}-01`), 'MM')}`), 'yyyy-MM');
+  // Pick a stable random highlight entry (useMemo avoids calling impure Math.random during render)
+  const highlightEntry = useMemo(() => {
+    if (entries.length === 0) return null;
+    return entries[Math.floor(Math.random() * entries.length)];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entries.length]);
 
   if (entries.length === 0) {
     return (
@@ -155,10 +151,10 @@ export function TimeCapsuleViewer({
         {/* AI Message */}
         <div className="p-4 bg-[var(--background-elevated)] rounded-lg border border-amber-100 dark:border-amber-800">
           <p className="text-[var(--foreground)] italic">
-            "Dear {kidName}, in {periodLabel} you wrote {entryCount} journal {entryCount === 1 ? 'entry' : 'entries'}
+            &quot;Dear {kidName}, in {periodLabel} you wrote {entryCount} journal {entryCount === 1 ? 'entry' : 'entries'}
             {topMood && ` and felt mostly ${MOOD_LABELS[topMood].toLowerCase()}`}
             {topTags.length > 0 && `. You thought a lot about ${topTags.join(', ')}`}. 
-            Keep filling your journal with your thoughts and memories! ✨"
+            Keep filling your journal with your thoughts and memories! ✨&quot;
           </p>
         </div>
       </div>
@@ -174,7 +170,7 @@ export function TimeCapsuleViewer({
             </span>
           </div>
           <p className="text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] mb-2 italic">
-            "{highlightEntry.prompt}"
+            &quot;{highlightEntry.prompt}&quot;
           </p>
           <p className="text-[var(--foreground)]">
             {highlightEntry.response}
@@ -227,7 +223,7 @@ export function TimeCapsuleViewer({
                   )}
                 </div>
                 <p className="text-sm text-[var(--nebula-purple)] dark:text-[var(--nebula-purple)] mb-2 italic">
-                  "{entry.prompt}"
+                  &quot;{entry.prompt}&quot;
                 </p>
                 <p className="text-[var(--foreground)]">{entry.response}</p>
               </div>

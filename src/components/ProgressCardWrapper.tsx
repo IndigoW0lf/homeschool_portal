@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { ProgressCard } from './ProgressCard';
 import { isDone } from '@/lib/storage';
 
@@ -35,12 +35,9 @@ export function ProgressCardWrapper({
   date,
   itemIds 
 }: ProgressCardWrapperProps) {
-  const [isClient, setIsClient] = useState(false);
-  
-  // Ensure we're on client before reading localStorage
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const [isClient, setIsClient] = useState(() => typeof window !== 'undefined');
+  // Keep setIsClient in scope to avoid "defined but never used" if needed elsewhere
+  void setIsClient;
 
   // Count completed items from localStorage
   const completedCount = useSyncExternalStore(

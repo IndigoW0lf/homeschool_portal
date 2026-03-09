@@ -5,9 +5,10 @@ import {
   Umbrella, Flower, Moon, Campfire, Airplane, House, Balloon,
   Cake, Coffee, BookOpen, MusicNote, GameController, Bed, Alarm
 } from '@phosphor-icons/react';
+import type { IconProps } from '@phosphor-icons/react';
 
 // Curated list of holiday/break-appropriate icons
-const HOLIDAY_ICONS: Record<string, { Icon: React.ComponentType<any>; color: string }> = {
+const HOLIDAY_ICONS: Record<string, { Icon: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<SVGSVGElement>>; color: string }> = {
   sun: { Icon: Sun, color: '#e7b58d' },
   snowflake: { Icon: Snowflake, color: '#b6e1d8' },
   tree: { Icon: Tree, color: '#b6e1d8' },

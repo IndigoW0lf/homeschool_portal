@@ -202,7 +202,7 @@ export function AddKidStep({ data, updateData, onNext, onBack, userId }: AddKidS
             </button>
           </div>
           <p className="text-xs text-muted mt-2">
-            They'll use their <strong>First Name</strong>, <strong>Last Initial</strong>, and this <strong>Password</strong> to log in.
+            They&apos;ll use their <strong>First Name</strong>, <strong>Last Initial</strong>, and this <strong>Password</strong> to log in.
           </p>
         </div>
 

@@ -194,8 +194,16 @@ export default async function KidPortalPage({ params, searchParams }: KidPortalP
                 readOnly={isPast}
               />
             ) : (
-              <div className="card-elevated p-6 text-center text-muted">
-                {isPast ? "No assignments recorded on this day." : "No assignments scheduled for today! 🎉"}
+              <div className="card-elevated p-6 text-center">
+                <p className="text-[var(--foreground)] font-medium">
+                  {isPast ? 'No assignments recorded on this day.' : 'No assignments scheduled for today! 🎉'}
+                </p>
+                {!isPast && (
+                  <p className="text-sm text-[var(--muted)] mt-2">
+                    Ask a parent to add something from the{' '}
+                    <a href="/parent" className="text-[var(--nebula-pink)] hover:underline">dashboard</a>.
+                  </p>
+                )}
               </div>
             )}
             

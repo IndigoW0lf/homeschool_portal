@@ -38,14 +38,15 @@ export async function getLessonHistory(lessonId: string): Promise<HistoryItem[]>
   }
 
   // Transform to simpler shape
-  return data.map((item: any) => ({
-    id: item.id,
-    date: item.date,
-    status: item.status,
-    completed_at: item.completed_at,
-    student: item.kids ? {
-      id: item.kids.id,
-      name: item.kids.name
-    } : { id: 'unknown', name: 'Unknown' }
-  }));
+  type RawHistoryRow = { id: string; date: string; status: string; completed_at: string | null; kids: { id: string; name: string } | { id: string; name: string }[] | null };
+  return (data as unknown as RawHistoryRow[]).map(item => {
+    const kids = Array.isArray(item.kids) ? item.kids[0] : item.kids;
+    return {
+      id: item.id,
+      date: item.date,
+      status: item.status as HistoryItem['status'],
+      completed_at: item.completed_at,
+      student: kids ? { id: kids.id, name: kids.name } : { id: 'unknown', name: 'Unknown' }
+    };
+  });
 }

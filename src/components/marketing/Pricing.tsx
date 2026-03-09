@@ -21,7 +21,7 @@ export function Pricing() {
             Simple, transparent pricing
           </h2>
           <p className="text-xl text-[var(--slate-300)]">
-            Start free. Upgrade when you're ready.
+            Start free. Upgrade when you&apos;re ready.
           </p>
         </div>
 

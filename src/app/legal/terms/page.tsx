@@ -32,7 +32,7 @@ export default function TermsPage() {
                 1. Acceptance of Terms
               </h2>
               <p>
-                By accessing and using Lunara Quest ("the Service"), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Service.
+                By accessing and using Lunara Quest (&quot;the Service&quot;), you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Service.
               </p>
             </section>
 
@@ -41,7 +41,7 @@ export default function TermsPage() {
                 2. Description of Service
               </h2>
               <p>
-                Lunara Quest is a homeschool planning and organization tool designed to help parents and educators manage their children's learning. The Service includes lesson planning, assignment tracking, and gamified learning experiences for children.
+                Lunara Quest is a homeschool planning and organization tool designed to help parents and educators manage their children&apos;s learning. The Service includes lesson planning, assignment tracking, and gamified learning experiences for children.
               </p>
             </section>
 

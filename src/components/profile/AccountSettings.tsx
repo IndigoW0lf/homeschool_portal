@@ -143,7 +143,7 @@ export function AccountSettings({ user }: AccountSettingsProps) {
               </button>
             </div>
             <p className="text-xs text-muted">
-              We'll send a confirmation link to your new email. You'll need to click it to complete the change.
+              We&apos;ll send a confirmation link to your new email. You&apos;ll need to click it to complete the change.
             </p>
           </form>
         )}

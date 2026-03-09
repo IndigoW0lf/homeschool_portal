@@ -142,14 +142,18 @@ export function SubjectOverview({
     );
   }
 
-  // Build donut gradient
-  let cumulative = 0;
-  const gradientStops = subjects.map(subject => {
-    const start = (cumulative / total) * 100;
-    const end = ((cumulative + subject.count) / total) * 100;
-    cumulative += subject.count;
-    return `${getSubjectColor(subject.subject)} ${start}% ${end}%`;
-  }).join(', ');
+  // Build donut gradient using reduce to avoid mutation in render
+  const gradientStops = subjects.reduce<{ stops: string[]; cumulative: number }>(
+    (acc, subject) => {
+      const start = (acc.cumulative / total) * 100;
+      const end = ((acc.cumulative + subject.count) / total) * 100;
+      return {
+        stops: [...acc.stops, `${getSubjectColor(subject.subject)} ${start}% ${end}%`],
+        cumulative: acc.cumulative + subject.count,
+      };
+    },
+    { stops: [], cumulative: 0 }
+  ).stops.join(', ');
 
   const filterTabs: { key: SourceFilter; label: string; Icon: typeof Sparkle; show: boolean }[] = [
     { key: 'all', label: 'All', Icon: ListChecks, show: true },

@@ -4,6 +4,8 @@ import { AvatarState } from '@/types';
 
 interface AvatarPreviewProps {
   avatarState?: AvatarState | null;
+  photoUrl?: string | null;
+  profilePicType?: 'avatar' | 'photo';
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   fallbackName?: string;
   fallbackColor?: string;
@@ -11,11 +13,14 @@ interface AvatarPreviewProps {
 }
 
 /**
- * Renders a kid's customized avatar from their saved avatar state.
+ * Renders a kid's customized avatar from their saved avatar state,
+ * or their profile photo if selected.
  * Falls back to initials circle if no avatar state is available.
  */
 export function AvatarPreview({ 
   avatarState, 
+  photoUrl,
+  profilePicType = 'avatar',
   size = 'md', 
   fallbackName = '?',
   fallbackColor,
@@ -30,6 +35,18 @@ export function AvatarPreview({
   };
 
   const { container, text } = sizeConfig[size];
+
+  // If using photo and it exists
+  if (profilePicType === 'photo' && photoUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img 
+        src={photoUrl} 
+        alt={`${fallbackName}'s profile photo`}
+        className={`${container} rounded-full object-cover shadow-sm ${className}`}
+      />
+    );
+  }
 
   // If no avatar state, show initials fallback
   if (!avatarState || !avatarState.base) {

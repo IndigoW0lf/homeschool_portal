@@ -32,14 +32,18 @@ export function SubjectDonut({ subjects }: SubjectDonutProps) {
   const total = subjects.reduce((sum, s) => sum + s.count, 0);
   if (total === 0) return null;
 
-  // Calculate conic gradient stops
-  let cumulative = 0;
-  const gradientStops = subjects.map(subject => {
-    const start = (cumulative / total) * 100;
-    const end = ((cumulative + subject.count) / total) * 100;
-    cumulative += subject.count;
-    return `${getSubjectColor(subject.subject)} ${start}% ${end}%`;
-  }).join(', ');
+  // Calculate conic gradient stops using reduce to avoid mutation in render
+  const gradientStops = subjects.reduce<{ stops: string[]; cumulative: number }>(
+    (acc, subject) => {
+      const start = (acc.cumulative / total) * 100;
+      const end = ((acc.cumulative + subject.count) / total) * 100;
+      return {
+        stops: [...acc.stops, `${getSubjectColor(subject.subject)} ${start}% ${end}%`],
+        cumulative: acc.cumulative + subject.count,
+      };
+    },
+    { stops: [], cumulative: 0 }
+  ).stops.join(', ');
 
   return (
     <div className="flex items-center gap-4">

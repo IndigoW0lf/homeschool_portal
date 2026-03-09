@@ -31,7 +31,7 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
             <>
               Welcome to <strong>{joiningFamily}</strong>, {data.displayName || 'friend'}!
               <br />
-              You can now view and manage the family's homeschool activities.
+              You can now view and manage the family&apos;s homeschool activities.
             </>
           ) : (
             <>
@@ -50,18 +50,18 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
       {/* What's Next */}
       <div className="bg-[var(--background-secondary)]/50 rounded-xl p-4 text-left">
         <h3 className="font-medium text-heading mb-3">
-          What's next:
+          What&apos;s next:
         </h3>
         <ul className="space-y-2 text-sm text-muted">
           {joiningFamily ? (
             <>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--ember-500)]">→</span>
-                View the family's lessons and assignments
+                View the family&apos;s lessons and assignments
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--ember-500)]">→</span>
-                Check in on the kids' progress
+                Check in on the kids&apos; progress
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--ember-500)]">→</span>
@@ -76,7 +76,7 @@ export function CompleteStep({ data, onComplete, joiningFamily }: CompleteStepPr
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--ember-500)]">→</span>
-                Explore {data.kidName || "your child"}'s portal
+                Explore {data.kidName || "your child"}&apos;s portal
               </li>
               <li className="flex items-center gap-2">
                 <span className="text-[var(--ember-500)]">→</span>

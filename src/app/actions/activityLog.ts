@@ -197,11 +197,11 @@ export async function fetchUnifiedActivities(
 
   for (const row of scheduleData || []) {
     // Get title and subject from joined tables - cast through unknown for type safety
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const lesson = (row.lesson as unknown) as { id: string; title: string; type: string } | { id: string; title: string; type: string }[] | null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const assignment = (row.assignment as unknown) as { id: string; title: string; type: string } | { id: string; title: string; type: string }[] | null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const resource = (row.resource as unknown) as { id: string; name: string; category: string } | { id: string; name: string; category: string }[] | null;
 
     // Handle both single object and array cases (Supabase can return either)

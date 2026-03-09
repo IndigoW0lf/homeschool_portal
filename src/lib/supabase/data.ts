@@ -1,5 +1,5 @@
 import { createServerClient } from './server';
-import { Kid, Lesson, CalendarEntry, Resources } from '@/types';
+import { Kid, Lesson, CalendarEntry, Resources, type ScheduleDisplayItem } from '@/types';
 import { formatDateString, getTodayInTimezone } from '../dateUtils';
 import type { Profile } from '@/types';
 
@@ -39,7 +39,7 @@ export async function getKidsFromDB(): Promise<Kid[]> {
     // 1. Get current kid's family_id
     const { data: currentKid, error: kidError } = await supabase
       .from('kids')
-      .select('family_id, id, name, grade_band, grades, avatar_url, favorite_color, birthday, bio, favorite_shows, favorite_music, favorite_foods, favorite_subjects, hobbies, nickname, avatar_state, journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled, featured_badges')
+      .select('family_id, id, name, grade_band, grades, avatar_url, profile_photo_url, profile_pic_type, favorite_color, birthday, bio, favorite_shows, favorite_music, favorite_foods, favorite_subjects, hobbies, nickname, avatar_state, journal_enabled, journal_allow_skip, journal_prompt_types, streak_enabled, featured_badges')
       .eq('id', kidSession.kidId)
       .single();
 
@@ -120,8 +120,10 @@ function mapKidRow(row: any): Kid {
     gradeBand: row.grade_band || '',
     grades: row.grades || [],
     familyId: row.family_id || undefined,
-    avatarUrl: row.avatar_url || undefined,
-    favoriteColor: row.favorite_color || undefined,
+    avatarUrl: row.avatar_url || null,
+    profilePhotoUrl: row.profile_photo_url || null,
+    profilePicType: row.profile_pic_type as 'avatar' | 'photo' | undefined,
+    favoriteColor: row.favorite_color || null,
     birthday: row.birthday || undefined,
     bio: row.bio || undefined,
     favoriteShows: row.favorite_shows || undefined,
@@ -437,7 +439,7 @@ export async function getMiAcademyResourceFromDB(): Promise<{ label: string; url
 
 
 // Schedule Items - filtered by authenticated user
-export async function getScheduleItemsFromDB() {
+export async function getScheduleItemsFromDB(): Promise<ScheduleDisplayItem[]> {
   const supabase = await createServerClient();
   
   // Get current user
@@ -459,19 +461,23 @@ export async function getScheduleItemsFromDB() {
     return [];
   }
 
-  return (data || []).map(row => ({
-    id: row.id,
-    date: row.date,
-    studentId: row.student_id,
-    itemType: row.item_type,
-    status: row.status,
-    completedAt: row.completed_at,
-    itemId: row.item_type === 'lesson' ? row.lesson_id : row.assignment_id,
-    title: row.lesson?.title || row.assignment?.title || 'Untitled',
-    type: row.lesson?.type || row.assignment?.type || 'Task',
-    // Mock details for DayModal compatibility if needed, or we rely on the Join
-    studentIds: [row.student_id] // Helper for DayModal which expects array
-  }));
+  return (data || []).map(row => {
+    const itemType = row.item_type === 'lesson' || row.item_type === 'assignment' ? row.item_type : 'assignment';
+    return {
+      id: row.id,
+      date: row.date,
+      studentId: row.student_id,
+      itemType,
+      status: row.status || 'pending',
+      sortOrder: row.sort_order ?? 0,
+      itemId: (row.item_type === 'lesson' ? row.lesson_id : row.assignment_id) ?? row.id,
+      title: row.lesson?.title || row.assignment?.title || 'Untitled',
+      type: row.lesson?.type || row.assignment?.type || 'Task',
+      estimatedMinutes: 20,
+      completedAt: row.completed_at,
+      studentIds: [row.student_id],
+    };
+  });
 }
 
 // Get schedule items for a specific student, optionally filtered by date range

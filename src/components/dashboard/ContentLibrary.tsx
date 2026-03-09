@@ -144,14 +144,15 @@ export function ContentLibrary({
      const isLesson = 'instructions' in l;
      // eslint-disable-next-line @typescript-eslint/no-explicit-any
      const type = isLesson ? 'lesson' : (l as any).worksheet_data ? 'worksheet' : 'assignment';
+     const asAny = l as Lesson & AssignmentItemRow;
      return {
        id: l.id,
        title: l.title,
        type: type as ContentItem['type'],
        subtitle: isLesson ? (l as Lesson).type || 'Lesson' : (l as AssignmentItemRow).type || 'Assignment',
        category: isLesson ? (l as Lesson).type : (l as AssignmentItemRow).type,
-       is_pinned: (l as any).is_pinned,
-       display_order: (l as any).display_order || 0,
+       is_pinned: asAny.is_pinned,
+       display_order: asAny.display_order || 0,
        originalItem: l
      };
   };
@@ -174,16 +175,21 @@ export function ContentLibrary({
   const [localItems, setLocalItems] = useState<ContentItem[]>(() => baseItems);
 
   // When baseItems changes (e.g. reusableOnly toggle or props refresh), sync list
+  // We use a ref to detect when baseItems reference changes and update asynchronously
   useEffect(() => {
-    setLocalItems(prev => {
-      const byId = new Map(baseItems.map(i => [i.id, i]));
-      const next = prev.filter(i => byId.has(i.id)).map(i => byId.get(i.id)!);
-      const added = baseItems.filter(i => !prev.some(p => p.id === i.id));
-      return [...next, ...added].sort((a, b) => {
-        if (a.is_pinned === b.is_pinned) return (a.display_order || 0) - (b.display_order || 0);
-        return a.is_pinned ? -1 : 1;
+    // Schedule the state update as a microtask so it's not synchronous within the effect
+    const timeout = setTimeout(() => {
+      setLocalItems(prev => {
+        const byId = new Map(baseItems.map(i => [i.id, i]));
+        const next = prev.filter(i => byId.has(i.id)).map(i => byId.get(i.id)!);
+        const added = baseItems.filter(i => !prev.some(p => p.id === i.id));
+        return [...next, ...added].sort((a, b) => {
+          if (a.is_pinned === b.is_pinned) return (a.display_order || 0) - (b.display_order || 0);
+          return a.is_pinned ? -1 : 1;
+        });
       });
-    });
+    }, 0);
+    return () => clearTimeout(timeout);
   }, [baseItems]);
 
   const sensors = useSensors(

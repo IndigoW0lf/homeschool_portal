@@ -12,7 +12,8 @@ import bcrypt from 'bcryptjs';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    let { firstName, lastInitial, password, rememberMe } = body;
+    let { firstName, lastInitial, password } = body;
+    const { rememberMe } = body;
     
     // Trim inputs to handle iOS/mobile autocomplete adding spaces
     firstName = firstName?.trim();

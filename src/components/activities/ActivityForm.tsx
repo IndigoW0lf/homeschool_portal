@@ -47,7 +47,7 @@ const activitySchema = z.object({
   date: z.string().optional(),
   tags: z.array(z.string()).default([]),
   links: z.array(z.object({ 
-    url: z.string().url(), 
+    url: z.string(), 
     label: z.string() 
   })).default([]),
   isTemplate: z.boolean().default(false),
@@ -232,7 +232,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
       if (data.materials) setValue('materials', data.materials);
       if (data.estimatedMinutes) setValue('estimatedMinutes', data.estimatedMinutes);
 
-      feedback.show({ type: 'success', title: 'Activity generated', message: 'Review and edit the content below.' });
+      toast.success('Activity generated! ✨', { description: 'Review and edit the content below. Then hit Save Activity when ready.' });
     } catch (error) {
       console.error('Generation error:', error);
       feedback.show({ type: 'error', title: 'Generation failed', message: 'Please try again.' });
@@ -288,20 +288,27 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
           const extras = [];
           if (result.hasWorksheet) extras.push('worksheet generated');
           if (result.videoCount > 0) extras.push(`${result.videoCount} videos found`);
-          
+          const enrichmentNote = result.enrichmentFailed
+            ? ' Activity saved; optional worksheet or video search didn\'t complete.'
+            : '';
+          const baseScheduled = `"${data.title}" added to calendar. View your week on the dashboard.${extras.length ? ' Plus: ' + extras.join(', ') : ''}${enrichmentNote}`;
+          const baseSaved = (extras.length ? `Plus: ${extras.join(', ')}. ` : '') + `View on the dashboard to schedule.${enrichmentNote}`;
+
           if (data.date && data.assignTo.length > 0) {
             feedback.show({
               type: 'success',
-              title: 'Activity scheduled',
-              message: `"${data.title}" added to calendar. View your week on the dashboard.${extras.length ? ' Plus: ' + extras.join(', ') : ''}`,
+              title: 'Activity scheduled! 🗓️',
+              message: baseScheduled,
             });
             router.push('/parent');
           } else {
             feedback.show({
               type: 'success',
-              title: 'Activity saved',
-              message: extras.length ? `Plus: ${extras.join(', ')}. View on the dashboard to schedule.` : 'Saved to library. View on the dashboard to schedule later.',
+              title: 'Activity saved! ✨',
+              message: extras.length ? baseSaved : `Saved to library. View on the dashboard to schedule later.${enrichmentNote}`,
             });
+            // Brief delay so the modal is visible before navigating back
+            setTimeout(() => router.push('/parent'), 1400);
           }
         }
       } else {
@@ -309,7 +316,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
         throw new Error(errorData.error || 'Failed to create');
       }
     } catch (err) {
-      console.error(err);
+      console.error('[ActivityForm] Save error:', err);
       feedback.show({
         type: 'error',
         title: 'Could not save activity',
@@ -662,7 +669,7 @@ export function ActivityForm({ initialData, onSubmit: parentOnSubmit }: Activity
               isSubmitting && "opacity-50 cursor-not-allowed"
             )}
           >
-            {isSubmitting ? 'Creating...' : 'Save Activity'}
+            {isSubmitting ? 'Creating activity and finding resources…' : 'Save Activity'}
           </button>
         </div>
       </form>
