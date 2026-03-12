@@ -169,18 +169,22 @@ export async function importExternalCurriculum(
     return { success: false, imported: 0, errors: ['No valid rows to import'] };
   }
 
-  // Insert records
-  const { error: insertError, data } = await supabase
+  // Upsert: insert new rows, skip rows that already exist for this kid (same date + task_name)
+  const { error: upsertError, data } = await supabase
     .from('external_curriculum')
-    .insert(records)
+    .upsert(records, {
+      onConflict: 'kid_id,date,task_name',
+      ignoreDuplicates: true,
+    })
     .select();
 
-  if (insertError) {
-    console.error('Import error:', insertError);
-    return { success: false, imported: 0, errors: [insertError.message] };
+  if (upsertError) {
+    console.error('Import error:', upsertError);
+    return { success: false, imported: 0, errors: [upsertError.message] };
   }
 
-  imported = data?.length || 0;
+  // data = only newly inserted rows; duplicates are skipped
+  imported = data?.length ?? 0;
 
   revalidatePath('/parent/progress');
 
