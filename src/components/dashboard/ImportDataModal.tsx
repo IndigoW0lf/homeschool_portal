@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { X, Upload, FileText, Check, Warning, Spinner, Sparkle, CaretDown, CaretUp, Trash, PencilSimple } from '@phosphor-icons/react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { X, Upload, FileText, Check, Warning, Spinner, Sparkle, CaretDown, CaretUp, Trash, PencilSimple, Globe } from '@phosphor-icons/react';
 import { importExternalCurriculum } from '@/app/actions/import';
 import { toast } from 'sonner';
 
@@ -71,6 +71,60 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
   const [showBulkEdit, setShowBulkEdit] = useState(false);
   const [bulkSubject, setBulkSubject] = useState('');
   const [customSubject, setCustomSubject] = useState('');
+
+  // Import from URL (Cloudflare crawl)
+  const [crawlUrl, setCrawlUrl] = useState('');
+  const [crawlCookie, setCrawlCookie] = useState('');
+  const [crawlJobId, setCrawlJobId] = useState<string | null>(null);
+  const [crawlLoading, setCrawlLoading] = useState(false);
+  const [crawlError, setCrawlError] = useState<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Poll crawl job until done, then run import and show result
+  useEffect(() => {
+    if (!crawlJobId || !selectedKidId) return;
+
+    const poll = async () => {
+      try {
+        const res = await fetch(
+          `/api/miacademy/crawl?jobId=${encodeURIComponent(crawlJobId)}&kidId=${encodeURIComponent(selectedKidId)}&import=1`
+        );
+        const data = await res.json();
+        if (!res.ok) {
+          setCrawlError(data.error || 'Crawl failed');
+          setCrawlLoading(false);
+          setCrawlJobId(null);
+          return;
+        }
+        if (data.status === 'running') return;
+
+        setCrawlLoading(false);
+        setCrawlJobId(null);
+        setResult({
+          imported: data.imported ?? 0,
+          errors: data.errors ?? [],
+        });
+        setStep('complete');
+        if (data.imported > 0) {
+          toast.success(`Imported ${data.imported} MiAcademy items from URL`);
+        } else if (data.errors?.length) {
+          toast.warning(data.errors[0] || 'Import had issues');
+        }
+      } catch (err) {
+        setCrawlError(err instanceof Error ? err.message : 'Crawl failed');
+        setCrawlLoading(false);
+        setCrawlJobId(null);
+      }
+    };
+
+    pollRef.current = setInterval(poll, 5000);
+    poll();
+
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+      pollRef.current = null;
+    };
+  }, [crawlJobId, selectedKidId]);
 
   // AI-powered parsing
   const parseWithAI = async (text: string) => {
@@ -250,6 +304,44 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     }
   }, [parseCSVManual, useAI, source]);
 
+  const handleFetchFromUrl = useCallback(async () => {
+    const url = crawlUrl.trim();
+    if (!url || !url.startsWith('http')) {
+      toast.error('Enter a valid URL starting with http');
+      return;
+    }
+    if (!selectedKidId) {
+      toast.error('Select a child first');
+      return;
+    }
+    setCrawlError(null);
+    setCrawlLoading(true);
+    try {
+      const res = await fetch('/api/miacademy/crawl', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url,
+          limit: 50,
+          ...(crawlCookie.trim() ? { cookieHeader: crawlCookie.trim() } : {}),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setCrawlError(data.error || 'Could not start crawl');
+        setCrawlLoading(false);
+        toast.error(data.error || 'Could not start crawl');
+        return;
+      }
+      setCrawlJobId(data.jobId);
+      toast.info('Crawling the URL… we’ll import when ready.');
+    } catch (err) {
+      setCrawlError(err instanceof Error ? err.message : 'Request failed');
+      setCrawlLoading(false);
+      toast.error('Could not start crawl');
+    }
+  }, [crawlUrl, crawlCookie, selectedKidId]);
+
   // Row management functions
   const toggleRowSelection = (idx: number) => {
     const newSelected = new Set(selectedRows);
@@ -336,6 +428,15 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
     setResult(null);
     setSelectedRows(new Set());
     setShowBulkEdit(false);
+    setCrawlUrl('');
+    setCrawlCookie('');
+    setCrawlJobId(null);
+    setCrawlLoading(false);
+    setCrawlError(null);
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
     onClose();
   };
 
@@ -437,6 +538,64 @@ export function ImportDataModal({ isOpen, onClose, kids }: ImportDataModalProps)
                     Paste from Clipboard
                   </button>
                 </div>
+              </div>
+
+              {/* Import from URL (Cloudflare crawl) */}
+              <div className="pt-4 mt-4 border-t border-[var(--border)]">
+                <p className="text-sm font-medium text-heading dark:text-muted mb-2 flex items-center gap-2">
+                  <Globe size={16} />
+                  Or fetch from a report URL (MiAcademy)
+                </p>
+                <p className="text-xs text-muted mb-2">
+                  Paste the report URL. For pages behind login (e.g. parents.miacademy.co/reportWizard), add your session cookie below so we can crawl while logged in. The cookie is used only for this crawl and is not stored.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={crawlUrl}
+                    onChange={(e) => setCrawlUrl(e.target.value)}
+                    placeholder="https://parents.miacademy.co/reportWizard?nchild=…"
+                    aria-label="Report or progress page URL to crawl"
+                    className="flex-1 px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading placeholder:text-muted text-sm"
+                    disabled={crawlLoading}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleFetchFromUrl}
+                    disabled={crawlLoading || !crawlUrl.trim()}
+                    className="px-4 py-2 bg-[var(--celestial-500)] text-[var(--foreground)] rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {crawlLoading ? (
+                      <>
+                        <Spinner size={16} className="animate-spin" />
+                        Crawling…
+                      </>
+                    ) : (
+                      'Fetch from URL'
+                    )}
+                  </button>
+                </div>
+                <div className="mt-2">
+                  <label className="block text-xs font-medium text-muted mb-1">
+                    Session cookie (optional, for logged-in pages)
+                  </label>
+                  <input
+                    type="password"
+                    value={crawlCookie}
+                    onChange={(e) => setCrawlCookie(e.target.value)}
+                    placeholder="e.g. session_id=abc123; other=value"
+                    aria-label="Cookie header for authenticated crawl"
+                    className="w-full px-3 py-2 border border-[var(--border)] dark:border-[var(--border)] rounded-lg bg-[var(--background-elevated)] dark:bg-[var(--background-secondary)] text-heading placeholder:text-muted text-sm font-mono"
+                    disabled={crawlLoading}
+                    autoComplete="off"
+                  />
+                  <p className="text-xs text-muted mt-1">
+                    Log in at parents.miacademy.co, then F12 → Network → refresh or open the report page → click any request to parents.miacademy.co → Headers → copy the &quot;Cookie&quot; request header value and paste here.
+                  </p>
+                </div>
+                {crawlError && (
+                  <p className="text-sm text-[var(--destructive)] mt-2">{crawlError}</p>
+                )}
               </div>
             </div>
           )}
