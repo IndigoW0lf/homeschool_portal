@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase/browser';
@@ -7,18 +8,20 @@ import { useRouter } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import { DarkModeToggle } from '@/components/ui/DarkModeToggle';
 import { AvatarPreview } from '@/components/kids/AvatarPreview';
-import { 
-  House, 
+import {
+  House,
   PlusCircle,
-  Lightbulb, 
-  FolderOpen, 
+  Lightbulb,
+  FolderOpen,
   SignOut,
   Sparkle,
   UserCircle,
   Gear,
   ChartLineUp,
   Moon,
-  UsersThree
+  UsersThree,
+  List,
+  X
 } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { AvatarState } from '@/types';
@@ -50,6 +53,12 @@ const navItems = [
 export function ParentNav({ kids = [] }: ParentNavProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -57,35 +66,25 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
     router.refresh();
   };
 
-  return (
-    <aside className="fixed left-0 top-0 h-full w-56 bg-[var(--background-sidebar)] flex flex-col z-30 border-r border-[var(--border)]">
-      {/* Logo / Header */}
-      <div className="p-4 border-b border-[var(--night-600)]">
-        <Link href="/parent" className="flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition-opacity">
-          <div className="p-1.5 rounded-lg bg-gradient-ember">
-            <Sparkle size={18} weight="fill" className="text-[var(--foreground)]" />
-          </div>
-          <span className="font-bold text-lg">Lunara Quest</span>
-        </Link>
-      </div>
-
+  const navContent = (
+    <>
       {/* Navigation */}
       <nav className="flex-1 py-4 overflow-y-auto custom-scrollbar">
         {/* Main Nav Items */}
         <div className="space-y-1">
           {navItems.map(item => {
-            const isActive = pathname === item.href || 
+            const isActive = pathname === item.href ||
               (item.href !== '/parent' && pathname?.startsWith(item.href));
             const Icon = item.icon;
-            
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all",
-                  isActive 
-                    ? "bg-[var(--celestial-500)]/20 text-[var(--celestial-400)] border-l-2 border-[var(--celestial-400)]" 
+                  isActive
+                    ? "bg-[var(--celestial-500)]/20 text-[var(--celestial-400)] border-l-2 border-[var(--celestial-400)]"
                     : "text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--nebula-purple)]/20"
                 )}
               >
@@ -107,19 +106,19 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
               {kids.map(kid => {
                 const isActive = pathname === `/parent/kids/${kid.id}`;
                 const displayName = kid.nickname || kid.name;
-                
+
                 return (
                   <Link
                     key={kid.id}
                     href={`/parent/kids/${kid.id}`}
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg transition-all",
-                      isActive 
-                        ? "bg-[var(--night-600)] text-[var(--foreground)]" 
+                      isActive
+                        ? "bg-[var(--night-600)] text-[var(--foreground)]"
                         : "text-[var(--foreground-muted)] dark:text-[var(--slate-300)] hover:text-[var(--foreground)] hover:bg-[var(--night-700)]"
                     )}
                   >
-                    <AvatarPreview 
+                    <AvatarPreview
                       avatarState={kid.avatar_state}
                       size="xs"
                       fallbackName={displayName}
@@ -151,6 +150,51 @@ export function ParentNav({ kids = [] }: ParentNavProps) {
           <span className="text-sm font-medium">Sign Out</span>
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Header with Hamburger */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[var(--background-sidebar)] border-b border-[var(--border)]">
+        <div className="flex items-center justify-between px-4 py-3">
+          <Link href="/parent" className="flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition-opacity">
+            <div className="p-1.5 rounded-lg bg-gradient-ember">
+              <Sparkle size={18} weight="fill" className="text-[var(--foreground)]" />
+            </div>
+            <span className="font-bold text-lg">Lunara Quest</span>
+          </Link>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 rounded-lg text-[var(--foreground)] hover:bg-[var(--night-700)] transition-colors"
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <List size={24} />}
+          </button>
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="absolute top-full left-0 right-0 bg-[var(--background-sidebar)] border-b border-[var(--border)] shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto">
+            {navContent}
+          </div>
+        )}
+      </header>
+
+      {/* Desktop Sidebar (hidden on mobile) */}
+      <aside className="hidden lg:flex fixed left-0 top-0 h-full w-56 bg-[var(--background-sidebar)] flex-col z-30 border-r border-[var(--border)]">
+        {/* Logo / Header */}
+        <div className="p-4 border-b border-[var(--night-600)]">
+          <Link href="/parent" className="flex items-center gap-2 text-[var(--foreground)] hover:opacity-80 transition-opacity">
+            <div className="p-1.5 rounded-lg bg-gradient-ember">
+              <Sparkle size={18} weight="fill" className="text-[var(--foreground)]" />
+            </div>
+            <span className="font-bold text-lg">Lunara Quest</span>
+          </Link>
+        </div>
+
+        {navContent}
+      </aside>
+    </>
   );
 }
