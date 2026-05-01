@@ -115,9 +115,9 @@ export default async function ParentViewKidProfilePage({ params }: Props) {
         
         {/* Avatar Builder (Replaces "Coming Soon") */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-[var(--foreground)] px-1">
+          <h2 className="text-lg font-semibold text-[var(--foreground)] px-1">
              Avatar Customization
-          </h3>
+          </h2>
           <p className="text-sm text-muted px-1 mb-2">
             Customize {displayName}&apos;s avatar including background color.
           </p>

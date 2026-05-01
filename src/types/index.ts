@@ -185,8 +185,6 @@ export interface Lesson {
 export interface CalendarEntry {
   date: string;
   theme: string;
-  kidIds: string[];
-  lessonIds: string[];
   journalPrompt: string;
   projectPrompt: string | null;
   parentNotes: string;

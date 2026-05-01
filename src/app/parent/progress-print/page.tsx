@@ -38,22 +38,15 @@ export default async function PrintActivityLogPage({
 
   const kids = await getKidsFromDB();
   
-  // Debug: log all params
-  console.log('[PrintPage] params:', JSON.stringify(params));
-  
   const days = parseInt(params.days || '30', 10);
   const startDate = format(subDays(new Date(), days), 'yyyy-MM-dd');
   const sourceFilter = params.source as 'lunara_quest' | 'miacademy' | 'manual' | undefined;
   const kidFilter = params.kid;
-  
-  console.log('[PrintPage] Parsed filters - days:', days, 'startDate:', startDate, 'source:', sourceFilter, 'kid:', kidFilter);
-  
+
   // Filter to specific kid if requested
-  const targetKids = kidFilter 
+  const targetKids = kidFilter
     ? kids.filter(k => k.id === kidFilter)
     : kids;
-    
-  console.log('[PrintPage] targetKids count:', targetKids.length, 'of', kids.length);
 
   // Fetch activities for each kid
   const kidActivities = await Promise.all(
