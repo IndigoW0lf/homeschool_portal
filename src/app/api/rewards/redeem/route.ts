@@ -184,8 +184,6 @@ export async function POST(request: NextRequest) {
       resultData = data;
     }
 
-    console.log(`[Redeem] Success: ${rewardName} for ${cost} moons. New balance: ${newMoonBalance}`);
-
     return NextResponse.json({
       success: true,
       redemption: resultData,
@@ -224,8 +222,6 @@ export async function GET(request: NextRequest) {
       supabase = await createServerClient();
     }
 
-    console.log('[Redeem API] Fetching for kidId:', kidId);
-    
     // Fetch from reward_redemptions (old system)
     const { data: rewardRedemptions, error: rewardError } = await supabase
       .from('reward_redemptions')
@@ -237,17 +233,8 @@ export async function GET(request: NextRequest) {
       .eq('status', 'pending')
       .order('redeemed_at', { ascending: false });
 
-    console.log('[Redeem API] reward_redemptions:', rewardRedemptions?.length || 0, rewardError?.message || 'OK');
-
-    // First check ALL shop purchases for this kid (for debugging)
-    const { data: allShopPurchases, error: allShopError } = await supabase
-      .from('shop_purchases')
-      .select('*')
-      .eq('kid_id', kidId);
-    
-    console.log('[Redeem API] ALL shop_purchases for kid:', allShopPurchases?.length || 0, allShopError?.message || 'OK');
-    if (allShopPurchases && allShopPurchases.length > 0) {
-      console.log('[Redeem API] Shop purchases statuses:', allShopPurchases.map(p => p.status));
+    if (rewardError) {
+      console.error('[Redeem] reward_redemptions error:', rewardError);
     }
 
     // Fetch from shop_purchases (new system) - unfulfilled items
@@ -257,8 +244,6 @@ export async function GET(request: NextRequest) {
       .eq('kid_id', kidId)
       .eq('status', 'unfulfilled')
       .order('purchased_at', { ascending: false });
-
-    console.log('[Redeem API] Unfulfilled shop_purchases:', shopPurchases?.length || 0, shopError?.message || 'OK');
 
     if (shopError) {
       console.error('[Redeem] shop_purchases error:', shopError);
@@ -281,8 +266,6 @@ export async function GET(request: NextRequest) {
         }
       }))
     ];
-
-    console.log('[Redeem API] Combined total:', combinedRedemptions.length);
 
     return NextResponse.json({ redemptions: combinedRedemptions });
 

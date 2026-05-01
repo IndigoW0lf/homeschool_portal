@@ -178,9 +178,8 @@ export function AssignmentForm({ initialData, onSubmit: parentOnSubmit, onDelete
            estimated_minutes: data.estimatedMinutes,
            tags: data.tags,
            is_template: data.isTemplate,
-           // JSON/HACK Fields until schema update or JSONB column refinement
            rubric: data.rubric,
-           steps: data.steps, 
+           steps: data.steps,
            links: data.links,
            // eslint-disable-next-line @typescript-eslint/no-explicit-any
            worksheet_data: (initialData as any)?.worksheet_data ?? null,

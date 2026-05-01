@@ -1,4 +1,4 @@
-import { getWeekRange, formatDateString } from './dateUtils';
+import { formatDateString } from './dateUtils';
 // In Phase 2, this can be swapped to Supabase while keeping the same interface
 
 import { Kid, Quote, Resources, Lesson, CalendarEntry, AvatarAssets, StudioTemplates, ShopItems } from '@/types';
@@ -73,30 +73,10 @@ export function getCalendarEntryByDate(dateString: string): CalendarEntry | unde
   return getCalendarEntries().find(entry => entry.date === dateString);
 }
 
-export function getCalendarEntriesForKid(kidId: string): CalendarEntry[] {
-  return getCalendarEntries().filter(entry => entry.kidIds.includes(kidId));
-}
-
 export function getCalendarEntriesForDateRange(startDate: Date, endDate: Date): CalendarEntry[] {
   const start = formatDateString(startDate);
   const end = formatDateString(endDate);
   return getCalendarEntries().filter(entry => entry.date >= start && entry.date <= end);
-}
-
-export function getTodayEntry(kidId: string, date: Date = new Date()): CalendarEntry | undefined {
-  const dateString = formatDateString(date);
-  return getCalendarEntries().find(
-    entry => entry.date === dateString && entry.kidIds.includes(kidId)
-  );
-}
-
-export function getWeekEntries(kidId: string, date: Date = new Date()): CalendarEntry[] {
-  const { start, end } = getWeekRange(date);
-
-  return getCalendarEntriesForKid(kidId).filter(entry => {
-    const entryDate = new Date(entry.date);
-    return entryDate >= start && entryDate <= end;
-  });
 }
 
 // Avatar Assets

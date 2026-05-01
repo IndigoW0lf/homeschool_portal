@@ -134,7 +134,7 @@ export function ResourceForm({ initialData, onSubmit: parentOnSubmit, onCancel, 
            label: data.title,
            type: data.type,
            url: data.url || '',
-           description: '', // TODO: Map fields to description or JSONB
+           description: data.purposePrompt || '',
            category: data.category,
            tags: data.tags,
            pinned_today: data.showOnToday,

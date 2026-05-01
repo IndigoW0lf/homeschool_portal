@@ -49,6 +49,7 @@ export default async function ParentDashboard({ searchParams }: PageProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-6">
+      <h1 className="sr-only">Parent Dashboard</h1>
 
       <TodaySection summaries={todaySummaries} todayLabel={todayLabel} />
 
@@ -70,9 +71,9 @@ export default async function ParentDashboard({ searchParams }: PageProps) {
 
         {/* Weekly Progress */}
         <div className="bg-[var(--night-700)] rounded-xl shadow-lg border border-[var(--night-600)] p-6">
-          <h3 className="font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
-            📊 Weekly Progress
-          </h3>
+          <h2 className="font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
+            Weekly Progress
+          </h2>
           <WeeklyProgressChart 
             schedule={thisWeekSchedule.map(s => ({
               id: s.id,

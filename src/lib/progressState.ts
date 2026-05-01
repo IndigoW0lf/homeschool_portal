@@ -132,10 +132,16 @@ function getDateString(date: Date): string {
 }
 
 function getDaysBetween(date1: string, date2: string): number {
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
+  const d1 = parseDateLocal(date1);
+  const d2 = parseDateLocal(date2);
   const diffTime = Math.abs(d2.getTime() - d1.getTime());
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+// Parse a YYYY-MM-DD string as local midnight (avoids UTC offset shifting getDay())
+function parseDateLocal(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
 }
 
 function getNextSchoolDayAfter(date: Date): Date {
@@ -159,7 +165,7 @@ export function updateStreakIfCompleted(kidId: string, date: Date): void {
     streak.best = 1;
     streak.lastCompletedDate = dateString;
   } else {
-    const lastDate = new Date(streak.lastCompletedDate);
+    const lastDate = parseDateLocal(streak.lastCompletedDate);
     const nextExpectedSchoolDay = getNextSchoolDayAfter(lastDate);
     const todayString = getDateString(date);
     const expectedString = getDateString(nextExpectedSchoolDay);

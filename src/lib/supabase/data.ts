@@ -330,15 +330,9 @@ export async function getDayPlansFromDB(): Promise<CalendarEntry[]> {
     return [];
   }
   
-  // Note: We need to refactor logic for 'kidIds' and 'lessonIds' since junction tables are gone.
-  // Ideally we query schedule_items to find what's on this day for a kid.
-  // For now, returning partial data to fix build errors.
-  
   return (plans || []).map(p => ({
     date: p.date,
     theme: p.theme || '',
-    kidIds: [], // TODO: Derived from schedule_items
-    lessonIds: [], // TODO: Derived from schedule_items
     journalPrompt: p.journal_prompt || '',
     projectPrompt: p.project_prompt || null,
     parentNotes: p.parent_notes || '',
@@ -346,10 +340,9 @@ export async function getDayPlansFromDB(): Promise<CalendarEntry[]> {
 }
 
 export async function getTodayEntryFromDB(date: Date = new Date()): Promise<CalendarEntry | undefined> {
-  // Simplified logic for migration phase
   const dateString = formatDateString(date);
   const plans = await getDayPlansFromDB();
-  return plans.find(p => p.date === dateString); // Ignoring kidId check for now as day plans are global for familys usually
+  return plans.find(p => p.date === dateString);
 }
 
 export async function getWeekEntriesFromDB(date: Date = new Date()): Promise<CalendarEntry[]> {
