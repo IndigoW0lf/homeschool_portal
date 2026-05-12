@@ -33,9 +33,9 @@ function TodayKidTile({ summary, todayLabel }: { summary: TodayKidSummary; today
   const totalToday = summary.todayItems.length;
 
   return (
-    <div className="bg-[var(--night-700)] rounded-xl border border-[var(--night-600)] overflow-hidden shadow-lg">
+    <div className="bg-[var(--background-elevated)] rounded-xl border border-[var(--border)] overflow-hidden shadow-lg">
       {/* Header: name, date, link */}
-      <div className="p-4 border-b border-[var(--night-600)] flex items-center justify-between gap-3">
+      <div className="p-4 border-b border-[var(--border)] flex items-center justify-between gap-3">
         <div>
           <h3 className="heading-sm text-[var(--foreground)]">{summary.kidName}</h3>
           <p className="text-sm text-[var(--muted)] mt-0.5">{todayLabel}</p>

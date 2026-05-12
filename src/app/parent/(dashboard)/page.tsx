@@ -65,12 +65,12 @@ export default async function ParentDashboard({ searchParams }: PageProps) {
       {/* Pending Rewards + Weekly Progress - 2 column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pending Reward Redemptions */}
-        <div className="bg-[var(--night-700)] rounded-xl shadow-lg border border-[var(--night-600)] p-6">
+        <div className="bg-[var(--background-elevated)] rounded-xl shadow-lg border border-[var(--border)] p-6">
           <RedemptionManager kids={kids.map(k => ({ id: k.id, name: k.name }))} />
         </div>
 
         {/* Weekly Progress */}
-        <div className="bg-[var(--night-700)] rounded-xl shadow-lg border border-[var(--night-600)] p-6">
+        <div className="bg-[var(--background-elevated)] rounded-xl shadow-lg border border-[var(--border)] p-6">
           <h2 className="font-semibold text-[var(--foreground)] mb-4 flex items-center gap-2">
             Weekly Progress
           </h2>
