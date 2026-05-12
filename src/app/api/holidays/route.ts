@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createHoliday, removeScheduleItemsForDateRange } from '@/lib/supabase/mutations';
+import { createHoliday } from '@/lib/supabase/mutations';
 import { getHolidaysFromDB, getScheduleItemsForDateRange } from '@/lib/supabase/data';
 
 export async function GET() {
@@ -24,19 +24,13 @@ export async function POST(request: NextRequest) {
     // Check for existing schedule items in the date range
     const effectiveEndDate = end_date || start_date;
     const existingItems = await getScheduleItemsForDateRange(start_date, effectiveEndDate);
-    
+
     // Create the holiday
     const holiday = await createHoliday({ name, emoji, start_date, end_date });
-    
-    // Remove conflicting schedule items
-    let removedCount = 0;
-    if (existingItems.length > 0) {
-      removedCount = await removeScheduleItemsForDateRange(start_date, effectiveEndDate);
-    }
-    
-    return NextResponse.json({ 
-      ...holiday, 
-      removedItemsCount: removedCount,
+
+    return NextResponse.json({
+      ...holiday,
+      affectedItemsCount: existingItems.length,
       affectedItems: existingItems.map(item => ({
         id: item.id,
         title: item.title || item.title_override,

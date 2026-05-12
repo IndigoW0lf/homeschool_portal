@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LunaraTitle } from '@/components/ui/LunaraTitle';
-import { 
-  Plus, PencilSimple, Trash, X, Check,
+import {
+  Plus, PencilSimple, Trash, X, Check, Warning,
   Sun, Snowflake, Tree, Gift, Heart, Star, Sparkle, Confetti,
   Umbrella, Flower, Moon, Campfire, Airplane, House, Balloon,
   Cake, Coffee, BookOpen, MusicNote, GameController, Bed, Alarm
@@ -51,12 +51,19 @@ interface HolidayManagerProps {
   initialHolidays: Holiday[];
 }
 
+interface RemovalPending {
+  startDate: string;
+  endDate: string;
+  count: number;
+}
+
 export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
   const router = useRouter();
   const [holidays, setHolidays] = useState<Holiday[]>(initialHolidays);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showIconPicker, setShowIconPicker] = useState(false);
+  const [removalPending, setRemovalPending] = useState<RemovalPending | null>(null);
   
   // Create effective "today" for filtering
   const todayStr = format(new Date(), 'yyyy-MM-dd');
@@ -101,6 +108,9 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
       return;
     }
 
+    const startDate = formData.startDate;
+    const endDate = formData.endDate || formData.startDate;
+
     try {
       const res = await fetch('/api/holidays', {
         method: 'POST',
@@ -108,13 +118,13 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
         body: JSON.stringify({
           name: formData.name,
           emoji: formData.emoji,
-          start_date: formData.startDate,
+          start_date: startDate,
           end_date: formData.endDate || null,
         }),
       });
 
       if (!res.ok) throw new Error('Failed to create holiday');
-      
+
       const newHoliday = await res.json();
       setHolidays([...holidays, {
         id: newHoliday.id,
@@ -123,19 +133,19 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
         startDate: newHoliday.start_date,
         endDate: newHoliday.end_date,
       }]);
-      
-      // Show toast about removed items if any
-      if (newHoliday.removedItemsCount > 0) {
-        toast.success('Holiday added!', {
-          description: `${newHoliday.removedItemsCount} scheduled item(s) were removed from this date range.`,
-          duration: 5000
+
+      resetForm();
+      router.refresh();
+
+      if (newHoliday.affectedItemsCount > 0) {
+        setRemovalPending({
+          startDate,
+          endDate,
+          count: newHoliday.affectedItemsCount,
         });
       } else {
         toast.success('Holiday added!');
       }
-      
-      resetForm();
-      router.refresh();
     } catch {
       toast.error('Failed to add holiday');
     }
@@ -190,6 +200,27 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
       router.refresh();
     } catch {
       toast.error('Failed to delete holiday');
+    }
+  };
+
+  const handleRemoveAssignments = async () => {
+    if (!removalPending) return;
+    try {
+      const params = new URLSearchParams({
+        start_date: removalPending.startDate,
+        end_date: removalPending.endDate,
+      });
+      const res = await fetch(`/api/schedule-items/by-range?${params}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to remove assignments');
+      toast.success('Holiday added!', {
+        description: `${removalPending.count} assignment(s) removed from this date range.`,
+        duration: 5000,
+      });
+    } catch {
+      toast.error('Failed to remove assignments');
+    } finally {
+      setRemovalPending(null);
+      router.refresh();
     }
   };
 
@@ -422,6 +453,57 @@ export function HolidayManager({ initialHolidays }: HolidayManagerProps) {
           ))
         )}
       </div>
+
+      {/* Assignment removal confirmation modal */}
+      {removalPending && (
+        <div
+          className="modal-backdrop animate-in fade-in duration-200"
+          onClick={() => {
+            setRemovalPending(null);
+            toast.success('Holiday added!');
+          }}
+        >
+          <div
+            className="modal-content animate-in zoom-in-95 duration-200 max-w-md"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-6 border-b border-[var(--border)] flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[var(--ember-100)] dark:bg-[var(--ember-900)]/30 flex items-center justify-center flex-shrink-0">
+                <Warning size={22} weight="duotone" color="var(--ember-500)" />
+              </div>
+              <div>
+                <h2 className="heading-lg">Assignments During This Time</h2>
+                <p className="text-sm text-muted mt-0.5">
+                  There {removalPending.count === 1 ? 'is' : 'are'}{' '}
+                  <strong>{removalPending.count}</strong> scheduled assignment{removalPending.count === 1 ? '' : 's'} overlapping with this holiday.
+                </p>
+              </div>
+            </div>
+            <div className="p-6 bg-[var(--background-secondary)] space-y-3">
+              <p className="text-sm text-muted">
+                Would you like to remove those assignments, or keep them? (For example, Dad travelling doesn&apos;t mean school stops!)
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                <button
+                  onClick={handleRemoveAssignments}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium bg-[var(--destructive)]/10 hover:bg-[var(--destructive)]/20 text-[var(--destructive)] dark:text-[var(--nebula-pink-light)] rounded-lg transition-colors"
+                >
+                  Remove Assignments
+                </button>
+                <button
+                  onClick={() => {
+                    setRemovalPending(null);
+                    toast.success('Holiday added! Assignments kept.');
+                  }}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium bg-[var(--herbal-500)] hover:bg-[var(--herbal-600)] text-white rounded-lg transition-colors"
+                >
+                  Keep School Going
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
