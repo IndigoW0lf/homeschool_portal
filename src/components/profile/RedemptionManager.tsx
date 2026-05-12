@@ -120,7 +120,7 @@ export function RedemptionManager({ kids }: RedemptionManagerProps) {
           {redemptions.map(redemption => (
             <div
               key={redemption.id}
-              className="flex items-center gap-4 p-4 bg-gradient-taupe-pink rounded-xl border border-[var(--nebula-pink)]/30"
+              className="flex items-center gap-4 p-4 bg-gradient-teal-pink rounded-xl border border-[var(--celestial-400)]/30"
             >
               {/* Emoji */}
               <div className="text-3xl">{redemption.reward?.emoji || '🎁'}</div>
