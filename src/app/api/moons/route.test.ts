@@ -39,7 +39,7 @@ describe('GET /api/moons', () => {
     ];
     const supabase = makeSupabaseMock({ data: transactions, error: null });
     // Override single() for student_progress query
-    supabase.from = vi.fn((table: string) => {
+    vi.mocked(supabase.from).mockImplementation(((table: string) => {
       if (table === 'student_progress') {
         return {
           select: vi.fn().mockReturnThis(),
@@ -54,7 +54,7 @@ describe('GET /api/moons', () => {
         order: vi.fn().mockReturnThis(),
         limit: vi.fn().mockResolvedValue({ data: transactions, error: null }),
       } as never;
-    });
+    }) as unknown as typeof supabase.from);
     vi.mocked(createServerClient).mockResolvedValue(supabase as never);
 
     const res = await GET(makeGetRequest({ kidId: 'kid-1' }));
@@ -93,7 +93,7 @@ describe('POST /api/moons (bonus)', () => {
   it('returns 200 with award on success', async () => {
     const award = { id: 'award-1', kid_id: 'kid-1', stars_earned: 10, source: 'bonus' };
     const supabase = makeSupabaseMock({ data: null, error: null });
-    supabase.from = vi.fn((table: string) => {
+    vi.mocked(supabase.from).mockImplementation(((table: string) => {
       if (table === 'progress_awards') {
         return {
           insert: vi.fn().mockReturnThis(),
@@ -107,7 +107,7 @@ describe('POST /api/moons (bonus)', () => {
         single: vi.fn().mockResolvedValue({ data: { total_stars: 15 }, error: null }),
         upsert: vi.fn().mockResolvedValue({ error: null }),
       } as never;
-    });
+    }) as unknown as typeof supabase.from);
     supabase.rpc = vi.fn().mockResolvedValue({ error: null });
     vi.mocked(createServerClient).mockResolvedValue(supabase as never);
 
