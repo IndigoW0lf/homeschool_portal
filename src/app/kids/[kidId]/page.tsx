@@ -3,6 +3,8 @@ import { getKidByIdFromDB, getResourcesFromDB, getScheduleItemsForStudent, getTi
 import { getStudentProgress, getStudentUnlocks } from '@/lib/supabase/progressData';
 import { formatDateString, getTodayInTimezone, getNowInTimezone } from '@/lib/dateUtils';
 import { ProgressCardWrapper, ResourceSection } from '@/components';
+
+export const dynamic = 'force-dynamic';
 import { KidPortalWeekCalendar } from './KidPortalWeekCalendar';
 import { ScheduleItemsList } from './ScheduleItemsList';
 import { JournalCard } from '@/components/kids/JournalCard';
