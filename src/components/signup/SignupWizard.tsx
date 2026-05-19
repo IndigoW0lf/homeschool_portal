@@ -30,6 +30,7 @@ export interface SignupData {
   kidPin: string; // 4-digit PIN for kid access
   // Meta
   termsAccepted: boolean;
+  coppaConsent: boolean; // explicit COPPA parental consent
 }
 
 const initialData: SignupData = {
@@ -42,6 +43,7 @@ const initialData: SignupData = {
   kidAvatarUrl: '',
   kidPin: '',
   termsAccepted: false,
+  coppaConsent: false,
 };
 
 export function SignupWizard() {

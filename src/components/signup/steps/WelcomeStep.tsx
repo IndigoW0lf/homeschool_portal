@@ -16,7 +16,7 @@ interface WelcomeStepProps {
 export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: WelcomeStepProps) {
   const [isVerified, setIsVerified] = useState(false);
   
-  const canContinue = data.termsAccepted && isVerified;
+  const canContinue = data.termsAccepted && data.coppaConsent && isVerified;
 
   const handleVerify = (token: string) => {
     setTurnstileToken(token);
@@ -68,8 +68,9 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
         </ul>
       </div>
 
-      {/* Terms Checkbox */}
-      <div className="border-t border-[var(--border)] pt-4">
+      {/* Consent checkboxes */}
+      <div className="border-t border-[var(--border)] pt-4 space-y-3">
+        {/* Terms + Privacy */}
         <button
           type="button"
           onClick={() => updateData({ termsAccepted: !data.termsAccepted })}
@@ -89,6 +90,30 @@ export function WelcomeStep({ data, updateData, onNext, setTurnstileToken }: Wel
             <Link href="/legal/privacy" className="text-[var(--ember-500)] hover:underline" target="_blank">
               Privacy Policy
             </Link>
+          </span>
+        </button>
+
+        {/* COPPA parental consent */}
+        <button
+          type="button"
+          onClick={() => updateData({ coppaConsent: !data.coppaConsent })}
+          className="flex items-start gap-3 w-full text-left"
+        >
+          {data.coppaConsent ? (
+            <CheckSquare size={24} weight="fill" className="text-[var(--ember-500)] flex-shrink-0 mt-0.5" />
+          ) : (
+            <Square size={24} className="text-muted flex-shrink-0 mt-0.5" />
+          )}
+          <span className="text-sm text-muted">
+            I am the parent or legal guardian of the children I will add to this service and I
+            consent to the collection and use of their information as described in the{' '}
+            <Link href="/legal/privacy" className="text-[var(--ember-500)] hover:underline" target="_blank">
+              Privacy Policy
+            </Link>
+            , including the{' '}
+            <Link href="/legal/privacy#coppa" className="text-[var(--ember-500)] hover:underline" target="_blank">
+              COPPA notice
+            </Link>.
           </span>
         </button>
       </div>
