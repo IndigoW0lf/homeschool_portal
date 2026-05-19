@@ -38,9 +38,9 @@ export async function POST(request: NextRequest) {
 
     // Rate limit by authenticated user ID (more reliable than IP across Vercel instances)
     const identifier = user.id;
-    
+
     // Check rate limit
-    const rateLimitResult = checkRateLimit(identifier);
+    const rateLimitResult = await checkRateLimit(identifier);
     const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
     
     if (!rateLimitResult.allowed) {

@@ -23,15 +23,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
-    }
-
-    // Validate file size (max 5MB)
+    // Validate file size before reading full buffer (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json({ error: 'File too large (max 5MB)' }, { status: 400 });
     }
+
+    // Read buffer early so we can validate magic bytes server-side
+    // (client-supplied file.type is not trustworthy)
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+
+    // Validate image magic bytes
+    const isJpeg = buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+    const isPng = buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
+    const isWebP = buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46
+      && buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50;
+    const isGif = buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46;
+
+    if (!isJpeg && !isPng && !isWebP && !isGif) {
+      return NextResponse.json({ error: 'File must be a JPEG, PNG, WebP, or GIF image' }, { status: 400 });
+    }
+
+    // Derive a safe content type from the actual bytes, not the client's claim
+    const contentType = isJpeg ? 'image/jpeg'
+      : isPng ? 'image/png'
+      : isWebP ? 'image/webp'
+      : 'image/gif';
 
     // Get current profile to delete old photo
     const { data: profile } = await supabase
@@ -49,17 +66,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload new photo with timestamp to bust cache
-    const fileName = `photo_${Date.now()}.${file.type.split('/')[1] || 'jpg'}`;
+    const ext = contentType.split('/')[1];
+    const fileName = `photo_${Date.now()}.${ext}`;
     const filePath = `${user.id}/${fileName}`;
-    
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
 
     const { error: uploadError } = await supabase.storage
       .from('profile-photos')
       .upload(filePath, buffer, {
-        contentType: file.type,
-        upsert: true
+        contentType,
+        upsert: true,
       });
 
     if (uploadError) {
