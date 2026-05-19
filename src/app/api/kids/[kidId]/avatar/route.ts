@@ -64,6 +64,22 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: 'File too large (max 5MB)' }, { status: 400 });
     }
 
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = new Uint8Array(arrayBuffer);
+
+    // Validate image magic bytes server-side — client file.type is not trustworthy
+    const isJpeg = buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+    const isPng  = buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
+    const isWebP = buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46
+                && buffer[8] === 0x57 && buffer[9] === 0x45 && buffer[10] === 0x42 && buffer[11] === 0x50;
+    const isGif  = buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46;
+
+    if (!isJpeg && !isPng && !isWebP && !isGif) {
+      return NextResponse.json({ error: 'File must be a JPEG, PNG, WebP, or GIF image' }, { status: 400 });
+    }
+
+    const validatedContentType = isJpeg ? 'image/jpeg' : isPng ? 'image/png' : isWebP ? 'image/webp' : 'image/gif';
+
     const typeParam = request.nextUrl.searchParams.get('type');
     const isPhoto = typeParam === 'photo';
 
@@ -82,17 +98,14 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       if (oldPath) await supabase.storage.from(bucketId).remove([oldPath]);
     }
 
-    const ext = fileType.split('/')[1] || 'jpg';
+    const ext = validatedContentType.split('/')[1] || 'jpg';
     const fileName = `${isPhoto ? 'photo' : 'avatar'}_${Date.now()}.${ext}`;
     const filePath = `${kidId}/${fileName}`;
-
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
 
     const { error: uploadError } = await supabase.storage
       .from(bucketId)
       .upload(filePath, buffer, {
-        contentType: fileType,
+        contentType: validatedContentType,
         upsert: true,
       });
 
