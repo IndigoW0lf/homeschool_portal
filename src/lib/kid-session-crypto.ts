@@ -21,10 +21,14 @@ function base64urlEncode(buffer: ArrayBuffer | Uint8Array): string {
     .replace(/=/g, '');
 }
 
-function base64urlDecode(str: string): Uint8Array {
+function base64urlDecode(str: string): Uint8Array<ArrayBuffer> {
   const padded = str.replace(/-/g, '+').replace(/_/g, '/');
   const binary = atob(padded);
-  return Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
 }
 
 async function getHmacKey(secret: string): Promise<CryptoKey> {
