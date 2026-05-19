@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 
+const MAX_PDF_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+
 // pdf-parse has CJS issues - use dynamic require
 async function parsePdf(buffer: Buffer): Promise<{ text: string; numpages: number; info: Record<string, unknown> }> {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -10,7 +12,7 @@ async function parsePdf(buffer: Buffer): Promise<{ text: string; numpages: numbe
 
 /**
  * POST /api/parse-pdf
- * 
+ *
  * Extracts text content from an uploaded PDF file.
  * Used for importing MiAcademy report cards.
  */
@@ -32,13 +34,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    if (!file.name.toLowerCase().endsWith('.pdf')) {
-      return NextResponse.json({ error: 'File must be a PDF' }, { status: 400 });
+    // Enforce size limit before reading the full buffer
+    if (file.size > MAX_PDF_SIZE_BYTES) {
+      return NextResponse.json({ error: 'File too large (max 10 MB)' }, { status: 400 });
     }
 
     // Convert file to buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    // Validate PDF magic bytes (%PDF) — client-supplied filename/type cannot be trusted
+    if (buffer.length < 4 || buffer.toString('ascii', 0, 4) !== '%PDF') {
+      return NextResponse.json({ error: 'File is not a valid PDF' }, { status: 400 });
+    }
 
     // Parse PDF to text
     const pdfData = await parsePdf(buffer);

@@ -2,6 +2,7 @@
 // Handles kid-specific sessions separate from parent Supabase auth
 
 import { cookies } from 'next/headers';
+import { signSession, verifySession } from './kid-session-crypto';
 
 const KID_SESSION_COOKIE = 'lunara_kid_session';
 export const KID_SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
@@ -24,9 +25,11 @@ export async function createKidSession(kidId: string, name: string, maxAge?: num
     name,
     createdAt: Date.now(),
   };
-  
+
+  const value = await signSession(session);
+
   const cookieStore = await cookies();
-  cookieStore.set(KID_SESSION_COOKIE, JSON.stringify(session), {
+  cookieStore.set(KID_SESSION_COOKIE, value, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -36,22 +39,23 @@ export async function createKidSession(kidId: string, name: string, maxAge?: num
 }
 
 /**
- * Get the current kid session if one exists
+ * Get the current kid session if one exists and the cookie signature is valid
  */
 export async function getKidSession(): Promise<KidSession | null> {
   try {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get(KID_SESSION_COOKIE);
-    
-    // console.log('[getKidSession] Cookie present:', !!sessionCookie?.value);
-    
+
     if (!sessionCookie?.value) {
-      console.log('[getKidSession] No cookie found');
       return null;
     }
-    
-    const session = JSON.parse(sessionCookie.value) as KidSession;
-    console.log('[getKidSession] Session found for kid:', session.kidId);
+
+    const session = await verifySession<KidSession>(sessionCookie.value);
+    if (!session) {
+      console.warn('[getKidSession] Cookie signature verification failed');
+      return null;
+    }
+
     return session;
   } catch {
     return null;

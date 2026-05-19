@@ -5,6 +5,14 @@ import { LUNA_SYSTEM_PROMPT, CONTEXT_PROMPTS } from '@/lib/ai/system-prompt';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/ai/rate-limiter';
 import { loadContextForRequest } from '@/lib/ai/context-loader';
 import { enrichWithResources, isYouTubeConfigured } from '@/lib/ai/resource-enricher';
+import { createServerClient } from '@/lib/supabase/server';
+
+// Patterns that attempt to override system instructions
+const INJECTION_PATTERN = /ignore\s+(previous|prior|above|all)\s+instructions?|<\|im_start\|>|<\|im_end\|>|\[INST\]|\[\/INST\]|###\s*system\s*:|system\s*prompt\s*:/i;
+
+function sanitizeMessage(message: string): string {
+  return message.replace(INJECTION_PATTERN, '[removed]');
+}
 
 /**
  * POST /api/ai/think
@@ -21,11 +29,15 @@ import { enrichWithResources, isYouTubeConfigured } from '@/lib/ai/resource-enri
  */
 export async function POST(request: NextRequest) {
   try {
-    // Get user identifier for rate limiting
-    // In production, use authenticated user ID
-    const identifier = request.headers.get('x-forwarded-for') 
-      ?? request.headers.get('x-real-ip') 
-      ?? 'anonymous';
+    // Require parent authentication — this endpoint consumes OpenAI credits
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Rate limit by authenticated user ID (more reliable than IP across Vercel instances)
+    const identifier = user.id;
     
     // Check rate limit
     const rateLimitResult = checkRateLimit(identifier);
@@ -58,7 +70,8 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const { context, message, history, childProfileId, lessonId, weekStartDate } = parseResult.data;
+    const { context, history, childProfileId, lessonId, weekStartDate } = parseResult.data;
+    const message = sanitizeMessage(parseResult.data.message);
     
     // =========================================
     // LOAD CONTEXT (minimal, scoped by mode)
