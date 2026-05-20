@@ -156,6 +156,7 @@ export const ThinkResponseSchema = z.object({
     .max(2)
     .describe('Thoughts or ideas, only if enough context exists'),
   tone_check: ToneCheckSchema.describe('CALM for normal, GENTLE when distress is detected'),
+  off_topic: z.boolean().optional().describe('True when the request is unrelated to homeschooling or parenting'),
 });
 
 export type ThinkResponse = z.infer<typeof ThinkResponseSchema>;
@@ -245,6 +246,10 @@ export const THINK_RESPONSE_JSON_SCHEMA = {
         enum: ['CALM', 'GENTLE'],
         description: 'CALM for normal exchanges, GENTLE when distress detected',
       },
+      off_topic: {
+        type: 'boolean',
+        description: 'Set to true when the request is unrelated to homeschooling, parenting, or child development',
+      },
     },
     required: ['clarifying_questions', 'suggestions', 'tone_check'],
     additionalProperties: false,
@@ -275,4 +280,7 @@ export interface LunaThinkResponse {
   
   /** Emotional register: CALM (default) or GENTLE (distress detected) */
   tone_check: 'CALM' | 'GENTLE';
+
+  /** True when the message is outside the homeschool/parenting scope */
+  off_topic?: boolean;
 }
