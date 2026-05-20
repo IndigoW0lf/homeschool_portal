@@ -37,14 +37,11 @@ export async function POST(request: NextRequest) {
       // Kid buying for themselves → Use Service Role (bypass RLS)
       supabase = await createServiceRoleClient();
     } else {
-      // Parent/other user → Use standard client (RLS)
-      supabase = await createServerClient();
-      
-      // If not a kid session, verify parent is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      // Parent path: verify family membership before touching kid's moons
+      if (!await canAccessKid(kidId)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
+      supabase = await createServerClient();
     }
     
     let cost = 0;
