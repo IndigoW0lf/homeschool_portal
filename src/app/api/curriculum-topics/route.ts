@@ -66,7 +66,7 @@ export async function GET(request: Request) {
 
     if (error) {
       console.error('Error fetching curriculum topics:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to fetch curriculum topics' }, { status: 500 });
     }
 
     // Group by topic and get unique topics with their latest info

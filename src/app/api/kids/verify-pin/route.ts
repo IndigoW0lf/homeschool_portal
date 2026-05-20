@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
 import { createServerClient } from '@/lib/supabase/server';
 
 const MAX_ATTEMPTS = 5;
@@ -55,10 +56,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    // Simple PIN comparison (in production, use bcrypt compare)
-    // For now, we'll use a simple hash comparison
-    const expectedHash = simpleHash(pin);
-    const isCorrect = kid.pin_hash === expectedHash;
+    // Compare PIN — bcrypt hashes start with $2b$; legacy hashes are hex strings
+    let isCorrect: boolean;
+    if (kid.pin_hash.startsWith('$2')) {
+      isCorrect = await bcrypt.compare(pin, kid.pin_hash);
+    } else {
+      // Legacy simpleHash — compare then immediately upgrade to bcrypt on success
+      isCorrect = kid.pin_hash === simpleHash(pin);
+      if (isCorrect) {
+        const newHash = await bcrypt.hash(pin, 10);
+        await supabase.from('kids').update({ pin_hash: newHash }).eq('id', kidId);
+      }
+    }
 
     if (isCorrect) {
       // Reset failed attempts on success
@@ -102,7 +111,7 @@ export async function POST(request: Request) {
   }
 }
 
-// Simple hash function for PINs (in production, use bcrypt)
+// Legacy hash — only used for backward-compatible migration of old PINs
 function simpleHash(pin: string): string {
   let hash = 0;
   const salt = 'lunara_pin_salt_2024';
@@ -110,7 +119,7 @@ function simpleHash(pin: string): string {
   for (let i = 0; i < salted.length; i++) {
     const char = salted.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
+    hash = hash & hash;
   }
   return hash.toString(16);
 }

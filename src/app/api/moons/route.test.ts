@@ -6,6 +6,10 @@ vi.mock('@/lib/supabase/server', () => ({
   createServerClient: vi.fn(),
 }));
 
+vi.mock('@/lib/kid-access', () => ({
+  canAccessKid: vi.fn().mockResolvedValue(true),
+}));
+
 import { createServerClient } from '@/lib/supabase/server';
 import { GET, POST } from './route';
 

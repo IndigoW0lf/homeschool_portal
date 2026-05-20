@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { canAccessKid } from '@/lib/kid-access';
 
 /**
  * GET /api/moons/history?kidId=xxx
@@ -8,9 +9,13 @@ import { createServerClient } from '@/lib/supabase/server';
 export async function GET(request: NextRequest) {
   try {
     const kidId = request.nextUrl.searchParams.get('kidId');
-    
+
     if (!kidId) {
       return NextResponse.json({ error: 'kidId is required' }, { status: 400 });
+    }
+
+    if (!await canAccessKid(kidId)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const supabase = await createServerClient();
@@ -68,6 +73,10 @@ export async function POST(request: NextRequest) {
         { error: 'kidId and positive amount are required' },
         { status: 400 }
       );
+    }
+
+    if (!await canAccessKid(kidId)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Cap at reasonable maximum per bonus

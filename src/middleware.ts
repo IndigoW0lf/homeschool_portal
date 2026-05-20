@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifySession } from '@/lib/kid-session-crypto';
+import type { KidSession } from '@/lib/kid-session';
 
 /**
  * Auth and kid-session routing.
  * Note: Next.js may deprecate the "middleware" file convention in favor of "proxy".
  * When that happens, migrate this logic per: https://nextjs.org/docs/messages/middleware-to-proxy
  */
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
-  
+
   // 1. Auth Callback Check
   // If we're at the root and have an auth code, redirect to the callback handler
   if (pathname === '/' && searchParams.get('code')) {
@@ -18,14 +20,14 @@ export function middleware(request: NextRequest) {
   }
 
   // 2. Kid Session Access Control
-  // Check for kid session cookie
+  // Verify the signed cookie — unsigned/tampered cookies are rejected
   const kidSessionCookie = request.cookies.get('lunara_kid_session');
-  
-  if (kidSessionCookie?.value) {
-    try {
-      const session = JSON.parse(kidSessionCookie.value);
-      const kidId = session.kidId;
 
+  if (kidSessionCookie?.value) {
+    const session = await verifySession<KidSession>(kidSessionCookie.value);
+    const kidId = session?.kidId;
+
+    if (kidId) {
       // Rule A: Kids cannot access Parent Dashboard or Home
       if (pathname.startsWith('/parent') || pathname === '/home') {
         const url = request.nextUrl.clone();
@@ -52,11 +54,8 @@ export function middleware(request: NextRequest) {
         url.pathname = `/kids/${kidId}`;
         return NextResponse.redirect(url);
       }
-
-    } catch (e) {
-      // Invalid cookie? Ignore it (allow normal flow, maybe clear it?)
-      console.error('Invalid kid session cookie', e);
     }
+    // If kidId is falsy (signature invalid or missing), fall through to normal flow
   }
 
   return NextResponse.next();

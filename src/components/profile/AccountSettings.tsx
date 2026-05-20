@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
 import { User } from '@supabase/supabase-js';
-import { Envelope, Key, Warning, ArrowRight } from '@phosphor-icons/react';
+import { Envelope, Key, Warning, ArrowRight, Trash } from '@phosphor-icons/react';
+import { Modal } from '@/components/ui/Modal';
 
 interface AccountSettingsProps {
   user: User;
@@ -16,12 +17,19 @@ export function AccountSettings({ user }: AccountSettingsProps) {
   const [newEmail, setNewEmail] = useState('');
   const [isChangingEmail, setIsChangingEmail] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(false);
-  
+
   // Password state
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
+  // Delete account state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const DELETE_KEYWORD = 'DELETE';
+  const canConfirmDelete = deleteConfirmText === DELETE_KEYWORD;
 
   const handleEmailChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +93,24 @@ export function AccountSettings({ user }: AccountSettingsProps) {
     await supabase.auth.signOut();
     router.push('/parent/login');
     router.refresh();
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!canConfirmDelete) return;
+    setIsDeletingAccount(true);
+    try {
+      const res = await fetch('/api/account', { method: 'DELETE' });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? 'Failed to delete account');
+      }
+      await supabase.auth.signOut();
+      router.push('/?deleted=1');
+    } catch (err) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Failed to delete account');
+      setIsDeletingAccount(false);
+    }
   };
 
   return (
@@ -245,10 +271,94 @@ export function AccountSettings({ user }: AccountSettingsProps) {
       </div>
 
       {/* Account Info */}
-      <div className="text-sm text-muted">
+      <div className="pb-6 border-b border-[var(--border)] text-sm text-muted">
         <p>Account created: {new Date(user.created_at).toLocaleDateString()}</p>
         <p>Last sign in: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString() : 'N/A'}</p>
       </div>
+
+      {/* Danger Zone */}
+      <div className="rounded-xl border border-red-200 dark:border-red-900 bg-red-50/50 dark:bg-red-950/20 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Trash size={18} className="text-red-500" />
+          <h3 className="font-medium text-red-700 dark:text-red-400">Danger Zone</h3>
+        </div>
+        <p className="text-sm text-red-600/80 dark:text-red-400/70 mb-4">
+          Permanently delete your account and all data — kids&apos; profiles, journal entries,
+          lesson records, and uploaded photos. This cannot be undone.
+        </p>
+        <button
+          onClick={() => { setDeleteConfirmText(''); setShowDeleteModal(true); }}
+          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg font-medium transition-colors"
+        >
+          Delete my account
+        </button>
+      </div>
+
+      {/* Delete Account Modal */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => { if (!isDeletingAccount) { setShowDeleteModal(false); setDeleteConfirmText(''); } }}
+        title="Delete Account"
+        description="This action is permanent and cannot be reversed."
+      >
+        <div className="space-y-5">
+          {/* What gets deleted */}
+          <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-4">
+            <p className="text-sm font-medium text-red-700 dark:text-red-400 mb-2">
+              The following will be permanently deleted:
+            </p>
+            <ul className="text-sm text-red-600/90 dark:text-red-400/80 space-y-1 list-disc pl-4">
+              <li>Your parent account and login credentials</li>
+              <li>All child profiles and their personal information</li>
+              <li>All journal entries and mood records</li>
+              <li>All lessons, assignments, and progress records</li>
+              <li>All imported curriculum data</li>
+              <li>All uploaded profile photos</li>
+              <li>All family connections</li>
+            </ul>
+          </div>
+
+          <p className="text-sm text-muted">
+            If you share this family with other parent accounts, their accounts will not be deleted —
+            only your membership will be removed.
+          </p>
+
+          {/* Type-to-confirm */}
+          <div>
+            <label htmlFor="deleteConfirm" className="block text-sm font-medium text-heading mb-1">
+              Type <span className="font-mono font-bold text-red-600 dark:text-red-400">{DELETE_KEYWORD}</span> to confirm
+            </label>
+            <input
+              id="deleteConfirm"
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder={DELETE_KEYWORD}
+              disabled={isDeletingAccount}
+              autoComplete="off"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-lg bg-[var(--background-elevated)] text-heading font-mono focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none disabled:opacity-50"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(''); }}
+              disabled={isDeletingAccount}
+              className="flex-1 px-4 py-2.5 border border-[var(--border)] text-muted text-sm rounded-lg hover:bg-[var(--hover-overlay)] transition-colors disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDeleteAccount}
+              disabled={!canConfirmDelete || isDeletingAccount}
+              className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isDeletingAccount ? 'Deleting...' : 'Permanently delete'}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

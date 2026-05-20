@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { unlockDesignStudioTier } from '@/lib/supabase/mutations';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+import { canAccessKid } from '@/lib/kid-access';
 import { getTierLimits, getTierCost, getNextTierInfo, type DesignStudioTier } from '@/lib/avatar/tier-limits';
 
 interface RouteParams {
@@ -10,7 +11,9 @@ interface RouteParams {
 // GET /api/kids/[kidId]/tier - Get current tier info and limits
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
-  
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const supabase = await createServiceRoleClient();
     
@@ -53,7 +56,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 // POST /api/kids/[kidId]/tier - Unlock next tier
 export async function POST(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
-  
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { targetTier } = body as { targetTier: DesignStudioTier };

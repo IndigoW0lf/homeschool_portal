@@ -52,13 +52,14 @@ export function ParentAccountStep({ data, updateData, onNext, onBack, setUserId 
         // Continue anyway - the account was created
       }
 
-      // Update profile with display name if provided
-      if (data.displayName) {
-        await supabase
-          .from('profiles')
-          .update({ display_name: data.displayName })
-          .eq('id', authData.user.id);
-      }
+      // Persist display name and COPPA consent timestamp
+      await supabase
+        .from('profiles')
+        .update({
+          ...(data.displayName ? { display_name: data.displayName } : {}),
+          coppa_consent_at: new Date().toISOString(),
+        })
+        .eq('id', authData.user.id);
 
       setUserId(authData.user.id);
       toast.success('Account created! 🎉');

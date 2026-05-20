@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
 import { createServerClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
     }
 
     // Hash and store the PIN
-    const pinHash = simpleHash(pin);
+    const pinHash = await bcrypt.hash(pin, 10);
 
     const { error: updateError } = await supabase
       .from('kids')
@@ -79,16 +80,3 @@ export async function POST(request: Request) {
 
 // No DELETE endpoint - PIN cannot be removed, only reset
 // This ensures all kids always have a PIN for security
-
-// Simple hash function for PINs (same as verify-pin route)
-function simpleHash(pin: string): string {
-  let hash = 0;
-  const salt = 'lunara_pin_salt_2024';
-  const salted = salt + pin + salt;
-  for (let i = 0; i < salted.length; i++) {
-    const char = salted.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash;
-  }
-  return hash.toString(16);
-}

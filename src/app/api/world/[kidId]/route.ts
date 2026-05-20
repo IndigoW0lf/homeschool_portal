@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+import { canAccessKid } from '@/lib/kid-access';
 import { createEmptyWorld, WorldMap } from '@/types/world';
 
 interface RouteParams {
@@ -17,7 +18,9 @@ export async function GET(
   { params }: RouteParams
 ) {
   const { kidId } = await params;
-  
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const supabase = await createServiceRoleClient();
     
@@ -78,7 +81,9 @@ export async function PUT(
   { params }: RouteParams
 ) {
   const { kidId } = await params;
-  
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const body = await request.json() as WorldMap;
     

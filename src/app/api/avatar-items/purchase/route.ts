@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+import { canAccessKid } from '@/lib/kid-access';
 import openPeepsOptions from '../../../../../content/open-peeps-options.json';
 
 // Flatten premium items from the options file
@@ -45,6 +46,10 @@ export async function POST(request: NextRequest) {
 
   if (!kidId || !itemKey) {
     return NextResponse.json({ error: 'kidId and itemKey are required' }, { status: 400 });
+  }
+
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   // Validate item exists

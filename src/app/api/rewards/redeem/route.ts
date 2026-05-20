@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { getKidSession } from '@/lib/kid-session';
+import { canAccessKid } from '@/lib/kid-access';
 
 /**
  * POST /api/rewards/redeem
@@ -36,14 +37,11 @@ export async function POST(request: NextRequest) {
       // Kid buying for themselves → Use Service Role (bypass RLS)
       supabase = await createServiceRoleClient();
     } else {
-      // Parent/other user → Use standard client (RLS)
-      supabase = await createServerClient();
-      
-      // If not a kid session, verify parent is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      // Parent path: verify family membership before touching kid's moons
+      if (!await canAccessKid(kidId)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
+      supabase = await createServerClient();
     }
     
     let cost = 0;
@@ -218,7 +216,10 @@ export async function GET(request: NextRequest) {
       // Kid viewing their own redemptions → Use Service Role
       supabase = await createServiceRoleClient();
     } else {
-      // Parent/other user → Use standard client (RLS)
+      // Parent path: verify family membership explicitly
+      if (!await canAccessKid(kidId)) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
       supabase = await createServerClient();
     }
 
@@ -296,9 +297,25 @@ export async function PUT(request: NextRequest) {
     }
 
     const supabase = await createServerClient();
-    
+
+    // Verify parent is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Handle shop purchases (fulfillment)
     if (source === 'shop' || status === 'fulfilled') {
+      // Verify parent owns this kid before updating
+      const { data: purchase } = await supabase
+        .from('shop_purchases')
+        .select('kid_id')
+        .eq('id', redemptionId)
+        .single();
+      if (!purchase || !await canAccessKid(purchase.kid_id)) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      }
+
       const { data, error } = await supabase
         .from('shop_purchases')
         .update({
@@ -320,7 +337,17 @@ export async function PUT(request: NextRequest) {
         message: 'Marked as fulfilled! 🎉',
       });
     }
-    
+
+    // Verify parent owns this kid before approving/denying
+    const { data: redemption } = await supabase
+      .from('reward_redemptions')
+      .select('kid_id')
+      .eq('id', redemptionId)
+      .single();
+    if (!redemption || !await canAccessKid(redemption.kid_id)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     // Handle reward_redemptions (legacy approval system)
     const { data, error } = await supabase
       .from('reward_redemptions')

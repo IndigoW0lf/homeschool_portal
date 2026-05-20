@@ -1,9 +1,16 @@
 import { createServerClient } from '@/lib/supabase/server';
+import { checkRateLimit } from '@/lib/ai/rate-limiter';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
+  const rl = await checkRateLimit(`invite-check:${ip}`);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   const code = request.nextUrl.searchParams.get('code');
-  
+
   if (!code) {
     return NextResponse.json({ error: 'Missing invite code' }, { status: 400 });
   }
