@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     
     if (error) {
       console.error('[Designs API] Error fetching designs:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to fetch designs' }, { status: 500 });
     }
     
     return NextResponse.json({ designs: designs || [] });
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     
     if (error) {
       console.error('[Designs API] Error saving design:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to save design' }, { status: 500 });
     }
     
     return NextResponse.json({ design }, { status: 201 });
@@ -227,7 +227,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     
     if (error) {
       console.error('[Designs API] Error updating design:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to update design' }, { status: 500 });
     }
     
     if (!design) {
@@ -265,7 +265,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     
     if (error) {
       console.error('[Designs API] Error deleting design:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to delete design' }, { status: 500 });
     }
     
     return NextResponse.json({ success: true });
