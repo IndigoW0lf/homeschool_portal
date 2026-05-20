@@ -331,7 +331,8 @@ export function LunaProvider({ children }: { children: ReactNode }) {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Something went wrong');
+        // Prefer a human-friendly message (e.g. daily limit) over the raw error key
+        throw new Error(errorData.message || errorData.error || 'Something went wrong');
       }
 
       const data: ThinkResponse = await res.json();
