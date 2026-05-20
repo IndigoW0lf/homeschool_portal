@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient, createServerClient } from '@/lib/supabase/server';
 import { getKidSession } from '@/lib/kid-session';
+import { canAccessKid } from '@/lib/kid-access';
 
 /** Extract storage path from a public URL (e.g. .../kid-avatars/kidId/file.jpg -> kidId/file.jpg) */
 function getStoragePathFromUrl(url: string | null, bucketId: string): string | null {
@@ -164,14 +165,11 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       // Kid updating their own avatar → Use Service Role (bypass RLS)
       supabase = await createServiceRoleClient();
     } else {
-      // Parent/other user → Use standard client (RLS)
-      supabase = await createServerClient();
-      
-      // Verify user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      // Parent path: verify family membership
+      if (!await canAccessKid(kidId)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
+      supabase = await createServiceRoleClient();
     }
 
     const body = await request.json();
@@ -183,7 +181,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     // Update kid record with new DiceBear configuration
     const { error: updateError } = await supabase
-      .from('kid')
+      .from('kids')
       .update({ dicebear_avatar_state: dicebearState })
       .eq('id', kidId);
 
