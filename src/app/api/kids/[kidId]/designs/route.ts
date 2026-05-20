@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+import { canAccessKid } from '@/lib/kid-access';
 import { ItemDesignRow, DesignRegion } from '@/types/design-studio';
 
 interface RouteParams {
@@ -9,7 +10,9 @@ interface RouteParams {
 // GET /api/kids/[kidId]/designs - List all designs for a kid
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
-  
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const supabase = await createServiceRoleClient();
     
@@ -34,7 +37,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 // POST /api/kids/[kidId]/designs - Save a new design
 export async function POST(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
-  
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { templateId, name, regions, textureImage, design_data } = body as {
@@ -158,7 +163,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 // PUT /api/kids/[kidId]/designs - Update an existing design
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
-  
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const body = await request.json();
     const { id, templateId, name, regions, isEquipped, textureImage } = body as {
@@ -237,9 +244,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // DELETE /api/kids/[kidId]/designs?id=xxx - Delete a design
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const url = new URL(request.url);
   const designId = url.searchParams.get('id');
-  
+
   if (!designId) {
     return NextResponse.json({ error: 'Missing design id' }, { status: 400 });
   }

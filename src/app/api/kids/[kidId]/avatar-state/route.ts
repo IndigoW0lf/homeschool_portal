@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+import { canAccessKid } from '@/lib/kid-access';
 
 interface RouteParams {
   params: Promise<{
@@ -13,7 +14,9 @@ interface RouteParams {
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
-
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const supabase = await createServiceRoleClient();
 
   const { data, error } = await supabase
@@ -51,7 +54,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
  */
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   const { kidId } = await params;
-
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   let body: { openPeepsState: Record<string, string>; avatarUrl?: string };
   try {
     body = await request.json();

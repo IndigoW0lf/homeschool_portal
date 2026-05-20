@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceRoleClient } from '@/lib/supabase/server';
-import { getKidSession } from '@/lib/kid-session';
+import { canAccessKid } from '@/lib/kid-access';
 
 /**
  * GET /api/kids/[kidId]/featured-badges
@@ -11,7 +11,9 @@ export async function GET(
   { params }: { params: Promise<{ kidId: string }> }
 ) {
   const { kidId } = await params;
-
+  if (!await canAccessKid(kidId)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const supabase = await createServiceRoleClient();
     
@@ -56,10 +58,8 @@ export async function PUT(
       return NextResponse.json({ error: 'Maximum 3 featured badges allowed' }, { status: 400 });
     }
 
-    // Check if this is a kid session and verify they're updating their own profile
-    const kidSession = await getKidSession();
-    if (kidSession && kidSession.kidId !== kidId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    if (!await canAccessKid(kidId)) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Update featured badges
