@@ -288,9 +288,7 @@ export default function TermsPage() {
               </h2>
               <p>
                 These Terms are governed by the laws of{' '}
-                <span className="text-amber-600 dark:text-amber-400 font-medium">
-                  [YOUR STATE / JURISDICTION — update before launch]
-                </span>
+                Missouri, USA
                 , without regard to conflict-of-law principles. Any disputes shall be resolved in the
                 courts of that jurisdiction, and you consent to personal jurisdiction there.
               </p>
