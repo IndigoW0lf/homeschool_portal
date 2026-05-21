@@ -1,38 +1,29 @@
 'use client';
 
-import { useState, useCallback, useSyncExternalStore } from 'react';
-import { isDone as checkIsDone, setDone } from '@/lib/storage';
+import { useState, useCallback, useEffect } from 'react';
+import { getDoneKey, setDone } from '@/lib/storage';
 
-// Create a subscription mechanism for localStorage changes
-function subscribe(callback: () => void) {
-  window.addEventListener('storage', callback);
-  return () => window.removeEventListener('storage', callback);
-}
+export function useDoneState(kidId: string, date: string, lessonId: string, initialDone = false) {
+  const [done, setDoneState] = useState(initialDone);
 
-export function useDoneState(kidId: string, date: string, lessonId: string) {
-  // Track optimistic updates locally
-  const [optimisticDone, setOptimisticDone] = useState<boolean | null>(null);
-  
-  // Use useSyncExternalStore to properly sync with localStorage
-  const storedDone = useSyncExternalStore(
-    subscribe,
-    () => checkIsDone(kidId, date, lessonId),
-    () => false // Server snapshot
-  );
-
-  // Use optimistic value if set, otherwise use stored value
-  const done = optimisticDone !== null ? optimisticDone : storedDone;
+  // Cross-tab sync via storage events — not used for initial render
+  useEffect(() => {
+    const key = getDoneKey(kidId, date, lessonId);
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === key) {
+        setDoneState(e.newValue === 'true');
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [kidId, date, lessonId]);
 
   const toggle = useCallback(async (): Promise<{ moonsAwarded?: number } | undefined> => {
     const newState = !done;
-    setOptimisticDone(newState);
-
-    // Sync to BOTH localStorage AND database for cross-device visibility
-    // lessonId here is the schedule_item.id when called from ScheduleItemCard
+    setDoneState(newState);
     const result = await setDone(kidId, date, lessonId, newState, lessonId);
     return result;
   }, [done, kidId, date, lessonId]);
 
   return { done, toggle, isLoaded: true };
 }
-
