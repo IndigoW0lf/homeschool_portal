@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { getOpenAIClient, AI_MODELS } from '@/lib/ai/config';
+import { checkRateLimit, checkDailyQuota } from '@/lib/ai/rate-limiter';
 import { isMiAcademyReportFormat, parseMiAcademyReport } from '@/lib/miacademy-report';
 
 interface ParsedCurriculumItem {
@@ -283,6 +284,17 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const [minuteResult, dailyResult] = await Promise.all([
+      checkRateLimit(user.id),
+      checkDailyQuota(user.id),
+    ]);
+    if (!minuteResult.allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+    if (!dailyResult.allowed) {
+      return NextResponse.json({ error: 'Daily limit reached' }, { status: 429 });
     }
 
     const { rawText, source = 'unknown' } = await request.json();

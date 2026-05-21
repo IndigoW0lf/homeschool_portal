@@ -219,8 +219,15 @@ export function LunaPanel() {
                     );
                   })()}
 
-                  {/* Empty response */}
-                  {(msg.response.clarifying_questions?.length ?? 0) === 0 && (msg.response.suggestions?.length ?? 0) === 0 && (
+                  {/* Off-topic response */}
+                  {msg.response.off_topic && (
+                    <p className="text-sm text-heading dark:text-muted leading-relaxed">
+                      I&apos;m set up to help with homeschooling, lesson planning, and parenting challenges — that one&apos;s a bit outside my lane. Got anything going on with school or your kids I can help with?
+                    </p>
+                  )}
+
+                  {/* Empty response (not off-topic) */}
+                  {!msg.response.off_topic && (msg.response.clarifying_questions?.length ?? 0) === 0 && (msg.response.suggestions?.length ?? 0) === 0 && (
                     <p className="text-muted text-sm text-center py-4">
                       I don&apos;t have any suggestions right now. Could you tell me more?
                     </p>

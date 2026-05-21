@@ -1,12 +1,11 @@
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/lib/supabase/server';
-import { 
-  Hero, 
-  Features, 
-  HowItWorks, 
-  KidShowcase, 
-  Testimonials, 
-  Pricing, 
+import {
+  Hero,
+  Features,
+  HowItWorks,
+  KidShowcase,
+  Pricing,
   CTA,
   MarketingNav,
   Footer
@@ -30,7 +29,6 @@ export default async function HomePage() {
         <Features />
         <HowItWorks />
         <KidShowcase />
-        <Testimonials />
         <Pricing />
         <CTA />
       </main>

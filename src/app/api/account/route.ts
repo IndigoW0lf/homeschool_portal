@@ -72,15 +72,16 @@ export async function DELETE() {
       .single();
 
     if (profile?.profile_photo_url && !profile.profile_photo_url.startsWith('/api')) {
-      // Legacy full URL — extract path
-      const idx = profile.profile_photo_url.indexOf('/profile-photos/');
+      const url = profile.profile_photo_url;
+      const idx = url.indexOf('/profile-photos/');
       if (idx !== -1) {
-        const path = profile.profile_photo_url.slice(idx + '/profile-photos/'.length).split('?')[0];
+        // Legacy full Supabase URL — extract storage path
+        const path = url.slice(idx + '/profile-photos/'.length).split('?')[0];
         if (path) await service.storage.from('profile-photos').remove([path]);
+      } else if (url.includes('/')) {
+        // Bare storage path (current format: userId/filename.ext)
+        await service.storage.from('profile-photos').remove([url]);
       }
-    } else if (profile?.profile_photo_url && profile.profile_photo_url.includes('/')) {
-      // Bare storage path
-      await service.storage.from('profile-photos').remove([profile.profile_photo_url]);
     }
 
     // 3. Delete profile row

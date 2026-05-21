@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getOpenAIClient, AI_MODELS, AI_CONFIG } from '@/lib/ai/config';
 import { ThinkRequestSchema, ThinkResponse, THINK_RESPONSE_JSON_SCHEMA } from '@/lib/ai/types';
 import { LUNA_SYSTEM_PROMPT, CONTEXT_PROMPTS } from '@/lib/ai/system-prompt';
-import { checkRateLimit, getRateLimitHeaders } from '@/lib/ai/rate-limiter';
+import { checkRateLimit, checkDailyQuota, getRateLimitHeaders } from '@/lib/ai/rate-limiter';
 import { loadContextForRequest } from '@/lib/ai/context-loader';
 import { enrichWithResources, isYouTubeConfigured } from '@/lib/ai/resource-enricher';
 import { createServerClient } from '@/lib/supabase/server';
@@ -39,20 +39,33 @@ export async function POST(request: NextRequest) {
     // Rate limit by authenticated user ID (more reliable than IP across Vercel instances)
     const identifier = user.id;
 
-    // Check rate limit
+    // Check per-minute rate limit
     const rateLimitResult = await checkRateLimit(identifier);
     const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
-    
+
     if (!rateLimitResult.allowed) {
       return NextResponse.json(
-        { 
+        {
           error: 'Too many requests',
           retryAfter: rateLimitResult.retryAfter,
         },
-        { 
+        {
           status: 429,
           headers: rateLimitHeaders,
         }
+      );
+    }
+
+    // Check daily quota — prevents free-rider abuse
+    const dailyResult = await checkDailyQuota(identifier);
+    if (!dailyResult.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Daily limit reached',
+          message: "You've reached today's limit for Luna. Come back tomorrow!",
+          retryAfter: dailyResult.retryAfter,
+        },
+        { status: 429, headers: rateLimitHeaders }
       );
     }
     
@@ -169,6 +182,12 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Short-circuit off-topic requests — don't enrich, log for monitoring
+    if (parsedResponse.off_topic) {
+      console.log('[AI Think] Off-topic request detected for user:', identifier);
+      return NextResponse.json(parsedResponse, { headers: rateLimitHeaders });
+    }
+
     // Enrich with educational resources (videos, worksheets) if configured
     let enrichedResponse = parsedResponse;
     if (isYouTubeConfigured()) {

@@ -12,6 +12,7 @@ export const AI_CONFIG = {
   maxTokens: 3000, // Increased to allow detailed lesson plans
   // Rate limiting
   maxRequestsPerMinute: 10,
+  maxRequestsPerDay: 50,
 } as const;
 
 // Lazy-initialized OpenAI client

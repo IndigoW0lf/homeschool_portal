@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getOpenAIClient, AI_MODELS } from '@/lib/ai/config';
-import { 
-  getJournalSystemPrompt, 
-  getJournalUserPrompt, 
-  calculateAge, 
+import { checkRateLimit } from '@/lib/ai/rate-limiter';
+import {
+  getJournalSystemPrompt,
+  getJournalUserPrompt,
+  calculateAge,
   getRandomFallbackPrompt,
   JournalPromptType,
   ALL_PROMPT_TYPES
@@ -28,6 +29,12 @@ export async function POST(request: NextRequest) {
         { error: 'kidId is required' },
         { status: 400 }
       );
+    }
+
+    // Rate limit by kid ID — uses per-minute cap only (prompts are short + have a fallback)
+    const rateLimitResult = await checkRateLimit(kidId);
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
     }
 
     // Get kid data for age and prompt preferences

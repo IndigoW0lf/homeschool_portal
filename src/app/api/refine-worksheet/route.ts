@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
+import { checkRateLimit, checkDailyQuota } from '@/lib/ai/rate-limiter';
 import { OpenAI } from 'openai';
 import { WorksheetData } from '@/types';
 
@@ -63,6 +64,17 @@ export async function POST(request: NextRequest) {
     
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const [minuteResult, dailyResult] = await Promise.all([
+      checkRateLimit(user.id),
+      checkDailyQuota(user.id),
+    ]);
+    if (!minuteResult.allowed) {
+      return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+    }
+    if (!dailyResult.allowed) {
+      return NextResponse.json({ error: 'Daily limit reached' }, { status: 429 });
     }
 
     const body: RefineRequest = await request.json();

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Sparkle, EnvelopeSimple, TwitterLogo, InstagramLogo } from '@phosphor-icons/react/dist/ssr';
+import { Sparkle, EnvelopeSimple } from '@phosphor-icons/react/dist/ssr';
 
 export function Footer() {
   return (
@@ -15,7 +15,7 @@ export function Footer() {
               <span className="text-xl font-bold text-[var(--foreground)]">Lunara Quest</span>
             </Link>
             <p className="text-[var(--slate-400)] max-w-sm">
-              Your magical homeschool companion. Making learning organized, 
+              Your magical homeschool companion. Making learning organized,
               joyful, and engaging for the whole family.
             </p>
           </div>
@@ -65,29 +65,13 @@ export function Footer() {
           <p className="text-[var(--slate-500)] text-sm">
             © {new Date().getFullYear()} Lunara Quest. Made with ✨ for homeschool families.
           </p>
-          <div className="flex items-center gap-4">
-            <a 
-              href="mailto:hello@lunara.quest" 
-              className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
-              aria-label="Email"
-            >
-              <EnvelopeSimple size={20} />
-            </a>
-            <a 
-              href="#" 
-              className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
-              aria-label="Twitter"
-            >
-              <TwitterLogo size={20} />
-            </a>
-            <a 
-              href="#" 
-              className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
-              aria-label="Instagram"
-            >
-              <InstagramLogo size={20} />
-            </a>
-          </div>
+          <a
+            href="mailto:hello@lunara.quest"
+            className="text-[var(--slate-400)] hover:text-[var(--foreground)] transition-colors"
+            aria-label="Email"
+          >
+            <EnvelopeSimple size={20} />
+          </a>
         </div>
       </div>
     </footer>
