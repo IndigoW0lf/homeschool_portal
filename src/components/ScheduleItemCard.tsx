@@ -22,7 +22,8 @@ interface ScheduleItemCardProps {
 }
 
 export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClick }: ScheduleItemCardProps) {
-  const { done, toggle: markDone } = useDoneState(kidId, date, item.id);
+  const initialDone = item.status === 'completed';
+  const { done, toggle: markDone } = useDoneState(kidId, date, item.id, initialDone);
   const feedback = useFeedback();
 
   // Format date for display
@@ -98,6 +99,7 @@ export function ScheduleItemCard({ item, kidId, date, showDate, readOnly, onClic
             kidId={kidId}
             lessonId={item.id}
             date={date}
+            initialDone={initialDone}
           />
         )}
       </div>

@@ -7,10 +7,11 @@ interface DoneToggleProps {
   kidId: string;
   date: string;
   lessonId: string;
+  initialDone?: boolean;
 }
 
-export function DoneToggle({ kidId, date, lessonId }: DoneToggleProps) {
-  const { done, toggle, isLoaded } = useDoneState(kidId, date, lessonId);
+export function DoneToggle({ kidId, date, lessonId, initialDone }: DoneToggleProps) {
+  const { done, toggle, isLoaded } = useDoneState(kidId, date, lessonId, initialDone);
   const feedback = useFeedback();
 
   const handleClick = () => {
